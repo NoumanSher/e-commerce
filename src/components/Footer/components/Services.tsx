@@ -1,11 +1,11 @@
 import { servicesData } from "@/data/data";
-import React from "react";
+import React, { memo } from "react";
 
-export default function Services() {
+const  Services=()=> {
   return (
     <div>
       <div className="flex px-4 md:px-8 lg:px-12   ">
-        <div className="md:flex px-[15px] md:px-[15px]  md:items-center lg:justify-center w-full md:max-w-[720px] lg:max-w-[960px] xl:max-w-[1150px] 2xl:marker:max-w-[1650px]  mx-auto  pb-[36.8px] pt-[48px] border-b border-b-[#cfcdcd]">
+        <div className="md:flex px-[15px] md:px-[15px]  md:items-center lg:justify-center w-full md:max-w-[720px] lg:max-w-[960px] xl:max-w-[1350px]   mx-auto  pb-[36.8px] pt-[48px] border-b border-b-[#cfcdcd]">
           {servicesData.map((item, index) => (
             <div
               key={item._id}
@@ -29,3 +29,4 @@ export default function Services() {
     </div>
   );
 }
+export default memo(Services)
