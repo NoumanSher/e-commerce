@@ -14,7 +14,7 @@ const  FooterMain=()=> {
           <Services />
         </Suspense>
       </div>
-      <div className="px-[15px] md:px-8 lg:px-12 pt-[50px] md:pt-[65px] md:pb-[45px] lg:pt-[100px] lg:pb-[76px] pb-[30px] lg:flex xl:max-w-[1350px] xl:px-0 xl:mx-auto">
+      <div className="px-[15px] md:px-8 lg:px-12 pt-[50px] md:pt-[65px] md:pb-[45px] lg:pt-[100px] lg:pb-[76px] pb-[30px] lg:flex xl:max-w-[1440px] xl:px-0 xl:mx-auto">
         <div className=" mb-[24px] lg:mb-0 lg:w-[24%] lg:px-3">
           <Suspense fallback={<div>Loading...</div>}>
             <FooterInfo />

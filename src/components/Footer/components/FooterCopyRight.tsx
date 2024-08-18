@@ -4,7 +4,7 @@ import React from "react";
 export default function FooterCopyRight() {
   return (
     <div>
-      <div className="border-t border-t-[#cfcdcd] pt-5 px-4 md:pt-7 md:pb-6  lg:py-9 pb-4 md:mx-8 md:flex md:items-center md:justify-between xl:max-w-[1350px] xl:px-0 xl:mx-auto">
+      <div className="border-t border-t-[#cfcdcd] pt-5 px-4 md:pt-7 md:pb-6  lg:py-9 pb-4 md:mx-8 md:flex md:items-center md:justify-between xl:max-w-[1440px] xl:px-0 xl:mx-auto">
         <p className="text-[14px] font-normal leading-[1.71430em] ">
           ©2023 Company
         </p>
