@@ -24,8 +24,8 @@ import { FooterLinksData } from "@/data/data";
         +92 317 4303225
       </a>
       <div className="flex gap-8 xl:gap-5 mt-8 lg:flex-wrap">
-        {FooterLinksData.map((item) => (
-          <div className="cursor-pointer">{React.createElement(item.icon)}</div>
+        {FooterLinksData.map((item, index) => (
+          <div key={index} className="cursor-pointer">{React.createElement(item.icon)}</div>
         ))}
       </div>
     </div>
