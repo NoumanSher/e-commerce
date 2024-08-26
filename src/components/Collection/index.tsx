@@ -24,11 +24,11 @@ export default function Collection() {
       <div className="bg-[#e4e4e4]  bg-opacity-35">
         <div className=" pb-1 md:pb-4 px-[15px] mx-auto md:max-w-[720px] lg:max-w-[960px] xl:max-w-[1350px]">
           <div className="pt-7 xl:pt-24">
-            <h1 className="text-[26px] xl:text-[32px] leading-[1.2rem] !font-normal !pb-2 md:!pb-4 xl:!pb-20 !text-center ">
+            <h1 className="text-[26px] xl:text-[32px] leading-[1.2rem] !font-normal !pb-1 md:!pb-4 xl:!pb-20 !text-center ">
               The Inside Collection
             </h1>
           </div>
-          <div className="flex flex-row  overflow-x-scroll custom-scrollbar ">
+          <div className="flex flex-row mt-2  overflow-x-scroll custom-scrollbar ">
             {ProductCardData.map((item, index) => {
               const isHovered = hoveredCard === item._id;
               // eslint-disable-next-line react-hooks/rules-of-hooks
