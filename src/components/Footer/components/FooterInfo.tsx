@@ -25,7 +25,7 @@ import { FooterLinksData } from "@/data/data";
       </a>
       <div className="flex gap-8 xl:gap-5 mt-8 lg:flex-wrap">
         {FooterLinksData.map((item, index) => (
-          <div key={index} className="cursor-pointer">{React.createElement(item.icon)}</div>
+          <a href={item.path} target="_blank" key={index} className="cursor-pointer">{React.createElement(item.icon)}</a>
         ))}
       </div>
     </div>

@@ -74,22 +74,31 @@ export const FooterLinksData: FooterLinksProps[] = [
   {
     _id: "abcde",
     icon: FaFacebookFIcon,
+    path:"https://www.facebook.com/"
   },
   {
     _id: "hello",
     icon: FaTwitterIcon,
+    path:"https://twitter.com/"
+
   },
   {
     _id: "abcdef",
     icon: IoLogoInstagramIcon,
+    path:"https://www.instagram.com/"
+
   },
   {
     _id: "computer",
     icon: BsYoutubeIcon,
+    path:"https://www.youtube.com/"
+
   },
   {
     _id: "hi",
     icon: FaPinterestIcon,
+    path:"https://www.pinterest.com/"
+
   },
 ];
 

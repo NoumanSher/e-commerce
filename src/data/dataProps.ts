@@ -14,6 +14,7 @@ export interface ServicesDataProps {
   export interface FooterLinksProps {
     _id: string;
     icon: React.ComponentType;
+    path:string
   }
   export interface FooterItem {
     title: string;
