@@ -6,56 +6,93 @@ import {
   FaHeart,
   FaShoppingBag,
   FaBars,
+  FaTimes
 } from "react-icons/fa";
-
 const Navbar = () => {
   const [isMobile, setIsMobile] = useState(false);
+  const [searchValue, setSearchValue] = useState('');
+  const [searching, setSearching] = useState(false); // To track if search results are being fetched
 
+  const handleChange = (e:any) => {
+    setSearchValue(e.target.value);
+    if (e.target.value) {
+      setSearching(true); // User is typing, show cross icon
+    } else {
+      setSearching(false); // Input is empty, show search icon
+    }
+  };
+
+  const handleClear = () => {
+    setSearchValue('');
+    setSearching(false); // Clear search and reset to show search icon
+  };
   return (
-    <nav className="flex items-center justify-between p-4 border-b border-gray-200 bg-white">
-      <div className="flex items-center text-2xl font-bold lg:order-1 order-2">
+    <nav className="flex items-center justify-between p-4 border-b border-gray-200 bg-white container lg:px-16">
+
+      <div className="flex items-center gap-x-20 lg:order-1 order-2">
+      <div className="flex items-center text-2xl font-bold ">
         <span>UQMO</span>
         <span className="ml-1 w-4 h-4 bg-red-600 rounded-full"></span>
       </div>
 
       <ul
-        className={`flex space-x-6 lg:order-2 ${
+        className={`flex gap-x-10 lg:order-2 ${
           isMobile
-            ? "flex-col absolute top-16 left-0 w-full bg-white border-t border-gray-200 h-screen z-50"
+            ? "flex-col absolute top-16 left-0 w-full bg-white border-t border-gray-200 h-screen z-50 px-4 pt-4"
             : "hidden lg:flex"
         }`}
       >
+        <div className="relative">
+      <input
+        type="text"
+        name="search"
+        placeholder="Search Products"
+        id="search"
+        value={searchValue}
+        onChange={handleChange}
+        className="lg:hidden border-gray-400 w-full border outline-none h-9 rounded-md px-2 pr-8"
+      />
+      <span className="absolute top-[10px] right-2">
+        {searching ? (
+          <FaTimes onClick={handleClear} className="cursor-pointer" />
+        ) : (
+          <FaSearch />
+        )}
+      </span>
+    </div>
         <li>
-          <a href="#" className="text-lg text-black hover:text-gray-600">
+          <a href="#" className="text-sm tracking-wide text-black font-medium hover:text-gray-600">
             HOME
           </a>
         </li>
         <li>
-          <a href="#" className="text-lg text-black hover:text-gray-600">
+          <a href="#" className="text-sm tracking-wide text-black font-medium hover:text-gray-600">
             SHOP
           </a>
         </li>
         <li>
-          <a href="#" className="text-lg text-black hover:text-gray-600">
+          <a href="#" className="text-sm tracking-wide text-black font-medium hover:text-gray-600">
             BLOG
           </a>
         </li>
         <li>
-          <a href="#" className="text-lg text-black hover:text-gray-600">
+          <a href="#" className="text-sm tracking-wide text-black font-medium hover:text-gray-600">
             PAGES
           </a>
         </li>
         <li>
-          <a href="#" className="text-lg text-black hover:text-gray-600">
+          <a href="#" className="text-sm tracking-wide text-black font-medium hover:text-gray-600">
             ABOUT
           </a>
         </li>
         <li>
-          <a href="#" className="text-lg text-black hover:text-gray-600">
+          <a href="#" className="text-sm tracking-wide text-black font-medium hover:text-gray-600">
             CONTACT
           </a>
         </li>
       </ul>
+      </div>
+   
 
       <div className="lg:flex items-center space-x-6 hidden lg:order-3 ">
         <FaSearch className="text-lg cursor-pointer hover:text-gray-600 hidden lg:flex" />
