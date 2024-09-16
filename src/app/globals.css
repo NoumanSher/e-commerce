@@ -8,3 +8,49 @@
 body {
   font-family: 'Jost', sans-serif;
 }
+
+
+@keyframes fade-in-left {
+  from {
+    opacity: 0;
+    transform: translateX(-50%);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes zoom-in {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes slide-in-right {
+  from {
+    opacity: 0;
+    transform: translateX(50%);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.animate-fade-in-left {
+  animation: fade-in-left 1s ease-in-out;
+}
+
+.animate-zoom-in {
+  animation: zoom-in 1s ease-in-out;
+}
+
+.animate-slide-in-right {
+  animation: slide-in-right 1s ease-in-out;
+}

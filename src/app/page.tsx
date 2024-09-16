@@ -3,9 +3,13 @@ const Footer = lazy(() => import("@/components/Footer/footer"));
 const Trending = lazy(() => import("@/components/Trending/trending"));
 const Collection = lazy(() => import("@/components/Collection"));
 const LimitedEdition = lazy(() => import("@/components/Limited"));
+const Slider = lazy(() => import("@/components/Slider/Slider"));
 export default function Home() {
   return (
     <>
+      <Suspense fallback={<div>Loading Slider .........</div>}>
+      <Slider />
+      </Suspense>
       <Suspense fallback={<div>Loading Trending .........</div>}>
         <Trending />
       </Suspense>
