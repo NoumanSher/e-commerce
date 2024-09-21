@@ -59,6 +59,8 @@ export default function Slider() {
             {slides.map((slide) => (
               <div key={slide.id} className="w-full flex-shrink-0">
                 <Image
+                 priority={true}
+              loading='eager'
                   src={slide.img}
                   className="object-cover w-full h-full"
                   alt={`Slide ${slide.id}`}

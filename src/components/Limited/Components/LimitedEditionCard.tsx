@@ -2,7 +2,9 @@ import Image from "next/image";
 import React, { memo, useCallback, useState } from "react";
 import Imag from "@/assets/img/vidar-nordli-mathisen-IbaTONUx7BI-unsplash.jpg";
 import CardHover from "@/components/cardHover";
-const LimitedEditionCard = ({ index, item }: any) => {
+import { LimitedEditionCardProps } from "../types/LimitedEditionCardDto";
+
+const LimitedEditionCard = ({ index }: LimitedEditionCardProps) => {
   const [hoveredCard, setHoveredCard] = useState<number | null>(null);
   const handleMouseEnter = useCallback((id: number) => {
     setHoveredCard(id);
@@ -13,7 +15,7 @@ const LimitedEditionCard = ({ index, item }: any) => {
   const isHovered = hoveredCard === index;
   return (
     <>
-      <div key={index} className="flex w-full justify-between items-center">
+      <div className="flex w-full justify-between items-center">
         <div
           key={index}
           className="w-[100%] pr-[6px] md:!pr-3   lg:!pr-[18px] xl:pr-6 flex-shrink-0"
@@ -26,6 +28,8 @@ const LimitedEditionCard = ({ index, item }: any) => {
             <Image
               src={Imag} // Use currentImage instead of Imag
               alt="Product Image"
+              priority={true}
+              loading='eager'
               className="aspect-[260/315] w-full  object-cover"
             />
             <CardHover isHovered={isHovered} />

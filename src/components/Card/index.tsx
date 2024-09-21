@@ -28,7 +28,7 @@ const MainCard = ({ item }: MAinCardPRops) => {
   }, []);
   return (
     <>
-      <div key={item._id} className=" mb-6 xl:mb-12   px-2  md:px-4">
+      <div  className=" mb-6 xl:mb-12   px-2  md:px-4">
         <div className="">
           <div
             className="relative xl:h-[404px]"
@@ -36,6 +36,8 @@ const MainCard = ({ item }: MAinCardPRops) => {
             onMouseLeave={handleMouseLeave}
           >
             <Image
+              priority={true}
+              loading='eager'
               src={currentImage}
               alt="Product BAnner Img"
               className="object-cover w-full h-full transition-transform duration-700 ease-in-out transform-gpu "

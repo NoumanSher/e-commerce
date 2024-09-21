@@ -50,9 +50,11 @@ export default function LimitedEditionMain() {
               .fill(0)
               .map((item, index) => {
                 return (
-                  <>
-                    <LimitedEditionCard key={index} index={index} item={item} />
-                  </>
+                  
+                    <div key={index}>
+                      <LimitedEditionCard index={index}  />
+                    </div>
+                
                 );
               })}
           </Carousel>

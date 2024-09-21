@@ -9,8 +9,9 @@ const Banner = ({ bannerimage,desc,title }: BannerProps) => {
         <Image
           className="w-full pb-6"
           src={bannerimage}
+          priority={true}
+              loading='eager'
           alt="bannerimg"
-          layout="responsive"
         />
         <div className="absolute  left-[30px] bottom-[54px] pt-[30px] pr-[30px]">
           <h1 className="text-[14px] font-normal leading-[1.7143em] uppercase">

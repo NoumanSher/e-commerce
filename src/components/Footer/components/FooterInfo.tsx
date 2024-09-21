@@ -6,7 +6,10 @@ import { FooterLinksData } from "@/data/data";
  const FooterInfo=()=> {
   return (
     <div>
-      <Image src={Logo} alt="Logo" className="pb-[48px]" />
+      <Image src={Logo}
+        priority={true}
+              loading='eager'
+      alt="Logo" className="pb-[48px]" />
       <p className="text-[#222222] text-[14px] font-normal leading-[1.7173em] mb-5">
         174 Pize Drive, Cola Street, Don Jones Lukhesciw{" "}
       </p>

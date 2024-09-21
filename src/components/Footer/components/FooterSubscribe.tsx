@@ -35,6 +35,8 @@ const FooterSubscribe=()=> {
                 <Image
                   src={masterCard}
                   alt="masterCard"
+                    priority={true}
+              loading='eager'
                   className="w-[35px] h-[35px]"
                 />
               </>
