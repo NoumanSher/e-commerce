@@ -4,7 +4,6 @@ import "./styles.css";
 const BannerProducts = lazy(() => import("./BannerProducts"));
 const ProductsCatgories = lazy(() => import("./ProductsCatgories"));
 const ProductsCard = lazy(() => import("./ProductsCard"));
-
 const TrendingMain = () => {
   return (
     <>

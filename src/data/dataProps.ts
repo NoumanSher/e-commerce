@@ -29,6 +29,12 @@ export interface ServicesDataProps {
     title1: string;
     desc1: string;
   }
+  export interface BannerSectionProps {
+    _id: string;
+    bannerimage: StaticImageData;
+    title: string;
+    desc: string;
+  }
   export interface ProductCardDataProps {
     _id:string;
     productName:string;
