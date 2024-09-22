@@ -6,7 +6,6 @@ const FooterInfo = lazy(() => import("./FooterInfo"));
 const FooterSubscribe = lazy(() => import("./FooterSubscribe"));
 
 const  FooterMain=()=> {
-    console.log("Footer Main");
   return (
     <div  className="bg-[#e4e4e4]">
        <div>
