@@ -27,7 +27,7 @@ const Navbar = () => {
     setSearching(false); // Clear search and reset to show search icon
   };
   return (
-    <nav className="flex items-center justify-between p-4 border-b border-gray-200 bg-white container lg:px-16">
+    <nav className="flex  items-center justify-between p-4 border-b border-gray-200 bg-white container lg:px-16">
 
       <div className="flex items-center gap-x-20 lg:order-1 order-2">
       <div className="flex items-center text-2xl font-bold ">
@@ -56,7 +56,7 @@ const Navbar = () => {
         {searching ? (
           <FaTimes onClick={handleClear} className="cursor-pointer" />
         ) : (
-          <FaSearch />
+          <FaSearch className="lg:hidden"/>
         )}
       </span>
     </div>
