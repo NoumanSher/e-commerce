@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useCallback, useMemo, useRef } from "react";
 import Image from "next/image";
 import P1 from "@/assets/img/P1.jpg";
 import P2 from "@/assets/img/P2.jpg";
@@ -18,21 +18,32 @@ export default function Slider() {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isHovered, setIsHovered] = useState(false);
 
-  const nextSlide = () => {
-    setCurrentSlide((prev) => (prev + 1) % slides.length);
-  };
+  // UseRef should be typed as number | null for browser environments
+  const intervalRef = useRef<number | null>(null);
 
-  const prevSlide = () => {
+  const nextSlide = useCallback(() => {
+    setCurrentSlide((prev) => (prev + 1) % slides.length);
+  }, [slides.length]);
+
+  const prevSlide = useCallback(() => {
     setCurrentSlide((prev) => (prev - 1 + slides.length) % slides.length);
-  };
+  }, [slides.length]);
 
   // Auto-play functionality with pause on hover
   useEffect(() => {
     if (!isHovered) {
-      const autoPlay = setInterval(nextSlide, 5000);
-      return () => clearInterval(autoPlay);
+      intervalRef.current = window.setInterval(nextSlide, 5000);
+    } else if (intervalRef.current !== null) {
+      clearInterval(intervalRef.current);
     }
-  }, [isHovered]);
+
+    // Cleanup interval on unmount
+    return () => {
+      if (intervalRef.current !== null) {
+        clearInterval(intervalRef.current);
+      }
+    };
+  }, [isHovered, nextSlide]);
 
   return (
     <div

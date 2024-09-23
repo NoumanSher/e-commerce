@@ -9,8 +9,11 @@ body {
   font-family: 'Jost', sans-serif;
 }
 
+.no-scroll {
+  overflow: hidden!important;
+}
 
-@keyframes fade-in-left {
+/* @keyframes fade-in-left {
   from {
     opacity: 0;
     transform: translateX(-50%);
@@ -41,9 +44,9 @@ body {
     opacity: 1;
     transform: translateX(0);
   }
-}
+} */
 
-.animate-fade-in-left {
+/* .animate-fade-in-left {
   animation: fade-in-left 1s ease-in-out;
 }
 
@@ -53,4 +56,4 @@ body {
 
 .animate-slide-in-right {
   animation: slide-in-right 1s ease-in-out;
-}
+} */
