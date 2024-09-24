@@ -4,9 +4,13 @@ const Trending = lazy(() => import("@/components/Trending/trending"));
 const Collection = lazy(() => import("@/components/Collection"));
 const LimitedEdition = lazy(() => import("@/components/Limited"));
 const Slider = lazy(() => import("@/components/Slider/Slider"));
+const ShoppingCartModal = lazy(() => import("@/components/shoppingCartModal/client/shoppingCartModal"));
 export default function Home() {
   return (
     <>
+      <Suspense fallback={<div>Loading Slider .........</div>}>
+      <ShoppingCartModal   />
+      </Suspense>
       <Suspense fallback={<div>Loading Slider .........</div>}>
       <Slider />
       </Suspense>
