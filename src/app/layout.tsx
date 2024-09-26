@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Jost } from "next/font/google"; // Import Jost instead of Inter
 import "./globals.css";
 import Navbar from "@/components/Nav";
+import StoreTypeProviderWrapper from "@/Context/StoreTypeProviderWrapper";
 
 const jost = Jost({ subsets: ["latin"] }); // Load the Jost font
 
@@ -17,9 +18,13 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={jost.className}> {/* Apply Jost font class */}
-        <Navbar />
-        {children}
+      <body className={jost.className}>
+        {" "}
+        {/* Apply Jost font class */}
+        <StoreTypeProviderWrapper>
+          <Navbar />
+          {children}
+        </StoreTypeProviderWrapper>
       </body>
     </html>
   );

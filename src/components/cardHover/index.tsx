@@ -1,8 +1,11 @@
+import { useStore } from '@/Context/storeContext';
 import React, { memo } from 'react'
 import { FiEye, FiHeart } from 'react-icons/fi';
 import { MdOutlineShoppingBag } from 'react-icons/md';
 
 const  CardHover=({isHovered}:any)=> {
+  const {setIsCartOpen} = useStore()
+
   return (
     <div>
        <div
@@ -12,7 +15,7 @@ const  CardHover=({isHovered}:any)=> {
                   : "opacity-0 invisible translate-y-5"
               }`}
             >
-              <div className="w-[40px] h-[40px] cursor-pointer rounded-[50%] bg-white flex justify-center items-center">
+              <div onClick={() => setIsCartOpen(true)} className="w-[40px] h-[40px] cursor-pointer rounded-[50%] bg-white flex justify-center items-center">
                 <MdOutlineShoppingBag />
               </div>
               <div className="w-[40px] h-[40px] cursor-pointer rounded-[50%] bg-white flex justify-center items-center">

@@ -1,7 +1,7 @@
-'use client';
+"use client";
 import React, { useState } from "react";
-import ShoppingCart from '../../shoppingCartModal';
-
+import ShoppingCart from "../../shoppingCartModal";
+import { useStore } from "@/Context/storeContext";
 interface Product {
   id: number;
   productImageUrl: string;
@@ -16,7 +16,7 @@ interface Product {
 }
 
 const ShoppingCartModal: React.FC = () => {
-  const [isCartOpen, setIsCartOpen] = useState<boolean>(false);
+  const { setIsCartOpen, isCartOpen } = useStore();
 
   const products: Product[] = [
     {
@@ -78,14 +78,11 @@ const ShoppingCartModal: React.FC = () => {
   ];
 
   return (
-    <div>
-      <button onClick={() => setIsCartOpen(true)}>Open Cart</button>
-      <ShoppingCart
-        isOpen={isCartOpen}
-        onClose={() => setIsCartOpen(false)}
-        products={products}
-      />
-    </div>
+    <ShoppingCart
+      isOpen={isCartOpen}
+      onClose={() => setIsCartOpen(false)}
+      products={products}
+    />
   );
 };
 
