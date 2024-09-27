@@ -8,6 +8,7 @@ interface MAinCardPRops {
   item: ProductCardDataProps;
 }
 const MainCard = ({ item }: MAinCardPRops) => {
+  console.log("New Chages")
   const [hoveredCard, setHoveredCard] = useState<string | null>(null);
   const [selectedColor, setSelectedColor] = useState<string | null>("gray");
   const isHovered = hoveredCard === item._id;
