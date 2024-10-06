@@ -43,7 +43,7 @@ const router = useRouter()
   }, [isMobile]);
 
   const handleClickProfile =() =>{
-    router.push('pages/login')
+    router.push('/pages/login')
   }
   return (
     <nav className="flex border-2  items-center justify-between p-4 border-b border-gray-200 bg-white container mx-auto lg:px-16">
