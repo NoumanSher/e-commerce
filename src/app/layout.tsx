@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Jost } from "next/font/google"; // Import Jost instead of Inter
 import "./globals.css";
 import Navbar from "@/components/Nav";
+import Footer from "@/components/Footer/footer";
 import StoreTypeProviderWrapper from "@/Context/StoreTypeProviderWrapper";
 
 const jost = Jost({ subsets: ["latin"] }); // Load the Jost font
@@ -24,6 +25,7 @@ export default function RootLayout({
         <StoreTypeProviderWrapper>
           <Navbar />
           {children}
+          <Footer />
         </StoreTypeProviderWrapper>
       </body>
     </html>

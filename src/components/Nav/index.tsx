@@ -8,11 +8,12 @@ import {
   FaBars,
   FaTimes,
 } from "react-icons/fa";
+import { useRouter } from "next/navigation";
 const Navbar = () => {
   const [isMobile, setIsMobile] = useState(false);
   const [searchValue, setSearchValue] = useState("");
   const [searching, setSearching] = useState(false); // To track if search results are being fetched
-
+const router = useRouter()
   const handleChange = (e: any) => {
     setSearchValue(e.target.value);
     if (e.target.value) {
@@ -40,6 +41,10 @@ const Navbar = () => {
       document.body.classList.remove("no-scroll");
     };
   }, [isMobile]);
+
+  const handleClickProfile =() =>{
+    router.push('pages/login')
+  }
   return (
     <nav className="flex border-2  items-center justify-between p-4 border-b border-gray-200 bg-white container mx-auto lg:px-16">
       <div className="flex items-center gap-x-20 lg:order-1 order-2">
@@ -126,7 +131,7 @@ const Navbar = () => {
 
       <div className="lg:flex  items-center space-x-6 hidden lg:order-3 ">
         <FaSearch className="text-lg cursor-pointer hover:text-gray-600 hidden lg:flex" />
-        <FaUserAlt className="text-lg cursor-pointer hover:text-gray-600" />
+        <FaUserAlt onClick={handleClickProfile} className="text-lg cursor-pointer hover:text-gray-600" />
         <FaHeart className="text-lg cursor-pointer hover:text-gray-600" />
         <div className="relative cursor-pointer">
           <FaShoppingBag className="text-lg hover:text-gray-600" />
