@@ -1,14 +1,14 @@
 import { ProductCardDataProps } from "@/data/dataProps";
 import Image from "next/image";
 import React, { memo, useCallback, useMemo, useState } from "react";
-import { FiEye, FiHeart } from "react-icons/fi";
-import { MdOutlineShoppingBag } from "react-icons/md";
+import { useRouter } from "next/navigation";
 import CardHover from "../cardHover";
 interface MAinCardPRops {
   item: ProductCardDataProps;
 }
 const MainCard = ({ item }: MAinCardPRops) => {
   console.log("New Chages")
+  const router = useRouter()
   const [hoveredCard, setHoveredCard] = useState<string | null>(null);
   const [selectedColor, setSelectedColor] = useState<string | null>("gray");
   const isHovered = hoveredCard === item._id;
@@ -29,7 +29,7 @@ const MainCard = ({ item }: MAinCardPRops) => {
   }, []);
   return (
     <>
-      <div  className=" mb-6 xl:mb-12   px-2  md:px-4">
+      <div  className=" mb-6 xl:mb-12   px-2  md:px-4" onClick={() => router.push('/pages/productDetail')}>
         <div className="">
           <div
             className="relative xl:h-[404px]"
