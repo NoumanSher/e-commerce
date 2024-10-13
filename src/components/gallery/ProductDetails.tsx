@@ -20,7 +20,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({ product }) => {
   const isInWishlist = wishlist.some((item) => item.id === product.id);
 
   return (
-    <div className="p-8 w-[50%]">
+    <div className="p-8 w-[45%] border-2 border-blue-500">
       <h1 className="text-3xl font-bold">{product.title}</h1>
       <p className="text-lg font-semibold mt-4">${product.price}</p>
       <p className="text-gray-600 mt-2">{product.description}</p>
