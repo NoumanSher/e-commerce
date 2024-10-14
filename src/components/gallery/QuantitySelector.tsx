@@ -1,21 +1,35 @@
 // components/QuantitySelector.tsx
-import { useState } from 'react';
+"use client";
+import React from "react";
 
-const QuantitySelector: React.FC = () => {
-  const [quantity, setQuantity] = useState(1);
+interface QuantitySelectorProps {
+  quantity: number;
+  setQuantity: React.Dispatch<React.SetStateAction<number>>;
+}
+
+const QuantitySelector: React.FC<QuantitySelectorProps> = ({
+  quantity,
+  setQuantity,
+}) => {
+  const handleIncrement = () => setQuantity((prevQuantity) => prevQuantity + 1);
+  const handleDecrement = () =>
+    setQuantity((prevQuantity) => Math.max(1, prevQuantity - 1));
 
   return (
-    <div className="flex items-center mt-4">
+    <div
+      className="flex justify-between w-[100px] py-3 px-3 items-center border-2 border-gray-200 rounded-sm 
+      transition-all duration-300 ease-in-out hover:border-gray-300 hover:shadow-md"
+    >
       <button
-        className="px-4 py-2 border"
-        onClick={() => setQuantity((prev) => Math.max(prev - 1, 1))}
+        onClick={handleDecrement}
+        className="rounded text-gray-400 hover:text-rose-800 transition-colors duration-200"
       >
         -
       </button>
-      <span className="px-4 py-2">{quantity}</span>
+      <span className="font-medium text-gray-400">{quantity}</span>
       <button
-        className="px-4 py-2 border"
-        onClick={() => setQuantity((prev) => prev + 1)}
+        onClick={handleIncrement}
+        className="rounded text-gray-400 hover:text-rose-800 transition-colors duration-200"
       >
         +
       </button>

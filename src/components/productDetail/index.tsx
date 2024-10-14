@@ -19,7 +19,7 @@ const product = {
 
 const ProductDetail: React.FC = () => {
   return (
-    <div className="flex  flex-col lg:flex-row lg:p-8 p-4 border-2 border-red-500">
+    <div className="flex  flex-col lg:flex-row lg:p-8 p-4 border-2 border-red-500 container mx-auto">
       <ImageGallery images={product.images} /> 
       <ProductDetails product={product} />
     </div>
