@@ -6,6 +6,9 @@ export interface WishlistItem {
   title: string;
   price: number;
   image: string;
+  color:string;
+  size:string;
+  quantity:number;
 }
 
 export const useWishlist = () => {
