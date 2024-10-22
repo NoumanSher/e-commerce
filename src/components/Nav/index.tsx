@@ -9,6 +9,7 @@ import {
   FaTimes,
 } from "react-icons/fa";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 const Navbar = () => {
   const [isMobile, setIsMobile] = useState(false);
   const [searchValue, setSearchValue] = useState("");
@@ -48,10 +49,10 @@ const router = useRouter()
   return (
     <nav className="flex border-2  items-center justify-between p-4 border-b border-gray-200 bg-white container mx-auto lg:px-16">
       <div className="flex items-center gap-x-20 lg:order-1 order-2">
-        <div className="flex items-center text-2xl font-bold ">
+        <Link href={'/'} className="flex items-center text-2xl font-bold">
           <span>UQMO</span>
           <span className="ml-1 w-4 h-4 bg-red-600 rounded-full"></span>
-        </div>
+        </Link>
 
         <ul
           className={`flex gap-x-10 lg:order-2 ${

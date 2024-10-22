@@ -5,11 +5,13 @@ import React from "react";
 interface QuantitySelectorProps {
   quantity: number;
   setQuantity: React.Dispatch<React.SetStateAction<number>>;
+  className?:string
 }
 
 const QuantitySelector: React.FC<QuantitySelectorProps> = ({
   quantity,
   setQuantity,
+  className
 }) => {
   const handleIncrement = () => setQuantity((prevQuantity) => prevQuantity + 1);
   const handleDecrement = () =>
@@ -17,8 +19,8 @@ const QuantitySelector: React.FC<QuantitySelectorProps> = ({
 
   return (
     <div
-      className="flex justify-between w-[100px] py-3 px-3 items-center border-2 border-gray-200 rounded-sm 
-      transition-all duration-300 ease-in-out hover:border-gray-300 hover:shadow-md"
+      className={`${className} flex justify-between w-[100px] py-3 px-3 items-center border-2 border-gray-200 rounded-sm 
+      transition-all duration-300 ease-in-out hover:border-gray-300 hover:shadow-md`}
     >
       <button
         onClick={handleDecrement}
