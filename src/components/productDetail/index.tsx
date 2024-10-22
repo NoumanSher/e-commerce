@@ -9,7 +9,8 @@ const product = {
   id: "1",
   title: "Dresses Fully Beaded Gown",
   price: 95.0,
-  description: "Phasellus sed volutpat orci. Fusce eget lorem mauris...",
+  description:
+    "Phasellus sed volutpat orci. Fusce eget lore mauris vehicula elementum gravida nec dui. Aenean aliquam varius ipsum, non ultricies tellus sodales eu. Donec dignissim viverra nunc, ut aliquet magna posuere eget.",
   images: [
     { src: P1.src, alt: "Grid Banner 1" },
     { src: P2.src, alt: "Grid Banner 2" },

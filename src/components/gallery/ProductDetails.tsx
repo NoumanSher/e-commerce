@@ -4,6 +4,7 @@ import { useWishlist } from "@/components/hooks/useWishlist";
 import QuantitySelector from "@/components/gallery/QuantitySelector";
 import { useState } from "react";
 // import Select from "@/components/Select/select";
+import { Slash } from "lucide-react";
 import {
   Select,
   SelectContent,
@@ -13,6 +14,14 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from "@/components/ui/breadcrumb";
 import { Button } from "@/components/ui/button";
 import { CiHeart } from "react-icons/ci";
 import { PiShareNetworkThin } from "react-icons/pi";
@@ -46,37 +55,62 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({ product }) => {
   const isInWishlist = wishlist.some((item) => item.id === product.id);
 
   return (
-    <div className="p-8 lg:w-[40%] w-full border-2 border-blue-500">
-      <h1 className="text-2xl font-medium">{product.title}</h1>
-      <p className="text-lg font-medium mt-4">${product.price}</p>
-      <p className="text-gray-600 mt-2">{product.description}</p>
+    <div className="px-8 pt-2 lg:w-[40%] w-full border-2 border-blue-500">
+      <Breadcrumb className="mb-5">
+        <BreadcrumbList>
+          <BreadcrumbItem>
+            <BreadcrumbLink href="/">Home</BreadcrumbLink>
+          </BreadcrumbItem>
+          <BreadcrumbSeparator>
+            <Slash />
+          </BreadcrumbSeparator>
+          <BreadcrumbItem>
+            <BreadcrumbLink href="/components">Fashion</BreadcrumbLink>
+          </BreadcrumbItem>
+          <BreadcrumbSeparator>
+            <Slash />
+          </BreadcrumbSeparator>
+          <BreadcrumbItem>
+            <BreadcrumbPage>Women</BreadcrumbPage>
+          </BreadcrumbItem>
+        </BreadcrumbList>
+      </Breadcrumb>
+      <h1 className="text-2xl font-medium mb-3">{product.title}</h1>
+      <p className="text-lg font-medium mb-3">${product.price}</p>
+      <p className="text-gray-600 mb-4">{product.description}</p>
 
-      <div className="flex justify-between mt-3 gap-3">
+      <div className="flex justify-between mb-6 gap-3">
         <Select>
-          <SelectTrigger className="flex-1 h-14 rounded-none">
-            <SelectValue placeholder="Select color" />
+          <SelectTrigger className="flex-1 h-14 rounded-none  hover:shadow-md">
+            <SelectValue
+              placeholder={
+                <p className="text-base font-normal">Select Color</p>
+              }
+            />
           </SelectTrigger>
           <SelectContent className="rounded-none">
             <SelectGroup>
               <SelectLabel>Color</SelectLabel>
               {product.availableColors.map((color, index) => (
                 <SelectItem key={index} value={color.toLowerCase()}>
-                  {color}
+                  <p className="text-base font-normal">{color}</p>
                 </SelectItem>
               ))}
             </SelectGroup>
           </SelectContent>
         </Select>
         <Select>
-          <SelectTrigger className="flex-1 h-14 rounded-none">
-            <SelectValue placeholder="Select size" />
+          <SelectTrigger className="flex-1 h-14 rounded-none hover:shadow-md">
+            <SelectValue
+              placeholder={<p className="text-base font-normal">Select Size</p>}
+            />
           </SelectTrigger>
           <SelectContent className="rounded-none">
             <SelectGroup>
               <SelectLabel>Size</SelectLabel>
               {product.availableSizes.map((size, index) => (
                 <SelectItem key={index} value={size.toLowerCase()}>
-                  {size}
+                  <p className="text-base font-normal">{size}</p>
                 </SelectItem>
               ))}
             </SelectGroup>
@@ -84,7 +118,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({ product }) => {
         </Select>
       </div>
 
-      <div className="flex items-center mt-4 gap-x-3">
+      <div className="flex items-center mt-4 gap-x-3 mb-5">
         <QuantitySelector
           quantity={quantity}
           setQuantity={setQuantity}
@@ -101,27 +135,8 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({ product }) => {
       </div>
 
       {/* Wishlist Button */}
-      {/* <button
-        className={`mt-4 py-2 px-4 ${
-          isInWishlist ? "bg-red-500" : "bg-gray-800"
-        } text-white`}
-        onClick={() =>
-          isInWishlist
-            ? removeFromWishlist(product.id)
-            : addToWishlist({
-                id: product.id,
-                title: product.title,
-                price: product.price,
-                image: product.images[0].src,
-                quantity: quantity,
-                color: selectedColor,
-                size: selectedSize,
-              })
-        }
-      >
-        {isInWishlist ? "Remove from Wishlist" : "Add to Wishlist"}
-      </button> */}
-      <div className="flex gap-x-7 items-center  mt-4">
+
+      <div className="flex gap-x-7 items-center  mb-3">
         <div className="btn-link1">
           <div
             className="flex gap-x-2 items-center pb-2 cursor-pointer"
@@ -192,6 +207,13 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({ product }) => {
           </HoverCardContent>
         </HoverCard>
       </div>
+      
+ <div>
+ </div>
+  <p className="uppercase text-sm text-gray-500 mb-1">sku: <span className="text-black text-xs capitalize">n/t4</span></p>
+  <p className="uppercase text-sm text-gray-500 mb-1">categories: <span className="text-black text-xs capitalize">dresses,women</span></p>
+  <p className="uppercase text-sm text-gray-500">tages: <span className="text-black text-xs lowercase">dresses,women</span></p>
+
     </div>
   );
 };

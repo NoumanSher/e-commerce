@@ -5,7 +5,13 @@ import Navbar from "@/components/Nav";
 import Footer from "@/components/Footer/footer";
 import StoreTypeProviderWrapper from "@/Context/StoreTypeProviderWrapper";
 
-const jost = Jost({ subsets: ["latin"] }); // Load the Jost font
+// const jost = Jost({ subsets: ["latin"] }); // Load the Jost font
+
+const jost = Jost({
+  subsets: ["latin"],
+  weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"], // Specify weights if needed
+  style: ["normal", "italic"], // Optional: Include both normal and italic styles
+});
 
 export const metadata: Metadata = {
   title: "E-Commerce App",
