@@ -1,6 +1,6 @@
 // pages/index.tsx
-import ImageGallery from "@/components/gallery";
-import ProductDetails from "@/components/gallery/ProductDetails";
+import PoductImageGallery from "@/components/gallery";
+import ProductInfo from "@/components/productDetail/ProductDetails";
 import P1 from "@/assets/img/P4.jpg";
 import P2 from "@/assets/img/P5.jpg";
 import P3 from "@/assets/img/P6.jpg";
@@ -23,8 +23,8 @@ const product = {
 const ProductDetail: React.FC = () => {
   return (
     <div className="flex  flex-col lg:flex-row lg:p-8 p-4 border-2 border-red-500 container mx-auto">
-      <ImageGallery images={product.images} />
-      <ProductDetails product={product} />
+      <PoductImageGallery images={product.images} />
+      <ProductInfo product={product} />
     </div>
   );
 };

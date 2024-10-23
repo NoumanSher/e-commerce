@@ -19,7 +19,7 @@ const QuantitySelector: React.FC<QuantitySelectorProps> = ({
 
   return (
     <div
-      className={`${className} flex justify-between w-[100px] py-3 px-3 items-center border border-gray-300 rounded-sm 
+      className={`${className} flex justify-between w-[120px] py-3 px-3 items-center border border-gray-300 rounded-sm 
       transition-all duration-300 ease-in-out hover:border-gray-400 hover:shadow-md`}
     >
       <button

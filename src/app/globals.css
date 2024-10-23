@@ -2,61 +2,11 @@
 @tailwind components;
 @tailwind utilities;
 
-/* @import url('https://fonts.googleapis.com/css2?family=Jost:ital,wght@0,100..900;1,100..900&display=swap'); */
 
-/* Apply the Jost font globally */
-/* body {
-  font-family: 'Jost', sans-serif;
-} */
 
 .no-scroll {
   overflow: hidden!important;
 }
-
-/* @keyframes fade-in-left {
-  from {
-    opacity: 0;
-    transform: translateX(-50%);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(0);
-  }
-}
-
-@keyframes zoom-in {
-  from {
-    opacity: 0;
-    transform: scale(0.9);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
-}
-
-@keyframes slide-in-right {
-  from {
-    opacity: 0;
-    transform: translateX(50%);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(0);
-  }
-} */
-
-/* .animate-fade-in-left {
-  animation: fade-in-left 1s ease-in-out;
-}
-
-.animate-zoom-in {
-  animation: zoom-in 1s ease-in-out;
-}
-
-.animate-slide-in-right {
-  animation: slide-in-right 1s ease-in-out;
-} */
 
 @layer base {
   :root {
@@ -121,4 +71,75 @@
   body {
     @apply bg-background text-foreground;
   }
+}
+
+/* Base styles for links */
+.nav-link {
+  position: relative;
+  display: inline-block; /* Ensure only text gets the border */
+  text-decoration: none;
+  color: #767676; /* Default non-active color */
+  transition: color 0.3s ease;
+}
+
+/* Hover state */
+.nav-link:hover {
+  color: #222222; /* Color on hover */
+}
+
+/* Active state */
+.nav-link.active {
+  color: #222222; /* Color for active link */
+}
+
+/* Border-bottom animation */
+.nav-link::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: 0; /* Align the border at the bottom of the text */
+  width: 0;
+  height: 2px; /* Border thickness */
+  background-color: #222222; /* Border color */
+  transition: width 0.3s ease; /* Smooth transition */
+  transform: scaleX(0);
+  transform-origin: bottom left;
+}
+
+.nav-link:hover::after,
+.nav-link.active::after {
+  width: 100%; /* Expand the border to full width on hover or when active */
+  transform: scaleX(1);
+}
+
+.btn-link1 {
+  position: relative;
+  display: inline-block; /* Ensure only text gets the border */
+  text-decoration: none;
+  color: #222222; /* Default non-active color */
+  transition: color 0.3s ease;
+}
+
+/* Border-bottom animation */
+.btn-link1::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: 0; /* Align the border at the bottom of the text */
+  width: 80%; /* Initial width */
+  height: 2px; /* Border thickness */
+  background-color: #222222; /* Border color */
+  transition: width 0.5s ease; /* Smooth transition */
+  transform: scaleX(1); /* Show initial border */
+  transform-origin: bottom left;
+}
+
+/* Hover state */
+.btn-link1:hover {
+  color: #222222; /* Color on hover */
+}
+
+.btn-link1:hover::after {
+  width: 100%; /* Expand the border to full width on hover */
+  transform: scaleX(1); /* Ensure border is fully visible */
 }
