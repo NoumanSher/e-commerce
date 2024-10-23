@@ -1,4 +1,4 @@
-'use client'
+"use client";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import QuantitySelector from "@/components/productDetail/components/QuantitySelector";
@@ -17,7 +17,7 @@ interface Product {
   price: number;
   description: string;
   images: { src: string; alt: string }[];
-  availableColors: string[]; 
+  availableColors: string[];
   availableSizes: string[];
 }
 
@@ -29,25 +29,38 @@ const ProductInfo: React.FC<ProductDetailsProps> = ({ product }) => {
   const [quantity, setQuantity] = useState(1);
   const [selectedColor, setSelectedColor] = useState("");
   const [selectedSize, setSelectedSize] = useState("");
-  const [warning, setWarning] = useState(""); // State for warning messages
+  const [colorrequired, setColorRequired] = useState(false);
+  const [sizerequired, setSizeRequired] = useState(false);
 
   const handleAddToCart = () => {
-    if (!selectedColor || !selectedSize) {
-      setWarning("Please select a color and size");
-    } else {
-      setWarning(""); // Clear the warning when valid selection is made
-      // Add to cart logic here
-      console.log("Product added to cart");
+    if (!selectedColor && !selectedSize) {
+      setColorRequired(true);
+      setSizeRequired(true);
+      return;
+    }
+    if (!selectedSize) {
+      setSizeRequired(true);
+      return;
+    }
+    if (!selectedColor) {
+      setColorRequired(true);
+      return;
     }
   };
 
   const handleCheckout = () => {
-    if (!selectedColor || !selectedSize) {
-      setWarning("Please select a color and size before proceeding to checkout");
-    } else {
-      setWarning(""); // Clear the warning when valid selection is made
-      // Proceed to checkout logic here
-      console.log("Proceeding to checkout");
+    if (!selectedColor && !selectedSize) {
+      setColorRequired(true);
+      setSizeRequired(true);
+      return;
+    }
+    if (!selectedSize) {
+      setSizeRequired(true);
+      return;
+    }
+    if (!selectedColor) {
+      setColorRequired(true);
+      return;
     }
   };
 
@@ -65,11 +78,11 @@ const ProductInfo: React.FC<ProductDetailsProps> = ({ product }) => {
         availableSizes={product.availableSizes}
         setSelectedColor={setSelectedColor}
         setSelectedSize={setSelectedSize}
+        colorRequired={colorrequired}
+        sizeRequired={sizerequired}
+        setColorRequired={setColorRequired}
+        setSizeRequired={setSizeRequired}
       />
-
-      {warning && (
-        <p className="text-red-500 mb-4">{warning}</p>  
-      )}
 
       <div className="flex items-center mt-4 gap-x-4 mb-5">
         <QuantitySelector
