@@ -1,4 +1,3 @@
-// components/ProductInfo.tsx
 import React from "react";
 
 interface ProductInfoProps {
@@ -17,4 +16,4 @@ const ProductBasicInfo: React.FC<ProductInfoProps> = ({ title, price, descriptio
   );
 };
 
-export default ProductBasicInfo;
+export default React.memo(ProductBasicInfo);

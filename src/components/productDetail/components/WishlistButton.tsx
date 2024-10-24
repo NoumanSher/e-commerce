@@ -1,5 +1,6 @@
 import { FaHeart } from "react-icons/fa";
 import { useWishlist } from "@/components/hooks/useWishlist";
+import React from "react";
 
 interface WishlistButtonProps {
   productId: string;
@@ -21,7 +22,7 @@ const WishlistButton: React.FC<WishlistButtonProps> = ({
   size,
 }) => {
   const { addToWishlist, removeFromWishlist, wishlist } = useWishlist();
-  const isInWishlist = wishlist.some((item) => item.id === productId);
+  const isInWishlist = React.useMemo(() => wishlist.some((item) => item.id === productId), [wishlist, productId]);
 
   const handleWishlistClick = () => {
     if (isInWishlist) {
@@ -55,4 +56,4 @@ const WishlistButton: React.FC<WishlistButtonProps> = ({
   );
 };
 
-export default WishlistButton;
+export default React.memo(WishlistButton);

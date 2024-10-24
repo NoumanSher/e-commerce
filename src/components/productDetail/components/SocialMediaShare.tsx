@@ -4,11 +4,33 @@ import {
   HoverCardContent,
   HoverCardTrigger,
 } from "@/components/ui/hover-card";
+import { useEffect, useState } from "react";
+import React from "react";
 
 const SocialMediaShare: React.FC = () => {
+  const [isOpen, setIsOpen] = useState(false);
+  const [isMobile, setIsMobile] = useState(() => window.innerWidth <= 768); // Initial state based on window width
+
+  useEffect(() => {
+    const handleResize = () => {
+      const isMobileScreen = window.innerWidth <= 768;
+      setIsMobile((prev) => (prev !== isMobileScreen ? isMobileScreen : prev));
+    };
+
+    window.addEventListener("resize", handleResize);
+    
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  const toggleOpen = () => {
+    if (isMobile) {
+      setIsOpen((prev) => !prev); // Toggle open only on mobile
+    }
+  };
+
   return (
-    <HoverCard openDelay={100}>
-      <HoverCardTrigger className="group cursor-pointer">
+    <HoverCard openDelay={100} open={isMobile ? isOpen : undefined}>
+      <HoverCardTrigger className="group cursor-pointer" onClick={toggleOpen}>
         <div className="flex gap-x-2 items-center pb-2">
           <PiShareNetworkThin
             className="group-hover:text-rose-800"
@@ -38,4 +60,4 @@ const SocialMediaShare: React.FC = () => {
   );
 };
 
-export default SocialMediaShare;
+export default React.memo(SocialMediaShare);

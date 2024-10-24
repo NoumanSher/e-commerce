@@ -1,3 +1,4 @@
+import React from "react";
 import {
   Breadcrumb as BreadCrumb,
   BreadcrumbItem,
@@ -8,7 +9,7 @@ import {
 } from "@/components/ui/breadcrumb";
 import { Slash } from "lucide-react";
 
-export default function Breadcrumb() {
+const Breadcrumb: React.FC = React.memo(() => {
   return (
     <BreadCrumb className="mb-5">
       <BreadcrumbList>
@@ -30,4 +31,6 @@ export default function Breadcrumb() {
       </BreadcrumbList>
     </BreadCrumb>
   );
-}
+});
+
+export default Breadcrumb;

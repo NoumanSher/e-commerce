@@ -1,17 +1,15 @@
-// components/QuantitySelector.tsx
-"use client";
 import React from "react";
 
 interface QuantitySelectorProps {
   quantity: number;
   setQuantity: React.Dispatch<React.SetStateAction<number>>;
-  className?:string
+  className?: string;
 }
 
 const QuantitySelector: React.FC<QuantitySelectorProps> = ({
   quantity,
   setQuantity,
-  className
+  className,
 }) => {
   const handleIncrement = () => setQuantity((prevQuantity) => prevQuantity + 1);
   const handleDecrement = () =>
@@ -39,4 +37,4 @@ const QuantitySelector: React.FC<QuantitySelectorProps> = ({
   );
 };
 
-export default QuantitySelector;
+export default React.memo(QuantitySelector);
