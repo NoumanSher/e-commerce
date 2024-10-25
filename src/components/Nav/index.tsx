@@ -14,7 +14,7 @@ const Navbar = () => {
   const [isMobile, setIsMobile] = useState(false);
   const [searchValue, setSearchValue] = useState("");
   const [searching, setSearching] = useState(false); // To track if search results are being fetched
-const router = useRouter()
+  const router = useRouter();
   const handleChange = (e: any) => {
     setSearchValue(e.target.value);
     if (e.target.value) {
@@ -43,13 +43,13 @@ const router = useRouter()
     };
   }, [isMobile]);
 
-  const handleClickProfile =() =>{
-    router.push('/pages/login')
-  }
+  const handleClickProfile = () => {
+    router.push("/pages/login");
+  };
   return (
     <nav className="flex border-2  items-center justify-between p-4 border-b border-gray-200 bg-white container mx-auto lg:px-16">
       <div className="flex items-center gap-x-20 lg:order-1 order-2">
-        <Link href={'/'} className="flex items-center text-2xl font-bold">
+        <Link href={"/"} className="flex items-center text-2xl font-bold">
           <span>UQMO</span>
           <span className="ml-1 w-4 h-4 bg-red-600 rounded-full"></span>
         </Link>
@@ -132,9 +132,15 @@ const router = useRouter()
 
       <div className="lg:flex  items-center space-x-6 hidden lg:order-3 ">
         <FaSearch className="text-lg cursor-pointer hover:text-gray-600 hidden lg:flex" />
-        <FaUserAlt onClick={handleClickProfile} className="text-lg cursor-pointer hover:text-gray-600" />
+        <FaUserAlt
+          onClick={handleClickProfile}
+          className="text-lg cursor-pointer hover:text-gray-600"
+        />
         <FaHeart className="text-lg cursor-pointer hover:text-gray-600" />
-        <div className="relative cursor-pointer">
+        <div
+          className="relative cursor-pointer"
+          onClick={() => router.push("/pages/cart")}
+        >
           <FaShoppingBag className="text-lg hover:text-gray-600" />
           <span className="absolute top-0 right-0 w-4 h-4 bg-yellow-600 text-white text-xs font-bold rounded-full flex items-center justify-center">
             3
@@ -142,7 +148,7 @@ const router = useRouter()
         </div>
       </div>
 
-      <div className="relative  cursor-pointer order-3  lg:hidden">
+      <div className="relative  cursor-pointer order-3  lg:hidden" onClick={() => router.push("/pages/cart")}>
         <FaShoppingBag className="text-lg hover:text-gray-600" />
         <span className="absolute top-0 right-0 w-4 h-4 bg-yellow-600 text-white text-xs font-bold rounded-full flex items-center justify-center">
           3

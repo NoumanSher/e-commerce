@@ -71,7 +71,7 @@ const ProductInfo: React.FC<ProductDetailsProps> = ({ product }) => {
   }, [selectedColor, selectedSize]);
 
   return (
-    <div className="lg:px-8 pt-2 lg:w-[40%] w-full border-2 border-blue-500">
+    <div className="lg:px-8 pt-2 lg:w-[40%]  w-full border-2 border-blue-500">
       <Breadcrumb />
       <ProductBasicInfo title={title} price={price} description={description} />
 
@@ -117,8 +117,8 @@ const ProductInfo: React.FC<ProductDetailsProps> = ({ product }) => {
 
       <Tabs />
 
-      <div className="flex justify-center mt-10">
-        <CheckOutBtn className="!w-[70%]" onClick={handleCheckout} />
+      <div className="flex justify-center mt-5">
+        <CheckOutBtn className="!w-[100%]" onClick={handleCheckout} />
       </div>
     </div>
   );

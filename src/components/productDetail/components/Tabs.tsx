@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useCallback, memo } from "react";
 import {
   Dialog,
   DialogTrigger,
@@ -6,7 +6,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogDescription,
-} from "@/components/ui/dialog"; // Adjust this import based on your ShadCN setup
+} from "@/components/ui/dialog"; // Adjust based on your setup
 
 const TABS = [
   {
@@ -26,41 +26,43 @@ const TABS = [
   },
 ];
 
-const ProductDetailInfo: React.FC = () => {
-  const [activeTabContent, setActiveTabContent] = useState<string>("");
+const ProductDetailTabs: React.FC = memo(() => {
+  const [activeTabContent, setActiveTabContent] = useState<string>(TABS[0].content);
 
-  // Handle tab click and set content
-  const handleTabClick = (content: string) => {
+  // Memoized function to handle tab clicks
+  const handleTabClick = useCallback((content: string) => {
     setActiveTabContent(content);
-  };
+  }, []);
 
   return (
     <div>
-      {/* Tabs */}
       <div className="tabs flex flex-wrap justify-between">
         {TABS.map((tab) => (
           <Dialog key={tab.id}>
             <DialogTrigger asChild>
               <button
                 onClick={() => handleTabClick(tab.content)}
-                className="nav-link pb-[2px] pt-2   focus:outline-none"
+                className="nav-link pb-[2px] pt-2 focus:outline-none"
               >
                 <p className="text-black text-sm font-medium text-opacity-95">
                   {tab.label}
                 </p>
               </button>
             </DialogTrigger>
-            <DialogContent>
-              <DialogHeader>
-                <DialogTitle>Product Information</DialogTitle>
-                <DialogDescription>{activeTabContent}</DialogDescription>
-              </DialogHeader>
-            </DialogContent>
+            {activeTabContent === tab.content && (
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>Product Information</DialogTitle>
+                  <DialogDescription>{activeTabContent}</DialogDescription>
+                </DialogHeader>
+              </DialogContent>
+            )}
           </Dialog>
         ))}
       </div>
     </div>
   );
-};
+});
+ProductDetailTabs.displayName = "ProductDetailInfo";
 
-export default ProductDetailInfo;
+export default ProductDetailTabs;
