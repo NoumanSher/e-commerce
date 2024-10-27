@@ -103,5 +103,6 @@ const SelectColorAndSize: React.FC<SelectVarientProps> = React.memo(
     );
   }
 );
+SelectColorAndSize.displayName = "SelectColorAndSize";
 
 export default SelectColorAndSize;
