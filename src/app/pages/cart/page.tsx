@@ -1,4 +1,11 @@
-import CartScreen from "@/components/screen/cart";
+import React, { Suspense, lazy } from "react";
+
+const CartScreen = lazy(() => import("@/components/screen/cart"));
+
 export default function CartPage() {
-  return <CartScreen />;
+  return (
+    <Suspense fallback={".....loading detail"}>
+      <CartScreen />
+    </Suspense>
+  );
 }

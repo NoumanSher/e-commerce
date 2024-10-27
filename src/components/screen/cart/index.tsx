@@ -1,6 +1,6 @@
 "use client";
 import { useState, useEffect, useMemo } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import {  useSearchParams } from "next/navigation";
 import ShoppingBag from "../shoppingBag";
 import Checkout from "../checkout";
 interface Tab {
