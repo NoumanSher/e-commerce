@@ -15,5 +15,6 @@ const ProductBasicInfo: React.FC<ProductInfoProps> = ({ title, price, descriptio
     </>
   );
 };
+ProductBasicInfo.displayName = "ProductBasicInfo";
 
 export default React.memo(ProductBasicInfo);

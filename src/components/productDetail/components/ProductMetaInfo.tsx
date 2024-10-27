@@ -26,5 +26,7 @@ const ProductMetaInfo: React.FC<ProductMetaInfoProps> = ({
     </div>
   );
 };
+ProductMetaInfo.displayName = "ProductMetaInfo";
+
 
 export default React.memo(ProductMetaInfo);

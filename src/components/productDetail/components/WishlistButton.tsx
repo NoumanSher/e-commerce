@@ -55,5 +55,6 @@ const WishlistButton: React.FC<WishlistButtonProps> = ({
     </div>
   );
 };
+WishlistButton.displayName = "WishlistButton";
 
 export default React.memo(WishlistButton);

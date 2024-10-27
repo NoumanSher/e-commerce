@@ -36,5 +36,7 @@ const QuantitySelector: React.FC<QuantitySelectorProps> = ({
     </div>
   );
 };
+QuantitySelector.displayName = "QuantitySelector";
+
 
 export default React.memo(QuantitySelector);

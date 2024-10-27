@@ -59,5 +59,6 @@ const SocialMediaShare: React.FC = () => {
     </HoverCard>
   );
 };
+SocialMediaShare.displayName = "SocialMediaShare";
 
 export default React.memo(SocialMediaShare);

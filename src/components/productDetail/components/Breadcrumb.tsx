@@ -33,4 +33,7 @@ const Breadcrumb: React.FC = React.memo(() => {
   );
 });
 
+Breadcrumb.displayName = "Breadcrumb";
+
+
 export default Breadcrumb;

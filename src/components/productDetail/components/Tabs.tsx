@@ -63,6 +63,6 @@ const ProductDetailTabs: React.FC = memo(() => {
     </div>
   );
 });
-ProductDetailTabs.displayName = "ProductDetailInfo";
+ProductDetailTabs.displayName = "ProductDetailTabs";
 
 export default ProductDetailTabs;
