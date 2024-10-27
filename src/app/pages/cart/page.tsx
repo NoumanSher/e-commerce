@@ -1,4 +1,4 @@
-import Cart from "@/components/Cart";
+import CartScreen from "@/components/screen/cart";
 export default function CartPage() {
-  return <Cart />;
+  return <CartScreen />;
 }

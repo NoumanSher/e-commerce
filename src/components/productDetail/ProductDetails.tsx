@@ -10,6 +10,7 @@ import ProductBasicInfo from "./components/ProductBasicInfo";
 import CheckOutBtn from "./components/CheckOutBtn";
 import Tabs from "./components/Tabs";
 import Breadcrumb from "./components/Breadcrumb";
+import { useRouter } from "next/navigation";
 
 interface Product {
   id: string;
@@ -35,7 +36,7 @@ const ProductInfo: React.FC<ProductDetailsProps> = ({ product }) => {
     colorRequired: false,
     sizeRequired: false,
   });
-
+const router = useRouter()
   // Handle Add to Cart logic
   const handleAddToCart = useCallback(() => {
     const isColorMissing = !selectedColor;
@@ -67,6 +68,7 @@ const ProductInfo: React.FC<ProductDetailsProps> = ({ product }) => {
       return;
     }
 
+router.push('/pages/cart?section=checkout')
     // Proceed with checkout logic
   }, [selectedColor, selectedSize]);
 

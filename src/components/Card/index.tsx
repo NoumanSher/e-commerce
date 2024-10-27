@@ -87,7 +87,7 @@ const MainCard = ({ item }: MAinCardPRops) => {
                         ? "border-black"
                         : "border-transparent"
                     }`}
-                    onClick={() => handleColorSelect(color)}
+                    onClick={(e:any) => handleColorSelect(color)}
                   >
                     <div
                       className={`w-[10px] h-[10px] rounded-[50%]`}

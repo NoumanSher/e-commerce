@@ -1,3 +1,4 @@
+import { useRouter } from "next/navigation";
 import React, { useEffect } from "react";
 
 interface Product {
@@ -24,6 +25,7 @@ const ShoppingCart: React.FC<ShoppingCartProps> = ({
   onClose,
   products,
 }) => {
+  const router = useRouter()
   const subtotal = products.reduce(
     (total, product) => total + product.productPrice * product.productQuantity,
     0
@@ -138,10 +140,10 @@ const ShoppingCart: React.FC<ShoppingCartProps> = ({
             <span className="font-bold">Subtotal:</span>
             <span className="font-bold">${subtotal.toFixed(2)}</span>
           </div>
-          <button className="w-full bg-gray-800 text-white py-2 rounded-md mb-2">
+          <button className="w-full bg-gray-800 text-white py-2 rounded-md mb-2" onClick={() => router.push('/pages/cart?section=shoppingbag')}>
             View Cart
           </button>
-          <button className="w-full bg-blue-600 text-white py-2 rounded-md">
+          <button className="w-full bg-blue-600 text-white py-2 rounded-md" onClick={() => router.push('/pages/cart?section=checkout')}>
             Checkout
           </button>
         </div>
