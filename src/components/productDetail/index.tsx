@@ -28,5 +28,5 @@ const ProductDetail: React.FC = () => {
     </div>
   );
 };
-
+ProductDetail.displayName= 'ProductDetail'
 export default ProductDetail;
