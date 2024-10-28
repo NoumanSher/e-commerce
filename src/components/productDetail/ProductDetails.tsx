@@ -77,14 +77,14 @@ router.push('/pages/cart?section=checkout')
       <Breadcrumb />
       <ProductBasicInfo title={title} price={price} description={description} />
 
-      <SelectColorAndSize
+      {/* <SelectColorAndSize
         availableColors={availableColors}
         availableSizes={availableSizes}
         setSelectedColor={setSelectedColor}
         setSelectedSize={setSelectedSize}
         validation={validation}
         setValidation={setValidation}
-      />
+      /> */}
 
       <div className="flex md:items-center justify-between md:justify-normal mt-4 gap-x-4 mb-5">
         <QuantitySelector
