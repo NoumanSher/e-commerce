@@ -4,7 +4,6 @@ import { Button } from "@/components/ui/button";
 import QuantitySelector from "@/components/productDetail/components/QuantitySelector";
 import SelectColorAndSize from "./components/SelectVarient";
 import WishlistButton from "./components/WishlistButton";
-import SocialMediaShare from "./components/SocialMediaShare";
 import ProductMetaInfo from "./components/ProductMetaInfo";
 import ProductBasicInfo from "./components/ProductBasicInfo";
 import CheckOutBtn from "./components/CheckOutBtn";
@@ -13,10 +12,10 @@ import Breadcrumb from "./components/Breadcrumb";
 import { useRouter } from "next/navigation";
 import dynamic from 'next/dynamic'
  
-// const SocialMediaShareWithNoSSR = dynamic(
-//   () => import('./components/SocialMediaShare'),
-//   { ssr: false }
-// )
+const SocialMediaShareWithNoSSR = dynamic(
+  () => import('./components/SocialMediaShare'),
+  { ssr: false }
+)
 interface Product {
   id: string;
   title: string;
@@ -117,7 +116,7 @@ router.push('/pages/cart?section=checkout')
           color={selectedColor}
           size={selectedSize}
         />
-        <SocialMediaShare />
+        <SocialMediaShareWithNoSSR />
       </div>
 
       <ProductMetaInfo sku="n/t4" categories="dresses,women" tags="dresses,women" />
