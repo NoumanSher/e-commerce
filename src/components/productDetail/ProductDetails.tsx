@@ -77,7 +77,7 @@ router.push('/pages/cart?section=checkout')
       <Breadcrumb />
       <ProductBasicInfo title={title} price={price} description={description} />
 
-      <SelectColorAndSize
+      {/* <SelectColorAndSize
         availableColors={availableColors}
         availableSizes={availableSizes}
         setSelectedColor={setSelectedColor}
@@ -121,7 +121,7 @@ router.push('/pages/cart?section=checkout')
 
       <div className="flex justify-center mt-5">
         <CheckOutBtn className="!w-[100%]" onClick={handleCheckout} />
-      </div>
+      </div> */}
     </div>
   );
 };
