@@ -1,5 +1,5 @@
 
-// import React, { Suspense, lazy } from "react";
+import React from "react";
 import ProductDetailComponet from '@/components/productDetail'
 // const ProductDetailComponet = lazy(() => import("@/components/productDetail"));
 

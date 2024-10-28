@@ -70,7 +70,7 @@ const router = useRouter()
 
 router.push('/pages/cart?section=checkout')
     // Proceed with checkout logic
-  }, [selectedColor, selectedSize]);
+  }, [router, selectedColor, selectedSize]);
 
   return (
     <div className="lg:px-8 pt-2 lg:w-[40%]  w-full border-2 border-blue-500">
