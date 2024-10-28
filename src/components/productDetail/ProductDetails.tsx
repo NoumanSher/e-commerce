@@ -11,7 +11,12 @@ import CheckOutBtn from "./components/CheckOutBtn";
 import Tabs from "./components/Tabs";
 import Breadcrumb from "./components/Breadcrumb";
 import { useRouter } from "next/navigation";
-
+import dynamic from 'next/dynamic'
+ 
+const SocialMediaShareWithNoSSR = dynamic(
+  () => import('./components/SocialMediaShare'),
+  { ssr: false }
+)
 interface Product {
   id: string;
   title: string;
@@ -77,14 +82,14 @@ router.push('/pages/cart?section=checkout')
       <Breadcrumb />
       <ProductBasicInfo title={title} price={price} description={description} />
 
-      {/* <SelectColorAndSize
+      <SelectColorAndSize
         availableColors={availableColors}
         availableSizes={availableSizes}
         setSelectedColor={setSelectedColor}
         setSelectedSize={setSelectedSize}
         validation={validation}
         setValidation={setValidation}
-      /> */}
+      />
 
       <div className="flex md:items-center justify-between md:justify-normal mt-4 gap-x-4 mb-5">
         <QuantitySelector
@@ -112,7 +117,7 @@ router.push('/pages/cart?section=checkout')
           color={selectedColor}
           size={selectedSize}
         />
-        {/* <SocialMediaShare /> */}
+        <SocialMediaShareWithNoSSR />
       </div>
 
       <ProductMetaInfo sku="n/t4" categories="dresses,women" tags="dresses,women" />
