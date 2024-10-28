@@ -77,7 +77,7 @@ router.push('/pages/cart?section=checkout')
       <Breadcrumb />
       <ProductBasicInfo title={title} price={price} description={description} />
 
-      {/* <SelectColorAndSize
+      <SelectColorAndSize
         availableColors={availableColors}
         availableSizes={availableSizes}
         setSelectedColor={setSelectedColor}
@@ -92,18 +92,18 @@ router.push('/pages/cart?section=checkout')
           setQuantity={setQuantity}
           className="h-14"
         />
-        <Button
+        {/* <Button
           onClick={handleAddToCart}
           className="rounded-none shadow-none bg-opacity-95 bg-black border-0 h-14 w-[50%] uppercase py-3 transition-all duration-500 hover:bg-white group hover:border border-black"
         >
           <p className="text-[14px] font-semibold leading-[1.72] group-hover:text-black">
             add to cart
           </p>
-        </Button>
+        </Button> */}
       </div>
 
       <div className="flex gap-x-7 items-center mb-5">
-        <WishlistButton
+        {/* <WishlistButton
           productId={id}
           title={title}
           price={price}
@@ -111,17 +111,17 @@ router.push('/pages/cart?section=checkout')
           quantity={quantity}
           color={selectedColor}
           size={selectedSize}
-        />
+        /> */}
         <SocialMediaShare />
       </div>
 
       <ProductMetaInfo sku="n/t4" categories="dresses,women" tags="dresses,women" />
 
-      <Tabs />
+      {/* <Tabs /> */}
 
       <div className="flex justify-center mt-5">
         <CheckOutBtn className="!w-[100%]" onClick={handleCheckout} />
-      </div> */}
+      </div>
     </div>
   );
 };
