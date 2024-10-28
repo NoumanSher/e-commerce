@@ -112,10 +112,10 @@ router.push('/pages/cart?section=checkout')
           color={selectedColor}
           size={selectedSize}
         /> */}
-        <SocialMediaShare />
+        {/* <SocialMediaShare /> */}
       </div>
 
-      <ProductMetaInfo sku="n/t4" categories="dresses,women" tags="dresses,women" />
+      {/* <ProductMetaInfo sku="n/t4" categories="dresses,women" tags="dresses,women" /> */}
 
       {/* <Tabs /> */}
 
