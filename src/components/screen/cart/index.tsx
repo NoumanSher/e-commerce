@@ -1,8 +1,9 @@
 "use client";
 import { useState, useEffect, useMemo } from "react";
-import {  useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import ShoppingBag from "../shoppingBag";
 import Checkout from "../checkout";
+import OrderConfirmation from "../../OrderConfirmation";
 interface Tab {
   label: string;
   step: number;
@@ -105,8 +106,20 @@ const CartScreen = () => {
             }`}
             onClick={() => handleTabClick(tab.step)}
           >
-            <h2 className="text-xl">{tab.label}</h2>
-            <p className="text-sm">{tab.description}</p>
+            <h2
+              className={`${
+                activeTab === tab.step ? "text-black" : "text-gray-400 "
+              } text-xl`}
+            >
+              {tab.label}
+            </h2>
+            <p
+              className={`${
+                activeTab === tab.step ? "text-black" : "text-gray-400"
+              } text-sm`}
+            >
+              {tab.description}
+            </p>
           </div>
         ))}
       </div>
@@ -118,19 +131,7 @@ const CartScreen = () => {
         {activeTab === 2 && (
           <Checkout checkValidation={() => completeValidation(2)} />
         )}
-        {activeTab === 3 && (
-          <div>
-            <h3 className="text-2xl mb-4">Confirmation</h3>
-            {/* Add your confirmation form/logic */}
-            <p>Thank you for your order!</p>
-            <button
-              className="bg-green-500 text-white py-2 px-4 rounded hover:bg-green-600"
-              onClick={() => completeValidation(3)}
-            >
-              Submit Order
-            </button>
-          </div>
-        )}
+        {activeTab === 3 && <OrderConfirmation />}
       </div>
     </div>
   );
