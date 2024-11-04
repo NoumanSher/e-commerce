@@ -38,7 +38,7 @@ const OrderHistoryTabel: React.FC<
             <td className="py-2 text-blue-500 underline cursor-pointer">
               <a href={order.details}></a>
               <Link
-                href="/pages/profile/order-details"
+                href={`/pages/profile/order-details`}
                 className="text-blue-500 underline"
               >
                 View Details
