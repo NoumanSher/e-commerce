@@ -1,20 +1,29 @@
 // AddressInfo.tsx
-import React from 'react';
+import React from "react";
 interface AddressProps {
   name: string;
   address: string;
   email: string;
   phone: string;
 }
-const AddressInfo: React.FC<AddressProps> = ({name,address,email,phone}) => (
-  <div className="w-2/4 p-6 bg-white rounded-lg shadow-md text-start flex flex-col gap-y-2">
-    <h2 className="text-lg font-semibold">Delivery Address</h2>
-    <p className="text-gray-700">{name}</p>
-    <p className="text-gray-700">{address}</p>
-    <p className="text-gray-700">{email}</p>
-    <p className="text-gray-700">{phone}</p>
-    <p className="text-blue-500 underline cursor-pointer mt-2">Edit Address</p>
+const AddressInfo: React.FC<AddressProps> = ({
+  name,
+  address,
+  email,
+  phone,
+}) => (
+  <div className="bg-card lg:w-[50%] w-full text-card-foreground p-4 rounded-lg shadow-md">
+    <h2 className="text-lg font-semibold text-primary mb-3">
+      Delivery Address
+    </h2>
+    <h2 className="text-lg text-muted-foreground mb-3">{name}</h2>
+    <p className="text-sm text-muted-foreground mb-3">{address}</p>
+    <p className="text-sm text-muted-foreground mb-3">{email}</p>
+    <p className="text-sm text-muted-foreground mb-4">{phone}</p>
+    <button className="bg-primary text-primary-foreground px-4 py-2 rounded-md hover:bg-primary/80">
+      Edit
+    </button>
   </div>
 );
-AddressInfo.displayName = 'AddressInfo'
+AddressInfo.displayName = "AddressInfo";
 export default AddressInfo;

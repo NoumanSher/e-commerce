@@ -49,10 +49,10 @@ const order = {
 };
 
 const OrderDetailsPage = () => (
-  <div className="p-6">
+  <div className="pt-6">
     <Header orderDate={order.date} productTitle={order.productTitle} />
 
-    <div className="flex gap-4">
+    <div className="flex gap-4 flex-col lg:flex-row">
       <AddressInfo
         name={order.billing.name}
         address={order.billing.address}

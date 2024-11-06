@@ -36,8 +36,8 @@ const orders = [
 ];
 
 const ProfilePage = () => (
-  <div className="flex  flex-col p-6">
-    <div className="flex gap-2">
+  <div className="flex  flex-col lg:p-6">
+    <div className="flex gap-2 flex-col lg:flex-row">
       <ProfileInfo name="Dianne Russell" />
       <AddressInfo
         name="Dianne Russell"

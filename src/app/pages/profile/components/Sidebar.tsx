@@ -16,18 +16,18 @@ const Sidebar: React.FC = () => {
   ];
 
   return (
-    <aside className="w-64 bg-gray-50 p-6 h-auto rounded-s-lg">
+    <aside className="lg:w-[20%]  w-full bg-gray-50 lg:p-6 px-4 py-4  h-auto rounded-s-lg ">
       <h2 className="text-lg font-bold mb-6">My Profile</h2>
       <nav>
-        <ul className="space-y-4">
+        <ul className="gap-4 flex lg:flex-col  flex-row overflow-x-auto">
           {menuItems.map(item => (
-            <li key={item.href} className="flex items-center">
+            <li key={item.href} className="flex  items-center">
               <span className="mr-3">{item.icon}</span>
               <Link
                 href={item.href}
                 className={`${
                   pathname === item.href ? 'text-black font-semibold' : 'text-gray-500'
-                } hover:text-black`}
+                } whitespace-nowrap hover:text-black`}
               >
                 {item.label}
               </Link>
