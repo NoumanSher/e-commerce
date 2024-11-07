@@ -6,7 +6,10 @@ import img2 from "../img/delivery.png";
 import { FaFacebookF, FaPinterest, FaTwitter } from "react-icons/fa";
 import { IoLogoInstagram } from "react-icons/io";
 import { BsYoutube } from "react-icons/bs";
-
+import Search from "@/assets/svg/search.svg";
+import Heart from "@/assets/svg/heart.svg";
+import ProfileAvatar from "@/assets/svg/profileAvatar.svg";
+import Cart from "@/assets/svg/cart.svg";
 // DeliveryIcon Component
 // eslint-disable-next-line react/display-name
 export const DeliveryIcon = React.memo(() => {
@@ -106,3 +109,29 @@ export const FaPinterestIcon = React.memo(() => {
     </div>
   );
 });
+interface IconProps {
+  className?: string;
+}
+interface ProfileIconProps {
+  className?: string;
+  onClick?: () => void
+}
+export const SearchIcon: React.FC<IconProps> = React.memo(({ className }) => (
+  <Image src={Search} alt="Search Icon" className={className} />
+));
+SearchIcon.displayName = "SearchIcon";
+
+export const HeartIcon: React.FC<IconProps> = React.memo(({ className }) => (
+  <Image src={Heart} alt="heart Icon" className={className} />
+));
+HeartIcon.displayName = "HeartIcon";
+
+export const ProfileAvatarIcon: React.FC<ProfileIconProps> = React.memo(
+  ({ className ,onClick}) => (
+    <Image src={ProfileAvatar} alt="profile Avatar Icon" className={className} onClick={onClick} />
+  )
+);
+ProfileAvatarIcon.displayName = "ProfileAvatarIcon";
+
+export const CartIcon:React.FC<IconProps> = React.memo(({className}) =>  <Image src={Cart} alt="Cart  Icon" className={className} />);
+CartIcon.displayName = "CartIcon";

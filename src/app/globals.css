@@ -143,3 +143,19 @@
   width: 100%; /* Expand the border to full width on hover */
   transform: scaleX(1); /* Ensure border is fully visible */
 }
+
+
+.scrollbarHide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.scrollbarHide::-webkit-scrollbar {
+  display: none;
+}
+
+.unselectable {
+  -webkit-user-select: none; /* Safari */
+  -moz-user-select: none; /* Firefox */
+  -ms-user-select: none; /* IE10+/Edge */
+  user-select: none; /* Standard */
+}

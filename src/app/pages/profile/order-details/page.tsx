@@ -5,6 +5,7 @@ import AddressInfo from "../components/AddressInfo";
 import OrderSummary from "./components/OrderSummary";
 import OrderStatusTimeline from "./components/OrderStatusTimeline";
 import ProductTable from "./components/ProductTable";
+import OrderStepper from "./components/Stepper";
 
 const order = {
   date: "9 October, 2024",
@@ -14,16 +15,25 @@ const order = {
   subtotal: "40 KWD",
   delivery: "5 KWD",
   total: "45 KWD",
-  statuses: [
+  orderStatuses: [
     {
-      date: "Wednesday, October 09",
-      time: "09:43 PM",
-      status: "Order placed and pending confirmation",
+      _id: "1",
+      status: "Pending",
+      statusDesc: "Order has been placed and is awaiting processing.",
+      updatedAt: "2024-11-05T10:15:00Z",
     },
     {
-      date: "Wednesday, October 09",
-      time: "09:44 PM",
-      status: "Order paid and confirmed",
+      _id: "2",
+      status: "Shipped",
+      statusDesc:
+        "Order has been shipped and is on its way to the destination.",
+      updatedAt: "2024-11-05T14:30:00Z",
+    },
+    {
+      _id: "3",
+      status: "Delivered",
+      statusDesc: "Order has been delivered to the recipient.",
+      updatedAt: "2024-11-06T09:45:00Z",
     },
   ],
   billing: {
@@ -49,16 +59,32 @@ const order = {
 };
 
 const OrderDetailsPage = () => (
-  <div className="pt-6">
+  <div className="lg:py-6 py-3">
     <Header orderDate={order.date} productTitle={order.productTitle} />
 
-    <div className="flex gap-4 flex-col lg:flex-row">
+    <div className="flex gap-4 flex-col lg:flex-row mt-3">
       <AddressInfo
         name={order.billing.name}
         address={order.billing.address}
         email={order.billing.email}
         phone={order.billing.phone}
       />
+      <div className="hidden lg:contents">
+        <OrderSummary
+          orderId={order.orderId}
+          paymentMethod={order.paymentMethod}
+          subtotal={order.subtotal}
+          delivery={order.delivery}
+          total={order.total}
+        />
+      </div>
+    </div>
+    {/* <OrderStatusTimeline statuses={order.statuses} /> */}
+    <div className="my-5">
+      <OrderStepper orderStatusHistory={order?.orderStatuses} />
+    </div>
+    <ProductTable products={order.products} />
+    <div className="lg:hidden mt-4">
       <OrderSummary
         orderId={order.orderId}
         paymentMethod={order.paymentMethod}
@@ -67,8 +93,6 @@ const OrderDetailsPage = () => (
         total={order.total}
       />
     </div>
-    <OrderStatusTimeline statuses={order.statuses} />
-    <ProductTable products={order.products} />
   </div>
 );
 

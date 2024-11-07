@@ -16,10 +16,10 @@ const Sidebar: React.FC = () => {
   ];
 
   return (
-    <aside className="lg:w-[20%]  w-full bg-gray-50 lg:p-6 px-4 py-4  h-auto rounded-s-lg ">
+    <aside className="lg:w-[20%]  w-full lg:bg-gray-50 lg:p-6 px-4   h-auto rounded-s-lg ">
       <h2 className="text-lg font-bold mb-6">My Profile</h2>
       <nav>
-        <ul className="gap-4 flex lg:flex-col  flex-row overflow-x-auto">
+        <ul className="gap-4 flex lg:flex-col  flex-row overflow-x-auto scrollbarHide">
           {menuItems.map(item => (
             <li key={item.href} className="flex  items-center">
               <span className="mr-3">{item.icon}</span>

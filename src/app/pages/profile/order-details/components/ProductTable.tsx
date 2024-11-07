@@ -10,7 +10,7 @@ const ProductTable: React.FC<{
   }[];
 }> = ({ products }) => (
   <>
-    <table className="w-full mt-4 text-left hidden lg:block">
+    <table className="w-full mt-4 text-left hidden lg:inline-table">
       <thead>
         <tr className="text-gray-500 bg-customGray border-b">
           <th className="py-2 pl-4">Product</th>

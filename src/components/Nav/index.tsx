@@ -10,6 +10,7 @@ import {
 } from "react-icons/fa";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { SearchIcon ,HeartIcon,CartIcon,ProfileAvatarIcon} from "@/assets/svg/common";
 const Navbar = () => {
   const [isMobile, setIsMobile] = useState(false);
   const [searchValue, setSearchValue] = useState("");
@@ -45,10 +46,10 @@ const Navbar = () => {
 
   const handleClickProfile = () => {
     // router.push("/pages/login");
-     router.push("/pages/profile");
+    router.push("/pages/profile");
   };
   return (
-    <nav className="flex border-2  items-center justify-between p-4 border-b border-gray-200 bg-white container mx-auto lg:px-16">
+    <nav className="flex items-center justify-between p-4 border-b border-gray-200 bg-white container mx-auto lg:px-16">
       <div className="flex items-center gap-x-20 lg:order-1 order-2">
         <Link href={"/"} className="flex items-center text-2xl font-bold">
           <span>UQMO</span>
@@ -76,7 +77,7 @@ const Navbar = () => {
               {searching ? (
                 <FaTimes onClick={handleClear} className="cursor-pointer" />
               ) : (
-                <FaSearch className="lg:hidden" />
+                <SearchIcon className="lg:hidden" />
               )}
             </span>
           </div>
@@ -132,26 +133,29 @@ const Navbar = () => {
       </div>
 
       <div className="lg:flex  items-center space-x-6 hidden lg:order-3 ">
-        <FaSearch className="text-lg cursor-pointer hover:text-gray-600 hidden lg:flex" />
-        <FaUserAlt
+        <SearchIcon className="text-lg cursor-pointer hover:text-gray-600 hover:scale-105 hidden lg:flex" />
+        <ProfileAvatarIcon
           onClick={handleClickProfile}
           className="text-lg cursor-pointer hover:text-gray-600"
         />
-        <FaHeart className="text-lg cursor-pointer hover:text-gray-600" />
+        <HeartIcon className="text-lg cursor-pointer hover:text-gray-600" />
         <div
           className="relative cursor-pointer"
           onClick={() => router.push("/pages/cart")}
         >
-          <FaShoppingBag className="text-lg hover:text-gray-600" />
-          <span className="absolute top-0 right-0 w-4 h-4 bg-yellow-600 text-white text-xs font-bold rounded-full flex items-center justify-center">
-            3
+          <CartIcon className="text-lg hover:text-gray-600" />
+          <span className="absolute top-[13px] -right-[6px] w-4 h-4 bg-yellow-600  text-xs font-bold rounded-full flex items-center justify-center">
+            33
           </span>
         </div>
       </div>
 
-      <div className="relative  cursor-pointer order-3  lg:hidden" onClick={() => router.push("/pages/cart")}>
-        <FaShoppingBag className="text-lg hover:text-gray-600" />
-        <span className="absolute top-0 right-0 w-4 h-4 bg-yellow-600 text-white text-xs font-bold rounded-full flex items-center justify-center">
+      <div
+        className="relative  cursor-pointer order-3  lg:hidden"
+        onClick={() => router.push("/pages/cart")}
+      >
+        <CartIcon className="text-lg hover:text-gray-600 hover:scale-150" />
+        <span className="absolute top-0 right-0 w-3 h-3 bg-yellow-600 text-white text-xs font-bold rounded-full flex items-center justify-center">
           3
         </span>
       </div>

@@ -3,9 +3,9 @@ import React from 'react';
 import Sidebar from './components/Sidebar';
 
 const ProfileLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => (
-  <div className="flex flex-col lg:flex-row 2xl:px-40 xl:px-32 py-5 shadow">
+  <div className="flex flex-col lg:flex-row container  mx-auto py-5 ">
     <Sidebar />
-    <main className="lg:w-[80%] px-6 bg-gray-50 rounded-e-lg border-2 border-blue-500">
+    <main className="lg:w-[80%] px-4 lg:bg-gray-50 rounded-e-lg">
       {children}
     </main>
   </div>

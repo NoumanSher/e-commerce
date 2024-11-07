@@ -62,7 +62,7 @@ const router = useRouter()
     currentPage * ordersPerPage
   );
   return (
-    <>
+    <div className="lg:py-7 py-0">
       <OrderHistoryTabel
         title="Order History"
         orders={paginatedOrders}
@@ -75,7 +75,7 @@ const router = useRouter()
           />
         }
       />
-    </>
+      </div>
   );
 };
 
