@@ -77,7 +77,7 @@ router.push('/pages/cart?section=checkout')
   }, [router, selectedColor, selectedSize]);
 
   return (
-    <div className="lg:px-8 pt-2 lg:w-[40%]  w-full border-2 border-blue-500">
+    <div className="lg:px-8 pt-2 lg:w-[40%]  w-full">
       <Breadcrumb />
       <ProductBasicInfo title={title} price={price} description={description} />
 

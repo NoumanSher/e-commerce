@@ -23,7 +23,7 @@ const ImageGallery: React.FC<ImageGalleryProps> = ({ images }) => {
   };
 
   return (
-    <div className="flex flex-col lg:flex-row gap-2 w-full lg:w-[60%] border-2 border-green-500">
+    <div className="flex flex-col lg:flex-row gap-2 w-full lg:w-[60%]">
       {/* Thumbnails */}
       <div className="overflow-x-auto lg:overflow-x-hidden  flex lg:flex-col flex-row gap-1 lg:order-1 order-2">
         {images.map((image, index) => (
