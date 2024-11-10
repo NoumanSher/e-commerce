@@ -1,3 +1,4 @@
+'use client'
 import { ProductCardDataProps } from "@/data/dataProps";
 import Image from "next/image";
 import React, { memo, useCallback, useMemo, useState } from "react";

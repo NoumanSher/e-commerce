@@ -3,7 +3,6 @@ import React from "react";
 import Header from "./components/Header";
 import AddressInfo from "../components/AddressInfo";
 import OrderSummary from "./components/OrderSummary";
-import OrderStatusTimeline from "./components/OrderStatusTimeline";
 import ProductTable from "./components/ProductTable";
 import OrderStepper from "./components/Stepper";
 

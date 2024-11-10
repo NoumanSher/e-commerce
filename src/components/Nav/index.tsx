@@ -89,30 +89,9 @@ const Navbar = () => {
               HOME
             </a>
           </li>
-          <li>
-            <a
-              href="#"
-              className="text-sm tracking-wide text-black font-medium hover:text-gray-600"
-            >
-              SHOP
-            </a>
-          </li>
-          <li>
-            <a
-              href="#"
-              className="text-sm tracking-wide text-black font-medium hover:text-gray-600"
-            >
-              BLOG
-            </a>
-          </li>
-          <li>
-            <a
-              href="#"
-              className="text-sm tracking-wide text-black font-medium hover:text-gray-600"
-            >
-              PAGES
-            </a>
-          </li>
+         
+      
+   
           <li>
             <a
               href="#"
@@ -144,7 +123,7 @@ const Navbar = () => {
           onClick={() => router.push("/pages/cart")}
         >
           <CartIcon className="text-lg hover:text-gray-600" />
-          <span className="absolute top-[13px] -right-[6px] w-4 h-4 bg-yellow-600  text-xs font-bold rounded-full flex items-center justify-center">
+          <span className="absolute top-[13px] -right-[6px] w-4 h-4 bg-yellow-600 text-white text-xs font-bold rounded-full flex items-center justify-center">
             33
           </span>
         </div>

@@ -8,13 +8,18 @@ interface OrderStepperProps {
 const OrderStepper: React.FC<OrderStepperProps> = ({ orderStatusHistory }) => {
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
-    const options = { weekday: "long", day: "2-digit", month: "long" };
+    const options: Intl.DateTimeFormatOptions = { 
+      weekday: "long" as const, 
+      day: "2-digit" as const, 
+      month: "long" as const 
+    };
     return date.toLocaleDateString(undefined, options).toUpperCase();
   };
+  
 
   const formatTime = (dateString: string) => {
     const date = new Date(dateString);
-    const options = { hour: "2-digit", minute: "2-digit", hour12: true };
+    const options = { hour: "2-digit" as const, minute: "2-digit" as const, hour12: true };
     return date.toLocaleTimeString(undefined, options);
   };
 

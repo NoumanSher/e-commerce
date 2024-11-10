@@ -1,9 +1,10 @@
-"use client";
 import React, { memo, lazy, Suspense } from "react";
 import "./styles.css";
 const BannerProducts = lazy(() => import("./BannerProducts"));
 const ProductsCatgories = lazy(() => import("./ProductsCatgories"));
 const ProductsCard = lazy(() => import("./ProductsCard"));
+const AllProductBtn = lazy(() => import("../../specific/allProductBtn"));
+
 const TrendingMain = () => {
   return (
     <>
@@ -14,6 +15,7 @@ const TrendingMain = () => {
           </Suspense>
           <Suspense fallback={<div>Loading...</div>}>
             <ProductsCard />
+            <AllProductBtn />
           </Suspense>
         </div>
         <Suspense fallback={<div>Loading...</div>}>
