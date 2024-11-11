@@ -1,15 +1,15 @@
-'use client'
+"use client";
 import { ProductCardDataProps } from "@/data/dataProps";
 import Image from "next/image";
 import React, { memo, useCallback, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import CardHover from "../cardHover";
-interface MAinCardPRops {
+interface MainCardProps {
   item: ProductCardDataProps;
 }
-const MainCard = ({ item }: MAinCardPRops) => {
-  console.log("New Chages")
-  const router = useRouter()
+const MainCard = ({ item }: MainCardProps) => {
+  console.log("New Chages");
+  const router = useRouter();
   const [hoveredCard, setHoveredCard] = useState<string | null>(null);
   const [selectedColor, setSelectedColor] = useState<string | null>("gray");
   const isHovered = hoveredCard === item._id;
@@ -30,7 +30,12 @@ const MainCard = ({ item }: MAinCardPRops) => {
   }, []);
   return (
     <>
-      <div  className=" mb-6 xl:mb-12   px-2  md:px-4" onClick={() => router.push('/pages/productDetail')}>
+      <div
+        className=" mb-6 xl:mb-12   px-2  md:px-4"
+        onClick={() =>
+          router.push(`/pages/productDetail?product-id=${item._id}`)
+        }
+      >
         <div className="">
           <div
             className="relative xl:h-[404px]"
@@ -39,7 +44,7 @@ const MainCard = ({ item }: MAinCardPRops) => {
           >
             <Image
               priority={true}
-              loading='eager'
+              loading="eager"
               src={currentImage}
               alt="Product BAnner Img"
               className="object-cover w-full h-full transition-transform duration-700 ease-in-out transform-gpu "
@@ -66,7 +71,7 @@ const MainCard = ({ item }: MAinCardPRops) => {
                 </h1>
               </div>
             )}
-            <CardHover isHovered={isHovered} />
+            <CardHover isHovered={isHovered} product={item} />
           </div>
           <div className="mt-4">
             <h1 className="mb-[4px] font-normal leading-[1.7143rem] text-[#767676] text-[14px]">
@@ -88,7 +93,7 @@ const MainCard = ({ item }: MAinCardPRops) => {
                         ? "border-black"
                         : "border-transparent"
                     }`}
-                    onClick={(e:any) => handleColorSelect(color)}
+                    onClick={(e: any) => handleColorSelect(color)}
                   >
                     <div
                       className={`w-[10px] h-[10px] rounded-[50%]`}

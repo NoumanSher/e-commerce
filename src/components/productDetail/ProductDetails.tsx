@@ -10,28 +10,27 @@ import CheckOutBtn from "./components/CheckOutBtn";
 import Tabs from "./components/Tabs";
 import Breadcrumb from "./components/Breadcrumb";
 import { useRouter } from "next/navigation";
-import dynamic from 'next/dynamic'
- 
+import dynamic from "next/dynamic";
+import { ProductCardDataProps } from "@/data/dataProps";
 const SocialMediaShareWithNoSSR = dynamic(
-  () => import('./components/SocialMediaShare'),
+  () => import("./components/SocialMediaShare"),
   { ssr: false }
-)
-interface Product {
-  id: string;
-  title: string;
-  price: number;
-  description: string;
-  images: { src: string; alt: string }[];
-  availableColors: string[];
-  availableSizes: string[];
-}
+);
 
 interface ProductDetailsProps {
-  product: Product;
+  product: ProductCardDataProps;
 }
 
 const ProductInfo: React.FC<ProductDetailsProps> = ({ product }) => {
-  const { id, title, price, description, images, availableColors, availableSizes } = product;
+  const {
+    _id,
+    productName,
+    price,
+    description,
+    images,
+    colors,
+    availableSizes,
+  } = product;
 
   const [quantity, setQuantity] = useState(1);
   const [selectedColor, setSelectedColor] = useState("");
@@ -40,7 +39,7 @@ const ProductInfo: React.FC<ProductDetailsProps> = ({ product }) => {
     colorRequired: false,
     sizeRequired: false,
   });
-const router = useRouter()
+  const router = useRouter();
   // Handle Add to Cart logic
   const handleAddToCart = useCallback(() => {
     const isColorMissing = !selectedColor;
@@ -72,18 +71,22 @@ const router = useRouter()
       return;
     }
 
-router.push('/pages/cart?section=checkout')
+    router.push("/pages/cart?section=checkout");
     // Proceed with checkout logic
   }, [router, selectedColor, selectedSize]);
 
   return (
     <div className="lg:px-8 pt-2 lg:w-[40%]  w-full">
       <Breadcrumb />
-      <ProductBasicInfo title={title} price={price} description={description} />
+      <ProductBasicInfo
+        title={productName}
+        price={Number(price)}
+        description={description}
+      />
 
       <SelectColorAndSize
-        availableColors={availableColors}
-        availableSizes={availableSizes}
+        availableColors={colors ?? []}
+        availableSizes={availableSizes ?? []}
         setSelectedColor={setSelectedColor}
         setSelectedSize={setSelectedSize}
         validation={validation}
@@ -107,19 +110,15 @@ router.push('/pages/cart?section=checkout')
       </div>
 
       <div className="flex gap-x-7 items-center mb-5">
-        <WishlistButton
-          productId={id}
-          title={title}
-          price={price}
-          image={images[0].src}
-          quantity={quantity}
-          color={selectedColor}
-          size={selectedSize}
-        />
+        <WishlistButton product={product} />
         <SocialMediaShareWithNoSSR />
       </div>
 
-      <ProductMetaInfo sku="n/t4" categories="dresses,women" tags="dresses,women" />
+      <ProductMetaInfo
+        sku="n/t4"
+        categories="dresses,women"
+        tags="dresses,women"
+      />
 
       <Tabs />
 

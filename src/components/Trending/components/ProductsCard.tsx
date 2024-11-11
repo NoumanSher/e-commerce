@@ -1,11 +1,20 @@
-import React, { memo } from "react";
+'use client'
+import React, { memo, useEffect } from "react";
 import MainCard from "../../Card/index";
-import { ProductCardData } from "@/data/data";
-const ProductsCard = () => {
+import {ProductCardDataProps} from '@/data/dataProps'
+interface ProductsCardProps {
+ products: ProductCardDataProps[]
+}
+
+
+const ProductsCard = ({products}:ProductsCardProps) => {
+  useEffect(() => {
+    console.log('render')
+  },[products])
   return (
     <div>
       <div className="flex flex-wrap xl:max-w-[1440px] mx-auto xl:mt-14 ">
-        {ProductCardData.map((item) => {
+        {products.map((item) => {
           return (
             <div key={item._id} className="w-[50%] md:!w-[33.333%] lg:!w-[25%]">
               <MainCard item={item} />
@@ -16,4 +25,4 @@ const ProductsCard = () => {
     </div>
   );
 };
-export default memo(ProductsCard);
+export default ProductsCard;

@@ -10,6 +10,7 @@ import Search from "@/assets/svg/search.svg";
 import Heart from "@/assets/svg/heart.svg";
 import ProfileAvatar from "@/assets/svg/profileAvatar.svg";
 import Cart from "@/assets/svg/cart.svg";
+import Link from "next/link";
 // DeliveryIcon Component
 // eslint-disable-next-line react/display-name
 export const DeliveryIcon = React.memo(() => {
@@ -114,7 +115,7 @@ interface IconProps {
 }
 interface ProfileIconProps {
   className?: string;
-  onClick?: () => void
+  onClick?: () => void;
 }
 export const SearchIcon: React.FC<IconProps> = React.memo(({ className }) => (
   <Image src={Search} alt="Search Icon" className={className} />
@@ -122,16 +123,25 @@ export const SearchIcon: React.FC<IconProps> = React.memo(({ className }) => (
 SearchIcon.displayName = "SearchIcon";
 
 export const HeartIcon: React.FC<IconProps> = React.memo(({ className }) => (
-  <Image src={Heart} alt="heart Icon" className={className} />
+  <Link href={"/pages/wish-list"}>
+    <Image src={Heart} alt="heart Icon" className={className} />
+  </Link>
 ));
 HeartIcon.displayName = "HeartIcon";
 
 export const ProfileAvatarIcon: React.FC<ProfileIconProps> = React.memo(
-  ({ className ,onClick}) => (
-    <Image src={ProfileAvatar} alt="profile Avatar Icon" className={className} onClick={onClick} />
+  ({ className, onClick }) => (
+    <Image
+      src={ProfileAvatar}
+      alt="profile Avatar Icon"
+      className={className}
+      onClick={onClick}
+    />
   )
 );
 ProfileAvatarIcon.displayName = "ProfileAvatarIcon";
 
-export const CartIcon:React.FC<IconProps> = React.memo(({className}) =>  <Image src={Cart} alt="Cart  Icon" className={className} />);
+export const CartIcon: React.FC<IconProps> = React.memo(({ className }) => (
+  <Image src={Cart} alt="Cart  Icon" className={className} />
+));
 CartIcon.displayName = "CartIcon";

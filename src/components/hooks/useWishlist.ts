@@ -1,41 +1,53 @@
 // components/hooks/useWishlist.ts
-import { useEffect, useState } from 'react';
 
-export interface WishlistItem {
-  id: string;
-  title: string;
-  price: number;
-  image: string;
-  color:string;
-  size:string;
-  quantity:number;
-}
+import { useEffect, useState } from "react";
+import {ProductCardDataProps} from '@/data/dataProps'
+// export interface WishlistItem {
+//   id: string;
+//   title: string;
+//   price: number;
+//   image: string;
+// }
 
 export const useWishlist = () => {
-  const [wishlist, setWishlist] = useState<WishlistItem[]>([]);
+  const [wishlist, setWishlist] = useState<ProductCardDataProps[]>([]);
 
-  // Load wishlist from localStorage on mount
+  // Load wishlist from localStorage after component mounts
   useEffect(() => {
-    const savedWishlist = localStorage.getItem('wishlist');
+    const savedWishlist = localStorage.getItem("wishlist");
     if (savedWishlist) {
       setWishlist(JSON.parse(savedWishlist));
     }
   }, []);
 
-  // Save wishlist to localStorage when it changes
-  useEffect(() => {
-    localStorage.setItem('wishlist', JSON.stringify(wishlist));
-  }, [wishlist]);
 
-  const addToWishlist = (item: WishlistItem) => {
-    if (!wishlist.some((wishlistItem) => wishlistItem.id === item.id)) {
-      setWishlist((prev) => [...prev, item]);
-    }
+
+  const isInWishlist = (productId: string) =>
+    wishlist.some((item) => item._id === productId);
+
+  const addToWishlist = (item: ProductCardDataProps) => {
+    debugger
+    setWishlist((currentWishlist) => {
+      // Check if the item is already in the wishlist
+      if (currentWishlist.some((wishlistItem) => wishlistItem._id === item._id)) {
+        return currentWishlist; // Item is already in wishlist, return the current state
+      }
+  
+      // If not, add the item to the wishlist
+      const updatedWishlist = [...currentWishlist, item];
+      localStorage.setItem("wishlist", JSON.stringify(updatedWishlist));
+
+      return updatedWishlist;
+    });
   };
 
   const removeFromWishlist = (itemId: string) => {
-    setWishlist((prev) => prev.filter((item) => item.id !== itemId));
+    setWishlist((currentWishlist) => {
+      const updatedWishlist = currentWishlist.filter((item) => item._id !== itemId);
+      localStorage.setItem("wishlist", JSON.stringify(updatedWishlist));
+      return updatedWishlist;
+    });
   };
 
-  return { wishlist, addToWishlist, removeFromWishlist };
+  return { wishlist, isInWishlist, addToWishlist, removeFromWishlist };
 };

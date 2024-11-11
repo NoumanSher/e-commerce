@@ -8,6 +8,9 @@ import {
   MoneyBackGuaranteeIcon,
   ServiceIcon,
 } from "@/assets/svg/common";
+import P1 from "@/assets/img/P4.jpg";
+import P2 from "@/assets/img/P5.jpg";
+import P3 from "@/assets/img/P6.jpg";
 import Banner1 from "../assets/img/grid-banner-1.jpg";
 import Banner2 from "../assets/img/grid-banner-2.jpg";
 import Banner3 from "../assets/img/grid-banner-3.jpg";
@@ -28,7 +31,6 @@ import Product13 from "../assets/img/product-7-1.jpg";
 import Product14 from "../assets/img/product-7-2.jpg";
 import Product15 from "../assets/img/product-8-1.jpg";
 import Product16 from "../assets/img/product-8-2.jpg";
-import { StaticImageData } from "next/image";
 import {
   BannerProductProps,
   FooterCopyRightProps,
@@ -74,31 +76,27 @@ export const FooterLinksData: FooterLinksProps[] = [
   {
     _id: "abcde",
     icon: FaFacebookFIcon,
-    path:"https://www.facebook.com/"
+    path: "https://www.facebook.com/",
   },
   {
     _id: "hello",
     icon: FaTwitterIcon,
-    path:"https://twitter.com/"
-
+    path: "https://twitter.com/",
   },
   {
     _id: "abcdef",
     icon: IoLogoInstagramIcon,
-    path:"https://www.instagram.com/"
-
+    path: "https://www.instagram.com/",
   },
   {
     _id: "computer",
     icon: BsYoutubeIcon,
-    path:"https://www.youtube.com/"
-
+    path: "https://www.youtube.com/",
   },
   {
     _id: "hi",
     icon: FaPinterestIcon,
-    path:"https://www.pinterest.com/"
-
+    path: "https://www.pinterest.com/",
   },
 ];
 
@@ -146,86 +144,145 @@ export const BannerProductsData: BannerProductProps[] = [
 ];
 export const ProductCardData: ProductCardDataProps[] = [
   {
-    _id: "12345",
-    productName: "Calvin Shorts",
+    _id: "12345a",
+    productName: "Calvin1",
     productCategory: "Dresses",
+    description: "Stylish Calvin shorts perfect for summer outings.",
+    isVarirnt: true,
+    stock: 40,
     price: "45",
-    isNew: false, // Optional
-    isSale: false, // Optional
+    isNew: false,
+    isSale: false,
     thumbNailImage1: Product1,
     thumbNailImage2: Product2,
-    // colors: ["cyan", "black", "gray"]
+    images: [
+      { src: P1, alt: "Calvin shorts front view" },
+      { src: P2, alt: "Calvin shorts side view" },
+      { src: P3, alt: "Calvin shorts back view" },
+    ],
+    availableSizes: ["S", "M", "L", "XL"],
   },
   {
-    _id: "1234",
-    productName: "Calvin Shorts",
+    _id: "1234b",
+    productName: "Calvin2",
     productCategory: "Dresses",
+    description: "Trendy Calvin shorts made from high-quality fabric.",
+    isVarirnt: true,
+    stock: 40,
     price: "45",
-    isNew: true, // Optional
-    isSale: false, // Optional
+    isNew: true,
+    isSale: false,
     thumbNailImage1: Product3,
     thumbNailImage2: Product4,
+    images: [
+      { src: Product1, alt: "Calvin shorts front view" },
+      { src: Product2, alt: "Calvin shorts back view" },
+    ],
     colors: ["cyan", "black", "gray"],
+    availableSizes: ["S", "M", "L", "XL"],
   },
   {
     _id: "12332af1w651f65aw45",
-    productName: "Calvin Shorts",
+    productName: "Calvin3",
     productCategory: "Dresses",
+    description: "Casual Calvin shorts for everyday comfort.",
+    isVarirnt: true,
+    stock: 40,
     price: "45",
-    isNew: false, // Optional
-    isSale: false, // Optional
+    isNew: false,
+    isSale: false,
     thumbNailImage1: Product5,
     thumbNailImage2: Product6,
+    images: [
+      { src: Product1, alt: "Calvin shorts front view" },
+      { src: Product2, alt: "Calvin shorts side view" },
+    ],
   },
   {
     _id: "123432af12waF5",
-    productName: "Calvin Shorts",
+    productName: "Calvin4",
     productCategory: "Dresses",
+    description: "Elegant Calvin shorts with a discount offer.",
+    isVarirnt: true,
+    stock: 40,
     price: "45",
-    discount: "67", // Optional
-    isNew: false, // Optional
-    isSale: false, // Optional
+    discount: "67",
+    isNew: false,
+    isSale: false,
     thumbNailImage1: Product7,
     thumbNailImage2: Product8,
+    images: [
+      { src: Product1, alt: "Calvin shorts front view" },
+      { src: Product2, alt: "Calvin shorts back view" },
+    ],
+    availableSizes: ["S", "M", "L", "XL"],
   },
   {
     _id: "1234gawfawva33435",
-    productName: "Calvin Shorts",
+    productName: "Calvin5",
     productCategory: "Dresses",
+    description: "High-quality Calvin shorts with sale discount.",
+    isVarirnt: true,
+    stock: 40,
     price: "45",
-    isNew: false, // Optional
-    isSale: true, // Optional
+    isNew: false,
+    isSale: true,
     thumbNailImage1: Product9,
     thumbNailImage2: Product10,
+    images: [
+      { src: Product1, alt: "Calvin shorts front view" },
+      { src: Product2, alt: "Calvin shorts back view" },
+    ],
   },
   {
     _id: "12awsegawgawg345",
     productName: "Calvin Shorts",
     productCategory: "Dresses",
+    description: "Comfortable Calvin shorts available in various sizes.",
+    isVarirnt: true,
+    stock: 40,
     price: "45",
-    isNew: false, // Optional
-    isSale: false, // Optional
+    isNew: false,
+    isSale: false,
     thumbNailImage1: Product11,
     thumbNailImage2: Product12,
+    images: [
+      { src: Product1, alt: "Calvin shorts front view" },
+      { src: Product2, alt: "Calvin shorts back view" },
+    ],
   },
   {
     _id: "1234wwwwwwwwwwwwwf5",
     productName: "Calvin Shorts",
     productCategory: "Dresses",
+    description: "Modern and stylish Calvin shorts for daily wear.",
+    isVarirnt: true,
+    stock: 40,
     price: "45",
-    isNew: false, // Optional
-    isSale: false, // Optional
+    isNew: false,
+    isSale: false,
     thumbNailImage1: Product13,
     thumbNailImage2: Product14,
+    images: [
+      { src: Product1, alt: "Calvin shorts front view" },
+      { src: Product2, alt: "Calvin shorts side view" },
+    ],
   },
   {
     _id: "12dawdawfawfa345",
     productName: "Calvin Shorts",
     productCategory: "Dresses",
+    description: "Durable Calvin shorts in different color options.",
+    isVarirnt: true,
+    stock: 40,
     price: "45",
-    isNew: false, // Optional
-    isSale: false, // Optional
+    isNew: false,
+    isSale: false,
     thumbNailImage1: Product15,
     thumbNailImage2: Product16,
+    images: [
+      { src: Product15, alt: "Calvin shorts thumbnail 1" },
+      { src: Product16, alt: "Calvin shorts thumbnail 2" },
+    ],
   },
 ];

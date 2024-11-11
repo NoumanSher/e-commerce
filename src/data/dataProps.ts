@@ -39,6 +39,9 @@ export interface ServicesDataProps {
     _id:string;
     productName:string;
     productCategory:string;
+    description:string
+    isVarirnt:boolean
+    stock:number
     price:string;
     discount?:string;
     isNew?:boolean;
@@ -46,4 +49,7 @@ export interface ServicesDataProps {
     thumbNailImage1:StaticImageData;
     thumbNailImage2:StaticImageData;
     colors?:string[];
+    availableSizes?:string[];
+    images:{ src: StaticImageData; alt: string }[]
+
   }

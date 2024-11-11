@@ -10,7 +10,12 @@ import {
 } from "react-icons/fa";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { SearchIcon ,HeartIcon,CartIcon,ProfileAvatarIcon} from "@/assets/svg/common";
+import {
+  SearchIcon,
+  HeartIcon,
+  CartIcon,
+  ProfileAvatarIcon,
+} from "@/assets/svg/common";
 const Navbar = () => {
   const [isMobile, setIsMobile] = useState(false);
   const [searchValue, setSearchValue] = useState("");
@@ -89,9 +94,7 @@ const Navbar = () => {
               HOME
             </a>
           </li>
-         
-      
-   
+
           <li>
             <a
               href="#"

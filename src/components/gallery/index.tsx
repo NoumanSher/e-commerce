@@ -1,12 +1,12 @@
 "use client";
 import { useState } from "react";
-import Image from "next/image";
+import Image, { StaticImageData } from "next/image";
 import {
   MdOutlineKeyboardArrowLeft,
   MdOutlineKeyboardArrowRight,
 } from "react-icons/md";
 interface ImageGalleryProps {
-  images: { src: string; alt: string }[];
+  images: { src: StaticImageData; alt: string }[];
 }
 
 const ImageGallery: React.FC<ImageGalleryProps> = ({ images }) => {
