@@ -12,22 +12,22 @@ interface ICardHover {
 const CardHover = ({ isHovered, product }: ICardHover) => {
   const { setIsCartOpen } = useStore();
   const { isInWishlist, removeFromWishlist, addToWishlist } = useWishlist();
-  const isTrue = isInWishlist(product?._id)
-  const handleAddToCart = (e: any) => {
+  const isTrue = isInWishlist(product?._id);
+  const handleAddToCart = (e: { stopPropagation: () => void }) => {
     e.stopPropagation();
     setIsCartOpen(true);
   };
-const handleAddToWishlist = (e: any) =>{
-  debugger
-  e.stopPropagation();
+  const handleAddToWishlist = (e: { stopPropagation: () => void }) => {
+    debugger;
+    e.stopPropagation();
 
-  addToWishlist(product)
-}
-const handleRemoveFromWishlist = (e: any) =>{
-  e.stopPropagation();
+    addToWishlist(product);
+  };
+  const handleRemoveFromWishlist = (e: any) => {
+    e.stopPropagation();
 
-  removeFromWishlist(product?._id)
-}
+    removeFromWishlist(product?._id);
+  };
   return (
     <div>
       <div
@@ -51,7 +51,6 @@ const handleRemoveFromWishlist = (e: any) =>{
             <div onClick={handleRemoveFromWishlist}>❤️</div>
           ) : (
             <div onClick={handleAddToWishlist}>💟</div>
-
           )}
         </div>
       </div>

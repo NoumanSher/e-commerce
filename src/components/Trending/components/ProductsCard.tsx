@@ -1,5 +1,4 @@
-'use client'
-import React, { memo, useEffect } from "react";
+import React, { memo } from "react";
 import MainCard from "../../Card/index";
 import {ProductCardDataProps} from '@/data/dataProps'
 interface ProductsCardProps {
@@ -8,9 +7,7 @@ interface ProductsCardProps {
 
 
 const ProductsCard = ({products}:ProductsCardProps) => {
-  useEffect(() => {
-    console.log('render')
-  },[products])
+
   return (
     <div>
       <div className="flex flex-wrap xl:max-w-[1440px] mx-auto xl:mt-14 ">
@@ -25,4 +22,4 @@ const ProductsCard = ({products}:ProductsCardProps) => {
     </div>
   );
 };
-export default ProductsCard;
+export default memo(ProductsCard);

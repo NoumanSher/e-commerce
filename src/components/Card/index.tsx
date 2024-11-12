@@ -8,7 +8,7 @@ interface MainCardProps {
   item: ProductCardDataProps;
 }
 const MainCard = ({ item }: MainCardProps) => {
-  console.log("New Chages");
+  // console.log("New Chages");
   const router = useRouter();
   const [hoveredCard, setHoveredCard] = useState<string | null>(null);
   const [selectedColor, setSelectedColor] = useState<string | null>("gray");
