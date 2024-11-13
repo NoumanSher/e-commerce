@@ -7,12 +7,12 @@ import { ProductCardDataProps } from "@/data/dataProps";
 
 interface ICardHover {
   isHovered: boolean;
-  product: ProductCardDataProps;
+  product?: ProductCardDataProps;
 }
 const CardHover = ({ isHovered, product }: ICardHover) => {
   const { setIsCartOpen } = useStore();
   const { isInWishlist, removeFromWishlist, addToWishlist } = useWishlist();
-  const isTrue = isInWishlist(product?._id);
+  const isTrue = product?._id ? isInWishlist(product._id) : false;
   const handleAddToCart = (e: { stopPropagation: () => void }) => {
     e.stopPropagation();
     setIsCartOpen(true);
@@ -21,12 +21,12 @@ const CardHover = ({ isHovered, product }: ICardHover) => {
     debugger;
     e.stopPropagation();
 
-    addToWishlist(product);
+    if (product) addToWishlist(product);
   };
   const handleRemoveFromWishlist = (e: any) => {
     e.stopPropagation();
 
-    removeFromWishlist(product?._id);
+    if (product) removeFromWishlist(product?._id);
   };
   return (
     <div>
