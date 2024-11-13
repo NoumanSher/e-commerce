@@ -1,4 +1,13 @@
-import { createContext, useState, useContext, ReactNode, Dispatch, SetStateAction, useEffect, useMemo } from "react";
+import {
+  createContext,
+  useState,
+  useContext,
+  ReactNode,
+  Dispatch,
+  SetStateAction,
+  useEffect,
+  useMemo,
+} from "react";
 import { ProductCardDataProps } from "@/data/dataProps";
 
 interface StoreContextProps {
@@ -11,17 +20,21 @@ interface StoreContextProps {
 const StoreTypeContext = createContext<StoreContextProps | undefined>(undefined);
 
 const getInitialWishlist = (): ProductCardDataProps[] => {
-  const savedWishlist = localStorage.getItem("wishlist");
-  return savedWishlist ? JSON.parse(savedWishlist) : [];
+  if (typeof window !== "undefined") {
+    const savedWishlist = localStorage.getItem("wishlist");
+    return savedWishlist ? JSON.parse(savedWishlist) : [];
+  }
+  return [];
 };
 
 export const StoreProvider = ({ children }: { children: ReactNode }) => {
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [wishlist, setWishlist] = useState<ProductCardDataProps[]>(getInitialWishlist);
 
-  // Sync wishlist to localStorage whenever it changes
   useEffect(() => {
-    localStorage.setItem("wishlist", JSON.stringify(wishlist));
+    if (typeof window !== "undefined") {
+      localStorage.setItem("wishlist", JSON.stringify(wishlist));
+    }
   }, [wishlist]);
 
   const contextValue = useMemo(

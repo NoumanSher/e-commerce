@@ -126,7 +126,7 @@ const Navbar = () => {
           onClick={() => router.push("/pages/cart")}
         >
           <CartIcon className="text-lg hover:text-gray-600" />
-          <span className="absolute top-[13px] -right-[6px] w-4 h-4 bg-yellow-600 text-white text-xs font-bold rounded-full flex items-center justify-center">
+          <span className="absolute top-[14px] -right-[6px] p-[2px] bg-yellow-600 text-white text-xs font-bold rounded-full flex items-center justify-center">
             33
           </span>
         </div>
@@ -137,7 +137,7 @@ const Navbar = () => {
         onClick={() => router.push("/pages/cart")}
       >
         <CartIcon className="text-lg hover:text-gray-600 hover:scale-150" />
-        <span className="absolute top-0 right-0 w-3 h-3 bg-yellow-600 text-white text-xs font-bold rounded-full flex items-center justify-center">
+        <span className="absolute top-[14px] right-0 w-3 h-3 bg-yellow-600 text-white text-xs font-bold rounded-full flex items-center justify-center">
           3
         </span>
       </div>
