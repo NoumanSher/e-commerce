@@ -122,10 +122,8 @@ export const SearchIcon: React.FC<IconProps> = React.memo(({ className }) => (
 ));
 SearchIcon.displayName = "SearchIcon";
 
-export const HeartIcon: React.FC<IconProps> = React.memo(({ className }) => (
-  <Link href={"/pages/wish-list"}>
-    <Image src={Heart} alt="heart Icon" className={className} />
-  </Link>
+export const HeartIcon: React.FC<ProfileIconProps> = React.memo(({ className ,onClick}) => (
+    <Image src={Heart} alt="heart Icon" className={className} onClick={onClick} />
 ));
 HeartIcon.displayName = "HeartIcon";
 

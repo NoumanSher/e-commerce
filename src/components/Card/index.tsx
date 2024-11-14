@@ -16,7 +16,7 @@ const MainCard = ({ item }: MainCardProps) => {
   // eslint-disable-next-line react-hooks/rules-of-hooks
   const currentImage = useMemo(
     () => (isHovered ? item.thumbNailImage1 : item.thumbNailImage2),
-    [hoveredCard]
+    [isHovered, item.thumbNailImage1, item.thumbNailImage2]
   );
   const handleColorSelect = useCallback((color: string) => {
     setSelectedColor(color);

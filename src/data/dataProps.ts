@@ -51,5 +51,5 @@ export interface ServicesDataProps {
     colors?:string[];
     availableSizes?:string[];
     images:{ src: StaticImageData; alt: string }[]
-
   }
+

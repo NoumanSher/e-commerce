@@ -24,7 +24,9 @@ export const useWishlist = () => {
   const addToWishlist = useCallback(
     (item: ProductCardDataProps) => {
       setWishlist((currentWishlist) => {
-        if (currentWishlist.some((wishlistItem) => wishlistItem._id === item._id)) {
+        if (
+          currentWishlist.some((wishlistItem) => wishlistItem._id === item._id)
+        ) {
           return currentWishlist; // Item already exists
         }
         return [...currentWishlist, item];
@@ -35,10 +37,20 @@ export const useWishlist = () => {
 
   const removeFromWishlist = useCallback(
     (itemId: string) => {
-      setWishlist((currentWishlist) => currentWishlist.filter((item) => item._id !== itemId));
+      setWishlist((currentWishlist) =>
+        currentWishlist.filter((item) => item._id !== itemId)
+      );
     },
     [setWishlist]
   );
 
-  return { wishlist, isInWishlist, addToWishlist, removeFromWishlist };
+  const wishlistCount = wishlist.length;
+
+  return {
+    wishlist,
+    isInWishlist,
+    addToWishlist,
+    removeFromWishlist,
+    wishlistCount,
+  };
 };
