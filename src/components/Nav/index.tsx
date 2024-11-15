@@ -106,7 +106,7 @@ const Navbar = () => {
         <div className="relative">
           <HeartIcon  onClick={() => router.push('/pages/wish-list')} className="cursor-pointer" />
           {isClient && wishlistCount > 0 && (
-            <span className="absolute w-4 h-4 p-[4px] top-[15px] 2xl:right-[288px] lg:-right-[5px] bg-yellow-600 text-white text-xs font-medium rounded-full flex items-center justify-center">
+            <span className="absolute w-4 h-4 p-[4px] top-[15px] 2xl:-right-[5px] lg:-right-[5px] bg-yellow-600 text-white text-xs font-medium rounded-full flex items-center justify-center">
               {wishlistCount}
             </span>
           )}
