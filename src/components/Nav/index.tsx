@@ -10,6 +10,7 @@ import {
   ProfileAvatarIcon,
 } from "@/assets/svg/common";
 import { useWishlist } from "../hooks/useWishlist";
+import { useCart } from "../hooks/useCart";
 
 const Navbar = () => {
   const { wishlistCount } = useWishlist();
@@ -17,7 +18,8 @@ const Navbar = () => {
   const [searchValue, setSearchValue] = useState("");
   const [searching, setSearching] = useState(false); // To track if search results are being fetched
   const [isClient, setIsClient] = useState(false); // To ensure client-only rendering
-
+  const { cartCount } =
+    useCart();
   const router = useRouter();
 
   useEffect(() => {
@@ -115,7 +117,7 @@ const Navbar = () => {
         <div className="relative cursor-pointer" onClick={() => router.push("/pages/cart")}>
           <CartIcon className="text-lg hover:text-gray-600" />
           <span className="absolute top-[14px] -right-[6px] p-[4px] h-4 w-4 bg-yellow-600 text-white text-xs font-medium rounded-full flex items-center justify-center">
-            11
+            {cartCount}
           </span>
         </div>
       </div>
@@ -126,7 +128,7 @@ const Navbar = () => {
       >
         <CartIcon className="text-lg hover:text-gray-600 hover:scale-150" />
         <span className="absolute top-[14px] -right-[6px] w-4 h-4 p-[4px] bg-yellow-600 text-black text-xs font-bold rounded-full flex items-center justify-center">
-          11
+          {cartCount}
         </span>
       </div>
 

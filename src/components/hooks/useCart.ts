@@ -130,7 +130,7 @@ export const useCart = () => {
 
   return {
     cartItems,
-    cartCount: cartItems.length,
+    cartCount: cartItems.length +1,
     addToCart,
     updateItemQuantity, // New function
     removeFromCart,
