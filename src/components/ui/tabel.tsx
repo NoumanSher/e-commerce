@@ -3,10 +3,35 @@
 import { useState } from "react";
 import QuantitySelector from "../productDetail/components/QuantitySelector";
 import { useCart } from "../hooks/useCart";
+import { toast } from "react-toastify";
 
 const ProductTable: React.FC = () => {
-  const [quantity, setQuantity] = useState(1);
-  const { removeFromCart, cartItems, totalCost } = useCart();
+  const { removeFromCart, cartItems, subTotal, updateItemQuantity } =
+    useCart();
+  const handleQuantityChange = (
+    productId: string,
+    quantity: number,
+    variantId?: string
+  ) => {
+    const item = cartItems.find(
+      (item) => item.product._id === productId && item.variantID === variantId
+    );
+    if (item) {
+      const selectedVariant = item.product?.variants?.find(
+        (variant) => variant._id === variantId
+      );
+      const availableStock = selectedVariant
+        ? selectedVariant.stock
+        : item.product.stock;
+
+      if (quantity > availableStock) {
+        toast.error(`Only ${availableStock} available.`);
+        quantity = availableStock; // Cap quantity at available stock
+        return;
+      }
+    }
+    updateItemQuantity(productId, quantity, variantId);
+  };
   return (
     <div className="w-full border-b border-gray-300 pb-4">
       {/* Table View for Larger Screens */}
@@ -22,89 +47,121 @@ const ProductTable: React.FC = () => {
           </tr>
         </thead>
         <tbody>
-          {cartItems.map((item) => (
-            <tr key={item.product._id} className="border-b border-gray-200">
-              <td className="py-4">
-                <img
-                  src={item.product.images[0].src}
-                  alt={item.product.images[0].alt}
-                  className="w-20 h-24 object-cover"
-                />
-              </td>
-              <td className="py-4 text-gray-700">{item.product.productName}</td>
-              <td className="py-4 text-gray-700">
-                ${item.product.salePrice.toFixed(2)}
-              </td>
-              <td className="py-4">
-                <QuantitySelector
-                  quantity={item.quantity}
-                  setQuantity={setQuantity}
-                  className="h-14"
-                  stock={item.product.stock}
-                />
-              </td>
-              <td className="py-4 text-gray-700">${totalCost}</td>
-              <td
-                className="py-4 text-gray-700 cursor-pointer"
-                onClick={() => removeFromCart(item.product._id)}
-              >
-                ×
-              </td>
-            </tr>
-          ))}
+          {cartItems.map((item) => {
+            const selectedVariant = item.product.variants?.find(
+              (varient) => varient._id === item.variantID
+            );
+            return (
+              <tr key={item.product._id} className="border-b border-gray-200">
+                <td className="py-4">
+                  <img
+                    src={item.product.images[0].src}
+                    alt={item.product.images[0].alt}
+                    className="w-20 h-24 object-cover"
+                  />
+                </td>
+                <td className="py-4 text-gray-700">
+                  {item.product.productName}
+                </td>
+                <td className="py-4 text-gray-700">
+                  ${item.product.salePrice.toFixed(2)}
+                </td>
+                <td className="py-4">
+                  <QuantitySelector
+                    className="h-14"
+                    quantity={item.quantity}
+                    stock={
+                      selectedVariant?.stock
+                        ? selectedVariant?.stock
+                        : item.product.stock
+                    }
+                    onQuantityChange={(quantity) =>
+                      handleQuantityChange(
+                        item.product._id,
+                        quantity,
+                        item.variantID
+                      )
+                    }
+                  />
+                </td>
+                <td className="py-4 text-gray-700">${subTotal.toFixed(1)}</td>
+                <td
+                  className="py-4 text-gray-700 cursor-pointer"
+                  onClick={() => removeFromCart(item.product._id)}
+                >
+                  ×
+                </td>
+              </tr>
+            );
+          })}
         </tbody>
       </table>
 
       {/* Compact Column View for Mobile Screens */}
       <div className="block md:hidden space-y-6">
-        {cartItems.map((item) => (
-          <div
-            key={item.product._id}
-            className="border-b border-gray-300 py-4 flex flex-col space-y-2"
-          >
-            {/* Row with image, name, and delete icon */}
-            <div className="flex items-center">
-              <img
-                src={item.product.images[0].src}
-                alt={item.product.images[0].alt}
-                className="w-20 h-20 object-cover mr-4"
-              />
-              <div className="flex-1">
-                <p className="font-semibold text-gray-900">{item.product.productName}</p>
+        {cartItems.map((item) => {
+           const selectedVariant = item.product.variants?.find(
+            (varient) => varient._id === item.variantID
+          );
+          return (
+            <div
+              key={item.product._id}
+              className="border-b border-gray-300 py-4 flex flex-col space-y-2"
+            >
+              {/* Row with image, name, and delete icon */}
+              <div className="flex items-center">
+                <img
+                  src={item.product.images[0].src}
+                  alt={item.product.images[0].alt}
+                  className="w-20 h-20 object-cover mr-4"
+                />
+                <div className="flex-1">
+                  <p className="font-semibold text-gray-900">
+                    {item.product.productName}
+                  </p>
+                </div>
+                <button className="text-red-500 ml-4">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    strokeWidth="1.5"
+                    stroke="currentColor"
+                    className="w-5 h-5"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M6 18L18 6M6 6l12 12"
+                    />
+                  </svg>
+                </button>
               </div>
-              <button className="text-red-500 ml-4">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  strokeWidth="1.5"
-                  stroke="currentColor"
-                  className="w-5 h-5"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M6 18L18 6M6 6l12 12"
-                  />
-                </svg>
-              </button>
-            </div>
 
-            {/* Row with price, quantity selector, and total */}
-            <div className="flex items-center justify-between">
-              <span className="text-gray-700">{item.product.salePrice}</span>
-              <QuantitySelector
-                quantity={item.quantity}
-                setQuantity={setQuantity}
-                stock={item.product.stock}
-                className="flex items-center !w-24"
-              />
-              <span className="text-gray-700 font-semibold">
-                {totalCost}
-              </span>
+              {/* Row with price, quantity selector, and total */}
+              <div className="flex items-center justify-between">
+                <span className="text-gray-700">{item.product.salePrice}</span>
+                <QuantitySelector
+                  quantity={item.quantity}
+                  stock={
+                    selectedVariant?.stock
+                      ? selectedVariant?.stock
+                      : item.product.stock
+                  }
+                  onQuantityChange={(quantity) =>
+                    handleQuantityChange(
+                      item.product._id,
+                      quantity,
+                      item.variantID
+                    )
+                  }
+                  className="flex items-center !w-24"
+                />
+                <span className="text-gray-700 font-semibold">{subTotal.toFixed(1)}</span>
+              </div>
             </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
     </div>
   );

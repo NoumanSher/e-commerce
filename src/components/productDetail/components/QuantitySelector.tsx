@@ -1,21 +1,45 @@
-import React from "react";
+import React, { useState } from "react";
+import { toast } from "react-toastify";
 
 interface QuantitySelectorProps {
   quantity: number;
   stock: number;
-  setQuantity: React.Dispatch<React.SetStateAction<number>>;
+  onQuantityChange: (quantity: number) => void;
+
   className?: string;
 }
 
 const QuantitySelector: React.FC<QuantitySelectorProps> = ({
   quantity,
-  setQuantity,
   className,
+  onQuantityChange,
+  stock
 }) => {
-  const handleIncrement = () => setQuantity((prevQuantity) => prevQuantity + 1);
-  const handleDecrement = () =>
-    setQuantity((prevQuantity) => Math.max(1, prevQuantity - 1));
+  const [currentQuantity, setCurrentQuantity] = useState(quantity);
 
+  const handleIncrement = () => {
+    setCurrentQuantity((prevQuantity) => {
+      const newQuantity = prevQuantity + 1;
+
+      if (stock === undefined || newQuantity <= stock) {
+        onQuantityChange(newQuantity);
+        return newQuantity;
+      }
+
+      if (newQuantity > stock) {
+        toast.error(`Only ${stock} Product(s) Available In This Category.`);
+      }
+      return prevQuantity;
+    });
+  };
+
+  const handleDecrement = () => {
+    setCurrentQuantity((prevQuantity) => {
+      const newQuantity = Math.max(prevQuantity - 1, 1);
+      onQuantityChange(newQuantity);
+      return newQuantity;
+    });
+  };
   return (
     <div
       className={`${className} flex justify-between w-[120px] py-3 px-3 items-center border border-gray-300 rounded-sm 
@@ -27,7 +51,7 @@ const QuantitySelector: React.FC<QuantitySelectorProps> = ({
       >
         -
       </button>
-      <span className="font-medium text-gray-400">{quantity}</span>
+      <span className="font-medium text-gray-400">{currentQuantity}</span>
       <button
         onClick={handleIncrement}
         className="rounded text-gray-400 hover:text-rose-800 transition-colors duration-200"

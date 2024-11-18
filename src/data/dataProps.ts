@@ -62,7 +62,7 @@ export interface Option {
 
 export interface Image {
   _id: string;
-  src: StaticImageData; 
+  src: any; 
   alt: string;
   isThumbnail?: boolean; 
 }
