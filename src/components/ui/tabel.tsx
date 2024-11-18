@@ -6,7 +6,7 @@ import { useCart } from "../hooks/useCart";
 import { toast } from "react-toastify";
 
 const ProductTable: React.FC = () => {
-  const { removeFromCart, cartItems, subTotal, updateItemQuantity } =
+  const { removeFromCart, cartItems, getSubTotalByProductId, updateItemQuantity } =
     useCart();
   const handleQuantityChange = (
     productId: string,
@@ -42,7 +42,7 @@ const ProductTable: React.FC = () => {
             <th className="py-4">PRODUCT NAME</th>
             <th className="py-4">PRICE</th>
             <th className="py-4">QUANTITY</th>
-            <th className="py-4">TOTAL</th>
+            <th className="py-4">SUB TOTAL</th>
             <th className="py-4"></th>
           </tr>
         </thead>
@@ -84,7 +84,7 @@ const ProductTable: React.FC = () => {
                     }
                   />
                 </td>
-                <td className="py-4 text-gray-700">${subTotal.toFixed(1)}</td>
+                <td className="py-4 text-gray-700">${getSubTotalByProductId(item.product._id,item.quantity,item.product.salePrice).toFixed(1)}</td>
                 <td
                   className="py-4 text-gray-700 cursor-pointer"
                   onClick={() => removeFromCart(item.product._id)}
@@ -157,7 +157,7 @@ const ProductTable: React.FC = () => {
                   }
                   className="flex items-center !w-24"
                 />
-                <span className="text-gray-700 font-semibold">{subTotal.toFixed(1)}</span>
+                <span className="text-gray-700 font-semibold">{getSubTotalByProductId(item.product._id,item.quantity,item.product.salePrice).toFixed(1)}</span>
               </div>
             </div>
           );
