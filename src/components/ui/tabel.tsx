@@ -2,18 +2,11 @@
 
 import { useState } from "react";
 import QuantitySelector from "../productDetail/components/QuantitySelector";
+import { useCart } from "../hooks/useCart";
 
-interface Product {
-  id: number;
-  imageUrl: string;
-  name: string;
-  price: number;
-  quantity: number;
-}
-
-const ProductTable: React.FC<{ products: Product[] }> = ({ products }) => {
+const ProductTable: React.FC = () => {
   const [quantity, setQuantity] = useState(1);
-
+  const { removeFromCart, cartItems, totalCost } = useCart();
   return (
     <div className="w-full border-b border-gray-300 pb-4">
       {/* Table View for Larger Screens */}
@@ -29,30 +22,34 @@ const ProductTable: React.FC<{ products: Product[] }> = ({ products }) => {
           </tr>
         </thead>
         <tbody>
-          {products.map((product) => (
-            <tr key={product.id} className="border-b border-gray-200">
+          {cartItems.map((item) => (
+            <tr key={item.product._id} className="border-b border-gray-200">
               <td className="py-4">
                 <img
-                  src={product.imageUrl}
-                  alt={product.name}
+                  src={item.product.images[0].src}
+                  alt={item.product.images[0].alt}
                   className="w-20 h-24 object-cover"
                 />
               </td>
-              <td className="py-4 text-gray-700">{product.name}</td>
+              <td className="py-4 text-gray-700">{item.product.productName}</td>
               <td className="py-4 text-gray-700">
-                ${product.price.toFixed(2)}
+                ${item.product.salePrice.toFixed(2)}
               </td>
               <td className="py-4">
                 <QuantitySelector
-                  quantity={quantity}
+                  quantity={item.quantity}
                   setQuantity={setQuantity}
                   className="h-14"
+                  stock={item.product.stock}
                 />
               </td>
-              <td className="py-4 text-gray-700">
-                ${(product.price * product.quantity).toFixed(2)}
+              <td className="py-4 text-gray-700">${totalCost}</td>
+              <td
+                className="py-4 text-gray-700 cursor-pointer"
+                onClick={() => removeFromCart(item.product._id)}
+              >
+                ×
               </td>
-              <td className="py-4 text-gray-700 cursor-pointer">×</td>
             </tr>
           ))}
         </tbody>
@@ -60,20 +57,20 @@ const ProductTable: React.FC<{ products: Product[] }> = ({ products }) => {
 
       {/* Compact Column View for Mobile Screens */}
       <div className="block md:hidden space-y-6">
-        {products.map((product) => (
+        {cartItems.map((item) => (
           <div
-            key={product.id}
+            key={item.product._id}
             className="border-b border-gray-300 py-4 flex flex-col space-y-2"
           >
             {/* Row with image, name, and delete icon */}
             <div className="flex items-center">
               <img
-                src={product.imageUrl}
-                alt={product.name}
+                src={item.product.images[0].src}
+                alt={item.product.images[0].alt}
                 className="w-20 h-20 object-cover mr-4"
               />
               <div className="flex-1">
-                <p className="font-semibold text-gray-900">{product.name}</p>
+                <p className="font-semibold text-gray-900">{item.product.productName}</p>
               </div>
               <button className="text-red-500 ml-4">
                 <svg
@@ -95,14 +92,15 @@ const ProductTable: React.FC<{ products: Product[] }> = ({ products }) => {
 
             {/* Row with price, quantity selector, and total */}
             <div className="flex items-center justify-between">
-              <span className="text-gray-700">{product.price.toFixed(2)}</span>
+              <span className="text-gray-700">{item.product.salePrice}</span>
               <QuantitySelector
-                quantity={quantity}
+                quantity={item.quantity}
                 setQuantity={setQuantity}
+                stock={item.product.stock}
                 className="flex items-center !w-24"
               />
               <span className="text-gray-700 font-semibold">
-                {(product.price * product.quantity).toFixed(2)}
+                {totalCost}
               </span>
             </div>
           </div>

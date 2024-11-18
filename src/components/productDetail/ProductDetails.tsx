@@ -12,6 +12,7 @@ import Breadcrumb from "./components/Breadcrumb";
 import { useRouter } from "next/navigation";
 import dynamic from "next/dynamic";
 import { ProductCardDataProps } from "@/data/dataProps";
+import { useCart } from "../hooks/useCart";
 const SocialMediaShareWithNoSSR = dynamic(
   () => import("./components/SocialMediaShare"),
   { ssr: false }
@@ -22,15 +23,8 @@ interface ProductDetailsProps {
 }
 
 const ProductInfo: React.FC<ProductDetailsProps> = ({ product }) => {
-  const {
-    _id,
-    productName,
-    price,
-    description,
-    images,
-    colors,
-    availableSizes,
-  } = product;
+  const { addToCart } = useCart();
+  const { productName, salePrice, description, options, isVariant ,stock} = product;
 
   const [quantity, setQuantity] = useState(1);
   const [selectedColor, setSelectedColor] = useState("");
@@ -42,62 +36,71 @@ const ProductInfo: React.FC<ProductDetailsProps> = ({ product }) => {
   const router = useRouter();
   // Handle Add to Cart logic
   const handleAddToCart = useCallback(() => {
-    const isColorMissing = !selectedColor;
-    const isSizeMissing = !selectedSize;
+    if (isVariant) {
+      const isColorMissing = !selectedColor;
+      const isSizeMissing = !selectedSize;
 
-    if (isColorMissing || isSizeMissing) {
-      setValidation((prev) => ({
-        ...prev,
-        colorRequired: isColorMissing,
-        sizeRequired: isSizeMissing,
-      }));
-      return;
+      if (isColorMissing || isSizeMissing) {
+        setValidation((prev) => ({
+          ...prev,
+          colorRequired: isColorMissing,
+          sizeRequired: isSizeMissing,
+        }));
+        return;
+      }
     }
+    addToCart({ product, quantity: 1 });
 
-    // Proceed with add to cart logic
   }, [selectedColor, selectedSize]);
 
   // Handle Checkout logic
   const handleCheckout = useCallback(() => {
-    const isColorMissing = !selectedColor;
-    const isSizeMissing = !selectedSize;
+    debugger;
+    if (isVariant) {
+      const isColorMissing = !selectedColor;
+      const isSizeMissing = !selectedSize;
 
-    if (isColorMissing || isSizeMissing) {
-      setValidation((prev) => ({
-        ...prev,
-        colorRequired: isColorMissing,
-        sizeRequired: isSizeMissing,
-      }));
-      return;
+      if (isColorMissing || isSizeMissing) {
+        setValidation((prev) => ({
+          ...prev,
+          colorRequired: isColorMissing,
+          sizeRequired: isSizeMissing,
+        }));
+        return;
+      }
     }
 
     router.push("/pages/cart?section=checkout");
     // Proceed with checkout logic
   }, [router, selectedColor, selectedSize]);
 
+  const colors = options ? options[1]?.values ?? [] : [];
+  const sizes = options ? options[0]?.values ?? [] : [];
   return (
     <div className="lg:px-8 pt-2 lg:w-[40%]  w-full">
       <Breadcrumb />
       <ProductBasicInfo
         title={productName}
-        price={Number(price)}
+        price={Number(salePrice)}
         description={description}
       />
-
-      <SelectColorAndSize
-        availableColors={colors ?? []}
-        availableSizes={availableSizes ?? []}
-        setSelectedColor={setSelectedColor}
-        setSelectedSize={setSelectedSize}
-        validation={validation}
-        setValidation={setValidation}
-      />
+      {colors.length > 0 && (
+        <SelectColorAndSize
+          availableColors={colors}
+          availableSizes={sizes}
+          setSelectedColor={setSelectedColor}
+          setSelectedSize={setSelectedSize}
+          validation={validation}
+          setValidation={setValidation}
+        />
+      )}
 
       <div className="flex md:items-center justify-between md:justify-normal mt-4 gap-x-4 mb-5">
         <QuantitySelector
           quantity={quantity}
           setQuantity={setQuantity}
           className="h-14"
+          stock={stock}
         />
         <Button
           onClick={handleAddToCart}

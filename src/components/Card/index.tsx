@@ -14,10 +14,10 @@ const MainCard = ({ item }: MainCardProps) => {
   const [selectedColor, setSelectedColor] = useState<string | null>("gray");
   const isHovered = hoveredCard === item._id;
   // eslint-disable-next-line react-hooks/rules-of-hooks
-  const currentImage = useMemo(
-    () => (isHovered ? item.thumbNailImage1 : item.thumbNailImage2),
-    [isHovered, item.thumbNailImage1, item.thumbNailImage2]
-  );
+  // const currentImage = useMemo(
+  //   () => (isHovered ? item.thumbNailImage1 : item.thumbNailImage2),
+  //   [isHovered, item.thumbNailImage1, item.thumbNailImage2]
+  // );
   const handleColorSelect = useCallback((color: string) => {
     setSelectedColor(color);
   }, []);
@@ -45,7 +45,7 @@ const MainCard = ({ item }: MainCardProps) => {
             <Image
               priority={true}
               loading="eager"
-              src={currentImage}
+              src={item.images[0].src}
               alt="Product BAnner Img"
               className="object-cover w-full h-full transition-transform duration-700 ease-in-out transform-gpu "
             />
@@ -81,11 +81,11 @@ const MainCard = ({ item }: MainCardProps) => {
               {item.productName}
             </p>
             <p className="font-normal leading-[1.7143rem]  text-[16px]">
-              ${item.price}
+              ${item.salePrice}
             </p>
             <div className="mt-[4px] flex items-center gap-2 ">
-              {item.colors &&
-                item.colors.map((color, index) => (
+              {item.options &&
+                item?.options[1]?.values?.map((color, index) => (
                   <div
                     key={index}
                     className={`w-[20px] h-[20px] rounded-[50%] cursor-pointer border-2 flex justify-center items-center ${

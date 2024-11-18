@@ -2,6 +2,7 @@ import React from "react";
 
 interface QuantitySelectorProps {
   quantity: number;
+  stock: number;
   setQuantity: React.Dispatch<React.SetStateAction<number>>;
   className?: string;
 }
