@@ -1,5 +1,6 @@
 import { useState, useCallback, useMemo, useEffect } from 'react';
 import { ProductCardDataProps } from '@/data/dataProps';
+import { useStore } from '@/Context/storeContext';
 
 // Define interfaces
 interface CartItem {
@@ -10,35 +11,16 @@ interface CartItem {
   variantID?: string;
 }
 
-// Helper function to manage localStorage
-const CART_STORAGE_KEY = 'shoppingCart';
 
-const getCartFromStorage = (): CartItem[] => {
-  try {
-    const storedCart = localStorage.getItem(CART_STORAGE_KEY);
-    return storedCart ? JSON.parse(storedCart) : [];
-  } catch {
-    console.warn('Failed to parse cart data from localStorage.');
-    return [];
-  }
-};
 
-const saveCartToStorage = (cart: CartItem[]) => {
-  try {
-    localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(cart));
-  } catch {
-    console.warn('Failed to save cart data to localStorage.');
-  }
-};
+
 
 // useCart Hook
 export const useCart = () => {
-  const [cartItems, setCartItems] = useState<CartItem[]>(getCartFromStorage);
+  const { cartItems, setCartItems } = useStore();
 
   // Synchronize cart with localStorage
-  useEffect(() => {
-    saveCartToStorage(cartItems);
-  }, [cartItems]);
+
 
   // Add an item to the cart
   const addToCart = useCallback(
@@ -130,7 +112,7 @@ export const useCart = () => {
 
   return {
     cartItems,
-    cartCount: cartItems.length +1,
+    cartCount: cartItems.length,
     addToCart,
     updateItemQuantity, // New function
     removeFromCart,

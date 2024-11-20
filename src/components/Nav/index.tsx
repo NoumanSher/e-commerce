@@ -18,15 +18,16 @@ const Navbar = () => {
   const [searchValue, setSearchValue] = useState("");
   const [searching, setSearching] = useState(false); // To track if search results are being fetched
   const [isClient, setIsClient] = useState(false); // To ensure client-only rendering
-  const { cartCount } =
-    useCart();
+  const { cartCount } = useCart();
   const router = useRouter();
 
   useEffect(() => {
     setIsClient(true); // Set to true only after component mounts on client
   }, []);
 
-  const handleChange = (e: { target: { value: React.SetStateAction<string>; }; }) => {
+  const handleChange = (e: {
+    target: { value: React.SetStateAction<string> };
+  }) => {
     setSearchValue(e.target.value);
     setSearching(!!e.target.value);
   };
@@ -81,17 +82,26 @@ const Navbar = () => {
             </span>
           </div>
           <li>
-            <a href="#" className="text-sm tracking-wide text-black font-medium hover:text-gray-600">
+            <a
+              href="#"
+              className="text-sm tracking-wide text-black font-medium hover:text-gray-600"
+            >
               HOME
             </a>
           </li>
           <li>
-            <a href="#" className="text-sm tracking-wide text-black font-medium hover:text-gray-600">
+            <a
+              href="#"
+              className="text-sm tracking-wide text-black font-medium hover:text-gray-600"
+            >
               ABOUT
             </a>
           </li>
           <li>
-            <a href="#" className="text-sm tracking-wide text-black font-medium hover:text-gray-600">
+            <a
+              href="#"
+              className="text-sm tracking-wide text-black font-medium hover:text-gray-600"
+            >
               CONTACT
             </a>
           </li>
@@ -104,9 +114,12 @@ const Navbar = () => {
           onClick={handleClickProfile}
           className="text-lg cursor-pointer hover:text-gray-600"
         />
-        
+
         <div className="relative">
-          <HeartIcon  onClick={() => router.push('/pages/wish-list')} className="cursor-pointer" />
+          <HeartIcon
+            onClick={() => router.push("/pages/wish-list")}
+            className="cursor-pointer"
+          />
           {isClient && wishlistCount > 0 && (
             <span className="absolute w-4 h-4 p-[4px] top-[15px] 2xl:-right-[5px] lg:-right-[5px] bg-yellow-600 text-white text-xs font-medium rounded-full flex items-center justify-center">
               {wishlistCount}
@@ -114,11 +127,17 @@ const Navbar = () => {
           )}
         </div>
 
-        <div className="relative cursor-pointer" onClick={() => router.push("/pages/cart")}>
+        <div
+          className="relative cursor-pointer"
+          onClick={() => router.push("/pages/cart")}
+        >
           <CartIcon className="text-lg hover:text-gray-600" />
-          <span className="absolute top-[14px] -right-[6px] p-[4px] h-4 w-4 bg-yellow-600 text-white text-xs font-medium rounded-full flex items-center justify-center">
-            {cartCount}
-          </span>
+
+          {isClient && cartCount > 0 && (
+            <span className="absolute top-[14px] -right-[6px] p-[4px] h-4 w-4 bg-yellow-600 text-white text-xs font-medium rounded-full flex items-center justify-center">
+              {cartCount}
+            </span>
+          )}
         </div>
       </div>
 
@@ -127,9 +146,11 @@ const Navbar = () => {
         onClick={() => router.push("/pages/cart")}
       >
         <CartIcon className="text-lg hover:text-gray-600 hover:scale-150" />
-        <span className="absolute top-[14px] -right-[6px] w-4 h-4 p-[4px] bg-yellow-600 text-black text-xs font-bold rounded-full flex items-center justify-center">
-          {cartCount}
-        </span>
+        {isClient && cartCount > 0 && (
+          <span className="absolute top-[14px] -right-[6px] w-4 h-4 p-[4px] bg-yellow-600 text-black text-xs font-bold rounded-full flex items-center justify-center">
+            {cartCount}
+          </span>
+        )}
       </div>
 
       <button
