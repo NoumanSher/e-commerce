@@ -9,7 +9,7 @@ import { useCart } from "../hooks/useCart";
 import { useRouter } from "next/navigation";
 interface ICardHover {
   isHovered: boolean;
-  product: ProductCardDataProps;
+  product?: ProductCardDataProps;
 }
 const CardHover = ({ isHovered, product }: ICardHover) => {
   const { setIsCartOpen } = useStore();
@@ -17,10 +17,11 @@ const CardHover = ({ isHovered, product }: ICardHover) => {
   const { addToCart } = useCart();
   const { isInWishlist, removeFromWishlist, addToWishlist } = useWishlist();
   const [isTrue, setIsTrue] = useState(false);
-
+  const isVariant = product?.isVariant || false;
+  const _id = product?._id;
   useEffect(() => {
-    if (product?._id) {
-      setIsTrue(isInWishlist(product._id));
+    if (_id) {
+      setIsTrue(isInWishlist(_id));
     }
   }, [product, isInWishlist]);
 
@@ -28,14 +29,14 @@ const CardHover = ({ isHovered, product }: ICardHover) => {
     e: React.MouseEvent<HTMLDivElement>, // Use the correct type for the event
     isVariant: boolean
   ) => {
-    // if (!product) {
-    //   return;
-    // }
+    if (!product) {
+      return;
+    }
     e.stopPropagation(); // Prevent event bubbling
 
     if (isVariant) {
       // Redirect to product details page if the product has variants
-      router.push(`/pages/product-detail?product-id=${product._id}`);
+      router.push(`/pages/product-detail?product-id=${_id}`);
     } else {
       // Add product to cart
       addToCart({ product, quantity: 1 });
@@ -66,7 +67,7 @@ const CardHover = ({ isHovered, product }: ICardHover) => {
         }`}
       >
         <div
-          onClick={(e) => handleAddToCart(e, product?.isVariant)}
+          onClick={(e) => handleAddToCart(e, isVariant)}
           className="w-[40px] h-[40px] cursor-pointer rounded-[50%] bg-white flex justify-center items-center"
         >
           <MdOutlineShoppingBag />

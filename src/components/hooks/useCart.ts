@@ -153,7 +153,7 @@ export const useCart = () => {
         : null;
       const additionalSalePrice = variant?.additionalSalePrice || 0;
 
-      return total + (basePrice + additionalSalePrice) * item.quantity;
+      return (total + (basePrice + additionalSalePrice) * item.quantity);
     }, 0);
   }, [cartItems]);
 
