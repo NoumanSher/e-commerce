@@ -1,7 +1,6 @@
 import { useRouter } from "next/navigation";
 import React, { useEffect } from "react";
 import { toast } from "react-toastify";
-import { ProductCardDataProps } from "@/data/dataProps";
 import { useCart } from "../hooks/useCart";
 import QuantitySelector from "../productDetail/components/QuantitySelector";
 
@@ -11,7 +10,13 @@ interface ShoppingCartProps {
 }
 
 const ShoppingCart: React.FC<ShoppingCartProps> = ({ isOpen, onClose }) => {
-  const { cartItems, totalCost, updateItemQuantity,cartCount,removeFromCart } = useCart();
+  const {
+    cartItems,
+    totalCost,
+    updateItemQuantity,
+    cartCount,
+    removeFromCart,
+  } = useCart();
   const router = useRouter();
 
   useEffect(() => {
@@ -101,12 +106,17 @@ const ShoppingCart: React.FC<ShoppingCartProps> = ({ isOpen, onClose }) => {
                       <h3 className="font-semibold">
                         {cartItem.product.productName}
                       </h3>
-                      <p className="text-sm text-gray-500">
-                        Color: {cartItem.color}
-                      </p>
-                      <p className="text-sm text-gray-500">
-                        Size: {cartItem.size}
-                      </p>
+                      {cartItem.product.isVariant && (
+                        <>
+                          <p className="text-sm text-gray-500">
+                            Color: {cartItem.color}
+                          </p>
+                          <p className="text-sm text-gray-500">
+                            Size: {cartItem.size}
+                          </p>
+                        </>
+                      )}
+
                       <QuantitySelector
                         className="border-0 hover:shadow-none"
                         quantity={cartItem.quantity}
@@ -126,7 +136,12 @@ const ShoppingCart: React.FC<ShoppingCartProps> = ({ isOpen, onClose }) => {
                     </div>
                     <div className="flex flex-col py-[14px] justify-between h-full">
                       <button
-                        onClick={() => removeFromCart(cartItem.product._id,cartItem.variantID)}
+                        onClick={() =>
+                          removeFromCart(
+                            cartItem.product._id,
+                            cartItem.variantID
+                          )
+                        }
                         className="text-red-500 text-xl hover:text-red-700"
                       >
                         &times;

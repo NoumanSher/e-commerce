@@ -155,6 +155,7 @@ export const useCart = () => {
 
       return (total + (basePrice + additionalSalePrice) * item.quantity);
     }, 0);
+    
   }, [cartItems]);
 
   // Calculate totalCost

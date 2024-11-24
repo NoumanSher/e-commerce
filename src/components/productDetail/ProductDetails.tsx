@@ -48,7 +48,6 @@ const ProductInfo: React.FC<ProductDetailsProps> = ({ product }) => {
   const router = useRouter();
 
   useEffect(() => {
-    
     if (stock) {
       SetAvailabelStock(stock < 0 ? 0 : stock);
     }
@@ -59,7 +58,6 @@ const ProductInfo: React.FC<ProductDetailsProps> = ({ product }) => {
 
   useEffect(() => {
     if (selectedColor && selectedSize) {
-      
       const colorSize = `${selectedColor.trim()}-${selectedSize}`;
       const selectVariat = variants?.find((item) => item.name === colorSize);
       //
@@ -73,13 +71,9 @@ const ProductInfo: React.FC<ProductDetailsProps> = ({ product }) => {
       SetExtraCost(selectVariat?.additionalSalePrice ?? 0);
       SetProductPrice(salePrice + extraCost);
     }
-  }, [ selectedColor,
-    selectedSize,
-    extraCost,
-    ]);
+  }, [selectedColor, selectedSize, extraCost]);
   const handleAddToCart = useCallback(() => {
     if (isVariant) {
-      
       const colorSize = `${selectedColor.trim()}-${selectedSize}`;
       const selectVariat = variants?.find((item) => item.name === colorSize);
       const isColorMissing = !selectedColor;
@@ -155,7 +149,7 @@ const ProductInfo: React.FC<ProductDetailsProps> = ({ product }) => {
 
       <div className="flex md:items-center justify-between md:justify-normal mt-4 gap-x-4 mb-5">
         <QuantitySelector
-        className="h-14"
+          className="h-14"
           quantity={
             selectedQuantity > availableStock
               ? availableStock
@@ -188,7 +182,12 @@ const ProductInfo: React.FC<ProductDetailsProps> = ({ product }) => {
       <Tabs />
 
       <div className="flex justify-center mt-5">
-        <CheckOutBtn availableStock={availableStock} className="!w-[100%]" onClick={handleCheckout} selectedQuantity={selectedQuantity} />
+        <CheckOutBtn
+          availableStock={availableStock}
+          className="!w-[100%]"
+          onClick={handleCheckout}
+          selectedQuantity={selectedQuantity}
+        />
       </div>
     </div>
   );
