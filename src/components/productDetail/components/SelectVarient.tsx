@@ -31,6 +31,7 @@ const SelectColorAndSize: React.FC<SelectVarientProps> = React.memo(
   }) => {
     const handleChangeColor = useCallback(
       (e: string) => {
+        
         setSelectedColor(e ?? "");
         setValidation((prev) => ({ ...prev, colorRequired: false }));
       },

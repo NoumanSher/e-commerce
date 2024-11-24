@@ -5,13 +5,16 @@ import { MdOutlineShoppingBag } from "react-icons/md";
 import { useWishlist } from "../hooks/useWishlist";
 import { ProductCardDataProps } from "@/data/dataProps";
 import { HeartIcon } from "@/assets/svg/common";
-
+import { useCart } from "../hooks/useCart";
+import { useRouter } from "next/navigation";
 interface ICardHover {
   isHovered: boolean;
-  product?: ProductCardDataProps;
+  product: ProductCardDataProps;
 }
 const CardHover = ({ isHovered, product }: ICardHover) => {
   const { setIsCartOpen } = useStore();
+  const router = useRouter();
+  const { addToCart } = useCart();
   const { isInWishlist, removeFromWishlist, addToWishlist } = useWishlist();
   const [isTrue, setIsTrue] = useState(false);
 
@@ -21,9 +24,26 @@ const CardHover = ({ isHovered, product }: ICardHover) => {
     }
   }, [product, isInWishlist]);
 
-  const handleAddToCart = (e: { stopPropagation: () => void }) => {
-    e.stopPropagation();
-    setIsCartOpen(true);
+  const handleAddToCart = (
+    e: React.MouseEvent<HTMLDivElement>, // Use the correct type for the event
+    isVariant: boolean
+  ) => {
+    // if (!product) {
+    //   return;
+    // }
+    e.stopPropagation(); // Prevent event bubbling
+
+    if (isVariant) {
+      // Redirect to product details page if the product has variants
+      router.push(`/pages/product-detail?product-id=${product._id}`);
+    } else {
+      // Add product to cart
+      addToCart({ product, quantity: 1 });
+
+      setTimeout(() => {
+        setIsCartOpen(true);
+      }, 2000);
+    }
   };
 
   const handleAddToWishlist = (e: { stopPropagation: () => void }) => {
@@ -46,7 +66,7 @@ const CardHover = ({ isHovered, product }: ICardHover) => {
         }`}
       >
         <div
-          onClick={handleAddToCart}
+          onClick={(e) => handleAddToCart(e, product?.isVariant)}
           className="w-[40px] h-[40px] cursor-pointer rounded-[50%] bg-white flex justify-center items-center"
         >
           <MdOutlineShoppingBag />
@@ -58,11 +78,11 @@ const CardHover = ({ isHovered, product }: ICardHover) => {
           onClick={isTrue ? handleRemoveFromWishlist : handleAddToWishlist}
           className="unselectable w-[40px] h-[40px] cursor-pointer rounded-[50%] bg-white flex justify-center items-center"
         >
-          {isTrue ? "❤️" : <HeartIcon className="h-[17px] w-[17px]"  />}
+          {isTrue ? "❤️" : <HeartIcon className="h-[17px] w-[17px]" />}
         </div>
       </div>
     </div>
   );
 };
 
-export default memo(CardHover); 
+export default memo(CardHover);

@@ -6,8 +6,7 @@ import { useCart } from "../hooks/useCart";
 import { toast } from "react-toastify";
 
 const ProductTable: React.FC = () => {
-  const { removeFromCart, cartItems, getSubTotalByProductId, updateItemQuantity } =
-    useCart();
+  const { removeFromCart, cartItems, updateItemQuantity } = useCart();
   const handleQuantityChange = (
     productId: string,
     quantity: number,
@@ -51,6 +50,9 @@ const ProductTable: React.FC = () => {
             const selectedVariant = item.product.variants?.find(
               (varient) => varient._id === item.variantID
             );
+            const basePrice = item.product.salePrice;
+            const extaPrice = selectedVariant?.additionalSalePrice || 0;
+            const finalPrice = basePrice + extaPrice;
             return (
               <tr key={item.product._id} className="border-b border-gray-200">
                 <td className="py-4">
@@ -63,9 +65,7 @@ const ProductTable: React.FC = () => {
                 <td className="py-4 text-gray-700">
                   {item.product.productName}
                 </td>
-                <td className="py-4 text-gray-700">
-                  ${item.product.salePrice.toFixed(2)}
-                </td>
+                <td className="py-4 text-gray-700">${finalPrice.toFixed(1)}</td>
                 <td className="py-4">
                   <QuantitySelector
                     className="h-14"
@@ -84,10 +84,14 @@ const ProductTable: React.FC = () => {
                     }
                   />
                 </td>
-                <td className="py-4 text-gray-700">${getSubTotalByProductId(item.product._id,item.quantity,item.product.salePrice).toFixed(1)}</td>
+                <td className="py-4 text-gray-700">
+                  ${finalPrice * item.quantity}
+                </td>
                 <td
                   className="py-4 text-gray-700 cursor-pointer"
-                  onClick={() => removeFromCart(item.product._id)}
+                  onClick={() =>
+                    removeFromCart(item.product._id, item.variantID)
+                  }
                 >
                   ×
                 </td>
@@ -100,9 +104,12 @@ const ProductTable: React.FC = () => {
       {/* Compact Column View for Mobile Screens */}
       <div className="block md:hidden space-y-6">
         {cartItems.map((item) => {
-           const selectedVariant = item.product.variants?.find(
+          const selectedVariant = item.product.variants?.find(
             (varient) => varient._id === item.variantID
           );
+          const basePrice = item.product.salePrice;
+          const extaPrice = selectedVariant?.additionalSalePrice || 0;
+          const finalPrice = basePrice + extaPrice;
           return (
             <div
               key={item.product._id}
@@ -120,7 +127,12 @@ const ProductTable: React.FC = () => {
                     {item.product.productName}
                   </p>
                 </div>
-                <button className="text-red-500 ml-4">
+                <button
+                  className="text-red-500 ml-4"
+                  onClick={() =>
+                    removeFromCart(item.product._id, item.variantID)
+                  }
+                >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     fill="none"
@@ -140,7 +152,7 @@ const ProductTable: React.FC = () => {
 
               {/* Row with price, quantity selector, and total */}
               <div className="flex items-center justify-between">
-                <span className="text-gray-700">{item.product.salePrice}</span>
+                <span className="text-gray-700">{finalPrice.toFixed(0)}</span>
                 <QuantitySelector
                   quantity={item.quantity}
                   stock={
@@ -157,7 +169,9 @@ const ProductTable: React.FC = () => {
                   }
                   className="flex items-center !w-24"
                 />
-                <span className="text-gray-700 font-semibold">{getSubTotalByProductId(item.product._id,item.quantity,item.product.salePrice).toFixed(1)}</span>
+                <span className="text-gray-700 font-semibold">
+                  {(finalPrice * item.quantity).toFixed(0)}
+                </span>
               </div>
             </div>
           );

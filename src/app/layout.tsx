@@ -4,6 +4,8 @@ import "./globals.css";
 import Navbar from "@/components/Nav";
 import Footer from "@/components/Footer/footer";
 import StoreTypeProviderWrapper from "@/Context/StoreTypeProviderWrapper";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 // const jost = Jost({ subsets: ["latin"] }); // Load the Jost font
 
@@ -26,9 +28,13 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={jost.className}>
-        {" "}
-        {/* Apply Jost font class */}
+    
         <StoreTypeProviderWrapper>
+          <ToastContainer
+            autoClose={1000}
+            theme="colored"
+            position="top-right"
+          />
           <Navbar />
           {children}
           <Footer />

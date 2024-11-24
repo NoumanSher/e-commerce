@@ -2,6 +2,7 @@
 import React, { useState } from "react";
 import ShoppingCart from "../../shoppingCartModal";
 import { useStore } from "@/Context/storeContext";
+import { useCart } from "@/components/hooks/useCart";
 interface Product {
   id: number;
   productImageUrl: string;
@@ -17,6 +18,7 @@ interface Product {
 
 const ShoppingCartModal: React.FC = () => {
   const { setIsCartOpen, isCartOpen } = useStore();
+  const { cartItems } = useCart();
 
   const products: Product[] = [
     {
@@ -81,7 +83,6 @@ const ShoppingCartModal: React.FC = () => {
     <ShoppingCart
       isOpen={isCartOpen}
       onClose={() => setIsCartOpen(false)}
-      products={products}
     />
   );
 };

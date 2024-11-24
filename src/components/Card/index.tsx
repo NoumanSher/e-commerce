@@ -33,7 +33,7 @@ const MainCard = ({ item }: MainCardProps) => {
       <div
         className=" mb-6 xl:mb-12   px-2  md:px-4"
         onClick={() =>
-          router.push(`/pages/productDetail?product-id=${item._id}`)
+          router.push(`/pages/product-detail?product-id=${item._id}`)
         }
       >
         <div className="">
@@ -57,7 +57,7 @@ const MainCard = ({ item }: MainCardProps) => {
               </div>
             )}
 
-            {item.isSale && (
+            {item.isSale && ( 
               <div className="bg-black absolute top-0 mx-[8px] mt-[8px] py-[7px] px-[10px] ">
                 <h1 className="uppercase text-white text-[12px] leading-[1.25em] font-normal ">
                   sale

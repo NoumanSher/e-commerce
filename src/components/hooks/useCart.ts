@@ -1,6 +1,7 @@
-import { useState, useCallback, useMemo, useEffect } from 'react';
-import { ProductCardDataProps } from '@/data/dataProps';
-import { useStore } from '@/Context/storeContext';
+import { useCallback, useMemo } from "react";
+import { useStore } from "@/Context/storeContext";
+import { toast } from "react-toastify";
+import { ProductCardDataProps } from "@/data/dataProps";
 
 // Define interfaces
 interface CartItem {
@@ -11,57 +12,113 @@ interface CartItem {
   variantID?: string;
 }
 
-
-
-
-
 // useCart Hook
 export const useCart = () => {
   const { cartItems, setCartItems } = useStore();
 
-  // Synchronize cart with localStorage
+  // Helper function: Validate quantity
+  const validateQuantity = (quantity: number) => {
+    if (quantity <= 0) {
+      toast.error("Quantity must be greater than zero.");
+      return false;
+    }
+    return true;
+  };
 
-
-  // Add an item to the cart
   const addToCart = useCallback(
     (item: CartItem) => {
+      debugger
+      const { product, quantity, size, color } = item;
+  
+      if (!validateQuantity(quantity)) return;
+  
+      // Check if the product has variants
+      if (product.isVariant) {
+        // Find the matching variant based on color and size
+        const matchingVariant = product.variants?.find(
+          (variant) =>
+            variant.attributes.color === color && variant.attributes.size === size
+        );
+  
+        if (!matchingVariant) {
+          toast.error("Selected color and size combination is not available.");
+          return;
+        }
+  
+        // Update the item with the matching variant's details
+        item.variantID = matchingVariant._id;
+        item.product = {
+          ...product,
+          stock: matchingVariant.stock, // Use the variant's stock
+        };
+      }
+  
+      // Validate stock
+      const availableStock = item.variantID
+        ? item.product.stock || 0
+        : product.stock || 0;
+  
+      if (quantity > availableStock) {
+        toast.error(
+          `Only ${availableStock} item(s) available for ${
+            product.productName || "this product"
+          }`
+        );
+        return;
+      }
+  
       setCartItems((prevItems) => {
         const existingItemIndex = prevItems.findIndex(
           (cartItem) =>
-            cartItem.product._id === item.product._id &&
-            cartItem.color === item.color &&
-            cartItem.size === item.size &&
+            cartItem.product._id === product._id &&
+            cartItem.color === color &&
+            cartItem.size === size &&
             cartItem.variantID === item.variantID
         );
-
+  
         if (existingItemIndex >= 0) {
           const updatedItems = [...prevItems];
-          updatedItems[existingItemIndex].quantity += item.quantity;
+          const existingItem = updatedItems[existingItemIndex];
+  
+          if (existingItem.quantity + quantity > availableStock) {
+            toast.error(
+              `Only ${
+                availableStock - existingItem.quantity
+              } more item(s) can be added for ${
+                product.productName || "this product"
+              }`
+            );
+            return updatedItems;
+          }
+  
+          updatedItems[existingItemIndex].quantity += quantity;
+          toast.success("Cart updated successfully!");
           return updatedItems;
         }
-
+  
+        toast.success("Item added to cart!");
         return [...prevItems, item];
       });
     },
-    []
+    [setCartItems]
   );
 
   // Update the quantity of an item
   const updateItemQuantity = useCallback(
     (productID: string, quantity: number, variantID?: string) => {
-      setCartItems((prevItems) => {
-        return prevItems.map((item) => {
-          if (
-            item.product._id === productID &&
-            (!variantID || item.variantID === variantID)
-          ) {
-            return { ...item, quantity };
-          }
-          return item;
-        });
-      });
+      if (!validateQuantity(quantity)) return;
+
+      setCartItems((prevItems) =>
+        prevItems.map((item) =>
+          item.product._id === productID &&
+          (!variantID || item.variantID === variantID)
+            ? { ...item, quantity }
+            : item
+        )
+      );
+      toast.success("Quantity updated successfully!");
     },
-    []
+    [setCartItems]
   );
 
   // Remove an item from the cart
@@ -74,38 +131,31 @@ export const useCart = () => {
             (variantID && item.variantID !== variantID)
         )
       );
+      toast.info("Item removed from cart.");
     },
-    []
+    [setCartItems]
   );
 
   // Clear all items from the cart
   const clearCart = useCallback(() => {
     setCartItems([]);
-  }, []);
+    toast.info("Cart cleared.");
+  }, [setCartItems]);
 
   // Calculate subTotal
   const subTotal = useMemo(() => {
     return cartItems.reduce((total, item) => {
-      const productPrice = item.product.salePrice;
-      return total + productPrice * item.quantity;
+      const basePrice = item.product.salePrice || 0;
+
+      // Handle variants
+      const variant = item.variantID
+        ? item.product.variants?.find((v) => v._id === item.variantID)
+        : null;
+      const additionalSalePrice = variant?.additionalSalePrice || 0;
+
+      return total + (basePrice + additionalSalePrice) * item.quantity;
     }, 0);
   }, [cartItems]);
-  const getSubTotalByProductId = useCallback(
-    (productID: string, quantity: number, salePrice: number): number => {
-      const productItems = cartItems.filter((item) => item.product._id === productID);
-  
-      // If the product exists in the cart, calculate subtotal based on quantity and salePrice
-      if (productItems.length > 0) {
-        const totalQuantity = productItems.reduce((acc, item) => acc + item.quantity, 0);
-        return salePrice * totalQuantity;
-      }
-  
-      // If the product isn't in the cart, calculate subtotal for the provided quantity and salePrice
-      return salePrice * quantity;
-    },
-    [cartItems]
-  );
-  
 
   // Calculate totalCost
   const totalCost = useMemo(() => subTotal, [subTotal]);
@@ -114,11 +164,10 @@ export const useCart = () => {
     cartItems,
     cartCount: cartItems.length,
     addToCart,
-    updateItemQuantity, // New function
+    updateItemQuantity,
     removeFromCart,
     clearCart,
     subTotal,
     totalCost,
-    getSubTotalByProductId
   };
 };

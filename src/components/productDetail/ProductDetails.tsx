@@ -1,5 +1,5 @@
 "use client";
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import QuantitySelector from "@/components/productDetail/components/QuantitySelector";
 import SelectColorAndSize from "./components/SelectVarient";
@@ -24,19 +24,64 @@ interface ProductDetailsProps {
 
 const ProductInfo: React.FC<ProductDetailsProps> = ({ product }) => {
   const { addToCart } = useCart();
-  const { productName, salePrice, description, options, isVariant ,stock} = product;
+  const {
+    productName,
+    salePrice,
+    description,
+    options,
+    isVariant,
+    stock,
+    variants,
+  } = product;
 
-  const [quantity, setQuantity] = useState(1);
   const [selectedColor, setSelectedColor] = useState("");
   const [selectedSize, setSelectedSize] = useState("");
+  const [availableStock, SetAvailabelStock] = useState<number>(0);
+  const [extraCost, SetExtraCost] = useState<number>(0);
+  const [selectedQuantity, setSelectedQuantity] = useState(1);
+  const [productPrice, SetProductPrice] = useState<number>(0);
+
   const [validation, setValidation] = useState({
     colorRequired: false,
     sizeRequired: false,
   });
   const router = useRouter();
-  // Handle Add to Cart logic
+
+  useEffect(() => {
+    
+    if (stock) {
+      SetAvailabelStock(stock < 0 ? 0 : stock);
+    }
+    if (salePrice) {
+      SetProductPrice(salePrice);
+    }
+  }, [salePrice, stock]);
+
+  useEffect(() => {
+    if (selectedColor && selectedSize) {
+      
+      const colorSize = `${selectedColor.trim()}-${selectedSize}`;
+      const selectVariat = variants?.find((item) => item.name === colorSize);
+      //
+
+      SetAvailabelStock(
+        selectVariat?.stock !== undefined && selectVariat.stock > 0
+          ? selectVariat.stock
+          : 0
+      );
+
+      SetExtraCost(selectVariat?.additionalSalePrice ?? 0);
+      SetProductPrice(salePrice + extraCost);
+    }
+  }, [ selectedColor,
+    selectedSize,
+    extraCost,
+    ]);
   const handleAddToCart = useCallback(() => {
     if (isVariant) {
+      
+      const colorSize = `${selectedColor.trim()}-${selectedSize}`;
+      const selectVariat = variants?.find((item) => item.name === colorSize);
       const isColorMissing = !selectedColor;
       const isSizeMissing = !selectedSize;
 
@@ -48,14 +93,20 @@ const ProductInfo: React.FC<ProductDetailsProps> = ({ product }) => {
         }));
         return;
       }
+      addToCart({
+        product,
+        quantity: selectedQuantity,
+        variantID: selectVariat?._id,
+        color: selectedColor.trim(),
+        size: selectedSize,
+      });
+    } else {
+      addToCart({ product, quantity: selectedQuantity });
     }
-    addToCart({ product, quantity: 1 });
-
   }, [selectedColor, selectedSize]);
 
   // Handle Checkout logic
   const handleCheckout = useCallback(() => {
-    debugger;
     if (isVariant) {
       const isColorMissing = !selectedColor;
       const isSizeMissing = !selectedSize;
@@ -76,12 +127,19 @@ const ProductInfo: React.FC<ProductDetailsProps> = ({ product }) => {
 
   const colors = options ? options[1]?.values ?? [] : [];
   const sizes = options ? options[0]?.values ?? [] : [];
+  const handleQuantityChange = (quantity: number) => {
+    if (quantity < 0) {
+      setSelectedQuantity(0);
+      SetAvailabelStock(0);
+    }
+    setSelectedQuantity(quantity);
+  };
   return (
     <div className="lg:px-8 pt-2 lg:w-[40%]  w-full">
       <Breadcrumb />
       <ProductBasicInfo
         title={productName}
-        price={Number(salePrice)}
+        price={Number(productPrice)}
         description={description}
       />
       {colors.length > 0 && (
@@ -96,13 +154,16 @@ const ProductInfo: React.FC<ProductDetailsProps> = ({ product }) => {
       )}
 
       <div className="flex md:items-center justify-between md:justify-normal mt-4 gap-x-4 mb-5">
-        {/* <QuantitySelector
-          quantity={quantity}
-          setQuantity={setQuantity}
-          className="h-14"
-          stock={stock}
-          
-        /> */}
+        <QuantitySelector
+        className="h-14"
+          quantity={
+            selectedQuantity > availableStock
+              ? availableStock
+              : selectedQuantity
+          }
+          stock={availableStock}
+          onQuantityChange={handleQuantityChange}
+        />
         <Button
           onClick={handleAddToCart}
           className="rounded-none shadow-none bg-opacity-95 bg-black border-0 h-14 w-[50%] uppercase py-3 transition-all duration-500 hover:bg-white group hover:border border-black"
@@ -127,7 +188,7 @@ const ProductInfo: React.FC<ProductDetailsProps> = ({ product }) => {
       <Tabs />
 
       <div className="flex justify-center mt-5">
-        <CheckOutBtn className="!w-[100%]" onClick={handleCheckout} />
+        <CheckOutBtn availableStock={availableStock} className="!w-[100%]" onClick={handleCheckout} selectedQuantity={selectedQuantity} />
       </div>
     </div>
   );

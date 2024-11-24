@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 
 interface QuantitySelectorProps {
@@ -13,10 +13,13 @@ const QuantitySelector: React.FC<QuantitySelectorProps> = ({
   quantity,
   className,
   onQuantityChange,
-  stock
+  stock,
 }) => {
+  
   const [currentQuantity, setCurrentQuantity] = useState(quantity);
-
+  useEffect(() => {
+    setCurrentQuantity(quantity);
+  }, [quantity]);
   const handleIncrement = () => {
     setCurrentQuantity((prevQuantity) => {
       const newQuantity = prevQuantity + 1;
@@ -47,14 +50,27 @@ const QuantitySelector: React.FC<QuantitySelectorProps> = ({
     >
       <button
         onClick={handleDecrement}
-        className="rounded text-gray-400 hover:text-rose-800 transition-colors duration-200"
+        className="rounded text-gray-400  hover:text-rose-800 transition-colors duration-200"
+        disabled={currentQuantity === 1 || currentQuantity === 0} // Disable decrement button when quantity is 0
+        style={{
+          cursor: currentQuantity === 0 ? "not-allowed" : "pointer",
+          opacity: currentQuantity === 0 ? 0.5 : 1,
+        }}
       >
-        -
+           <b>--</b>
       </button>
       <span className="font-medium text-gray-400">{currentQuantity}</span>
       <button
         onClick={handleIncrement}
         className="rounded text-gray-400 hover:text-rose-800 transition-colors duration-200"
+        disabled={stock !== undefined && currentQuantity >= stock} // Disable increment button when quantity reaches stock limit
+        style={{
+          cursor:
+            stock !== undefined && currentQuantity >= stock
+              ? "not-allowed"
+              : "pointer",
+          opacity: stock !== undefined && currentQuantity >= stock ? 0.5 : 1,
+        }}
       >
         +
       </button>
@@ -62,6 +78,5 @@ const QuantitySelector: React.FC<QuantitySelectorProps> = ({
   );
 };
 QuantitySelector.displayName = "QuantitySelector";
-
 
 export default React.memo(QuantitySelector);

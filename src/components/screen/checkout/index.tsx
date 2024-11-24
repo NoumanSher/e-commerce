@@ -38,7 +38,7 @@ export default function Checkout({checkValidation}:CheckoutProps) {
       }}
       validationSchema={CheckoutSchema}
       onSubmit={(values) => {
-        debugger
+        
         console.log("Form submitted with values:", values);
         checkValidation()
       }}
