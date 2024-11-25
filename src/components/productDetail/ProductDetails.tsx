@@ -133,6 +133,7 @@ const ProductInfo: React.FC<ProductDetailsProps> = ({ product }) => {
       <Breadcrumb />
       <ProductBasicInfo
         title={productName}
+        stockAvailability={availableStock}
         price={Number(productPrice)}
         description={description}
       />
