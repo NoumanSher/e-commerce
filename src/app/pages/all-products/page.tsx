@@ -1,4 +1,5 @@
 import React, { Suspense, lazy } from "react";
+
 const ProductsCard = lazy(
   () => import("@/components/Trending/components/ProductsCard")
 );

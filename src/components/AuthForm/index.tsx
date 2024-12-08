@@ -11,7 +11,7 @@ interface AuthFormProps {
   formType: 'login' | 'register'; // Define allowed values
   initialValues: { [key: string]: any }; // Shape of the form's initial values
   validationSchema: Yup.ObjectSchema<any>; // Validation schema from Yup
-  onSubmit: (values: { [key: string]: any }) => void; // Function to handle form submission
+  onSubmit: any; // write correct type
   buttonText: string; // Text for the submit button
   fields: FormField[]; // Array of form fields to render
 }

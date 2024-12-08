@@ -46,7 +46,7 @@ const Navbar = () => {
   }, [isMobile]);
 
   const handleClickProfile = () => {
-    router.push("/pages/profile");
+    router.push("/pages/login");
   };
 
   return (

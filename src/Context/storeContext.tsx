@@ -9,6 +9,7 @@ import {
   useMemo,
 } from "react";
 import { ProductCardDataProps } from "@/data/dataProps";
+import { boolean } from "yup";
 
 interface CartItem {
   product: ProductCardDataProps;
@@ -20,9 +21,11 @@ interface CartItem {
 
 interface StoreContextProps {
   isCartOpen: boolean;
+  isLogIn: boolean;
   wishlist: ProductCardDataProps[];
   cartItems: CartItem[];
   setIsCartOpen: (value: boolean) => void;
+  setIsLogIn: (value: boolean) => void;
   setWishlist: Dispatch<SetStateAction<ProductCardDataProps[]>>;
   setCartItems: Dispatch<SetStateAction<CartItem[]>>;
 }
@@ -49,6 +52,17 @@ const saveCartToStorage = (cart: CartItem[]) => {
     }
   }
 };
+
+type token = string | boolean;
+const saveTokenToStorage = (token: token) => {
+  if (typeof window !== "undefined") {
+    try {
+      localStorage.setItem("token", String(token));
+    } catch {
+      console.warn("Failed to save token to localStorage.");
+    }
+  }
+};
 const getInitialWishlist = (): ProductCardDataProps[] => {
   if (typeof window !== "undefined") {
     const savedWishlist = localStorage.getItem("wishlist");
@@ -56,9 +70,17 @@ const getInitialWishlist = (): ProductCardDataProps[] => {
   }
   return [];
 };
+const getIsLogIn = (): boolean => {
+  if (typeof window !== "undefined") {
+    const isLogIn = localStorage.getItem("token");
+    return isLogIn ? Boolean(isLogIn) : false;
+  }
+  return false;
+};
 
 export const StoreProvider = ({ children }: { children: ReactNode }) => {
   const [isCartOpen, setIsCartOpen] = useState(false);
+  const [isLogIn, setIsLogIn] = useState(getIsLogIn);
   const [wishlist, setWishlist] =
     useState<ProductCardDataProps[]>(getInitialWishlist);
   const [cartItems, setCartItems] = useState<CartItem[]>(getCartFromStorage);
@@ -66,6 +88,9 @@ export const StoreProvider = ({ children }: { children: ReactNode }) => {
   useEffect(() => {
     saveCartToStorage(cartItems);
   }, [cartItems]);
+  useEffect(() => {
+    saveTokenToStorage(isLogIn);
+  }, [isLogIn]);
   useEffect(() => {
     if (typeof window !== "undefined") {
       localStorage.setItem("wishlist", JSON.stringify(wishlist));
@@ -80,8 +105,10 @@ export const StoreProvider = ({ children }: { children: ReactNode }) => {
       setWishlist,
       cartItems,
       setCartItems,
+      setIsLogIn,
+      isLogIn,
     }),
-    [isCartOpen, wishlist,cartItems]
+    [isCartOpen, wishlist, cartItems]
   );
 
   return (
