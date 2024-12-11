@@ -24,6 +24,6 @@ export interface RegisterResponse {
   
 export const registerUser = async (payload: RegisterPayload):Promise<RegisterResponse> => {
     debugger
-  const response = await axios.post(`${BASE_URL}/auth/register-user`, payload);
-  return response.data;
+  const {data} = await axios.post(`${BASE_URL}/auth/register-user`, payload);
+  return data;
 };
