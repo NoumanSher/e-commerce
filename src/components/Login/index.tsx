@@ -2,7 +2,10 @@
 import React from "react";
 import AuthForm from "@/components/AuthForm";
 import * as Yup from "yup";
+import { LogInPayload } from "./service";
+import { useLogIn } from "./query";
 export default function LoginForm() {
+  const { mutate, isPending } = useLogIn();
   const LoginSchema = Yup.object().shape({
     email: Yup.string()
       .email("Invalid email address")
@@ -11,13 +14,19 @@ export default function LoginForm() {
       .min(6, "Password must be at least 6 characters")
       .required("Password is required"),
   });
+  const handleSubmit = (values: LogInPayload) => {
+    debugger
+    console.log(values);
+    mutate(values);
+  };
   return (
     <AuthForm
       formType="login"
       initialValues={{ email: "", password: "", rememberMe: false }}
       validationSchema={LoginSchema}
-      onSubmit={(values) => console.log(values)}
-      buttonText="LOG IN"
+      onSubmit={handleSubmit}
+      isLoading={isPending}
+      buttonText={isPending ? 'LOg IN...' :"LOG IN"}
       fields={[
         { name: "email", type: "text", placeholder: "User or Email" },
         { name: "password", type: "password", placeholder: "Password" },

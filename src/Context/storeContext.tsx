@@ -9,7 +9,6 @@ import {
   useMemo,
 } from "react";
 import { ProductCardDataProps } from "@/data/dataProps";
-import { boolean } from "yup";
 
 interface CartItem {
   product: ProductCardDataProps;
@@ -21,11 +20,11 @@ interface CartItem {
 
 interface StoreContextProps {
   isCartOpen: boolean;
-  isLogIn: boolean;
+  isLogIn: string;
   wishlist: ProductCardDataProps[];
   cartItems: CartItem[];
   setIsCartOpen: (value: boolean) => void;
-  setIsLogIn: (value: boolean) => void;
+  setIsLogIn: (value: string) => void;
   setWishlist: Dispatch<SetStateAction<ProductCardDataProps[]>>;
   setCartItems: Dispatch<SetStateAction<CartItem[]>>;
 }
@@ -53,10 +52,10 @@ const saveCartToStorage = (cart: CartItem[]) => {
   }
 };
 
-type token = string | boolean;
-const saveTokenToStorage = (token: token) => {
+const saveTokenToStorage = (token: string) => {
   if (typeof window !== "undefined") {
     try {
+      debugger
       localStorage.setItem("token", String(token));
     } catch {
       console.warn("Failed to save token to localStorage.");
@@ -70,12 +69,12 @@ const getInitialWishlist = (): ProductCardDataProps[] => {
   }
   return [];
 };
-const getIsLogIn = (): boolean => {
+const getIsLogIn = (): string => {
   if (typeof window !== "undefined") {
     const isLogIn = localStorage.getItem("token");
-    return isLogIn ? Boolean(isLogIn) : false;
+    return isLogIn ? isLogIn : '';
   }
-  return false;
+  return '';
 };
 
 export const StoreProvider = ({ children }: { children: ReactNode }) => {
@@ -89,8 +88,9 @@ export const StoreProvider = ({ children }: { children: ReactNode }) => {
     saveCartToStorage(cartItems);
   }, [cartItems]);
   useEffect(() => {
+    debugger
     saveTokenToStorage(isLogIn);
-  }, [isLogIn]);
+  }, [setIsLogIn,isLogIn]);
   useEffect(() => {
     if (typeof window !== "undefined") {
       localStorage.setItem("wishlist", JSON.stringify(wishlist));

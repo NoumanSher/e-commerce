@@ -29,6 +29,7 @@ interface AuthFormProps {
   validationSchema: Yup.ObjectSchema<any>;
   onSubmit: any; // Correct onSubmit type
   buttonText: string;
+  isLoading: boolean;
   fields: FormField[];
 }
 
@@ -39,6 +40,7 @@ const AuthForm: React.FC<AuthFormProps> = ({
   onSubmit,
   buttonText,
   fields,
+  isLoading
 }) => {
   const router = useRouter();
 
@@ -78,7 +80,7 @@ const AuthForm: React.FC<AuthFormProps> = ({
               <div className="mb-4">
                 <button
                   type="submit"
-                  disabled={isSubmitting}
+                  disabled={isLoading}
                   className="w-full py-2 h-16 px-4 border border-transparent text-sm font-medium text-white bg-black hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
                 >
                   {buttonText}

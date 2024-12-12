@@ -13,23 +13,22 @@ const RegisterSchema = Yup.object().shape({
   mobilePhone: Yup.string()
     .matches(/^\+92\d{9,10}$/, "Phone number must start with +92 and be valid")
     .required("Phone number is required"),
-  password: Yup.string().required("Password is required"),
+  password: Yup.string()
+    .required("Password is required")
+    .min(6, "Password must be at least 6 characters"),
   confirmPassword: Yup.string()
     .oneOf([Yup.ref("password")], "Passwords must match")
-    .required("Confirm Password is required"),
+    .required("Confirm Password is required")
+    .min(6, "Password must be at least 6 characters"),
 });
 
 export default function Register() {
-  const { mutate, isPending,data ,error} = useRegister();
+  const { mutate, isPending } = useRegister();
 
   const handleSubmit = (values: RegisterPayload) => {
-    console.log(values);
     mutate(values);
   };
 
-  if(error) return
-console.log(data)
-console.log(error)
   return (
     <AuthForm
       formType="register"
@@ -42,6 +41,7 @@ console.log(error)
       }}
       validationSchema={RegisterSchema}
       onSubmit={handleSubmit}
+      isLoading={isPending}
       buttonText={isPending ? "Registering..." : "REGISTER"}
       fields={[
         { name: "email", type: "email", placeholder: "Email" },

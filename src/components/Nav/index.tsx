@@ -11,9 +11,12 @@ import {
 } from "@/assets/svg/common";
 import { useWishlist } from "../hooks/useWishlist";
 import { useCart } from "../hooks/useCart";
+import { useStore } from "@/Context/storeContext";
 
 const Navbar = () => {
   const { wishlistCount } = useWishlist();
+  const {isLogIn} = useStore()
+
   const [isMobile, setIsMobile] = useState(false);
   const [searchValue, setSearchValue] = useState("");
   const [searching, setSearching] = useState(false); // To track if search results are being fetched
@@ -46,7 +49,9 @@ const Navbar = () => {
   }, [isMobile]);
 
   const handleClickProfile = () => {
-    router.push("/pages/login");
+    debugger
+    isLogIn ? router.push("/pages/profile") : router.push("/pages/login")
+    
   };
 
   return (
