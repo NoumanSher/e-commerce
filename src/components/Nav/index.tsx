@@ -49,6 +49,8 @@ const Navbar = () => {
   }, [isMobile]);
 
   const handleClickProfile = () => {
+    const isLogIn = localStorage.getItem("token");
+
     debugger
     isLogIn ? router.push("/pages/profile") : router.push("/pages/login")
     

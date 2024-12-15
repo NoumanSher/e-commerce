@@ -56,7 +56,7 @@ const saveTokenToStorage = (token: string) => {
   if (typeof window !== "undefined") {
     try {
       debugger
-      localStorage.setItem("token", String(token));
+      localStorage.setItem("token", token);
     } catch {
       console.warn("Failed to save token to localStorage.");
     }
@@ -88,9 +88,13 @@ export const StoreProvider = ({ children }: { children: ReactNode }) => {
     saveCartToStorage(cartItems);
   }, [cartItems]);
   useEffect(() => {
-    debugger
-    saveTokenToStorage(isLogIn);
-  }, [setIsLogIn,isLogIn]);
+    if (isLogIn) {
+      saveTokenToStorage(isLogIn); // Save token if logged in
+    } else {
+      localStorage.removeItem("token"); // Clear token if logged out
+    }
+  }, [isLogIn]);
+  
   useEffect(() => {
     if (typeof window !== "undefined") {
       localStorage.setItem("wishlist", JSON.stringify(wishlist));
