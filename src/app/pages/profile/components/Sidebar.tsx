@@ -11,8 +11,7 @@ const Sidebar: React.FC = () => {
 
   const handleLogout = () => {
     debugger
-    localStorage.setItem("token", '');
-    // setIsLogIn(''); // Clear login state
+    setIsLogIn(''); // Clear login state
     router.push('/'); // Redirect to home page
   };
 

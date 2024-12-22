@@ -1,7 +1,13 @@
-import React, { memo, useMemo } from "react";
+'use client'
+import React, { memo } from "react";
+import { useCategories } from "@/hooks/useCategories";
 
 const ProductsCatgories = () => {
-  const catgoriesProducts = useMemo(() => ["all", "women", "men", "kids"], []);
+  const { data, isLoading, error } = useCategories();
+
+  if (isLoading) return <div>Loading...</div>;
+  if (error) return <div>Error loading categories</div>;
+
   return (
     <div>
       <div>
@@ -11,13 +17,13 @@ const ProductsCatgories = () => {
       </div>
       <div className="xl:mt-8">
         <ul className="flex flex-wrap justify-center mb-[1rem] mt-2">
-          {catgoriesProducts.map((item, index) => (
-            <li key={index}>
+          {data?.categories?.slice(0,4).map((item) => (
+            <li key={item._id}>
               <a
                 href="#"
-                className="nav-link mx-[25px]  mt-[11px] pb-[9px]   leading-[1.375em] text-[14px] xl:text-[16px] !font-medium uppercase"
+                className="nav-link mx-[25px] mt-[11px] pb-[9px] leading-[1.375em] text-[14px] xl:text-[16px] !font-medium uppercase"
               >
-                {item}
+                {item.name}
               </a>
             </li>
           ))}
@@ -26,4 +32,5 @@ const ProductsCatgories = () => {
     </div>
   );
 };
+
 export default memo(ProductsCatgories);

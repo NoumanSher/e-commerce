@@ -79,7 +79,7 @@ const getIsLogIn = (): string => {
 
 export const StoreProvider = ({ children }: { children: ReactNode }) => {
   const [isCartOpen, setIsCartOpen] = useState(false);
-  const [isLogIn, setIsLogIn] = useState(getIsLogIn);
+  const [isLogIn, setIsLogIn] = useState(getIsLogIn());
   const [wishlist, setWishlist] =
     useState<ProductCardDataProps[]>(getInitialWishlist);
   const [cartItems, setCartItems] = useState<CartItem[]>(getCartFromStorage);
@@ -112,7 +112,7 @@ export const StoreProvider = ({ children }: { children: ReactNode }) => {
       setIsLogIn,
       isLogIn,
     }),
-    [isCartOpen, wishlist, cartItems]
+    [isCartOpen, wishlist, cartItems, isLogIn]
   );
 
   return (
