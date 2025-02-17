@@ -34,12 +34,12 @@ const MainCard = ({ item }: MainCardProps) => {
   return (
     <>
       <div
-        className=" mb-6 xl:mb-12   px-2  md:px-4"
+        className=" mb-6 xl:mb-12   px-2  md:px-4 cursor-pointer"
         onClick={() =>
           router.push(`/pages/product-detail?product-id=${item.id}`)
         }
       >
-        <div className="">
+        <div className=" cursor-pointer">
           <div
             className="relative xl:h-[404px] "
             onMouseEnter={() => handleMouseEnter(item.id)}
