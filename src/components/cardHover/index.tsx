@@ -7,9 +7,10 @@ import { ProductCardDataProps } from "@/data/dataProps";
 import { HeartIcon } from "@/assets/svg/common";
 import { useCart } from "../hooks/useCart";
 import { useRouter } from "next/navigation";
+import { Product } from "@/services/productsService";
 interface ICardHover {
   isHovered: boolean;
-  product?: ProductCardDataProps;
+  product?: Product;
 }
 const CardHover = ({ isHovered, product }: ICardHover) => {
   const { setIsCartOpen } = useStore();
@@ -17,8 +18,8 @@ const CardHover = ({ isHovered, product }: ICardHover) => {
   const { addToCart } = useCart();
   const { isInWishlist, removeFromWishlist, addToWishlist } = useWishlist();
   const [isTrue, setIsTrue] = useState(false);
-  const isVariant = product?.isVariant || false;
-  const _id = product?._id;
+  const isVariant = product?.variants ? true : false;
+  const _id = product?.id;
   useEffect(() => {
     if (_id) {
       setIsTrue(isInWishlist(_id));
@@ -39,7 +40,7 @@ const CardHover = ({ isHovered, product }: ICardHover) => {
       router.push(`/pages/product-detail?product-id=${_id}`);
     } else {
       // Add product to cart
-      addToCart({ product, quantity: 1 });
+      // addToCart({ product, quantity: 1 });
 
       setTimeout(() => {
         setIsCartOpen(true);
@@ -49,12 +50,12 @@ const CardHover = ({ isHovered, product }: ICardHover) => {
 
   const handleAddToWishlist = (e: { stopPropagation: () => void }) => {
     e.stopPropagation();
-    if (product) addToWishlist(product);
+    // if (product) addToWishlist(product);
   };
 
   const handleRemoveFromWishlist = (e: any) => {
     e.stopPropagation();
-    if (product) removeFromWishlist(product?._id);
+    if (product) removeFromWishlist(product?.id);
   };
 
   return (

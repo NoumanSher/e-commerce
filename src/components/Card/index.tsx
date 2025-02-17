@@ -3,16 +3,19 @@ import { ProductCardDataProps } from "@/data/dataProps";
 import Image from "next/image";
 import React, { memo, useCallback, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
+import Banner1 from "../assets/img/grid-banner-1.jpg";
+import Banner2 from "../assets/img/grid-banner-2.jpg";
 import CardHover from "../cardHover";
+import { Product } from "@/services/productsService";
 interface MainCardProps {
-  item: ProductCardDataProps;
+  item: Product;
 }
 const MainCard = ({ item }: MainCardProps) => {
   // console.log("New Chages");
   const router = useRouter();
   const [hoveredCard, setHoveredCard] = useState<string | null>(null);
   const [selectedColor, setSelectedColor] = useState<string | null>("gray");
-  const isHovered = hoveredCard === item._id;
+  const isHovered = hoveredCard === item.id;
   // eslint-disable-next-line react-hooks/rules-of-hooks
   // const currentImage = useMemo(
   //   () => (isHovered ? item.thumbNailImage1 : item.thumbNailImage2),
@@ -33,21 +36,23 @@ const MainCard = ({ item }: MainCardProps) => {
       <div
         className=" mb-6 xl:mb-12   px-2  md:px-4"
         onClick={() =>
-          router.push(`/pages/product-detail?product-id=${item._id}`)
+          router.push(`/pages/product-detail?product-id=${item.id}`)
         }
       >
         <div className="">
           <div
-            className="relative xl:h-[404px]"
-            onMouseEnter={() => handleMouseEnter(item._id)}
+            className="relative xl:h-[404px] "
+            onMouseEnter={() => handleMouseEnter(item.id)}
             onMouseLeave={handleMouseLeave}
           >
             <Image
               priority={true}
               loading="eager"
               src={item.images[0].src}
+              width={250}
+              height={404}
               alt="Product BAnner Img"
-              className="object-cover w-full h-full transition-transform duration-700 ease-in-out transform-gpu "
+              className="object-cover  w-full h-full transition-transform duration-700 ease-in-out transform-gpu "
             />
             {item.isNew && (
               <div className="bg-white absolute top-0 mx-[8px] mt-[8px] py-[7px] px-[10px] ">
@@ -57,8 +62,8 @@ const MainCard = ({ item }: MainCardProps) => {
               </div>
             )}
 
-            {item.isSale && ( 
-              <div className="bg-black absolute top-0 mx-[8px] mt-[8px] py-[7px] px-[10px] ">
+            {item.salePrice && ( 
+              <div className={`bg-black absolute top-0 mx-[8px] mt-[8px] py-[7px] px-[10px] ${item.isNew?"top-[36px]":""} `}>
                 <h1 className="uppercase text-white text-[12px] leading-[1.25em] font-normal ">
                   sale
                 </h1>
@@ -74,9 +79,9 @@ const MainCard = ({ item }: MainCardProps) => {
             <CardHover isHovered={isHovered} product={item} />
           </div>
           <div className="mt-4">
-            <h1 className="mb-[4px] font-normal leading-[1.7143rem] text-[#767676] text-[14px]">
+            {/* <h1 className="mb-[4px] font-normal leading-[1.7143rem] text-[#767676] text-[14px]">
               {item.productCategory}
-            </h1>
+            </h1> */}
             <p className="font-normal leading-[1.2em] text-[16px]">
               {item.productName}
             </p>

@@ -3,19 +3,10 @@
     position: relative;
     display: inline-block; /* Ensure only text gets the border */
     text-decoration: none;
-    color: #767676; /* Default non-active color */
     transition: color 0.3s ease;
   }
   
-  /* Hover state */
-  .nav-link:hover {
-    color: #222222; /* Color on hover */
-  }
-  
-  /* Active state */
-  .nav-link.active {
-    color: #222222; /* Color for active link */
-  }
+
   
   /* Border-bottom animation */
   .nav-link::after {

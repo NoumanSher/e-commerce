@@ -1,12 +1,21 @@
-'use client'
-import React, { memo } from "react";
+"use client";
+import React, { memo, useEffect, useState } from "react";
 import { useCategories } from "@/hooks/useCategories";
+import { useStore } from "@/Context/storeContext";
 
-const ProductsCatgories = () => {
-  const { data, isLoading, error } = useCategories();
-
-  if (isLoading) return <div>Loading...</div>;
-  if (error) return <div>Error loading categories</div>;
+const ProductsCategories = () => {
+  const {
+    data: categoriesData,
+    isLoading: categoriesLoading,
+    error: categoriesError,
+  } = useCategories();
+  const { updateSelectedCategory, selectedCategory } = useStore();
+  useEffect(() => {
+    if (categoriesData?.categories && categoriesData.categories.length > 0) {
+      updateSelectedCategory(categoriesData.categories[0]._id);
+    }
+  }, [categoriesData]);
+  if (categoriesError) return <div>Error loading categories</div>;
 
   return (
     <div>
@@ -16,21 +25,34 @@ const ProductsCatgories = () => {
         </h1>
       </div>
       <div className="xl:mt-8">
-        <ul className="flex flex-wrap justify-center mb-[1rem] mt-2">
-          {data?.categories?.slice(0,4).map((item) => (
-            <li key={item._id}>
-              <a
-                href="#"
-                className="nav-link mx-[25px] mt-[11px] pb-[9px] leading-[1.375em] text-[14px] xl:text-[16px] !font-medium uppercase"
-              >
-                {item.name}
-              </a>
-            </li>
-          ))}
-        </ul>
+        {categoriesLoading ? (
+          <div className="flex justify-center">Loading Categories...</div>
+        ) : (
+          <ul className="flex flex-wrap justify-center mb-[1rem] mt-2">
+            {categoriesData?.categories?.slice(0, 4).map((item) => (
+              <li key={item._id}>
+                <span
+                  onClick={() => updateSelectedCategory(item._id)}
+                  className={`relative mx-[25px] text-[#767676] hover:text-black cursor-pointer mt-[11px] pb-[9px] ${
+                    selectedCategory === item._id ? "text-black font-bold" : ""
+                  } leading-[1.375em] text-[14px] xl:text-[16px] font-medium uppercase group`}
+                >
+                  {item.name}
+                  <span
+                    className={`absolute left-0 bottom-0 h-[2.5px] bg-[#222222] transition-all duration-500 ease-in-out origin-bottom-left ${
+                      selectedCategory === item._id
+                        ? "w-full scale-x-100"
+                        : "w-0 group-hover:w-full group-hover:scale-x-100 scale-x-0"
+                    }`}
+                  ></span>{" "}
+                </span>
+              </li>
+            ))}
+          </ul>
+        )}
       </div>
     </div>
   );
 };
 
-export default memo(ProductsCatgories);
+export default memo(ProductsCategories);

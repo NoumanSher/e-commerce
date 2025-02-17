@@ -6,7 +6,10 @@ import Footer from "@/components/Footer/footer";
 import StoreTypeProviderWrapper from "@/Context/StoreTypeProviderWrapper";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
+
 import Provider from "@/Context/react-query-provider";
+import { SelectedCategoryProvider } from "@/components/Trending/context/SelectedCategoryContext";
 
 // const jost = Jost({ subsets: ["latin"] }); // Load the Jost font
 
@@ -39,6 +42,7 @@ export default function RootLayout({
             <Navbar />
             {children}
             <Footer />
+            <ReactQueryDevtools initialIsOpen={false} />
           </StoreTypeProviderWrapper>
         </Provider>
       </body>

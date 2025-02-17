@@ -1,3 +1,4 @@
+"use client"
 import {
   createContext,
   useState,
@@ -20,6 +21,8 @@ interface CartItem {
 
 interface StoreContextProps {
   isCartOpen: boolean;
+  selectedCategory: string | null;
+  updateSelectedCategory: (categoryId: string) => void;
   isLogIn: string;
   wishlist: ProductCardDataProps[];
   cartItems: CartItem[];
@@ -55,7 +58,7 @@ const saveCartToStorage = (cart: CartItem[]) => {
 const saveTokenToStorage = (token: string) => {
   if (typeof window !== "undefined") {
     try {
-      debugger
+      debugger;
       localStorage.setItem("token", token);
     } catch {
       console.warn("Failed to save token to localStorage.");
@@ -72,14 +75,29 @@ const getInitialWishlist = (): ProductCardDataProps[] => {
 const getIsLogIn = (): string => {
   if (typeof window !== "undefined") {
     const isLogIn = localStorage.getItem("token");
-    return isLogIn ? isLogIn : '';
+    return isLogIn ? isLogIn : "";
   }
-  return '';
+  return "";
 };
 
 export const StoreProvider = ({ children }: { children: ReactNode }) => {
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [isLogIn, setIsLogIn] = useState(getIsLogIn());
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+
+  // Load the selected category from localStorage on initial render
+  useEffect(() => {
+    const savedCategory = localStorage.getItem("selectedCategory");
+    if (savedCategory) {
+      setSelectedCategory(savedCategory);
+    }
+  }, []);
+
+  // Function to update the selected category and store it in localStorage
+  const updateSelectedCategory = (categoryId: string) => {
+    setSelectedCategory(categoryId);
+    localStorage.setItem("selectedCategory", categoryId); // Save to localStorage
+  };
   const [wishlist, setWishlist] =
     useState<ProductCardDataProps[]>(getInitialWishlist);
   const [cartItems, setCartItems] = useState<CartItem[]>(getCartFromStorage);
@@ -94,7 +112,7 @@ export const StoreProvider = ({ children }: { children: ReactNode }) => {
       localStorage.removeItem("token"); // Clear token if logged out
     }
   }, [isLogIn]);
-  
+
   useEffect(() => {
     if (typeof window !== "undefined") {
       localStorage.setItem("wishlist", JSON.stringify(wishlist));
@@ -104,6 +122,8 @@ export const StoreProvider = ({ children }: { children: ReactNode }) => {
   const contextValue = useMemo(
     () => ({
       isCartOpen,
+      selectedCategory,
+      updateSelectedCategory,
       setIsCartOpen,
       wishlist,
       setWishlist,
@@ -112,7 +132,14 @@ export const StoreProvider = ({ children }: { children: ReactNode }) => {
       setIsLogIn,
       isLogIn,
     }),
-    [isCartOpen, wishlist, cartItems, isLogIn]
+    [
+      isCartOpen,
+      wishlist,
+      cartItems,
+      isLogIn,
+      selectedCategory,
+      updateSelectedCategory,
+    ]
   );
 
   return (

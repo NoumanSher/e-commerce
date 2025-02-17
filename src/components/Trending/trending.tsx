@@ -4,9 +4,10 @@ const TrendingMain = lazy(() => import("./components/TrendingMain"));
 export default function Trending() {
   return (
     <div>
-      <Suspense fallback={<div>Loading...</div>}>
-        <TrendingMain />
-      </Suspense>
+    
+        <Suspense fallback={<div>Loading...</div>}>
+          <TrendingMain />
+        </Suspense>
     </div>
   );
 }
