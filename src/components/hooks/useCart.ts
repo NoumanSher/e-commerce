@@ -27,24 +27,23 @@ export const useCart = () => {
 
   const addToCart = useCallback(
     (item: CartItem) => {
-      debugger
-      const { product, quantity, size, color } = item;
-  
+      debugger;
+      const { product, quantity, variantID } = item;
+
       if (!validateQuantity(quantity)) return;
-  
+
       // Check if the product has variants
       if (product.isVariant) {
         // Find the matching variant based on color and size
         const matchingVariant = product.variants?.find(
-          (variant) =>
-            variant.attributes.color === color && variant.attributes.size === size
+          (variant) => variant._id === variantID
         );
-  
+
         if (!matchingVariant) {
           toast.error("Selected color and size combination is not available.");
           return;
         }
-  
+
         // Update the item with the matching variant's details
         item.variantID = matchingVariant._id;
         item.product = {
@@ -52,12 +51,12 @@ export const useCart = () => {
           stock: matchingVariant.stock, // Use the variant's stock
         };
       }
-  
+
       // Validate stock
       const availableStock = item.variantID
         ? item.product.stock || 0
         : product.stock || 0;
-  
+
       if (quantity > availableStock) {
         toast.error(
           `Only ${availableStock} item(s) available for ${
@@ -66,36 +65,32 @@ export const useCart = () => {
         );
         return;
       }
-  
+debugger
       setCartItems((prevItems) => {
         const existingItemIndex = prevItems.findIndex(
           (cartItem) =>
             cartItem.product._id === product._id &&
-            cartItem.color === color &&
-            cartItem.size === size &&
             cartItem.variantID === item.variantID
         );
-  
+
         if (existingItemIndex >= 0) {
           const updatedItems = [...prevItems];
           const existingItem = updatedItems[existingItemIndex];
-  
+
           if (existingItem.quantity + quantity > availableStock) {
             toast.error(
-              `Only ${
-                availableStock - existingItem.quantity
-              } more item(s) can be added for ${
+              `no more item(s) can be added for ${
                 product.productName || "this product"
               }`
             );
             return updatedItems;
           }
-  
+
           updatedItems[existingItemIndex].quantity += quantity;
           toast.success("Cart updated successfully!");
           return updatedItems;
         }
-  
+
         toast.success("Item added to cart!");
         return [...prevItems, item];
       });
@@ -153,9 +148,8 @@ export const useCart = () => {
         : null;
       const additionalSalePrice = variant?.additionalSalePrice || 0;
 
-      return (total + (basePrice + additionalSalePrice) * item.quantity);
+      return total + (basePrice + additionalSalePrice) * item.quantity;
     }, 0);
-    
   }, [cartItems]);
 
   // Calculate totalCost

@@ -36,7 +36,7 @@ const MainCard = ({ item }: MainCardProps) => {
       <div
         className=" mb-6 xl:mb-12   px-2  md:px-4 cursor-pointer"
         onClick={() =>
-          router.push(`/pages/product-detail?product-id=${item.id}`)
+          router.push(`/pages/product-detail/${item.id}`)
         }
       >
         <div className=" cursor-pointer">

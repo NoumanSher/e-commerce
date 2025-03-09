@@ -6,7 +6,7 @@ import { useCart } from "../hooks/useCart";
 import { toast } from "react-toastify";
 
 const ProductTable: React.FC = () => {
-  const { removeFromCart, cartItems, updateItemQuantity } = useCart();
+  const { removeFromCart, cartItems, updateItemQuantity } = useCart(); 
   const handleQuantityChange = (
     productId: string,
     quantity: number,

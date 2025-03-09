@@ -32,6 +32,9 @@ const ProductInfo: React.FC<ProductDetailsProps> = ({ product }) => {
     isVariant,
     stock,
     variants,
+    sku,
+    parentCategoryName,
+    childCategoryName
   } = product;
 
   const [selectedColor, setSelectedColor] = useState("");
@@ -58,9 +61,8 @@ const ProductInfo: React.FC<ProductDetailsProps> = ({ product }) => {
 
   useEffect(() => {
     if (selectedColor && selectedSize) {
-      const colorSize = `${selectedColor.trim()}-${selectedSize}`;
+      const colorSize = `${selectedSize} - ${selectedColor.trim()}`; // Ensure correct format
       const selectVariat = variants?.find((item) => item.name === colorSize);
-      //
 
       SetAvailabelStock(
         selectVariat?.stock !== undefined && selectVariat.stock > 0
@@ -71,10 +73,10 @@ const ProductInfo: React.FC<ProductDetailsProps> = ({ product }) => {
       SetExtraCost(selectVariat?.additionalSalePrice ?? 0);
       SetProductPrice(salePrice + extraCost);
     }
-  }, [selectedColor, selectedSize, extraCost]);
+  }, [selectedColor, selectedSize, salePrice, variants, extraCost]);
   const handleAddToCart = useCallback(() => {
     if (isVariant) {
-      const colorSize = `${selectedColor.trim()}-${selectedSize}`;
+      const colorSize = `${selectedSize} - ${selectedColor.trim()}`;
       const selectVariat = variants?.find((item) => item.name === colorSize);
       const isColorMissing = !selectedColor;
       const isSizeMissing = !selectedSize;
@@ -89,15 +91,29 @@ const ProductInfo: React.FC<ProductDetailsProps> = ({ product }) => {
       }
       addToCart({
         product,
-        quantity: selectedQuantity,
+        quantity:
+          selectedQuantity > availableStock ? availableStock : selectedQuantity,
         variantID: selectVariat?._id,
         color: selectedColor.trim(),
         size: selectedSize,
       });
     } else {
-      addToCart({ product, quantity: selectedQuantity });
+      addToCart({
+        product,
+        quantity:
+          selectedQuantity > availableStock ? availableStock : selectedQuantity,
+      });
     }
-  }, [selectedColor, selectedSize]);
+  }, [
+    isVariant,
+    selectedSize,
+    selectedColor,
+    variants,
+    addToCart,
+    product,
+    selectedQuantity,
+    availableStock,
+  ]);
 
   // Handle Checkout logic
   const handleCheckout = useCallback(() => {
@@ -117,11 +133,12 @@ const ProductInfo: React.FC<ProductDetailsProps> = ({ product }) => {
 
     router.push("/pages/cart?section=checkout");
     // Proceed with checkout logic
-  }, [router, selectedColor, selectedSize]);
+  }, [isVariant, router, selectedColor, selectedSize]);
 
   const colors = options ? options[1]?.values ?? [] : [];
   const sizes = options ? options[0]?.values ?? [] : [];
   const handleQuantityChange = (quantity: number) => {
+    debugger;
     if (quantity < 0) {
       setSelectedQuantity(0);
       SetAvailabelStock(0);
@@ -175,9 +192,9 @@ const ProductInfo: React.FC<ProductDetailsProps> = ({ product }) => {
       </div>
 
       <ProductMetaInfo
-        sku="n/t4"
-        categories="dresses,women"
-        tags="dresses,women"
+        sku={sku}
+        categories={parentCategoryName}
+        tags={childCategoryName}
       />
 
       <Tabs />

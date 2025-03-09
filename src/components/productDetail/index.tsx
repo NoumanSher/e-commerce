@@ -1,24 +1,31 @@
-// pages/index.tsx
-'use client'
+"use client";
 import PoductImageGallery from "@/components/gallery";
 import ProductInfo from "@/components/productDetail/ProductDetails";
+import { useQuery } from "@tanstack/react-query";
 
-import {ProductCardData} from '@/data/data'
-import { useSearchParams } from "next/navigation";
+interface ProductDetailProps {
+  productId: string;
+}
+const ProductDetail: React.FC<ProductDetailProps> = ({ productId }) => {
+  const getProductDataById = async () => {
+    const response = await fetch(
+      `https://e-commerce-backend-seven-xi.vercel.app/api/products/get-product/${productId}`
+    );
+    return response.json();
+  };
+  const { data, isLoading } = useQuery({
+    queryKey: ["productId", productId],
+    queryFn: getProductDataById,
+  });
+  console.log(data);
 
-
-const ProductDetail: React.FC = () => {
-  const searchParams = useSearchParams(); // Access query parameters
-  const productId = searchParams.get("product-id"); // Get 'section' param
-
-  let product = ProductCardData.find((item) => item._id === productId)
-  if (!product) {
-    return <div>Product not found</div>;
+  if (isLoading) {
+    return <div>Loading...</div>;
   }
   return (
     <div className="flex  flex-col lg:flex-row lg:p-8 p-4  container mx-auto">
-      <PoductImageGallery images={product?.images ?? []} />
-      <ProductInfo product={product} />
+      <PoductImageGallery images={data?.images ?? []} />
+      <ProductInfo product={data} />
     </div>
   );
 };

@@ -52,6 +52,8 @@ export interface ProductCardDataProps {
   options?: Option[];
   variants?: Variant[]; 
   stock: number; 
+  parentCategoryName:string
+  childCategoryName:string
 }
 
 export interface Option {

@@ -6,10 +6,11 @@ import {
   MdOutlineKeyboardArrowRight,
 } from "react-icons/md";
 interface ImageGalleryProps {
-  images: { src: StaticImageData; alt: string }[];
+  images: { src: string; alt: string }[];
 }
 
 const ImageGallery: React.FC<ImageGalleryProps> = ({ images }) => {
+  console.log(images)
   const [currentIndex, setCurrentIndex] = useState(0);
 
   const handleNext = () => {
@@ -32,9 +33,9 @@ const ImageGallery: React.FC<ImageGalleryProps> = ({ images }) => {
               key={index}
               src={image.src}
               alt={image.alt}
-              width={100}
-              height={100}
-              // sizes='(max-width:160px), 100vw,160px'
+              width={160}
+              height={160}
+              sizes='(max-width:160px), 100vw,160px'
               className={`cursor-pointer   aspect-auto w-full h-full rounded ${
                 index === currentIndex ? "opacity-100" : "opacity-50"
               }`}
@@ -47,15 +48,15 @@ const ImageGallery: React.FC<ImageGalleryProps> = ({ images }) => {
 
       {/* Main Image */}
       <div className="lg:w-[82%] w-full relative lg:order-2 order-1 group transition-all duration-300 ease-in-out">
-        <div className="relative  h-[327px] md:h-auto overflow-y-hidden">
+        <div className="relative  h-[480px] md:h-[690px] lg:h-[700px] overflow-y-hidden">
           <Image
-            src={images[currentIndex].src}
-            alt={images[currentIndex].alt}
+            src={images[currentIndex]?.src}
+            alt={images[currentIndex]?.alt}
             height={500}
             width={500}
-            // objectFit="contain"
-            layout="responsive"
-            className="rounded w-full h-full"
+            loading="lazy"
+            // layout="responsive"
+            className="rounded w-full h-full aspect-auto"
           />
         </div>
 
