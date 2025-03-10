@@ -1,7 +1,7 @@
 import React, { Suspense, lazy } from "react";
 // const Footer = lazy(() => import("@/components/Footer/footer"));
 const Trending = lazy(() => import("@/components/Trending/trending"));
-const Collection = lazy(() => import("@/components/Collection"));
+// const Collection = lazy(() => import("@/components/Collection"));
 const LimitedEdition = lazy(() => import("@/components/Limited"));
 const Slider = lazy(() => import("@/components/Slider/Slider"));
 const ShoppingCartModal = lazy(() => import("@/components/shoppingCartModal/client/shoppingCartModal"));
@@ -17,9 +17,9 @@ export default function Home() {
       <Suspense fallback={<div>Loading Trending .........</div>}>
         <Trending />
       </Suspense>
-      <Suspense fallback={<div>Loading Inside Collection .........</div>}>
+      {/* <Suspense fallback={<div>Loading Inside Collection .........</div>}>
         <Collection />
-      </Suspense>
+      </Suspense> */}
       <Suspense fallback={<div>Loading Limited Edition .........</div>}>
         <LimitedEdition />
       </Suspense>
