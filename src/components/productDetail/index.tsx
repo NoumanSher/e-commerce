@@ -7,7 +7,6 @@ interface ProductDetailProps {
 }
 const ProductDetail: React.FC<ProductDetailProps> = ({ productId }) => {
   const { data, isLoading } = useGetProductDetailById(productId);
-  console.log(data?.images);
 
   if (isLoading || !data) {
     return <div>Loading...</div>;
