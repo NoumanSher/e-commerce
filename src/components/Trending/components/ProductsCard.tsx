@@ -19,7 +19,7 @@ const ProductsCard = () => {
     queryKey: ["products", selectedCategory],
     queryFn: () => fetchProducts(selectedCategory as string),
     enabled: !!selectedCategory, // Ensures query doesn't run if there's no selected category
-    staleTime: 0,
+    staleTime: Infinity,
   });
   useEffect(() => {
     if (selectedCategory) {
