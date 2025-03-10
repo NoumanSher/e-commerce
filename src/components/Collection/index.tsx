@@ -1,8 +1,8 @@
 "use client";
 import "./components/style.css";
-import { ProductCardData } from "@/data/data";
-import MainCard from "../Card/index";
-import React, { useMemo } from "react";
+// import { ProductCardData } from "@/data/data";
+// import MainCard from "../Card/index";
+import React from "react";
 export default function Collection() {
   return (
     <>
@@ -13,7 +13,7 @@ export default function Collection() {
               The Inside Collection
             </h1>
           </div>
-          <div className="flex flex-row mt-2  overflow-x-scroll custom-scrollbar ">
+          {/* <div className="flex flex-row mt-2  overflow-x-scroll custom-scrollbar ">
             {ProductCardData.map((item, index) => {
               return (
                 <div
@@ -28,7 +28,7 @@ export default function Collection() {
                 </div>
               );
             })}
-          </div>
+          </div> */}
         </div>
       </div>
     </>
