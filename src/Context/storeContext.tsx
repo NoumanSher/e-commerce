@@ -9,10 +9,10 @@ import {
   useEffect,
   useMemo,
 } from "react";
-import { ProductCardDataProps } from "@/data/dataProps";
+import { Product } from "@/components/productDetail/productDetailDto";
 
 interface CartItem {
-  product: ProductCardDataProps;
+  product: Product;
   quantity: number;
   color?: string;
   size?: string;
@@ -24,11 +24,11 @@ interface StoreContextProps {
   selectedCategory: string | null;
   updateSelectedCategory: (categoryId: string) => void;
   isLogIn: string;
-  wishlist: ProductCardDataProps[];
+  wishlist: Product[];
   cartItems: CartItem[];
   setIsCartOpen: (value: boolean) => void;
   setIsLogIn: (value: string) => void;
-  setWishlist: Dispatch<SetStateAction<ProductCardDataProps[]>>;
+  setWishlist: Dispatch<SetStateAction<Product[]>>;
   setCartItems: Dispatch<SetStateAction<CartItem[]>>;
 }
 
@@ -65,7 +65,7 @@ const saveTokenToStorage = (token: string) => {
     }
   }
 };
-const getInitialWishlist = (): ProductCardDataProps[] => {
+const getInitialWishlist = (): Product[] => {
   if (typeof window !== "undefined") {
     const savedWishlist = localStorage.getItem("wishlist");
     return savedWishlist ? JSON.parse(savedWishlist) : [];
@@ -99,7 +99,7 @@ export const StoreProvider = ({ children }: { children: ReactNode }) => {
     localStorage.setItem("selectedCategory", categoryId); // Save to localStorage
   };
   const [wishlist, setWishlist] =
-    useState<ProductCardDataProps[]>(getInitialWishlist);
+    useState<Product[]>(getInitialWishlist);
   const [cartItems, setCartItems] = useState<CartItem[]>(getCartFromStorage);
 
   useEffect(() => {

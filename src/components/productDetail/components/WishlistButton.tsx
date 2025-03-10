@@ -3,8 +3,10 @@ import { useWishlist } from "@/components/hooks/useWishlist";
 import React from "react";
 import { StaticImageData } from "next/image";
 import { ProductCardDataProps } from "@/data/dataProps";
+import { Product } from "@/components/productDetail/productDetailDto"
+
 interface WishlistButtonProps {
-  product: ProductCardDataProps;
+  product: Product;
 }
 const WishlistButton: React.FC<WishlistButtonProps> = ({product}) => {
   const { addToWishlist, removeFromWishlist, isInWishlist } = useWishlist();

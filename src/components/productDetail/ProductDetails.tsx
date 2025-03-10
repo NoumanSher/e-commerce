@@ -11,7 +11,8 @@ import Tabs from "./components/Tabs";
 import Breadcrumb from "./components/Breadcrumb";
 import { useRouter } from "next/navigation";
 import dynamic from "next/dynamic";
-import { ProductCardDataProps } from "@/data/dataProps";
+import { Product } from "./productDetailDto";
+
 import { useCart } from "../hooks/useCart";
 const SocialMediaShareWithNoSSR = dynamic(
   () => import("./components/SocialMediaShare"),
@@ -19,7 +20,7 @@ const SocialMediaShareWithNoSSR = dynamic(
 );
 
 interface ProductDetailsProps {
-  product: ProductCardDataProps;
+  product: Product;
 }
 
 const ProductInfo: React.FC<ProductDetailsProps> = ({ product }) => {

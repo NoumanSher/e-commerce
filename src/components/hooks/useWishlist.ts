@@ -3,6 +3,7 @@
 import { useEffect, useCallback } from "react";
 import { ProductCardDataProps } from "@/data/dataProps";
 import { useStore } from "@/Context/storeContext";
+import { Product } from "../productDetail/productDetailDto";
 
 export const useWishlist = () => {
   const { wishlist, setWishlist } = useStore();
@@ -22,7 +23,7 @@ export const useWishlist = () => {
   );
 
   const addToWishlist = useCallback(
-    (item: ProductCardDataProps) => {
+    (item: Product) => {
       setWishlist((currentWishlist) => {
         if (
           currentWishlist.some((wishlistItem) => wishlistItem._id === item._id)

@@ -1,11 +1,11 @@
 import { useCallback, useMemo } from "react";
 import { useStore } from "@/Context/storeContext";
 import { toast } from "react-toastify";
-import { ProductCardDataProps } from "@/data/dataProps";
+import { Product } from "@/components/productDetail/productDetailDto"
 
 // Define interfaces
 interface CartItem {
-  product: ProductCardDataProps;
+  product: Product;
   quantity: number;
   color?: string;
   size?: string;
