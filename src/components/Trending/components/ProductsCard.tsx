@@ -38,7 +38,7 @@ const ProductsCard = () => {
           <div>Loading Products...</div>
         ) : (
           productsData?.data.slice(0, 8).map((item) => (
-            <div key={item.id} className="w-[50%] md:!w-[33.333%] lg:!w-[25%]">
+            <div key={item._id} className="w-[50%] md:!w-[33.333%] lg:!w-[25%]">
               <MainCard item={item} />
             </div>
           ))

@@ -2,7 +2,8 @@
 import React, { memo, useEffect, useState } from "react";
 import MainCard from "../../../Card/index";
 import { useQuery } from "@tanstack/react-query";
-import { fetchProducts, Product } from "@/services/productsService";
+import { fetchProducts } from "@/services/productsService";
+import { Product } from "@/components/productDetail/productDetailDto";
 import { useStore } from "@/Context/storeContext";
 
 const AllCAtegoriesCardSection = () => {
@@ -68,7 +69,7 @@ const AllCAtegoriesCardSection = () => {
         )}
 
         {products.map((item) => (
-          <div key={item.id} className="w-[50%] md:!w-[33.333%] lg:!w-[25%]">
+          <div key={item._id} className="w-[50%] md:!w-[33.333%] lg:!w-[25%]">
             <MainCard item={item} />
           </div>
         ))}
