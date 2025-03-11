@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import Banner1 from "../assets/img/grid-banner-1.jpg";
 import Banner2 from "../assets/img/grid-banner-2.jpg";
 import CardHover from "../cardHover";
-import { Product } from "@/services/productsService";
+import { Product } from "@/components/productDetail/productDetailDto";
 interface MainCardProps {
   item: Product;
 }
@@ -16,11 +16,7 @@ const MainCard = ({ item }: MainCardProps) => {
   const [hoveredCard, setHoveredCard] = useState<string | null>(null);
   const [selectedColor, setSelectedColor] = useState<string | null>("gray");
   const isHovered = hoveredCard === item.id;
-  // eslint-disable-next-line react-hooks/rules-of-hooks
-  // const currentImage = useMemo(
-  //   () => (isHovered ? item.thumbNailImage1 : item.thumbNailImage2),
-  //   [isHovered, item.thumbNailImage1, item.thumbNailImage2]
-  // );
+
   const handleColorSelect = useCallback((color: string) => {
     setSelectedColor(color);
   }, []);

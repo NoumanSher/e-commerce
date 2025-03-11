@@ -24,9 +24,6 @@ async function getProductDataById(productId: string) {
 // **Next.js Metadata for SEO**
 export async function generateMetadata({ params }: ProductDetailProps): Promise<Metadata> {
   const product = await getProductDataById(params.productId);
-  // console.log(product)
-
-
   interface ImageProps {
     src: string;
     alt: string;

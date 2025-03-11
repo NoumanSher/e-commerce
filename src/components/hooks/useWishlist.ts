@@ -1,7 +1,6 @@
 // components/hooks/useWishlist.ts
 
 import { useEffect, useCallback } from "react";
-import { ProductCardDataProps } from "@/data/dataProps";
 import { useStore } from "@/Context/storeContext";
 import { Product } from "../productDetail/productDetailDto";
 

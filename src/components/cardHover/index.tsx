@@ -3,28 +3,27 @@ import React, { memo, useState, useEffect } from "react";
 import { FiEye } from "react-icons/fi";
 import { MdOutlineShoppingBag } from "react-icons/md";
 import { useWishlist } from "../hooks/useWishlist";
-import { ProductCardDataProps } from "@/data/dataProps";
 import { HeartIcon } from "@/assets/svg/common";
 import { useCart } from "../hooks/useCart";
 import { useRouter } from "next/navigation";
-import { Product } from "@/services/productsService";
+import { Product } from "@/components/productDetail/productDetailDto";
 interface ICardHover {
   isHovered: boolean;
   product?: Product;
 }
 const CardHover = ({ isHovered, product }: ICardHover) => {
+  debugger
   const { setIsCartOpen } = useStore();
   const router = useRouter();
   const { addToCart } = useCart();
   const { isInWishlist, removeFromWishlist, addToWishlist } = useWishlist();
   const [isTrue, setIsTrue] = useState(false);
   const isVariant = product?.variants ? true : false;
-  const _id = product?.id;
   useEffect(() => {
-    if (_id) {
-      setIsTrue(isInWishlist(_id));
+    if (product?._id) {
+      setIsTrue(isInWishlist(product?._id));
     }
-  }, [product, isInWishlist]);
+  }, [product?._id, isInWishlist]);
 
   const handleAddToCart = (
     e: React.MouseEvent<HTMLDivElement>, // Use the correct type for the event
@@ -37,10 +36,10 @@ const CardHover = ({ isHovered, product }: ICardHover) => {
 
     if (isVariant) {
       // Redirect to product details page if the product has variants
-      router.push(`/pages/product-detail?product-id=${_id}`);
+      router.push(`/pages/product-detail/${product._id}`);
     } else {
       // Add product to cart
-      // addToCart({ product, quantity: 1 });
+      addToCart({ product, quantity: 1 });
 
       setTimeout(() => {
         setIsCartOpen(true);
@@ -49,13 +48,14 @@ const CardHover = ({ isHovered, product }: ICardHover) => {
   };
 
   const handleAddToWishlist = (e: { stopPropagation: () => void }) => {
+    debugger
     e.stopPropagation();
-    // if (product) addToWishlist(product);
+    if (product) addToWishlist(product);
   };
 
   const handleRemoveFromWishlist = (e: any) => {
     e.stopPropagation();
-    if (product) removeFromWishlist(product?.id);
+    if (product) removeFromWishlist(product?._id);
   };
 
   return (

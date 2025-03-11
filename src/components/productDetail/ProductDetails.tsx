@@ -13,7 +13,7 @@ import { useRouter } from "next/navigation";
 import dynamic from "next/dynamic";
 import { Product } from "./productDetailDto";
 
-import { useCart } from "../hooks/useCart";
+import { useCart } from "../hooks/useCart"; 
 const SocialMediaShareWithNoSSR = dynamic(
   () => import("./components/SocialMediaShare"),
   { ssr: false }

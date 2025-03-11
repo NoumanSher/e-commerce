@@ -1,8 +1,6 @@
 import { FaHeart } from "react-icons/fa";
 import { useWishlist } from "@/components/hooks/useWishlist";
 import React from "react";
-import { StaticImageData } from "next/image";
-import { ProductCardDataProps } from "@/data/dataProps";
 import { Product } from "@/components/productDetail/productDetailDto"
 
 interface WishlistButtonProps {

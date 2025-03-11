@@ -1,10 +1,10 @@
 "use client";
 
-import { useWishlist } from "@/components/hooks/useWishlist";
 import React, { Suspense, lazy } from "react";
-
-const ProductsCard = lazy(
-  () => import("@/components/Trending/components/ProductsCard")
+import { useWishlist } from "@/components/hooks/useWishlist";
+// import WishCardList from "./WishCardList";
+const WishCardList = lazy(
+  () => import("./WishCardList")
 );
 
 export default function WishListPage() {
@@ -14,7 +14,7 @@ export default function WishListPage() {
     <>
       <Suspense fallback={<div>Loading Wish list .........</div>}>
         <h1 className="text-3xl text-primary text-center mt-5">Wish List</h1>
-        {/* <ProductsCard products={wishlist} /> */}
+        <WishCardList products={wishlist} />
       </Suspense>
     </>
   );

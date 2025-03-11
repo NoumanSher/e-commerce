@@ -14,7 +14,7 @@ const ProductsCategories = () => {
     if (categoriesData?.categories && categoriesData.categories.length > 0) {
       updateSelectedCategory(categoriesData.categories[0]._id);
     }
-  }, [categoriesData]);
+  }, [categoriesData, updateSelectedCategory]);
   if (categoriesError) return <div>Error loading categories</div>;
 
   return (
