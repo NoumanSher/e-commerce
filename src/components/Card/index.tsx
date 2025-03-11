@@ -1,10 +1,8 @@
 "use client";
-import { ProductCardDataProps } from "@/data/dataProps";
 import Image from "next/image";
 import React, { memo, useCallback, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
-import Banner1 from "../assets/img/grid-banner-1.jpg";
-import Banner2 from "../assets/img/grid-banner-2.jpg";
+
 import CardHover from "../cardHover";
 import { Product } from "@/components/productDetail/productDetailDto";
 interface MainCardProps {
@@ -15,7 +13,7 @@ const MainCard = ({ item }: MainCardProps) => {
   const router = useRouter();
   const [hoveredCard, setHoveredCard] = useState<string | null>(null);
   const [selectedColor, setSelectedColor] = useState<string | null>("gray");
-  const isHovered = hoveredCard === item.id;
+  const isHovered = hoveredCard === item._id;
 
   const handleColorSelect = useCallback((color: string) => {
     setSelectedColor(color);
@@ -31,14 +29,12 @@ const MainCard = ({ item }: MainCardProps) => {
     <>
       <div
         className=" mb-6 xl:mb-12   px-2  md:px-4 cursor-pointer"
-        onClick={() =>
-          router.push(`/pages/product-detail/${item.id}`)
-        }
+        onClick={() => router.push(`/pages/product-detail/${item._id}`)}
       >
         <div className=" cursor-pointer">
           <div
             className="relative xl:h-[404px] "
-            onMouseEnter={() => handleMouseEnter(item.id)}
+            onMouseEnter={() => handleMouseEnter(item._id)}
             onMouseLeave={handleMouseLeave}
           >
             <Image
@@ -58,8 +54,12 @@ const MainCard = ({ item }: MainCardProps) => {
               </div>
             )}
 
-            {item.salePrice && ( 
-              <div className={`bg-black absolute top-0 mx-[8px] mt-[8px] py-[7px] px-[10px] ${item.isNew?"top-[36px]":""} `}>
+            {item.salePrice && (
+              <div
+                className={`bg-black absolute top-0 mx-[8px] mt-[8px] py-[7px] px-[10px] ${
+                  item.isNew ? "top-[36px]" : ""
+                } `}
+              >
                 <h1 className="uppercase text-white text-[12px] leading-[1.25em] font-normal ">
                   sale
                 </h1>
