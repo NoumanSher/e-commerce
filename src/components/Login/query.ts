@@ -17,13 +17,13 @@ export const useLogIn = () => {
   return useMutation<LogInResponse, CustomError, LogInPayload>({
     mutationFn: logInUser,
     onSuccess: (data) => {
-      debugger;
+      
       setIsLogIn(data.token);
       toast.success(data.message);
       router.push("/");
     },
     onError: (error) => {
-      debugger;
+      
       toast.error("An unexpected error occurred.");
       console.error("Registration failed:", error);
     },

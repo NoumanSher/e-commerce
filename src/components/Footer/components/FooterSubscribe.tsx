@@ -2,7 +2,7 @@ import Image from "next/image";
 import React, { memo } from "react";
 import masterCard from "../../../assets/img/mc_sym_debit_pos.svg";
 
-const FooterSubscribe=()=> {
+const FooterSubscribe = () => {
   return (
     <div>
       <div>
@@ -31,20 +31,20 @@ const FooterSubscribe=()=> {
           </h1>
           <div className="flex gap-4 my-2">
             {[1, 2, 3, 4, 5].map((item) => (
-              <>
+              <React.Fragment key={item}>
                 <Image
                   src={masterCard}
                   alt="masterCard"
-                    priority={true}
-              loading='eager'
+                  priority={true}
+                  loading="eager"
                   className="w-[35px] h-[35px]"
                 />
-              </>
+              </React.Fragment>
             ))}
           </div>
         </div>
       </div>
     </div>
   );
-}
-export default  memo(FooterSubscribe)
+};
+export default memo(FooterSubscribe);

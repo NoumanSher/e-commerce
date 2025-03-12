@@ -1,13 +1,20 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  reactStrictMode: false, // Disable React Strict Mode
+  reactStrictMode: true, // Disable React Strict Mode
   images: {
-    domains: [
-      "example.com",
-      "images.unsplash.com",
-      "firebasestorage.googleapis.com",
-    ],
     remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "example.com",
+      },
+      {
+        protocol: "https",
+        hostname: "images.unsplash.com",
+      },
+      {
+        protocol: "https",
+        hostname: "firebasestorage.googleapis.com",
+      },
       {
         protocol: "https",
         hostname: "e-commerce-backend-seven-xi.vercel.app",

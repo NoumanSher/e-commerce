@@ -23,7 +23,7 @@ export interface LogInResponse {
 export const logInUser = async (
   payload: LogInPayload
 ): Promise<LogInResponse> => {
-  debugger;
+  
   const { data } = await axios.post(`${BASE_URL}/auth/login-user`, payload);
   return data;
 };

@@ -10,7 +10,7 @@ const Sidebar: React.FC = () => {
   const { setIsLogIn } = useStore();
 
   const handleLogout = () => {
-    debugger
+    
     setIsLogIn(''); // Clear login state
     router.push('/'); // Redirect to home page
   };

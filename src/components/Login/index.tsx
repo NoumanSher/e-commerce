@@ -17,7 +17,7 @@ export default function LoginForm() {
   });
 
   const handleSubmit = (values: LogInPayload) => {
-    debugger;
+    
     console.log(values);
     mutate(values);
   };

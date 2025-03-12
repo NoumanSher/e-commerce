@@ -31,7 +31,7 @@ export const fetchProducts = async (
   const { data } = await axios.get(
     `${BASE_URL}/products/get-all-products?${params.toString()}`
   );
-  debugger
+  
   console.log(data);
 
   return data;

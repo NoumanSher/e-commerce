@@ -9,7 +9,6 @@ import "react-toastify/dist/ReactToastify.css";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 
 import Provider from "@/Context/react-query-provider";
-import { SelectedCategoryProvider } from "@/components/Trending/context/SelectedCategoryContext";
 
 // const jost = Jost({ subsets: ["latin"] }); // Load the Jost font
 

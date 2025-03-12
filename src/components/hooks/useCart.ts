@@ -27,7 +27,7 @@ export const useCart = () => {
 
   const addToCart = useCallback(
     (item: CartItem) => {
-      debugger;
+      
       const { product, quantity, variantID } = item;
 
       if (!validateQuantity(quantity)) return;
@@ -65,7 +65,7 @@ export const useCart = () => {
         );
         return;
       }
-debugger
+
       setCartItems((prevItems) => {
         const existingItemIndex = prevItems.findIndex(
           (cartItem) =>

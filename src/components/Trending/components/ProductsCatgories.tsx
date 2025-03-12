@@ -1,5 +1,5 @@
 "use client";
-import React, { memo, useEffect, useState } from "react";
+import React, { memo, useEffect } from "react";
 import { useCategories } from "@/hooks/useCategories";
 import { useStore } from "@/Context/storeContext";
 
@@ -11,6 +11,7 @@ const ProductsCategories = () => {
   } = useCategories();
   const { updateSelectedCategory, selectedCategory } = useStore();
   useEffect(() => {
+    debugger
     if (categoriesData?.categories && categoriesData.categories.length > 0) {
       updateSelectedCategory(categoriesData.categories[0]._id);
     }

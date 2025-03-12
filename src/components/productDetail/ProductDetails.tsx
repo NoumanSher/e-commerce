@@ -139,7 +139,7 @@ const ProductInfo: React.FC<ProductDetailsProps> = ({ product }) => {
   const colors = options ? options[1]?.values ?? [] : [];
   const sizes = options ? options[0]?.values ?? [] : [];
   const handleQuantityChange = (quantity: number) => {
-    debugger;
+    
     if (quantity < 0) {
       setSelectedQuantity(0);
       SetAvailabelStock(0);
