@@ -1,8 +1,23 @@
 // src/components/OrderConfirmation.tsx
 import Link from "next/link";
 import React from "react";
-
+import { useGetOrderDetailByorderNumber } from "./query/orderConfirmationQuery";
+import { useStore } from "@/Context/storeContext";
 const OrderConfirmation = () => {
+  const { orderNumber } = useStore();
+  const { data, isLoading } = useGetOrderDetailByorderNumber(orderNumber);
+  console.log(data?.data);
+
+  const subTotal = data?.data.items.reduce(
+    (acc, item) => acc + item.lineTotal,
+    0
+  );
+
+  const totalCost = (subTotal ?? 0) + (data?.data.deliveryFee ?? 0);
+
+  if (isLoading) {
+    return <div>loading</div>;
+  }
   return (
     <div className="flex flex-col items-center lg:p-8 p-4">
       {/* Success Icon and Message */}
@@ -33,15 +48,15 @@ const OrderConfirmation = () => {
       <div className="border-dotted border-2 border-gray-400 p-4 w-full max-w-3xl text-sm mb-8">
         <div className="flex justify-between mb-2">
           <span className="font-semibold">Order Number:</span>
-          <span>7886</span>
+          <span>{data?.data.orderNo}</span>
         </div>
         <div className="flex justify-between mb-2">
           <span className="font-semibold">Date:</span>
-          <span>October 29, 2024</span>
+          <span>{data?.data.createdAt}</span>
         </div>
         <div className="flex justify-between mb-2">
           <span className="font-semibold">Total:</span>
-          <span>$110.00</span>
+          <span>{totalCost}</span>
         </div>
         <div className="flex justify-between">
           <span className="font-semibold">Payment Method:</span>
@@ -56,13 +71,19 @@ const OrderConfirmation = () => {
           <span>PRODUCT</span>
           <span>TOTAL</span>
         </div>
-        <div className="flex justify-between mb-4">
-          <span>Dress Neck Casual Short Dresses × 1</span>
-          <span>$110.00</span>
-        </div>
+          <div>
+            {data?.data.items.map((item, index) => (
+              <div key={index} className={`flex justify-between ${data?.data.items.length > 1 ? 'border-b pb-2' : ''} `}>
+                <div>
+                  {item.product} x {item.quantity}
+                </div>
+                <div>{item.lineTotal}</div>
+              </div>
+            ))}
+          </div>
         <div className="flex justify-between font-semibold border-t border-gray-300 pt-4 mt-4">
           <span>SUBTOTAL:</span>
-          <span>$110.00</span>
+          <span>{subTotal}</span>
         </div>
         <div className="flex justify-between border-t border-gray-300 pt-2">
           <span>SHIPPING:</span>
@@ -74,10 +95,11 @@ const OrderConfirmation = () => {
         </div>
         <div className="flex justify-between font-semibold border-t border-gray-300 pt-2">
           <span>TOTAL:</span>
-          <span>$110.00</span>
+          <span>{totalCost}</span>
         </div>
       </div>
-      <Link href={'/'}
+      <Link
+        href={"/"}
         className="bg-black w-full lg:w-[48rem] flex justify-center items-center mt-4 h-14 text-white py-2 px-4 "
       >
         Return to shop

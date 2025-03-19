@@ -1,5 +1,5 @@
 "use client";
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback, useEffect, use } from "react";
 import { Button } from "@/components/ui/button";
 import QuantitySelector from "@/components/productDetail/components/QuantitySelector";
 import SelectColorAndSize from "./components/SelectVarient";
@@ -12,8 +12,8 @@ import Breadcrumb from "./components/Breadcrumb";
 import { useRouter } from "next/navigation";
 import dynamic from "next/dynamic";
 import { Product } from "./productDetailDto";
-
-import { useCart } from "../hooks/useCart"; 
+import { useStore } from "@/Context/storeContext";
+import { useCart } from "../hooks/useCart";
 const SocialMediaShareWithNoSSR = dynamic(
   () => import("./components/SocialMediaShare"),
   { ssr: false }
@@ -24,8 +24,10 @@ interface ProductDetailsProps {
 }
 
 const ProductInfo: React.FC<ProductDetailsProps> = ({ product }) => {
+  const { updateProductDetailtData } = useStore();
   const { addToCart } = useCart();
   const {
+    _id,
     productName,
     salePrice,
     description,
@@ -35,11 +37,12 @@ const ProductInfo: React.FC<ProductDetailsProps> = ({ product }) => {
     variants,
     sku,
     parentCategoryName,
-    childCategoryName
+    childCategoryName,
   } = product;
 
   const [selectedColor, setSelectedColor] = useState("");
   const [selectedSize, setSelectedSize] = useState("");
+  const [selectedVarientId, setSelectedVarientId] = useState("");
   const [availableStock, SetAvailabelStock] = useState<number>(0);
   const [extraCost, SetExtraCost] = useState<number>(0);
   const [selectedQuantity, setSelectedQuantity] = useState(1);
@@ -62,9 +65,11 @@ const ProductInfo: React.FC<ProductDetailsProps> = ({ product }) => {
 
   useEffect(() => {
     if (selectedColor && selectedSize) {
-      const colorSize = `${selectedSize} - ${selectedColor.trim()}`; // Ensure correct format
+      const colorSize = `${selectedColor.trim()} - ${selectedSize}`; // Ensure correct format
       const selectVariat = variants?.find((item) => item.name === colorSize);
-
+      if (selectVariat?._id) {
+        setSelectedVarientId(selectVariat._id);
+      }
       SetAvailabelStock(
         selectVariat?.stock !== undefined && selectVariat.stock > 0
           ? selectVariat.stock
@@ -77,7 +82,7 @@ const ProductInfo: React.FC<ProductDetailsProps> = ({ product }) => {
   }, [selectedColor, selectedSize, salePrice, variants, extraCost]);
   const handleAddToCart = useCallback(() => {
     if (isVariant) {
-      const colorSize = `${selectedSize} - ${selectedColor.trim()}`;
+      const colorSize = `${selectedColor.trim()} - ${selectedSize}`;
       const selectVariat = variants?.find((item) => item.name === colorSize);
       const isColorMissing = !selectedColor;
       const isSizeMissing = !selectedSize;
@@ -91,6 +96,8 @@ const ProductInfo: React.FC<ProductDetailsProps> = ({ product }) => {
         return;
       }
       addToCart({
+        userId: "67d47dd27a43f7958263f0c5",
+
         product,
         quantity:
           selectedQuantity > availableStock ? availableStock : selectedQuantity,
@@ -100,6 +107,8 @@ const ProductInfo: React.FC<ProductDetailsProps> = ({ product }) => {
       });
     } else {
       addToCart({
+        userId: "67d47dd27a43f7958263f0c5",
+
         product,
         quantity:
           selectedQuantity > availableStock ? availableStock : selectedQuantity,
@@ -132,14 +141,44 @@ const ProductInfo: React.FC<ProductDetailsProps> = ({ product }) => {
       }
     }
 
+    let dataToPass = {
+      productName: productName,
+      userId: "67d47dd27a43f7958263f0c5",
+      productId: _id,
+      items: [
+        {
+          productId: _id,
+          variantId: selectedVarientId,
+          price: productPrice,
+          quantity: selectedQuantity,
+          lineTotal: productPrice * selectedQuantity,
+        },
+      ],
+
+      deliveryFee: 0,
+      totalPrice: productPrice * selectedQuantity,
+      subTotal: productPrice * selectedQuantity,
+    };
+    updateProductDetailtData(dataToPass);
+    debugger;
     router.push("/pages/cart?section=checkout");
     // Proceed with checkout logic
-  }, [isVariant, router, selectedColor, selectedSize]);
+  }, [
+    _id,
+    isVariant,
+    productName,
+    productPrice,
+    router,
+    selectedColor,
+    selectedQuantity,
+    selectedSize,
+    selectedVarientId,
+    updateProductDetailtData,
+  ]);
 
-  const colors = options ? options[1]?.values ?? [] : [];
-  const sizes = options ? options[0]?.values ?? [] : [];
+  const colors = options ? options[0]?.values ?? [] : [];
+  const sizes = options ? options[1]?.values ?? [] : [];
   const handleQuantityChange = (quantity: number) => {
-    
     if (quantity < 0) {
       setSelectedQuantity(0);
       SetAvailabelStock(0);

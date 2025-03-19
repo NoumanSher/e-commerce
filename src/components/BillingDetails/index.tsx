@@ -37,13 +37,13 @@ const BillingDetailsComponent: React.FC = () => (
     <div className="mb-3">
       <label className="block text-sm font-medium">Street address *</label>
       <Field
-        name="address"
+        name="streetAddress"
         placeholder='house number and street name'
         type="text"
         className="mt-1 p-2 w-full h-14 border rounded"
       />
       <ErrorMessage
-        name="address"
+        name="streetAddress"
         component="div"
         className="text-red-500 text-xs"
       />
@@ -64,12 +64,12 @@ const BillingDetailsComponent: React.FC = () => (
     <div className="mb-3">
       <label className="block text-sm font-medium">ZIP Code *</label>
       <Field
-        name="zip"
+        name="zipCode"
         type="number"
         className="mt-1 p-2 w-full h-14 border rounded"
       />
       <ErrorMessage
-        name="zip"
+        name="zipCode"
         component="div"
         className="text-red-500 text-xs"
       />

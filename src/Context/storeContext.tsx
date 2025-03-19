@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import {
   createContext,
   useState,
@@ -11,8 +11,10 @@ import {
   useCallback,
 } from "react";
 import { Product } from "@/components/productDetail/productDetailDto";
+import { ProductDetailData } from "@/types"; // Import interface
 
 interface CartItem {
+  userId:string
   product: Product;
   quantity: number;
   color?: string;
@@ -22,12 +24,16 @@ interface CartItem {
 
 interface StoreContextProps {
   isCartOpen: boolean;
+  orderNumber: string;
   selectedCategory: string | null;
   updateSelectedCategory: (categoryId: string) => void;
+  updateProductDetailtData: (object: ProductDetailData) => void;
+  productDetail: ProductDetailData | null;
   isLogIn: string;
   wishlist: Product[];
   cartItems: CartItem[];
   setIsCartOpen: (value: boolean) => void;
+  setOrderNumber: (value: string) => void;
   setIsLogIn: (value: string) => void;
   setWishlist: Dispatch<SetStateAction<Product[]>>;
   setCartItems: Dispatch<SetStateAction<CartItem[]>>;
@@ -36,6 +42,25 @@ interface StoreContextProps {
 const StoreTypeContext = createContext<StoreContextProps | undefined>(
   undefined
 );
+const Product_Detail_KEY = "productDeatails";
+
+const getCheckoutDataFromStorage = (): ProductDetailData | null => {
+  if (typeof window !== "undefined") {
+    const storedData = localStorage.getItem(Product_Detail_KEY);
+    return storedData ? JSON.parse(storedData) : null;
+  }
+  return null;
+};
+
+const saveCheckoutDataToStorage = (data: ProductDetailData) => {
+  if (typeof window !== "undefined") {
+    try {
+      localStorage.setItem(Product_Detail_KEY, JSON.stringify(data));
+    } catch {
+      console.warn("Failed to save checkout data to localStorage.");
+    }
+  }
+};
 const CART_STORAGE_KEY = "shoppingCart";
 
 const getCartFromStorage = (): CartItem[] => {
@@ -59,7 +84,6 @@ const saveCartToStorage = (cart: CartItem[]) => {
 const saveTokenToStorage = (token: string) => {
   if (typeof window !== "undefined") {
     try {
-      
       localStorage.setItem("token", token);
     } catch {
       console.warn("Failed to save token to localStorage.");
@@ -83,9 +107,22 @@ const getIsLogIn = (): string => {
 
 export const StoreProvider = ({ children }: { children: ReactNode }) => {
   const [isCartOpen, setIsCartOpen] = useState(false);
+  const [orderNumber, setOrderNumber] = useState("");
   const [isLogIn, setIsLogIn] = useState(getIsLogIn());
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [productDetail, setProductDetail] = useState<ProductDetailData | null>(
+    getCheckoutDataFromStorage()
+  );
 
+  useEffect(() => {
+    if (productDetail) {
+      saveCheckoutDataToStorage(productDetail);
+    }
+  }, [productDetail]);
+
+  const updateProductDetailtData = (newData: ProductDetailData) => {
+    setProductDetail(newData);
+  };
   // Load the selected category from localStorage on initial render
   useEffect(() => {
     const savedCategory = localStorage.getItem("selectedCategory");
@@ -96,12 +133,10 @@ export const StoreProvider = ({ children }: { children: ReactNode }) => {
 
   // Function to update the selected category and store it in localStorage
   const updateSelectedCategory = useCallback((categoryId: string) => {
-    
     setSelectedCategory(categoryId);
     localStorage.setItem("selectedCategory", categoryId); // Save to localStorage
   }, []);
-  const [wishlist, setWishlist] =
-    useState<Product[]>(getInitialWishlist);
+  const [wishlist, setWishlist] = useState<Product[]>(getInitialWishlist);
   const [cartItems, setCartItems] = useState<CartItem[]>(getCartFromStorage);
 
   useEffect(() => {
@@ -133,8 +168,21 @@ export const StoreProvider = ({ children }: { children: ReactNode }) => {
       setCartItems,
       setIsLogIn,
       isLogIn,
+      updateProductDetailtData,
+      productDetail,
+      orderNumber,
+      setOrderNumber,
     }),
-    [isCartOpen, wishlist, cartItems, isLogIn, selectedCategory, updateSelectedCategory]
+    [
+      isCartOpen,
+      orderNumber,
+      selectedCategory,
+      updateSelectedCategory,
+      wishlist,
+      cartItems,
+      isLogIn,
+      productDetail,
+    ]
   );
 
   return (

@@ -12,7 +12,6 @@ interface ICardHover {
   product?: Product;
 }
 const CardHover = ({ isHovered, product }: ICardHover) => {
-  
   const { setIsCartOpen } = useStore();
   const router = useRouter();
   const { addToCart } = useCart();
@@ -28,14 +27,14 @@ const CardHover = ({ isHovered, product }: ICardHover) => {
     e: React.MouseEvent<HTMLDivElement>, // Use the correct type for the event
     isVariant: boolean
   ) => {
-    debugger
+    debugger;
     if (!product) {
       return;
     }
     e.stopPropagation(); // Prevent event bubbling
 
     if (isVariant) {
-      debugger
+      debugger;
       // Redirect to product details page if the product has variants
       router.push(`/pages/product-detail/${product._id}`);
     } else {
@@ -49,7 +48,6 @@ const CardHover = ({ isHovered, product }: ICardHover) => {
   };
 
   const handleAddToWishlist = (e: { stopPropagation: () => void }) => {
-    
     e.stopPropagation();
     if (product) addToWishlist(product);
   };
@@ -62,11 +60,10 @@ const CardHover = ({ isHovered, product }: ICardHover) => {
   return (
     <div>
       <div
-        className={`absolute bottom-[10px] mb-2 flex justify-center w-full gap-2 transition-all duration-300 ease-in-out transform ${
-          isHovered
-            ? "opacity-100 visible translate-y-[-10px]"
-            : "opacity-0 invisible translate-y-5"
-        }`}
+        className={`absolute bottom-[10px] mb-2 flex justify-center w-full gap-2 transition-all duration-300 ease-in-out transform ${isHovered
+          ? "opacity-100 visible translate-y-[-10px]"
+          : "opacity-0 invisible translate-y-5"
+          }`}
       >
         <div
           onClick={(e) => handleAddToCart(e, product?.isVariant as boolean)}
