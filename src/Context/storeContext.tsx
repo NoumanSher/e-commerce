@@ -11,20 +11,14 @@ import {
   useCallback,
 } from "react";
 import { Product } from "@/components/productDetail/productDetailDto";
-import { ProductDetailData } from "@/types"; // Import interface
+import { ProductDetailData,CartItem } from "@/types"; // Import interface
 
-interface CartItem {
-  userId:string
-  product: Product;
-  quantity: number;
-  color?: string;
-  size?: string;
-  variantID?: string;
-}
+
 
 interface StoreContextProps {
   isCartOpen: boolean;
   orderNumber: string;
+  userId: string;
   selectedCategory: string | null;
   updateSelectedCategory: (categoryId: string) => void;
   updateProductDetailtData: (object: ProductDetailData) => void;
@@ -34,6 +28,7 @@ interface StoreContextProps {
   cartItems: CartItem[];
   setIsCartOpen: (value: boolean) => void;
   setOrderNumber: (value: string) => void;
+  setUserId: (value: string) => void;
   setIsLogIn: (value: string) => void;
   setWishlist: Dispatch<SetStateAction<Product[]>>;
   setCartItems: Dispatch<SetStateAction<CartItem[]>>;
@@ -90,6 +85,15 @@ const saveTokenToStorage = (token: string) => {
     }
   }
 };
+const saveUserIdInStorage = (userId: string) => {
+  if (typeof window !== "undefined") {
+    try {
+      localStorage.setItem("userId", userId);
+    } catch {
+      console.warn("Failed to save userId in localStorage.");
+    }
+  }
+};
 const getInitialWishlist = (): Product[] => {
   if (typeof window !== "undefined") {
     const savedWishlist = localStorage.getItem("wishlist");
@@ -104,11 +108,19 @@ const getIsLogIn = (): string => {
   }
   return "";
 };
+const getUserId = (): string => {
+  if (typeof window !== "undefined") {
+    const userId = localStorage.getItem("userId");
+    return userId ? userId : "";
+  }
+  return "";
+};
 
 export const StoreProvider = ({ children }: { children: ReactNode }) => {
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [orderNumber, setOrderNumber] = useState("");
   const [isLogIn, setIsLogIn] = useState(getIsLogIn());
+  const [userId, setUserId] = useState(getUserId());
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [productDetail, setProductDetail] = useState<ProductDetailData | null>(
     getCheckoutDataFromStorage()
@@ -149,6 +161,13 @@ export const StoreProvider = ({ children }: { children: ReactNode }) => {
       localStorage.removeItem("token"); // Clear token if logged out
     }
   }, [isLogIn]);
+  useEffect(() => {
+    if (userId) {
+      saveUserIdInStorage(userId); // Save userId if logged in
+    } else {
+      localStorage.removeItem("userId"); // Clear userId if logged out
+    }
+  }, [userId]);
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -172,6 +191,8 @@ export const StoreProvider = ({ children }: { children: ReactNode }) => {
       productDetail,
       orderNumber,
       setOrderNumber,
+      userId,
+      setUserId,
     }),
     [
       isCartOpen,
@@ -181,6 +202,7 @@ export const StoreProvider = ({ children }: { children: ReactNode }) => {
       wishlist,
       cartItems,
       isLogIn,
+      userId,
       productDetail,
     ]
   );

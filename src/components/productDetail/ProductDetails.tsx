@@ -56,6 +56,7 @@ const ProductInfo: React.FC<ProductDetailsProps> = ({ product }) => {
 
   useEffect(() => {
     if (stock) {
+      debugger;
       SetAvailabelStock(stock < 0 ? 0 : stock);
     }
     if (salePrice) {
@@ -96,8 +97,6 @@ const ProductInfo: React.FC<ProductDetailsProps> = ({ product }) => {
         return;
       }
       addToCart({
-        userId: "67d47dd27a43f7958263f0c5",
-
         product,
         quantity:
           selectedQuantity > availableStock ? availableStock : selectedQuantity,
@@ -107,8 +106,6 @@ const ProductInfo: React.FC<ProductDetailsProps> = ({ product }) => {
       });
     } else {
       addToCart({
-        userId: "67d47dd27a43f7958263f0c5",
-
         product,
         quantity:
           selectedQuantity > availableStock ? availableStock : selectedQuantity,

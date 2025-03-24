@@ -12,20 +12,20 @@ interface CustomError extends Error {
 }
 
 export const useLogIn = () => {
-  const { setIsLogIn } = useStore();
+  const { setIsLogIn, setUserId } = useStore();
   const router = useRouter();
   return useMutation<LogInResponse, CustomError, LogInPayload>({
     mutationFn: logInUser,
     onSuccess: (data) => {
-      
+      debugger;
       setIsLogIn(data.token);
+      setUserId(data.data._id);
       toast.success(data.message);
       router.push("/");
     },
     onError: (error) => {
-      
-      toast.error("An unexpected error occurred.");
-      console.error("Registration failed:", error);
+      toast.error(`${error.response?.data?.message}`);
+      console.error("Registration failed:", error.response?.data?.message);
     },
   });
 };

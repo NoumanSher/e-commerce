@@ -1,6 +1,6 @@
 "use client";
 import { useState } from "react";
-import Image, { StaticImageData } from "next/image";
+import Image from "next/image";
 import {
   MdOutlineKeyboardArrowLeft,
   MdOutlineKeyboardArrowRight,
@@ -10,7 +10,6 @@ interface ImageGalleryProps {
 }
 
 const ImageGallery: React.FC<ImageGalleryProps> = ({ images }) => {
-  console.log(images)
   const [currentIndex, setCurrentIndex] = useState(0);
 
   const handleNext = () => {

@@ -32,7 +32,6 @@ export const fetchProducts = async (
     `${BASE_URL}/products/get-all-products?${params.toString()}`
   );
   
-  console.log(data);
 
   return data;
 };

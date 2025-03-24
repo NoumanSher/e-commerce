@@ -13,7 +13,6 @@ export const useOrderCreate = () => {
     mutationFn: OrderCreate,
     onSuccess: (data) => {
       debugger
-      console.log("create", data);
       toast.success("Order Create Successfully!");
     },
     onError: (error: ErrorLogin) => {

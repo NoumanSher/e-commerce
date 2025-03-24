@@ -9,6 +9,9 @@ import { useStore } from "@/Context/storeContext";
 import { useOrderCreate } from "./query/orderCreateQuery";
 import { useSearchParams } from "next/navigation";
 import { useCart } from "@/components/hooks/useCart";
+import { useQueryClient } from "@tanstack/react-query";
+import { toast } from "react-toastify";
+import { useRouter } from "next/navigation";
 const CheckoutSchema = Yup.object().shape({
   firstName: Yup.string().required("First Name is required"),
   lastName: Yup.string().required("Last Name is required"),
@@ -25,11 +28,31 @@ interface CheckoutProps {
 export default function Checkout({ checkValidation }: CheckoutProps) {
   const searchParams = useSearchParams(); // Access query parameters
   const section = searchParams.get("section"); // Get 'section' param
-  const { productDetail, setOrderNumber, cartItems } = useStore();
+  const { productDetail, setOrderNumber, cartItems, userId, isLogIn } =
+    useStore();
   const { mutate, isSuccess, isPending, data } = useOrderCreate();
   const { subTotal, clearCart } = useCart();
+  const queryClient = useQueryClient();
+  const router = useRouter();
   useEffect(() => {
     if (isSuccess) {
+      // Invalidate the product queries to refresh stock data
+      if (section === "checkout" && productDetail?.items[0].productId) {
+        queryClient.invalidateQueries({
+          queryKey: ["productId", productDetail.items[0].productId],
+          exact: true,
+        });
+      } else if (cartItems.length > 0) {
+        // Invalidate all product queries in cart
+        cartItems.forEach((item) => {
+          if (item.product._id) {
+            queryClient.invalidateQueries({
+              queryKey: ["productId", item.product._id],
+            });
+          }
+        });
+      }
+
       if (section !== "checkout") {
         clearCart();
       }
@@ -43,6 +66,9 @@ export default function Checkout({ checkValidation }: CheckoutProps) {
     isSuccess,
     section,
     setOrderNumber,
+    productDetail,
+    cartItems,
+    queryClient,
   ]);
 
   return (
@@ -61,8 +87,8 @@ export default function Checkout({ checkValidation }: CheckoutProps) {
       onSubmit={(values) => {
         const { paymentMethod, ...rest } = values;
         if (section === "checkout") {
-          let finalCompleteOrderObject = {
-            userId: productDetail?.userId as string,
+          let singleOrderObject = {
+            userId: userId,
 
             deliveryFee: productDetail?.deliveryFee as number,
             items: [
@@ -82,7 +108,12 @@ export default function Checkout({ checkValidation }: CheckoutProps) {
             paymentMethod: paymentMethod as "cash",
             address: { ...rest },
           };
-          mutate(finalCompleteOrderObject);
+          if (isLogIn) {
+            mutate(singleOrderObject);
+          } else {
+            toast.error("Please login to place order");
+            setTimeout(() => router.push("/pages/login"), 3000);
+          }
         } else {
           const items = cartItems.map((item) => ({
             variantId: item?.variantID,
@@ -92,7 +123,7 @@ export default function Checkout({ checkValidation }: CheckoutProps) {
             lineTotal: item.product.salePrice * item.quantity,
           }));
           let dataToPass = {
-            userId: "67d47dd27a43f7958263f0c5",
+            userId: userId,
             items: items,
             totalPrice: subTotal,
             subTotal: subTotal,
@@ -101,7 +132,12 @@ export default function Checkout({ checkValidation }: CheckoutProps) {
             address: { ...rest },
             deliveryFee: 0,
           };
-          mutate(dataToPass);
+          if (isLogIn) {
+            mutate(dataToPass);
+          } else {
+            toast.error("Please login to place order");
+            setTimeout(() => router.push("/pages/login"), 3000);
+          }
         }
       }}
     >

@@ -4,7 +4,7 @@ import { toast } from "react-toastify";
 import { Product } from "@/components/productDetail/productDetailDto";
 
 interface CartItem {
-  userId: string;
+  // userId: string;
   product: Product;
   quantity: number;
   color?: string;
@@ -16,8 +16,8 @@ export const useCart = () => {
   const { cartItems, setCartItems } = useStore();
 
   const validateQuantity = (quantity: number) => {
-    if (quantity <= 0) {
-      toast.error("Quantity must be greater than zero.");
+    if (isNaN(quantity) || quantity <= 0) {
+      toast.error("Quantity must be a positive number greater than zero.");
       return false;
     }
     return true;
@@ -25,11 +25,21 @@ export const useCart = () => {
 
   const addToCart = useCallback(
     (item: CartItem) => {
+      if (!item.product || !item.product._id) {
+        toast.error("Invalid product information.");
+        return;
+      }
+
       const { product, quantity, variantID } = item;
 
       if (!validateQuantity(quantity)) return;
 
       if (product.isVariant) {
+        if (!variantID) {
+          toast.error("Please select a product variant.");
+          return;
+        }
+
         const matchingVariant = product.variants?.find(
           (variant) => variant._id === variantID
         );
@@ -59,8 +69,9 @@ export const useCart = () => {
         return;
       }
 
-      let toastMessage = "";
-      let stockLimitExceeded = false;
+      // Create unique toast IDs
+      const successToastId = `add-item-${product._id}-${variantID || 'novariant'}`;
+      const errorToastId = `add-error-${product._id}`;
 
       setCartItems((prevItems) => {
         const existingItemIndex = prevItems.findIndex(
@@ -74,87 +85,145 @@ export const useCart = () => {
           const existingItem = updatedItems[existingItemIndex];
 
           if (existingItem.quantity + quantity > availableStock) {
-            stockLimitExceeded = true;
+            // Show toast inside setCartItems to avoid multiple toasts
+            toast.error(
+              `No more item(s) can be added for ${
+                product.productName || "this product"
+              }`,
+              { toastId: errorToastId }
+            );
             return updatedItems;
           }
 
           updatedItems[existingItemIndex].quantity += quantity;
-          toastMessage = "Cart updated successfully!";
+          // Show toast inside setCartItems to avoid multiple toasts
+          toast.success("Cart updated successfully!", { toastId: successToastId });
           return updatedItems;
         }
 
-        toastMessage = "Item added to cart!";
+        // Show toast inside setCartItems to avoid multiple toasts
+        toast.success("Item added to cart!", { toastId: successToastId });
         return [...prevItems, item];
       });
-
-      if (stockLimitExceeded) {
-        toast.error(
-          `No more item(s) can be added for ${
-            product.productName || "this product"
-          }`
-        );
-      } else if (toastMessage) {
-        toast.success(toastMessage);
-      }
     },
     [setCartItems]
   );
 
   const updateItemQuantity = useCallback(
     (productID: string, quantity: number, variantID?: string) => {
+      if (!productID) {
+        toast.error("Invalid product information.");
+        return;
+      }
+
       if (!validateQuantity(quantity)) return;
 
-      let toastMessage = "";
+      // First check if product exists
+      const productExists = cartItems.some(item => 
+        item.product._id === productID && (!variantID || item.variantID === variantID)
+      );
+      
+      if (!productExists) {
+        toast.error("Product not found in cart.");
+        return;
+      }
 
-      setCartItems((prevItems) => {
-        return prevItems.map((item) => {
-          if (item.product._id === productID && (!variantID || item.variantID === variantID)) {
-            if (item.quantity !== quantity) {
-              toastMessage = "Quantity updated successfully!";
-            }
-            return { ...item, quantity };
-          }
-          return item;
-        });
-      });
-
-      if (toastMessage) {
-        toast.success(toastMessage);
+      // Check stock availability
+      const itemToUpdate = cartItems.find(item => 
+        item.product._id === productID && (!variantID || item.variantID === variantID)
+      );
+      
+      if (itemToUpdate) {
+        const availableStock = itemToUpdate.variantID
+          ? itemToUpdate.product.stock || 0
+          : itemToUpdate.product.stock || 0;
+        
+        if (quantity > availableStock) {
+          toast.error(`Only ${availableStock} item(s) available.`);
+          return;
+        }
+        
+        // Only proceed with update if quantity is different
+        if (itemToUpdate.quantity !== quantity) {
+          // Create a unique ID for the toast based on product and action
+          const toastId = `update-quantity-${productID}`;
+          
+          setCartItems(prevItems => {
+            const newItems = prevItems.map(item => {
+              if (item.product._id === productID && (!variantID || item.variantID === variantID)) {
+                return { ...item, quantity };
+              }
+              return item;
+            });
+            
+            // Show toast only ONCE per update operation
+            toast.success("Quantity updated successfully!", { toastId });
+            
+            return newItems;
+          });
+        }
       }
     },
-    [setCartItems]
+    [cartItems, setCartItems]
   );
 
   const removeFromCart = useCallback(
     (productID: string, variantID?: string) => {
-      setCartItems((prevItems) =>
-        prevItems.filter(
+      if (!productID) {
+        toast.error("Invalid product information.");
+        return;
+      }
+      
+      // Create a unique ID for the toast
+      const toastId = `remove-item-${productID}`;
+      
+      setCartItems((prevItems) => {
+        const itemExists = prevItems.some(
+          item => item.product._id === productID && 
+          (!variantID || item.variantID === variantID)
+        );
+        
+        if (!itemExists) {
+          toast.error("Product not found in cart.");
+          return prevItems;
+        }
+        
+        const filteredItems = prevItems.filter(
           (item) =>
             item.product._id !== productID ||
             (variantID && item.variantID !== variantID)
-        )
-      );
-      toast.info("Item removed from cart.");
+        );
+        
+        // Show toast only ONCE per removal operation
+        toast.info("Item removed from cart.", { toastId });
+        
+        return filteredItems;
+      });
     },
     [setCartItems]
   );
 
   const clearCart = useCallback(() => {
+    const toastId = "clear-cart";
     setCartItems([]);
-    toast.info("Cart cleared.");
+    toast.info("Cart cleared.", { toastId });
   }, [setCartItems]);
 
   const subTotal = useMemo(() => {
     return cartItems.reduce((total, item) => {
-      const basePrice = item.product.salePrice || 0 * item.quantity
+      const basePrice = (Number(item.product.salePrice) || 0) * item.quantity;
 
       const variant = item.variantID
         ? item.product.variants?.find((v) => v._id === item.variantID)
         : null;
-      const additionalSalePrice = variant?.additionalSalePrice || 0;
+      const additionalSalePrice = Number(variant?.additionalSalePrice) || 0;
 
-      return total + (basePrice + additionalSalePrice);
+      return total + basePrice + (additionalSalePrice * item.quantity);
     }, 0);
+  }, [cartItems]);
+
+  const totalItems = useMemo(() => {
+    return cartItems.reduce((total, item) => total + item.quantity, 0);
   }, [cartItems]);
 
   const totalCost = useMemo(() => subTotal, [subTotal]);
@@ -162,6 +231,7 @@ export const useCart = () => {
   return {
     cartItems,
     cartCount: cartItems.length,
+    totalItems,
     addToCart,
     updateItemQuantity,
     removeFromCart,

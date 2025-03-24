@@ -6,7 +6,6 @@ import { useStore } from "@/Context/storeContext";
 const OrderConfirmation = () => {
   const { orderNumber } = useStore();
   const { data, isLoading } = useGetOrderDetailByorderNumber(orderNumber);
-  console.log(data?.data);
 
   const subTotal = data?.data.items.reduce(
     (acc, item) => acc + item.lineTotal,

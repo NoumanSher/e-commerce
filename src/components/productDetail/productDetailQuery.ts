@@ -6,7 +6,7 @@ export const useGetProductDetailById = (productId:string) => {
     queryKey: ["productId", productId],
     queryFn: () => productDetailById(productId),
     staleTime: Infinity,
+    refetchOnMount: true,
     enabled: !!productId,
-    // refetchOnWindowFocus: true,
   });
 };

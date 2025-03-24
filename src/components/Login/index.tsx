@@ -1,12 +1,21 @@
-'use client'
-import React from "react";
+"use client";
+import React, { useEffect } from "react";
 import AuthForm from "@/components/AuthForm";
 import * as Yup from "yup";
 import { LogInPayload } from "./service";
 import { useLogIn } from "./query";
+import { useStore } from "@/Context/storeContext";
 
 export default function LoginForm() {
-  const { mutate, isPending } = useLogIn();
+  const { mutate, isPending, data, isSuccess } = useLogIn();
+  // const { setUserId } = useStore();
+
+  // useEffect(() => {
+  //   console.log(data?.data._id);
+  //   debugger
+  //   if (isSuccess) setUserId(data.data._id);
+  // }, [data?.data._id, isSuccess, setUserId]);
+
   const LoginSchema = Yup.object().shape({
     email: Yup.string()
       .email("Invalid email address")
@@ -17,8 +26,6 @@ export default function LoginForm() {
   });
 
   const handleSubmit = (values: LogInPayload) => {
-    
-    console.log(values);
     mutate(values);
   };
 
@@ -29,7 +36,7 @@ export default function LoginForm() {
       validationSchema={LoginSchema}
       onSubmit={handleSubmit}
       isLoading={isPending}
-      buttonText={isPending ? 'LOG IN...' : "LOG IN"}
+      buttonText={isPending ? "LOG IN..." : "LOG IN"}
       fields={[
         { name: "email", type: "text", placeholder: "User or Email" },
         { name: "password", type: "password", placeholder: "Password" },

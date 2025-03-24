@@ -34,7 +34,7 @@ export default function RootLayout({
         <Provider>
           <StoreTypeProviderWrapper>
             <ToastContainer
-              autoClose={1000}
+              autoClose={2000}
               theme="colored"
               position="top-right"
             />

@@ -6,7 +6,7 @@ import {
 } from "@tanstack/react-query";
 import { Metadata } from "next";
 import ProductDetailComponet from "@/components/productDetail";
-import { ProductCardDataProps ,Image} from "@/data/dataProps";
+
 
 interface ProductDetailProps {
   params: { productId: string };
@@ -37,7 +37,7 @@ export async function generateMetadata({ params }: ProductDetailProps): Promise<
     openGraph: {
       title: product?.seo?.metaTitle || product?.productName,
       description: product?.seo?.metaDescription || product?.description,
-      url: `https://e-commerce-pink-iota.vercel.app/pages/product-detail${product?._id}`,
+      url: `https://e-commerce-pink-iota.vercel.app/pages/product-detail/${product?._id}`,
       images: product?.images?.map((img: ImageProps) => ({
         url: img.src,
         alt: img.alt,
@@ -54,15 +54,36 @@ export default async function ProductDetail({ params: { productId } }: ProductDe
 
   // Prefetch product data
   await queryClient.prefetchQuery({
-    queryKey: ["productId", productId],
+    queryKey: ["productId", productId, Date.now()],
     queryFn: () => getProductDataById(productId),
   });
 
+  const product = await getProductDataById(productId);
+
   return (
-    <HydrationBoundary state={dehydrate(queryClient)}>
-      <Suspense fallback={".....loading detail"}>
-        <ProductDetailComponet productId={productId} />
-      </Suspense>
-    </HydrationBoundary>
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org/",
+            "@type": "Product",
+            "name": product.productName,
+            "image": product.images?.[0]?.src,
+            "description": product.description,
+            "offers": {
+              "@type": "Offer",
+              "price": product.salePrice,
+              "priceCurrency": "PKR"
+            }
+          })
+        }}
+      />
+      <HydrationBoundary state={dehydrate(queryClient)}>
+        <Suspense fallback={".....loading detail"}>
+          <ProductDetailComponet productId={productId} />
+        </Suspense>
+      </HydrationBoundary>
+    </>
   );
 }

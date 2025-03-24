@@ -1,6 +1,7 @@
+import { Product } from "@/components/productDetail/productDetailDto";
+
 export interface ProductDetailData {
   productName?: string;
-  userId: string;
   items: item[];
   deliveryFee: number;
   totalPrice: number;
@@ -13,4 +14,12 @@ interface item {
   variantId?: string;
   price: number;
   lineTotal: number;
+}
+
+ export interface CartItem {
+  product: Product;
+  quantity: number;
+  color?: string;
+  size?: string;
+  variantID?: string;
 }
