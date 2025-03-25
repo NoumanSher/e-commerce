@@ -1,18 +1,17 @@
 "use client";
-import { useState, useEffect, useCallback, useMemo, useRef } from "react";
+import { useState, useEffect, useCallback, useMemo, useRef, memo } from "react";
 import Image from "next/image";
-import P1 from "@/assets/img/P1.jpg";
-import P2 from "@/assets/img/P2.jpg";
-import P3 from "@/assets/img/P3.jpg";
 
-export default function Slider() {
+import { StoreInfo } from "./dto/storeSettingDto";
+
+interface SliderProps {
+  storeSettings?: StoreInfo;
+}
+
+function Slider({ storeSettings }: SliderProps) {
   const slides = useMemo(
-    () => [
-      { id: 1, img: P1 },
-      { id: 2, img: P2 },
-      { id: 3, img: P3 },
-    ],
-    []
+    () => storeSettings?.bannerImages || [],
+    [storeSettings?.bannerImages]
   );
 
   const [currentSlide, setCurrentSlide] = useState(0);
@@ -22,15 +21,19 @@ export default function Slider() {
   const intervalRef = useRef<number | null>(null);
 
   const nextSlide = useCallback(() => {
+    // if (!slides.length) return;
     setCurrentSlide((prev) => (prev + 1) % slides.length);
   }, [slides.length]);
 
   const prevSlide = useCallback(() => {
+    // if (!slides.length) return;
     setCurrentSlide((prev) => (prev - 1 + slides.length) % slides.length);
   }, [slides.length]);
 
   // Auto-play functionality with pause on hover
   useEffect(() => {
+    if (!slides.length) return;
+
     if (!isHovered) {
       intervalRef.current = window.setInterval(nextSlide, 5000);
     } else if (intervalRef.current !== null) {
@@ -43,11 +46,15 @@ export default function Slider() {
         clearInterval(intervalRef.current);
       }
     };
-  }, [isHovered, nextSlide]);
+  }, [isHovered, nextSlide, slides.length]);
+
+  if (!slides.length) {
+    return null;
+  }
 
   return (
     <div
-      className="relative w-full h-[80vh] overflow-hidden"
+      className="relative w-full h-[50vh] md:h-[80vh] overflow-hidden"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
@@ -56,13 +63,15 @@ export default function Slider() {
         style={{ transform: `translateX(-${currentSlide * 100}%)` }}
       >
         {slides.map((slide) => (
-          <div key={slide.id} className="w-full flex-shrink-0">
+          <div key={slide._id} className="w-full flex-shrink-0">
             <Image
               priority={true}
               loading="eager"
+              layout="fill"
               src={slide.img}
-              className="object-cover w-full h-full"
-              alt={`Slide ${slide.id}`}
+              sizes="(max-width: 768px) 100vw, 100vw"
+              className="object-cover"
+              alt={`Slide ${slide._id}`}
             />
           </div>
         ))}
@@ -87,3 +96,5 @@ export default function Slider() {
     </div>
   );
 }
+
+export default memo(Slider);
