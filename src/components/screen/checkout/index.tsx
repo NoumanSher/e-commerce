@@ -93,7 +93,7 @@ export default function Checkout({ checkValidation }: CheckoutProps) {
             deliveryFee: productDetail?.deliveryFee as number,
             items: [
               {
-                variantId: productDetail?.items[0].variantId as string,
+                ...(productDetail?.items[0]?.variantId && { variantId: productDetail.items[0].variantId }),
                 productId: productDetail?.items[0].productId as string,
                 price: productDetail?.items[0].price as number,
                 quantity: productDetail?.items[0].quantity as number,
@@ -116,7 +116,7 @@ export default function Checkout({ checkValidation }: CheckoutProps) {
           }
         } else {
           const items = cartItems.map((item) => ({
-            variantId: item?.variantID,
+            ...(item?.variantID && { variantId: item.variantID }),
             productId: item.product._id,
             price: item.product.salePrice,
             quantity: item.quantity,

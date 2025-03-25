@@ -21,12 +21,10 @@ function Slider({ storeSettings }: SliderProps) {
   const intervalRef = useRef<number | null>(null);
 
   const nextSlide = useCallback(() => {
-    // if (!slides.length) return;
     setCurrentSlide((prev) => (prev + 1) % slides.length);
   }, [slides.length]);
 
   const prevSlide = useCallback(() => {
-    // if (!slides.length) return;
     setCurrentSlide((prev) => (prev - 1 + slides.length) % slides.length);
   }, [slides.length]);
 
@@ -40,7 +38,7 @@ function Slider({ storeSettings }: SliderProps) {
       clearInterval(intervalRef.current);
     }
 
-    // Cleanup interval on unmount
+    // Cleanup interval on unmount or when dependencies change
     return () => {
       if (intervalRef.current !== null) {
         clearInterval(intervalRef.current);
@@ -63,11 +61,14 @@ function Slider({ storeSettings }: SliderProps) {
         style={{ transform: `translateX(-${currentSlide * 100}%)` }}
       >
         {slides.map((slide) => (
-          <div key={slide._id} className="w-full flex-shrink-0">
+          <div 
+            key={slide._id} 
+            className="w-full flex-shrink-0 relative h-full" // Added "relative" and "h-full"
+          >
             <Image
               priority={true}
               loading="eager"
-              layout="fill"
+              fill
               src={slide.img}
               sizes="(max-width: 768px) 100vw, 100vw"
               className="object-cover"

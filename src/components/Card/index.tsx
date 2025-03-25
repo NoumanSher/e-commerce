@@ -40,7 +40,7 @@ const MainCard = ({ item }: MainCardProps) => {
             <Image
               priority={true}
               loading="eager"
-              src={item.images[0].src}
+              src={item.images[0]?.src}
               width={250}
               height={404}
               alt="Product BAnner Img"
