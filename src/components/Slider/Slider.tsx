@@ -52,7 +52,7 @@ function Slider({ storeSettings }: SliderProps) {
 
   return (
     <div
-      className="relative w-full h-[50vh] md:h-[80vh] overflow-hidden"
+      className="relative w-full h-[50vh] md:h-[90vh] overflow-hidden"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
@@ -71,7 +71,7 @@ function Slider({ storeSettings }: SliderProps) {
               fill
               src={slide.img}
               sizes="(max-width: 768px) 100vw, 100vw"
-              className="object-cover"
+              className="object-center object-fill"
               alt={`Slide ${slide._id}`}
             />
           </div>
