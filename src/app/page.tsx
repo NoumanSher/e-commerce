@@ -14,15 +14,30 @@ import {
 } from "@tanstack/react-query";
 import { getStoreSetting } from "@/components/Slider/api/storeSettingApi";
 import { Metadata } from "next";
-// Fetch product data from API
+
+// Tell Next.js to not cache this page
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 
 export default async function Home() {
-  const queryClient = new QueryClient();
+  const queryClient = new QueryClient({
+    defaultOptions: {
+      queries: {
+        staleTime: 0,
+        refetchOnWindowFocus: true,
+        refetchOnMount: true,
+      },
+    },
+  });
 
   const storeSettings = await queryClient.fetchQuery({
-    queryKey: ["settings",Date.now()],
+    queryKey: ["settings"],
     queryFn: getStoreSetting,
+    staleTime: 0,
   });
+
+  // Force clear cache for this query
+  await queryClient.invalidateQueries({queryKey: ["settings"]});
 
   return (
     <>
@@ -50,10 +65,18 @@ export default async function Home() {
 
 export async function generateMetadata(): Promise<Metadata> {
   try {
-    const queryClient = new QueryClient();
+    const queryClient = new QueryClient({
+      defaultOptions: {
+        queries: {
+          staleTime: 0,
+        },
+      },
+    });
+    
     const storeSettings = await queryClient.fetchQuery({
       queryKey: ["settings"],
       queryFn: getStoreSetting,
+      staleTime: 0,
     });
 
     return {
