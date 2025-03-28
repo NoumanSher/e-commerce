@@ -20,9 +20,8 @@ export default async function Home() {
   const queryClient = new QueryClient();
 
   const storeSettings = await queryClient.fetchQuery({
-    queryKey: ["settings"],
+    queryKey: ["settings",Date.now()],
     queryFn: getStoreSetting,
-
   });
 
   return (
