@@ -1,5 +1,5 @@
 "use client";
-import { useState, useCallback, useEffect, use } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import QuantitySelector from "@/components/productDetail/components/QuantitySelector";
 import SelectColorAndSize from "./components/SelectVarient";
