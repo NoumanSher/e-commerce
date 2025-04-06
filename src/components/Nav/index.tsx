@@ -12,10 +12,12 @@ import {
 import { useWishlist } from "../hooks/useWishlist";
 import { useCart } from "../hooks/useCart";
 import { useStore } from "@/Context/storeContext";
-
+import { useQuery } from "@tanstack/react-query";
+import { getStoreSetting } from "@/components/Slider/api/storeSettingApi";
+import Image from "next/image";
 const Navbar = () => {
   const { wishlistCount } = useWishlist();
-  const {isLogIn} = useStore()
+  const { isLogIn } = useStore();
 
   const [isMobile, setIsMobile] = useState(false);
   const [searchValue, setSearchValue] = useState("");
@@ -23,7 +25,11 @@ const Navbar = () => {
   const [isClient, setIsClient] = useState(false); // To ensure client-only rendering
   const { cartCount } = useCart();
   const router = useRouter();
-
+  const { data } = useQuery({
+    queryKey: ["settings"],
+    queryFn: getStoreSetting,
+  });
+  console.log(data);
   useEffect(() => {
     setIsClient(true); // Set to true only after component mounts on client
   }, []);
@@ -49,19 +55,16 @@ const Navbar = () => {
   }, [isMobile]);
 
   const handleClickProfile = () => {
-    const isLogIn = localStorage.getItem("token");
+    // const isLogIn = localStorage.getItem("token");
 
-    
-    isLogIn ? router.push("/pages/profile") : router.push("/pages/login")
-    
+    isLogIn ? router.push("/pages/profile") : router.push("/pages/login");
   };
 
   return (
     <nav className="flex items-center justify-between p-4 border-b border-gray-200 bg-white container mx-auto lg:px-16">
       <div className="flex items-center gap-x-20 lg:order-1 order-2">
         <Link href={"/"} className="flex items-center text-2xl font-bold">
-          <span>UQMO</span>
-          <span className="ml-1 w-4 h-4 bg-red-600 rounded-full"></span>
+          <Image src={data?.logo ?? ''} width={50} height={50} alt="logo" />
         </Link>
 
         <ul
