@@ -1,49 +1,60 @@
 "use client";
-import React, { memo, useEffect } from "react";
-
-import MainCard from "../../Card/index";
+import React, { memo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { fetchProducts } from "@/services/productsService";
 import { useStore } from "@/Context/storeContext";
+import MainCard from "../../Card/index";
+import type { ApiError } from "@/services/productsService";
 
 const ProductsCard = () => {
   const { selectedCategory } = useStore();
 
   const {
     data: productsData,
-    isLoading: productsLoading,
-    error: productsError,
+    isLoading,
+    error,
     isFetching,
-    refetch,
   } = useQuery({
     queryKey: ["products", selectedCategory],
     queryFn: () => fetchProducts(selectedCategory as string),
-    enabled: !!selectedCategory, // Ensures query doesn't run if there's no selected category
-    staleTime: Infinity,
+    enabled: !!selectedCategory,
+    staleTime: 1000 * 60 * 5, // 5 min (data is fresh)
+    gcTime: 1000 * 60 * 30 // 30 min in cache
   });
-  useEffect(() => {
-    if (selectedCategory) {
-      refetch();
-    }
-  }, [selectedCategory, refetch]);
 
-  if (productsError) {
-    return <div>Error loading products</div>;
+  // useEffect(() => {
+  //   if (selectedCategory) {
+  //     refetch();
+  //   }
+  // }, [selectedCategory, refetch]);
+
+  if (error) {
+    const err = error as ApiError;
+    return (
+      <div className="flex justify-center items-center h-96 text-center text-red-600 text-lg">
+        {err.response?.message ?? err.message ?? "Something went wrong."}
+      </div>
+    );
   }
 
   return (
-    <div>
-      <div className="flex flex-wrap xl:max-w-[1440px] mx-auto xl:mt-14">
-        {isFetching ? (
-          <div>Loading Products...</div>
-        ) : (
-          productsData?.data.slice(0, 8).map((item) => (
-            <div key={item._id} className="w-[50%] md:!w-[33.333%] lg:!w-[25%]">
+    <div className="xl:max-w-[1440px] mx-auto xl:mt-14 px-4">
+      {isLoading || isFetching ? (
+        <div className="flex justify-center items-center h-96 w-full">
+          <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-blue-500"></div>
+        </div>
+      ) : (
+        <div className="flex flex-wrap gap-y-6">
+          {productsData?.data.slice(0, 8).map((item) => (
+            <div
+              key={item._id}
+              className="w-[50%] md:w-[33.333%] lg:w-[25%] px-2"
+            >
               <MainCard item={item} />
             </div>
-          ))
-        )}
-      </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 };

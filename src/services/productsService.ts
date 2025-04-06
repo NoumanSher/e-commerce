@@ -1,8 +1,6 @@
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import { BASE_URL } from "@/constants";
-
 import { Product } from "@/components/productDetail/productDetailDto";
-
 
 export interface Pagination {
   totalProducts: number;
@@ -17,6 +15,12 @@ export interface ProductsResponse {
   pagination?: Pagination;
 }
 
+export interface ApiError {
+  message: string;
+  statusCode?: number;
+  response?: any;
+}
+
 export const fetchProducts = async (
   categoryId?: string,
   page: number = 1,
@@ -28,10 +32,20 @@ export const fetchProducts = async (
   if (page) params.append("page", page.toString());
   if (limit) params.append("limit", limit.toString());
 
-  const { data } = await axios.get(
-    `${BASE_URL}/products/get-all-products?${params.toString()}`
-  );
-  
+  try {
+    debugger
+    const { data } = await axios.get(
+      `${BASE_URL}/products/get-all-products?${params.toString()}`
+    );
 
-  return data;
+    return data;
+  } catch (error) {
+    const err = error as AxiosError;
+    console.log(err);
+    throw {
+      message: err.message,
+      statusCode: err.response?.status,
+      response: err.response?.data,
+    } satisfies ApiError;
+  }
 };
