@@ -6,31 +6,60 @@ import {
   DialogHeader,
   DialogTitle,
   DialogDescription,
-} from "@/components/ui/dialog"; // Adjust based on your setup
+} from "@/components/ui/dialog";
 
 const TABS = [
   {
     id: "delivery",
     label: "DELIVERY AND RETURN",
-    content: "Details about Delivery and Return",
+    content: (
+      <ul className="list-disc pl-5 space-y-2 text-sm text-gray-700">
+        <li>Standard delivery takes 3–7 business days depending on your location.</li>
+        <li>Express shipping options are available at checkout for faster delivery.</li>
+        <li>You have 14 days from the delivery date to return your item(s).</li>
+        <li>Products must be returned in their original condition, unworn and with tags attached.</li>
+        <li>Return shipping costs may apply.</li>
+        <li>Refunds are processed within 5–7 business days after receiving your return.</li>
+      </ul>
+    ),
   },
   {
     id: "shipping",
     label: "SHIPPING INFORMATION",
-    content: "Details about Shipping Information",
+    content: (
+      <ul className="list-disc pl-5 space-y-2 text-sm text-gray-700">
+        <li>We offer worldwide shipping.</li>
+        <li>Orders are processed within 1–2 business days.</li>
+        <li>Shipping rates and delivery times are calculated at checkout based on your location and selected shipping method.</li>
+        <li>Once your order is shipped, you’ll receive a confirmation email with tracking information.</li>
+        <li>Note: We are not responsible for customs duties or import taxes in your country.</li>
+      </ul>
+    ),
   },
   {
     id: "composition",
     label: "COMPOSITION AND CARE",
-    content: "Details about Composition and Care",
+    content: (
+      <ul className="list-disc pl-5 space-y-2 text-sm text-gray-700">
+        <li>Please refer to the product description for exact material details.</li>
+        <li>Most items are made with high-quality fabrics such as cotton, polyester, linen, or blends.</li>
+        <li>To maintain the quality of your item:</li>
+        <ul className="list-[circle] pl-5 space-y-1">
+          <li>Machine wash cold with like colors</li>
+          <li>Do not bleach</li>
+          <li>Tumble dry low or air dry</li>
+          <li>Iron on low heat if needed</li>
+          <li>Dry clean when specified</li>
+        </ul>
+      </ul>
+    ),
   },
 ];
 
 const ProductDetailTabs: React.FC = memo(() => {
-  const [activeTabContent, setActiveTabContent] = useState<string>(TABS[0].content);
+  const [activeTabContent, setActiveTabContent] = useState<React.ReactNode>("");
 
-  // Memoized function to handle tab clicks
-  const handleTabClick = useCallback((content: string) => {
+  const handleTabClick = useCallback((content: React.ReactNode) => {
     setActiveTabContent(content);
   }, []);
 
@@ -52,8 +81,10 @@ const ProductDetailTabs: React.FC = memo(() => {
             {activeTabContent === tab.content && (
               <DialogContent>
                 <DialogHeader>
-                  <DialogTitle>Product Information</DialogTitle>
-                  <DialogDescription>{activeTabContent}</DialogDescription>
+                  <DialogTitle>{tab.label}</DialogTitle>
+                  <DialogDescription asChild>
+                    <div className="text-start">{tab.content}</div>
+                  </DialogDescription>
                 </DialogHeader>
               </DialogContent>
             )}

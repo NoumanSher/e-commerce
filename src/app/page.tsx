@@ -14,6 +14,7 @@ import {
 } from "@tanstack/react-query";
 import { getStoreSetting } from "@/components/Slider/api/storeSettingApi";
 import { Metadata } from "next";
+import { FaWhatsapp } from "react-icons/fa";
 
 // Tell Next.js to not cache this page
 export const dynamic = 'force-dynamic';
@@ -28,7 +29,7 @@ export default async function Home() {
         refetchOnMount: true,
       },
     },
-  });
+  }); 
 
   const storeSettings = await queryClient.fetchQuery({
     queryKey: ["settings"],
@@ -38,7 +39,7 @@ export default async function Home() {
 
   // Force clear cache for this query
   await queryClient.invalidateQueries({queryKey: ["settings"]});
-
+  const landingWhatsappURL = `https://wa.me/923040261311`;
   return (
     <>
       <Suspense fallback={<div>Loading Slider .........</div>}>
@@ -56,9 +57,20 @@ export default async function Home() {
       {/* <Suspense fallback={<div>Loading Inside Collection .........</div>}>
         <Collection />
       </Suspense> */}
-      <Suspense fallback={<div>Loading Limited Edition .........</div>}>
+      {/* <Suspense fallback={<div>Loading Limited Edition .........</div>}>
         <LimitedEdition />
-      </Suspense>
+      </Suspense> */}
+       <a
+        href={landingWhatsappURL}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="fixed bottom-6 right-6 z-50 animate-bounce"
+      >
+        <div className="bg-green-500 hover:bg-green-600 text-white p-4 rounded-full shadow-lg flex items-center gap-2">
+          <FaWhatsapp size={24} />
+          <span className="hidden sm:inline font-semibold">WhatsApp Us</span>
+        </div>
+      </a>
     </>
   );
 }

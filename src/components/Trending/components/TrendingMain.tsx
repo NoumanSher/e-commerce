@@ -18,9 +18,9 @@ const TrendingMain = () => {
             <AllProductBtn />
           </Suspense>
         </div>
-        <Suspense fallback={<div>Loading...</div>}>
+        {/* <Suspense fallback={<div>Loading...</div>}>
           <BannerProducts />
-        </Suspense>
+        </Suspense> */}
       </div>
     </>
   );
