@@ -1,11 +1,6 @@
 // profileTypes.ts
-export interface Order {
-    id: string;
-    date: string;
-    total: string;
-    status: string;
-    details: string;
-  }
+import {Order} from "@/app/pages/profile/profileDtos";
+
   
   export interface ProfileInfoProps {
     name: string;

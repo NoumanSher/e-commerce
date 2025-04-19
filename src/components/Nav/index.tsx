@@ -29,7 +29,6 @@ const Navbar = () => {
     queryKey: ["settings"],
     queryFn: getStoreSetting,
   });
-  console.log(data);
   useEffect(() => {
     setIsClient(true); // Set to true only after component mounts on client
   }, []);
@@ -56,7 +55,7 @@ const Navbar = () => {
 
   const handleClickProfile = () => {
     // const isLogIn = localStorage.getItem("token");
-
+    setIsMobile(!isMobile);
     isLogIn ? router.push("/pages/profile") : router.push("/pages/login");
   };
 
@@ -64,7 +63,7 @@ const Navbar = () => {
     <nav className="flex items-center justify-between p-4 border-b border-gray-200 bg-white container mx-auto lg:px-16">
       <div className="flex items-center gap-x-20 lg:order-1 order-2">
         <Link href={"/"} className="flex items-center text-2xl font-bold">
-          <Image src={data?.logo ?? ''} width={50} height={50} alt="logo" />
+          <Image src={data?.logo ?? ""} width={50} height={50} alt="logo" />
         </Link>
 
         <ul
@@ -91,29 +90,44 @@ const Navbar = () => {
               )}
             </span>
           </div>
-          <li>
-            <a
-              href="#"
+          <li
+            onClick={handleClickProfile}
+            className="text-base  tracking-wide lg:hidden md:block text-black font-medium hover:text-gray-600 mt-4"
+          >
+            Profile
+          </li>
+          <li
+            onClick={() => {
+              setIsMobile(!isMobile);
+              router.push("/pages/wish-list");
+            }}
+            className="text-base  tracking-wide lg:hidden md:block text-black font-medium hover:text-gray-600"
+          >
+            Wishlist
+          </li>
+          <li onClick={() => setIsMobile(!isMobile)}>
+            <Link
+              href="/"
               className="text-sm tracking-wide text-black font-medium hover:text-gray-600"
             >
               HOME
-            </a>
+            </Link>
           </li>
           <li>
-            <a
-              href="#"
+            <Link
+              href="/"
               className="text-sm tracking-wide text-black font-medium hover:text-gray-600"
             >
               ABOUT
-            </a>
+            </Link>
           </li>
           <li>
-            <a
-              href="#"
+            <Link
+              href="/"
               className="text-sm tracking-wide text-black font-medium hover:text-gray-600"
             >
               CONTACT
-            </a>
+            </Link>
           </li>
         </ul>
       </div>

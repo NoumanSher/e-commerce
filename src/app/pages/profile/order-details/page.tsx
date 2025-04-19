@@ -1,11 +1,13 @@
-// OrderDetailsPage.tsx
-import React from "react";
+"use client";
+import React, { useMemo } from "react";
 import Header from "./components/Header";
 import AddressInfo from "../components/AddressInfo";
 import OrderSummary from "./components/OrderSummary";
 import ProductTable from "./components/ProductTable";
 import OrderStepper from "./components/Stepper";
-
+import { useSearchParams } from "next/navigation";
+import { useGetOrderDetailByOrderNumber } from "../profileQuery";
+import Loader from "@/components/Loader";
 const order = {
   date: "9 October, 2024",
   productTitle: "Product1",
@@ -56,43 +58,68 @@ const order = {
     },
   ],
 };
+const getSafeData = (data: any) => {
+  if (data) {
+    const addressObj = data?.address;
 
-const OrderDetailsPage = () => (
-  <div className="lg:py-6 py-3">
-    <Header orderDate={order.date} productTitle={order.productTitle} />
+    const address = addressObj.streetAddress ?? "";
+    const user = data.user ?? {};
+    return {
+      username: user.username ?? "",
+      fullName: `${addressObj.firstName ?? "User"} ${addressObj.lastName ?? "Name"}`,
+      email: addressObj.email ?? "xyz@gmail.com",
+      streetAddress: address ?? "xyz street",
+      phone: addressObj.phone ?? "030176776",
+      orders: data,
+    };
+  }
+};
+const OrderDetailsPage = () => { 
+  const searchParams = useSearchParams(); // Access query parameters
+  const orderNumber = searchParams.get("orderId"); // Get 'section' param
+  const { data, isLoading } = useGetOrderDetailByOrderNumber(
+    orderNumber as string
+  );
+  const profileData = useMemo(() => getSafeData(data?.data), [data]);
 
-    <div className="flex gap-4 flex-col lg:flex-row mt-3">
-      <AddressInfo
-        name={order.billing.name}
-        address={order.billing.address}
-        email={order.billing.email}
-        phone={order.billing.phone}
-      />
-      <div className="hidden lg:contents">
+  if (isLoading) return <Loader />;
+  return (
+    <div className="lg:py-6 py-3">
+      <Header orderDate={profileData?.orders.createdAt} />
+
+      <div className="flex gap-4 flex-col lg:flex-row mt-3">
+        <AddressInfo
+          name={profileData?.fullName ?? ""}
+          email={profileData?.email}
+          phone={profileData?.phone}
+          address={profileData?.streetAddress}
+        />
+        <div className="hidden lg:contents">
+          <OrderSummary
+            orderId={profileData?.orders?.orderNo ?? ""}
+            paymentMethod={profileData?.orders?.paymentMethod ?? ""}
+            subtotal={profileData?.orders?.subTotal ?? ""}
+            delivery={profileData?.orders?.deliveryFee}
+            total={profileData?.orders?.subTotal ?? ""}
+          />
+        </div>
+      </div>
+      {/* <OrderStatusTimeline statuses={order.statuses} /> */}
+      <div className="my-5">
+        <OrderStepper orderStatusHistory={order?.orderStatuses} />
+      </div>
+      <ProductTable products={profileData?.orders?.items} />
+      <div className="lg:hidden mt-4">
         <OrderSummary
-          orderId={order.orderId}
-          paymentMethod={order.paymentMethod}
-          subtotal={order.subtotal}
-          delivery={order.delivery}
-          total={order.total}
+          orderId={profileData?.orders?.orderNo ?? ""}
+          paymentMethod={profileData?.orders?.paymentMethod ?? ""}
+          subtotal={profileData?.orders?.subTotal ?? ""}
+          delivery={profileData?.orders?.deliveryFee}
+          total={profileData?.orders?.subTotal ?? ""}
         />
       </div>
     </div>
-    {/* <OrderStatusTimeline statuses={order.statuses} /> */}
-    <div className="my-5">
-      <OrderStepper orderStatusHistory={order?.orderStatuses} />
-    </div>
-    <ProductTable products={order.products} />
-    <div className="lg:hidden mt-4">
-      <OrderSummary
-        orderId={order.orderId}
-        paymentMethod={order.paymentMethod}
-        subtotal={order.subtotal}
-        delivery={order.delivery}
-        total={order.total}
-      />
-    </div>
-  </div>
-);
+  );
+};
 
 export default OrderDetailsPage;

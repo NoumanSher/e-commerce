@@ -6,26 +6,26 @@ const OrderSummary: React.FC<{ orderId: string; paymentMethod: string; subtotal:
     <h2 className="text-lg font-semibold text-primary mb-4">Order Summary</h2>
         <div className="mb-2 flex justify-between">
           <span className="text-muted-foreground font-medium">ORDER ID:</span>
-          <span className="font-semibold text-foreground">#4152</span>
+          <span className="font-semibold text-foreground">#{orderId}</span>
         </div>
         <div className="mb-2 flex justify-between">
           <span className="text-muted-foreground font-medium">PAYMENT METHOD:</span>
-          <span className="font-semibold text-foreground">K Net</span>
+          <span className="font-semibold text-foreground">{paymentMethod}</span>
         </div>
         <div className="border-t border-border my-4"></div>
         <div className="mb-2 flex justify-between">
           <span className="text-muted-foreground font-medium">Subtotal:</span>
-          <span className="font-semibold text-foreground">365.00KWD</span>
+          <span className="font-semibold text-foreground">{subtotal}</span>
         </div>
    
         <div className="mb-2 flex justify-between">
           <span className="text-muted-foreground font-medium">Delivery:</span>
-          <span className="font-semibold text-foreground">Free</span>
+          <span className="font-semibold text-foreground">{delivery}</span>
         </div>
         <div className="border-t border-border my-4"></div>
         <div className="mb-2 flex justify-between">
           <span className="text-muted-foreground font-medium">Total:</span>
-          <span className="font-semibold text-primary">84.00KWD</span>
+          <span className="font-semibold text-primary">{subtotal}</span>
         </div>
       </div>
 );

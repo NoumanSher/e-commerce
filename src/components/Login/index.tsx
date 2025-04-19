@@ -8,13 +8,11 @@ import { useStore } from "@/Context/storeContext";
 
 export default function LoginForm() {
   const { mutate, isPending, data, isSuccess } = useLogIn();
-  // const { setUserId } = useStore();
+  const { setUserId } = useStore();
 
-  // useEffect(() => {
-  //   console.log(data?.data._id);
-  //   debugger
-  //   if (isSuccess) setUserId(data.data._id);
-  // }, [data?.data._id, isSuccess, setUserId]);
+  useEffect(() => {
+    if (isSuccess) setUserId(data.data._id);
+  }, [data?.data._id, isSuccess, setUserId]);
 
   const LoginSchema = Yup.object().shape({
     email: Yup.string()

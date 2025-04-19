@@ -1,0 +1,27 @@
+import axios from "axios";
+
+import { BASE_URL_LIVE } from "@/appConst/appConst";
+import { OrderResponse,OrderResponseByOrderNumber } from "./profileDtos";
+
+const getUserDetailById = async (userId: string): Promise<OrderResponse> => {
+  try {
+    const response = await axios.get(
+      `${BASE_URL_LIVE}/order/user-all-orders/${userId}`
+    );
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+const getOrderDeatilsByOrderNumber = async (orderNumber: string): Promise<OrderResponseByOrderNumber> => {
+  try {
+    const response = await axios.get(
+      `${BASE_URL_LIVE}/order/user-single-order/${orderNumber}`
+    );
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export { getUserDetailById,getOrderDeatilsByOrderNumber };

@@ -3,10 +3,10 @@ import React from "react";
 
 const ProductTable: React.FC<{
   products: {
-    name: string;
+    product: string;
     price: string;
     quantity: string;
-    subtotal: string;
+    lineTotal: string;
   }[];
 }> = ({ products }) => (
   <>
@@ -22,10 +22,10 @@ const ProductTable: React.FC<{
       <tbody>
         {products.map((product, index) => (
           <tr key={index} className="border-b">
-            <td className="py-2 pl-4">{product.name}</td>
+            <td className="py-2 pl-4">{product.product.slice(0,35)}</td>
             <td className="py-2">{product.price}</td>
             <td className="py-2">{product.quantity}</td>
-            <td className="py-2">{product.subtotal}</td>
+            <td className="py-2">{product.lineTotal}</td>
           </tr>
         ))}
       </tbody>
@@ -38,7 +38,7 @@ const ProductTable: React.FC<{
           key={index}
           className="p-4 border rounded-lg bg-gray-50 shadow-sm text-sm"
         >
-          <div className="mb-2 font-semibold text-gray-700">{product.name}</div>
+          <div className="mb-2 font-semibold text-gray-700">{product.product}</div>
           <div className="text-gray-500">
             Price: <span className="text-gray-700">{product.price}</span>
           </div>
@@ -46,7 +46,7 @@ const ProductTable: React.FC<{
             Quantity: <span className="text-gray-700">{product.quantity}</span>
           </div>
           <div className="text-gray-500">
-            Subtotal: <span className="text-gray-700">{product.subtotal}</span>
+            Subtotal: <span className="text-gray-700">{product.lineTotal}</span>
           </div>
         </div>
       ))}

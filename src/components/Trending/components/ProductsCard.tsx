@@ -5,7 +5,7 @@ import { fetchProducts } from "@/services/productsService";
 import { useStore } from "@/Context/storeContext";
 import MainCard from "../../Card/index";
 import type { ApiError } from "@/services/productsService";
-
+import Loader from "@/components/Loader";
 const ProductsCard = () => {
   const { selectedCategory } = useStore();
 
@@ -19,7 +19,7 @@ const ProductsCard = () => {
     queryFn: () => fetchProducts(selectedCategory as string),
     enabled: !!selectedCategory,
     staleTime: 1000 * 60 * 5, // 5 min (data is fresh)
-    gcTime: 1000 * 60 * 30 // 30 min in cache
+    gcTime: 1000 * 60 * 30, // 30 min in cache
   });
 
   // useEffect(() => {
@@ -40,9 +40,7 @@ const ProductsCard = () => {
   return (
     <div className="xl:max-w-[1440px] mx-auto xl:mt-14 px-4">
       {isLoading || isFetching ? (
-        <div className="flex justify-center items-center h-96 w-full">
-          <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-blue-500"></div>
-        </div>
+        <Loader />
       ) : (
         <div className="flex flex-wrap gap-y-6">
           {productsData?.data.slice(0, 8).map((item) => (

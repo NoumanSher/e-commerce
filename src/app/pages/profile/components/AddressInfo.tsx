@@ -20,9 +20,9 @@ const AddressInfo: React.FC<AddressProps> = ({
     <p className="text-sm text-muted-foreground mb-3">{address}</p>
     <p className="text-sm text-muted-foreground mb-3">{email}</p>
     <p className="text-sm text-muted-foreground mb-4">{phone}</p>
-    <button className="bg-primary text-primary-foreground px-4 py-2 rounded-md hover:bg-primary/80">
+    {/* <button className="bg-primary text-primary-foreground px-4 py-2 rounded-md hover:bg-primary/80">
       Edit
-    </button>
+    </button> */}
   </div>
 );
 AddressInfo.displayName = "AddressInfo";
