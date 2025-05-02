@@ -49,7 +49,7 @@ export async function generateMetadata({ params }: ProductDetailProps): Promise<
     description: product?.seo?.metaDescription || product?.description || "Check out this amazing product.",
     keywords: product?.seo?.metaKeywords?.join(", ") || "e-commerce, shopping, online store",
     icons: {
-      icon: [{ url: `${storeSettings.logo}`, type: 'image/png', sizes: '100x100' }],
+      icon: [{ url: `${storeSettings.logo}`, type: 'image/png', sizes: '32x32' }],
     },
     openGraph: {
       title: product?.seo?.metaTitle || product?.productName,
