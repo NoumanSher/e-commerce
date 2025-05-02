@@ -106,7 +106,7 @@ const OrderDetailsPage = () => {
       </div>
       {/* <OrderStatusTimeline statuses={order.statuses} /> */}
       <div className="my-5">
-        <OrderStepper orderStatusHistory={order?.orderStatuses} />
+        <OrderStepper orderStatusHistory={profileData?.orders?.orderStatuses} />
       </div>
       <ProductTable products={profileData?.orders?.items} />
       <div className="lg:hidden mt-4">

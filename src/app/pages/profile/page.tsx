@@ -4,7 +4,7 @@ import React, { useMemo } from "react";
 import ProfileInfo from "./components/ProfileInfo";
 import AddressInfo from "./components/AddressInfo";
 import OrderHistoryTabel from "./components/OrderHistoryTabel";
-import { useGetProfileDetailByUserId } from "./profileQuery";
+import { useGetProfileDetailByUserId } from "./profileQuery"; 
 import { useStore } from "@/Context/storeContext";
 import Loader from "@/components/Loader";
 

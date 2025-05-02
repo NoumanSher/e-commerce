@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useCallback } from "react";
 import { OrderStatus } from "../../types/orderStatusDto";
 
 interface OrderStepperProps {
@@ -6,74 +6,92 @@ interface OrderStepperProps {
 }
 
 const OrderStepper: React.FC<OrderStepperProps> = ({ orderStatusHistory }) => {
-  const formatDate = (dateString: string) => {
+  const formatDate = useCallback((dateString: string) => {
     const date = new Date(dateString);
-    const options: Intl.DateTimeFormatOptions = { 
-      weekday: "long" as const, 
-      day: "2-digit" as const, 
-      month: "long" as const 
-    };
-    return date.toLocaleDateString(undefined, options).toUpperCase();
-  };
-  
+    if (isNaN(date.getTime())) return "INVALID DATE";
+    return date.toLocaleDateString("en-US", {
+      weekday: "long",
+      day: "2-digit",
+      month: "long",
+    }).toUpperCase();
+  }, []);
 
-  const formatTime = (dateString: string) => {
+  const formatTime = useCallback((dateString: string) => {
     const date = new Date(dateString);
-    const options = { hour: "2-digit" as const, minute: "2-digit" as const, hour12: true };
-    return date.toLocaleTimeString(undefined, options);
-  };
+    if (isNaN(date.getTime())) return "INVALID TIME";
+    return date.toLocaleTimeString("en-US", {
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: true,
+    });
+  }, []);
 
-  const getStatusStyles = (status: string) => {
-    switch (status) {
-      case "Delivered":
+  const getStatusStyles = useCallback((status: string) => {
+    switch (status.toLowerCase()) {
+      case "delivered":
         return { dotColor: "bg-green-500", textColor: "text-green-600" };
-      case "Cancelled":
-        return { dotColor: "bg-red", textColor: "text-red" };
+      case "shipped":
+        return { dotColor: "bg-blue-500", textColor: "text-blue-600" };
+      case "pending":
+        return { dotColor: "bg-yellow-500", textColor: "text-yellow-600" };
+      case "cancelled":
+        return { dotColor: "bg-red-500", textColor: "text-red-600" };
+      case "processing":
+        return { dotColor: "bg-purple-500", textColor: "text-purple-600" };
       default:
-        return { dotColor: "bg-[#203F6B]", textColor: "text-[#6B7280]" };
+        return { dotColor: "bg-gray-500", textColor: "text-gray-600" };
     }
-  };
+  }, []);
+
+  if (!orderStatusHistory?.length) {
+    return (
+      <div className="text-gray-500 p-4 text-center">
+        No order status history available
+      </div>
+    );
+  }
+
   return (
-    <div className={`w-full max-w-md  lg:pr-0  `}>
-      <ul className="space-y-6 relative">
+    <div className="w-full max-w-md lg:pr-0">
+      <ul className="space-y-8 relative">
+        {/* Main vertical line */}
+        <div className="absolute hidden lg:block left-[7px] top-[40px] bottom-[20px] w-[2px] bg-slate-200 z-0" />
+
         {orderStatusHistory.map((step, index) => {
           const { dotColor, textColor } = getStatusStyles(step.status);
+          const prevDate = index > 0 
+            ? new Date(orderStatusHistory[index - 1].updatedAt).toDateString()
+            : null;
+          const currentDate = new Date(step.updatedAt).toDateString();
+          const showDate = index === 0 || currentDate !== prevDate;
 
           return (
-            <li  key={step._id} className="relative">
-              {/* Vertical Line for large screens */}
-              {index !== orderStatusHistory.length - 1 && (
-                <div
-                  className={`hidden lg:block absolute left-[3px]  ${
-                    index === 0 ? "top-[52px] !h-[3.25rem]" : "top-[20px]"
-                  } h-full w-[2px] bg-slate-500 z-0`}
-                ></div>
-              )}
-
-              {/* Date */}
-              {(index === 0 ||
-                formatDate(step.updatedAt) !==
-                  formatDate(orderStatusHistory[index - 1]?.updatedAt)) && (
-                <div className={`font-semibold text-[14px]   leading-[20px] text-[#6B7280]`}>
+            <li key={step._id} className="relative z-10">
+              {showDate && (
+                <div className="font-semibold text-sm leading-[20px] text-gray-500 mb-4 pl-6">
                   {formatDate(step.updatedAt)}
                 </div>
               )}
 
-              <div className="flex items-start mt-3 relative z-10">
-                {/* Dot */}
+              <div className="flex items-start relative">
+                {/* Status dot */}
                 <div
-                  className={`w-2 h-2 rounded-full flex-shrink-0 ${dotColor} mr-4  mt-[8px] relative z-10`}
-                ></div>
-
-                {/* Status and Time */}
-                <div>
+                  className={`w-4 h-4 rounded-full flex-shrink-0 ${dotColor} 
+                    mr-4 mt-[3px] relative z-10 border-2 border-white shadow-sm`}
+                  aria-hidden="true"
+                />
+                
+                {/* Status content */}
+                <div className="pb-8">
                   <span
-                    className={`font-semibold text-[14px] leading-[16.94px] ${textColor}`}
-                    title={step.statusDesc} // Tooltip implementation
+                    className={`font-semibold text-sm ${textColor} block mb-1`}
+                    title={step.statusDesc}
+                    aria-label={`Status: ${step.statusDesc}`}
+                    role="status"
                   >
                     {step.statusDesc}
                   </span>
-                  <p className="font-normal mt-2 text-[14px] leading-[16.94px] text-[#6B7280]">
+                  <p className="font-normal text-sm text-gray-500">
                     {formatTime(step.updatedAt)}
                   </p>
                 </div>

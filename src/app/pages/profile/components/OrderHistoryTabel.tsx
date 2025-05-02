@@ -33,8 +33,8 @@ const OrderHistoryTabel: React.FC<
             <tr key={order.orderId} className="border-b text-sm">
               <td className="py-2">#{order.orderNo}</td>
               <td className="py-2">{order.createdAt}</td>
-              <td className="py-2">{order.totalPrice}</td>
-              <td className="py-2">{order.orderStatus}</td>
+              <td className="py-2">{order.orderDetails.totalPrice}</td>
+              <td className="py-2">{order.orderStatuses[order.orderStatuses.length -1].status}</td>
               <td className="py-2 text-blue-500 underline cursor-pointer">
                 <Link
                   href={`/pages/profile/order-details?orderId=${encodeURIComponent(order.orderNo)}`}
@@ -78,8 +78,8 @@ const OrderHistoryTabel: React.FC<
               </Link>
             </div>
             <div className="text-gray-500">Date: {order.createdAt}</div>
-            <div className="text-gray-500">Total: {order.totalPrice}</div>
-            <div className="text-gray-500">Status: {order.orderStatus}</div>
+            <div className="text-gray-500">Total: {order.orderDetails.totalPrice}</div>
+            <div className="text-gray-500">Status: {order.orderStatuses[order.orderStatuses.length -1].status}</div>
           </div>
         ))}
       </div>

@@ -55,7 +55,7 @@ const Navbar = () => {
 
   const handleClickProfile = () => {
     // const isLogIn = localStorage.getItem("token");
-    setIsMobile(!isMobile);
+    window.innerWidth < 768 ? setIsMobile(!isMobile): ''
     isLogIn ? router.push("/pages/profile") : router.push("/pages/login");
   };
 
@@ -63,7 +63,7 @@ const Navbar = () => {
     <nav className="flex items-center justify-between p-4 border-b border-gray-200 bg-white container mx-auto lg:px-16">
       <div className="flex items-center gap-x-20 lg:order-1 order-2">
         <Link href={"/"} className="flex items-center text-2xl font-bold">
-          <Image src={data?.logo ?? ""} width={50} height={50} alt="logo" />
+          <Image src={data?.logo ?? ""} className="-my-6 object-contain" width={100} height={100} alt="logo" />
         </Link>
 
         <ul

@@ -7,19 +7,34 @@ export interface OrderResponseByOrderNumber {
   data: Order;
 }
 
+interface orderStatus {
+  status: string;
+  statusDesc: string;
+  createdAt: string;
+  _id: string;
+}
+
+interface OrderDetails {
+  totalPrice: number;
+  subTotal: number;
+  paymentMethod: 'cash' | 'card' | 'digital wallet' | string; // Union type with string fallback
+  paymentStatus: 'Pending' | 'Paid' | 'Failed' | 'Refunded' | string; // Common statuses
+  deliveryFee: number;
+}
+
 
 export interface Order {
   orderId: string;
   user: User;
   items: OrderItem[];
-  totalPrice: number;
+  orderDetails: OrderDetails;
   subTotal: number;
   paymentMethod: string;
   paymentStatus: string;
   deliveryFee: number;
   address: Address;
   orderNo: string;
-  orderStatus: string;
+  orderStatuses: orderStatus[];
   createdAt: string;
 }
 

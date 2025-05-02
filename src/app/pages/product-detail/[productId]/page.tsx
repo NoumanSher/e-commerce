@@ -6,6 +6,7 @@ import {
 } from "@tanstack/react-query";
 import { Metadata } from "next";
 import ProductDetailComponet from "@/components/productDetail";
+import { getStoreSetting } from "@/components/Slider/api/storeSettingApi";
 
 
 interface ProductDetailProps {
@@ -28,12 +29,28 @@ export async function generateMetadata({ params }: ProductDetailProps): Promise<
     src: string;
     alt: string;
   }
+  const queryClient = new QueryClient({
+    defaultOptions: {
+      queries: {
+        staleTime: 0,
+      },
+    },
+  }); 
+  
+  const storeSettings = await queryClient.fetchQuery({
+    queryKey: ["settings"],
+    queryFn: getStoreSetting,
+    staleTime: 0,
+  });
 
 
   const metadata: Metadata = {
     title: product?.seo?.metaTitle || product?.productName || "Product Detail",
     description: product?.seo?.metaDescription || product?.description || "Check out this amazing product.",
     keywords: product?.seo?.metaKeywords?.join(", ") || "e-commerce, shopping, online store",
+    icons: {
+      icon: [{ url: `${storeSettings.logo}`, type: 'image/png', sizes: '100x100' }],
+    },
     openGraph: {
       title: product?.seo?.metaTitle || product?.productName,
       description: product?.seo?.metaDescription || product?.description,
