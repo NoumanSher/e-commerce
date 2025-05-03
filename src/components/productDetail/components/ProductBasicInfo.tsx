@@ -22,7 +22,7 @@ const ProductBasicInfo: React.FC<ProductInfoProps> = ({
           <span>{stockAvailability}</span>
         </div>
       </div>
-      <p className="text-lg font-medium mb-3">${price.toFixed(0)}</p>
+      <p className="text-lg font-semibold mb-3">Rs {price.toFixed(0)}</p>
       <p className="text-gray-600 mb-4">{description}</p>
     </>
   );

@@ -68,7 +68,7 @@ const MainCard = ({ item }: MainCardProps) => {
             {item.discount && (
               <div className="bg-[#c32929] absolute left-auto !right-0 top-0 flex flex-col  mx-[8px] mt-[8px] py-[7px] px-[10px] ">
                 <h1 className="uppercase text-white text-[12px] leading-[1.25em] font-normal ">
-                  -67%
+                  {item.discount + "% off"}
                 </h1>
               </div>
             )}
@@ -81,8 +81,8 @@ const MainCard = ({ item }: MainCardProps) => {
             <p className="font-normal leading-[1.2em] text-[16px]">
               {item.productName}
             </p>
-            <p className="font-normal leading-[1.7143rem]  text-[16px]">
-              ${item.salePrice}
+            <p className="font-semibold leading-[1.7143rem]  text-[16px]">
+             Rs {item.salePrice}
             </p>
             <div className="mt-[4px] flex items-center gap-2 ">
               {item.options &&
