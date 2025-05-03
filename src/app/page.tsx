@@ -15,12 +15,13 @@ import {
 import { getStoreSetting } from "@/components/Slider/api/storeSettingApi";
 import { Metadata } from "next";
 import { FaWhatsapp } from "react-icons/fa";
-
+import FallbackAutoPlay from "@/components/auto-play-video";
+// import video from '../assets/video/video1.mp4'
 // Tell Next.js to not cache this page
-export const dynamic = 'force-dynamic';
+export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
-export default async function Home() {
+export default async function LandingPage() {
   const queryClient = new QueryClient({
     defaultOptions: {
       queries: {
@@ -29,7 +30,7 @@ export default async function Home() {
         refetchOnMount: true,
       },
     },
-  }); 
+  });
 
   const storeSettings = await queryClient.fetchQuery({
     queryKey: ["settings"],
@@ -38,7 +39,7 @@ export default async function Home() {
   });
 
   // Force clear cache for this query
-  await queryClient.invalidateQueries({queryKey: ["settings"]});
+  await queryClient.invalidateQueries({ queryKey: ["settings"] });
   const landingWhatsappURL = `https://wa.me/923040261311`;
   return (
     <>
@@ -60,7 +61,12 @@ export default async function Home() {
       {/* <Suspense fallback={<div>Loading Limited Edition .........</div>}>
         <LimitedEdition />
       </Suspense> */}
-       <a
+
+      <div className="bg-[#faf9f8]">
+        <FallbackAutoPlay />
+      </div>
+
+      <a
         href={landingWhatsappURL}
         target="_blank"
         rel="noopener noreferrer"
@@ -84,7 +90,7 @@ export async function generateMetadata(): Promise<Metadata> {
         },
       },
     });
-    
+
     const storeSettings = await queryClient.fetchQuery({
       queryKey: ["settings"],
       queryFn: getStoreSetting,
@@ -94,11 +100,13 @@ export async function generateMetadata(): Promise<Metadata> {
     return {
       title: storeSettings.title,
       icons: {
-        icon: [{ url: `${storeSettings.logo}`, type: 'image/png', sizes: '32x32' }],
+        icon: [
+          { url: `${storeSettings.logo}`, type: "image/png", sizes: "32x32" },
+        ],
       },
       description: storeSettings.description,
       creator: "PakShipper",
-      applicationName: 'PakShipper',
+      applicationName: "PakShipper",
       generator: "Next.js",
     };
   } catch (error) {

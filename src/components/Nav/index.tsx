@@ -105,7 +105,7 @@ const Navbar = () => {
           >
             Wishlist
           </li>
-          <li onClick={() => setIsMobile(!isMobile)}>
+          <li onClick={() => { window.innerWidth < 768 ? setIsMobile(!isMobile): ''}}>
             <Link
               href="/"
               className="text-sm tracking-wide text-black font-medium hover:text-gray-600"
