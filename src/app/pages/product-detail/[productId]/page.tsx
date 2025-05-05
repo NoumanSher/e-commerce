@@ -70,16 +70,16 @@ export default async function ProductDetail({ params: { productId } }: ProductDe
   const queryClient = new QueryClient();
 
   // Prefetch product data
-  await queryClient.prefetchQuery({
+   queryClient.prefetchQuery({
     queryKey: ["productId", productId, Date.now()],
     queryFn: () => getProductDataById(productId),
   });
 
-  const product = await getProductDataById(productId);
+  // const product = await getProductDataById(productId);
 
   return (
     <>
-      <script
+      {/* <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
           __html: JSON.stringify({
@@ -95,7 +95,7 @@ export default async function ProductDetail({ params: { productId } }: ProductDe
             }
           })
         }}
-      />
+      /> */}
       <HydrationBoundary state={dehydrate(queryClient)}>
         <Suspense fallback={".....loading detail"}>
           <ProductDetailComponet productId={productId} />

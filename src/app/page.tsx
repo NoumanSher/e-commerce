@@ -3,7 +3,8 @@ import React, { Suspense, lazy } from "react";
 const Trending = lazy(() => import("@/components/Trending/trending"));
 // const Collection = lazy(() => import("@/components/Collection"));
 // const LimitedEdition = lazy(() => import("@/components/Limited"));
-const Slider = lazy(() => import("@/components/Slider/Slider"));
+const FallbackAutoPlay = lazy(() => import("@/components/auto-play-video"));
+import Slider from "@/components/Slider/Slider";
 const ShoppingCartModal = lazy(
   () => import("@/components/shoppingCartModal/client/shoppingCartModal")
 );
@@ -15,7 +16,7 @@ import {
 import { getStoreSetting } from "@/components/Slider/api/storeSettingApi";
 import { Metadata } from "next";
 import { FaWhatsapp } from "react-icons/fa";
-import FallbackAutoPlay from "@/components/auto-play-video";
+// import FallbackAutoPlay from "@/components/auto-play-video";
 // import video from '../assets/video/video1.mp4'
 // Tell Next.js to not cache this page
 export const dynamic = "force-dynamic";
@@ -48,9 +49,7 @@ export default async function LandingPage() {
       </Suspense>
 
       <HydrationBoundary state={dehydrate(queryClient)}>
-        <Suspense fallback={<div>Loading Slider .........</div>}>
-          <Slider storeSettings={storeSettings} />
-        </Suspense>
+        <Slider storeSettings={storeSettings} />
       </HydrationBoundary>
       <Suspense fallback={<div>Loading Trending .........</div>}>
         <Trending />
@@ -62,9 +61,11 @@ export default async function LandingPage() {
         <LimitedEdition />
       </Suspense> */}
 
-      <div className="bg-[#faf9f8]">
-        <FallbackAutoPlay />
-      </div>
+      <Suspense fallback={<div>Loading video .........</div>}>
+        <div className="bg-[#faf9f8]">
+          <FallbackAutoPlay />
+        </div>{" "}
+      </Suspense>
 
       <a
         href={landingWhatsappURL}
