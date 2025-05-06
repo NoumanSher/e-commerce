@@ -9,6 +9,20 @@ const config: Config = {
   ],
   theme: {
     extend: {
+      keyframes: {
+        "slide-in-left": {
+          "0%": { transform: "translateX(100%)" },
+          "100%": { transform: "translateX(0)" },
+        },
+        "slide-in-right": {
+          "0%": { transform: "translateX(-100%)" },
+          "100%": { transform: "translateX(0)" },
+        },
+      },
+      animation: {
+        "slide-in-left": "slide-in-left 0.5s ease-in-out forwards",
+        "slide-in-right": "slide-in-right 0.5s ease-in-out forwards",
+      },
       backgroundImage: {
         "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
         "gradient-conic":

@@ -10,6 +10,7 @@ interface ImageGalleryProps {
 
 const ImageGallery: React.FC<ImageGalleryProps> = ({ images }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
+  // const [direction, setDirection] = useState<"left" | "right">("right");
   // Preload adjacent images
   const preloadImage = useCallback(
     (index: number) => {
@@ -26,9 +27,11 @@ const ImageGallery: React.FC<ImageGalleryProps> = ({ images }) => {
   }, [currentIndex, images.length, preloadImage]);
 
   const handleNext = () => {
+    // setDirection("right");
     setCurrentIndex((prevIndex) => (prevIndex + 1) % images.length);
   };
   const handlePrev = () => {
+    // setDirection("left");
     setCurrentIndex(
       (prevIndex) => (prevIndex - 1 + images.length) % images.length
     );
@@ -60,15 +63,24 @@ const ImageGallery: React.FC<ImageGalleryProps> = ({ images }) => {
 
       {/* Main Image */}
       <div className="lg:w-[82%] h-fit w-full relative  lg:order-2 order-1 group transition-all duration-300 ease-in-out">
-        <div className="relative  h-auto md:h-[690px] lg:h-[700px] overflow-y-hidden">
-          <Image
-            src={images[currentIndex]?.src}
-            alt={images[currentIndex]?.alt}
-            height={500}
-            width={500}
-            loading="eager"
-            className="rounded w-full h-full aspect-auto"
-          />
+        <div className="relative  h-auto md:h-[690px] lg:h-[700px] overflow-hidden w-full">
+          {/* <div
+            key={images[currentIndex].src}
+            className={`absolute w-full h-full inset-0  ${
+              direction === "right"
+                ? "animate-slide-in-left"
+                : "animate-slide-in-right"
+            }`}
+          > */}
+            <Image
+              src={images[currentIndex].src}
+              alt={images[currentIndex].alt}
+              height={500}
+              width={500}
+              loading="eager"
+              className="rounded w-full h-full object-contain"
+            />
+          {/* </div> */}
         </div>
 
         {/* Navigation Buttons */}
