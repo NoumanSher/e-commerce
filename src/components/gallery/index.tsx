@@ -1,4 +1,3 @@
-"use client";
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import {
@@ -13,20 +12,19 @@ const ImageGallery: React.FC<ImageGalleryProps> = ({ images }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   // Preload adjacent images
   useEffect(() => {
-    images.forEach((img) => {
-      const preloadImg = new window.Image();
-      preloadImg.src = img.src;
-    });
-  }, [images]);
+    const nextIndex = currentIndex === images.length - 1 ? 0 : currentIndex + 1;
+    const img = new window.Image();
+    img.src = images[nextIndex].src;
+  }, [currentIndex, images]);
   const handleNext = () => {
     setCurrentIndex((prevIndex) => (prevIndex + 1) % images.length);
   };
-
   const handlePrev = () => {
     setCurrentIndex(
       (prevIndex) => (prevIndex - 1 + images.length) % images.length
     );
   };
+  if (!images.length) return <p>No images to show.</p>;
 
   return (
     <div className="flex flex-col lg:flex-row gap-2 w-full lg:w-[60%]">
@@ -40,7 +38,7 @@ const ImageGallery: React.FC<ImageGalleryProps> = ({ images }) => {
               alt={image.alt}
               width={160}
               height={160}
-              sizes='(max-width:160px), 100vw,160px'
+              sizes="(max-width:160px), 100vw,160px"
               className={`cursor-pointer   aspect-auto w-full h-full rounded transition-opacity duration-200 ${
                 index === currentIndex ? "opacity-100" : "opacity-50"
               }`}
@@ -70,13 +68,19 @@ const ImageGallery: React.FC<ImageGalleryProps> = ({ images }) => {
           onClick={handlePrev}
           className="absolute -left-[15px] border-black border lg:border-0 lg:left-7 flex justify-center items-center bg-white lg:hover:bg-red-500 lg:h-12 lg:w-12 h-8 w-8 rounded-full shadow-sm lg:invisible group-hover:lg:visible  top-1/2 transform -translate-y-1/2 p-2"
         >
-          <MdOutlineKeyboardArrowLeft size={100} className="text-black  lg:hover:text-white" />
+          <MdOutlineKeyboardArrowLeft
+            size={100}
+            className="text-black  lg:hover:text-white"
+          />
         </button>
         <button
           onClick={handleNext}
           className="absolute border-black border lg:border-0 -bottom-[88px] lg:-bottom-[101px] lg:h-12 lg:w-12 h-8 w-8 flex justify-center items-center rounded-full shadow-sm lg:right-7 lg:invisible bg-white lg:hover:bg-red-500 group-hover:lg:visible  -right-[15px] top-1/2 transform -translate-y-1/2  p-2"
         >
-          <MdOutlineKeyboardArrowRight size={100} className="text-black lg:hover:text-white"/>
+          <MdOutlineKeyboardArrowRight
+            size={100}
+            className="text-black lg:hover:text-white"
+          />
         </button>
       </div>
     </div>

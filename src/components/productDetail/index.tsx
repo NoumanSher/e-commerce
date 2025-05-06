@@ -1,25 +1,34 @@
 "use client";
-import PoductImageGallery from "@/components/gallery";
-import ProductInfo from "@/components/productDetail/ProductDetails";
+
+import { lazy, Suspense } from "react";
 import { useGetProductDetailById } from "./productDetailQuery";
+import ProductDetailSkeleton from "./components/ProductDetailSkeleton";
+
+const ProductImageGallery = lazy(() => import("@/components/gallery"));
+
+const ProductInfo = lazy(
+  () => import("@/components/productDetail/ProductDetails")
+);
 
 interface ProductDetailProps {
   productId: string;
 }
+
 const ProductDetail: React.FC<ProductDetailProps> = ({ productId }) => {
   const { data, isLoading } = useGetProductDetailById(productId);
 
- 
-
   if (isLoading || !data) {
-    return <div>Loading...</div>;
+    return <ProductDetailSkeleton />;
   }
+
   return (
-    <div className="flex  flex-col lg:flex-row lg:p-8 p-4  container mx-auto">
-      <PoductImageGallery images={data.data.images ?? []} />
-      <ProductInfo product={data.data} />
-    </div>
+    <Suspense fallback={<ProductDetailSkeleton />}>
+      <div className="flex flex-col lg:flex-row lg:p-8 p-4 container mx-auto">
+        <ProductImageGallery images={data.data.images ?? []} />
+        <ProductInfo product={data.data} />
+      </div>
+    </Suspense>
   );
 };
-// ProductDetail.displayName = 'ProductDetail'
+
 export default ProductDetail;
