@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { memo, useCallback, useEffect, useState } from "react";
 import Image from "next/image";
 import {
   MdOutlineKeyboardArrowLeft,
@@ -11,11 +11,20 @@ interface ImageGalleryProps {
 const ImageGallery: React.FC<ImageGalleryProps> = ({ images }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   // Preload adjacent images
+  const preloadImage = useCallback(
+    (index: number) => {
+      if (!images[index]) return;
+      const img = new window.Image();
+      img.src = images[index].src;
+    },
+    [images]
+  );
+
   useEffect(() => {
-    const nextIndex = currentIndex === images.length - 1 ? 0 : currentIndex + 1;
-    const img = new window.Image();
-    img.src = images[nextIndex].src;
-  }, [currentIndex, images]);
+    preloadImage((currentIndex + 1) % images.length);
+    preloadImage((currentIndex - 1 + images.length) % images.length);
+  }, [currentIndex, images.length, preloadImage]);
+
   const handleNext = () => {
     setCurrentIndex((prevIndex) => (prevIndex + 1) % images.length);
   };
@@ -36,9 +45,9 @@ const ImageGallery: React.FC<ImageGalleryProps> = ({ images }) => {
               key={index}
               src={image.src}
               alt={image.alt}
-              width={160}
-              height={160}
-              sizes="(max-width:160px), 100vw,160px"
+              width={100}
+              height={100}
+              sizes="(max-width: 768px) 100vw, 160px"
               className={`cursor-pointer   aspect-auto w-full h-full rounded transition-opacity duration-200 ${
                 index === currentIndex ? "opacity-100" : "opacity-50"
               }`}
@@ -58,7 +67,6 @@ const ImageGallery: React.FC<ImageGalleryProps> = ({ images }) => {
             height={500}
             width={500}
             loading="eager"
-            // layout="responsive"
             className="rounded w-full h-full aspect-auto"
           />
         </div>
@@ -66,6 +74,7 @@ const ImageGallery: React.FC<ImageGalleryProps> = ({ images }) => {
         {/* Navigation Buttons */}
         <button
           onClick={handlePrev}
+          onMouseEnter={() => preloadImage(currentIndex - 1)}
           className="absolute -left-[15px] border-black border lg:border-0 lg:left-7 flex justify-center items-center bg-white lg:hover:bg-red-500 lg:h-12 lg:w-12 h-8 w-8 rounded-full shadow-sm lg:invisible group-hover:lg:visible  top-1/2 transform -translate-y-1/2 p-2"
         >
           <MdOutlineKeyboardArrowLeft
@@ -75,6 +84,7 @@ const ImageGallery: React.FC<ImageGalleryProps> = ({ images }) => {
         </button>
         <button
           onClick={handleNext}
+          onMouseEnter={() => preloadImage(currentIndex + 1)}
           className="absolute border-black border lg:border-0 -bottom-[88px] lg:-bottom-[101px] lg:h-12 lg:w-12 h-8 w-8 flex justify-center items-center rounded-full shadow-sm lg:right-7 lg:invisible bg-white lg:hover:bg-red-500 group-hover:lg:visible  -right-[15px] top-1/2 transform -translate-y-1/2  p-2"
         >
           <MdOutlineKeyboardArrowRight
@@ -87,4 +97,4 @@ const ImageGallery: React.FC<ImageGalleryProps> = ({ images }) => {
   );
 };
 
-export default ImageGallery;
+export default memo(ImageGallery);

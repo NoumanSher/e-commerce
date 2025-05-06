@@ -10,7 +10,7 @@ const ImageGallerySkeleton = () => {
   
         {/* Main Image */}
         <div className="lg:w-[82%] h-fit w-full relative lg:order-2 order-1 group">
-          <div className="relative h-auto md:h-[690px] lg:h-[700px] bg-gray-300 rounded" />
+          <div className="relative h-[390px] md:h-[690px] lg:h-[700px] bg-gray-300 rounded" />
   
           {/* Navigation Buttons (grey circles) */}
           <div className="absolute -left-[15px] lg:left-7 top-1/2 transform -translate-y-1/2 p-2">
