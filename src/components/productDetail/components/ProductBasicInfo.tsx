@@ -1,5 +1,5 @@
 import React from "react";
-
+import ReactHtmlParser from "react-html-parser";
 interface ProductInfoProps {
   title: string;
   price: number;
@@ -29,14 +29,14 @@ const ProductBasicInfo: React.FC<ProductInfoProps> = ({
         </div>
       </div>
       <p className="text-lg font-semibold mb-3">Rs {price.toFixed(0)}</p>
-      <p className="text-gray-600 mb-4">
+      <div className="text-gray-600 mb-4">
         {typeof description === "string" &&
         /<[a-z][\s\S]*>/i.test(description) ? (
-          <span dangerouslySetInnerHTML={{ __html: description }} />
+          <>{ReactHtmlParser(description)}</> // Wrap in Fragment
         ) : (
           description
         )}
-      </p>
+      </div>
     </>
   );
 };
