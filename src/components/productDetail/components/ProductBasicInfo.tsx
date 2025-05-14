@@ -18,12 +18,25 @@ const ProductBasicInfo: React.FC<ProductInfoProps> = ({
       <div className="flex justify-between items-center mb-3">
         <h1 className="text-2xl font-medium">{title}</h1>
         <div>
-          <span className={`mr-2  ${stockAvailability === 0 ? 'text-red-500' : 'text-green-500'}`}>Stock Availability</span>
+          <span
+            className={`mr-2  ${
+              stockAvailability === 0 ? "text-red-500" : "text-green-500"
+            }`}
+          >
+            Stock Availability
+          </span>
           <span>{stockAvailability}</span>
         </div>
       </div>
       <p className="text-lg font-semibold mb-3">Rs {price.toFixed(0)}</p>
-      <p className="text-gray-600 mb-4">{description}</p>
+      <p className="text-gray-600 mb-4">
+        {typeof description === "string" &&
+        /<[a-z][\s\S]*>/i.test(description) ? (
+          <span dangerouslySetInnerHTML={{ __html: description }} />
+        ) : (
+          description
+        )}
+      </p>
     </>
   );
 };
