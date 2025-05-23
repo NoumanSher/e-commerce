@@ -76,28 +76,28 @@ export const FooterLinksData: FooterLinksProps[] = [
   {
     _id: "abcde",
     icon: FaFacebookFIcon,
-    path: "https://www.facebook.com/",
+    path: "https://www.facebook.com/profile.php?id=61576246324499",
   },
+  // {
+  //   _id: "hello",
+  //   icon: FaTwitterIcon,
+  //   path: "https://twitter.com/",
+  // },
   {
-    _id: "hello",
-    icon: FaTwitterIcon,
-    path: "https://twitter.com/",
-  },
-  {
-    _id: "abcdef",
+    _id: "instagram",
     icon: IoLogoInstagramIcon,
-    path: "https://www.instagram.com/",
+    path: "https://www.instagram.com/pakshipper/",
   },
-  {
-    _id: "computer",
-    icon: BsYoutubeIcon,
-    path: "https://www.youtube.com/",
-  },
-  {
-    _id: "hi",
-    icon: FaPinterestIcon,
-    path: "https://www.pinterest.com/",
-  },
+  // {
+  //   _id: "computer",
+  //   icon: BsYoutubeIcon,
+  //   path: "https://www.youtube.com/",
+  // },
+  // {
+  //   _id: "hi",
+  //   icon: FaPinterestIcon,
+  //   path: "https://www.pinterest.com/",
+  // },
 ];
 
 export const footerData: FooterItem[] = [

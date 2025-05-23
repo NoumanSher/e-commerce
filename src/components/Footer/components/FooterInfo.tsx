@@ -15,16 +15,16 @@ import { FooterLinksData } from "@/data/data";
       </p>
       <a
         className="text-[#222222] text-[14px] lg:text-[12px] font-semibold leading-[1.7173em] mt-4"
-        href="mailto:iamusmanmunawar@gmail.com"
+        href="mailto:pakshipperstore@gmail.com"
       >
-        iamusmanmunawar@gmail.com
+        pakshipperstore@gmail.com
       </a>
       <br />
       <a
         className="text-[#222222] text-[14px] lg:mt-5 font-medium leading-[1.7173px] mt-4"
-        href="tel:+923174303225"
+        href="tel:+923176872900"
       >
-        +92 317 4303225
+        03176872900
       </a>
       <div className="flex gap-8 xl:gap-5 mt-8 lg:flex-wrap">
         {FooterLinksData.map((item, index) => (

@@ -41,7 +41,7 @@ export default async function LandingPage() {
 
   // Force clear cache for this query
   await queryClient.invalidateQueries({ queryKey: ["settings"] });
-  const landingWhatsappURL = `https://wa.me/923040261311`;
+  const landingWhatsappURL = `https://wa.me/923176872900`;
   return (
     <>
       <Suspense fallback={<div>Loading Slider .........</div>}>
