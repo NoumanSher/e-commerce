@@ -2,6 +2,7 @@
 import { useState, useCallback, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import QuantitySelector from "@/components/productDetail/components/QuantitySelector";
+import WhatsAppButton from "@/components/productDetail/components/WhatsAppButton";
 import SelectColorAndSize from "./components/SelectVarient";
 import WishlistButton from "./components/WishlistButton";
 import ProductMetaInfo from "./components/ProductMetaInfo";
@@ -14,9 +15,8 @@ import dynamic from "next/dynamic";
 import { Product } from "./productDetailDto";
 import { useStore } from "@/Context/storeContext";
 import { useCart } from "../hooks/useCart";
-import { FaWhatsapp } from "react-icons/fa";
 const SocialMediaShareWithNoSSR = dynamic(
-  () => import("./components/SocialMediaShare"), 
+  () => import("./components/SocialMediaShare"),
   { ssr: false }
 );
 
@@ -54,13 +54,9 @@ const ProductInfo: React.FC<ProductDetailsProps> = ({ product }) => {
     sizeRequired: false,
   });
   const router = useRouter();
-  const whatsappText = encodeURIComponent(
-    `Hello, I'm interested in this product: ${selectedColor}\n${selectedSize}\n${productName}\nPrice: ${productPrice} PKR\nLink: https://e-commerce-pink-iota.vercel.app/pages/product-detail/${_id}`
-  );
-  const whatsappURL = `https://wa.me/923040261311?text=${whatsappText}`;
+
   useEffect(() => {
     if (stock) {
-      debugger;
       SetAvailabelStock(stock < 0 ? 0 : stock);
     }
     if (salePrice) {
@@ -248,17 +244,16 @@ const ProductInfo: React.FC<ProductDetailsProps> = ({ product }) => {
           selectedQuantity={selectedQuantity}
         />
       </div>
-      <a
-        href={whatsappURL}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="fixed bottom-6 right-6 z-50 animate-bounce"
-      >
-        <div className="bg-green-500 hover:bg-green-600 text-white p-4 rounded-full shadow-lg flex items-center gap-2">
-          <FaWhatsapp size={24} />
-          <span className="hidden sm:inline font-semibold">Chat on WhatsApp</span>
-        </div>
-      </a>
+      <WhatsAppButton
+        product={{
+          name: productName,
+          price: productPrice,
+          sku: sku,
+          size: selectedSize,
+          color: selectedColor,
+          url: `https://e-commerce-pink-iota.vercel.app/pages/product-detail/${_id}`,
+        }}
+      />
     </div>
   );
 };

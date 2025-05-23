@@ -28,7 +28,7 @@ const WhatsAppButton = ({ product }) => {
       href={whatsappURL}
       target="_blank"
       rel="noopener noreferrer"
-      className="fixed bottom-6 right-6 z-50 animate-bounce hover:animate-none transition-all duration-300"
+      className="fixed bottom-6 right-6 z-50 animate-bounce hover:animate-none"
       aria-label="Contact via WhatsApp"
     >
       <div className="bg-[#25D366] hover:bg-[#128C7E] text-white p-4 rounded-full shadow-lg flex items-center gap-2 transition-colors duration-300">
