@@ -1,5 +1,5 @@
 import React from "react";
-import ReactHtmlParser from "react-html-parser";
+import ReactHtmlParser from "html-react-parser";
 interface ProductInfoProps {
   title: string;
   price: number;
@@ -38,7 +38,7 @@ const ProductBasicInfo: React.FC<ProductInfoProps> = ({
         )}
       </div>
     </>
-  );
+  ); 
 };
 ProductBasicInfo.displayName = "ProductBasicInfo";
 
