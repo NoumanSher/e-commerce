@@ -1,7 +1,9 @@
+'use client'
 import { footerData } from '@/data/data'
 import React, { memo } from 'react'
-
+import { useRouter } from 'next/navigation'
 const FooterTabs=()=> {
+  const router = useRouter()
   return (
     <div>
         <div className="flex flex-wrap lg:flex-nowrap">
@@ -12,8 +14,8 @@ const FooterTabs=()=> {
             </h1>
             <ul className="text-[14px] leading-[1.5em] font-normal mb-[2px]">
               {section.items.map((item, itemIndex) => (
-                <li key={itemIndex} className="mb-[4px] mt-[3px] py-2 cursor-pointer">
-                  {item}
+                <li onClick={() => router.push(item.url)} key={itemIndex} className="mb-[4px] mt-[3px] py-2 cursor-pointer">
+                  {item.name}
                 </li>
               ))}
             </ul>

@@ -18,7 +18,7 @@ export interface FooterLinksProps {
 }
 export interface FooterItem {
   title: string;
-  items: string[];
+  items: any[];
 }
 export interface BannerProductProps {
   _id: string;

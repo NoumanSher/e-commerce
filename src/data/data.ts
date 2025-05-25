@@ -101,25 +101,32 @@ export const FooterLinksData: FooterLinksProps[] = [
 ];
 
 export const footerData: FooterItem[] = [
-  {
+{
     title: "Company",
-    items: ["About Us", "Careers", "Affiliates", "Blog", "Contact Us"],
+    items: [
+      { name: "About Us", url: "/pages/about-us" }
+    ]
   },
   {
     title: "Shop",
-    items: ["New Arrivals", "Accessories", "Men", "Women", "Shop All"],
+    items: [
+      {
+        name: "Shop All",
+        url: "/pages/all-products?parent-category-id=67f250a92f78a67e01f2b28e"
+      },
+      {
+        name: "Beauty & Health",
+        url: "/pages/all-products?parent-category-id=67f250eb2f78a67e01f2b299"
+      }
+    ]
   },
   {
     title: "Help",
     items: [
-      "Customer Service",
-      "My Account",
-      "Find A Store",
-      "Legal & Privacy",
-      "Contact",
-      "Gift Card",
-    ],
-  },
+      { name: "My Account", url: "" },
+      { name: "Contact Us", url: "" }
+    ]
+  }
 ];
 
 export const BannerProductsData: BannerProductProps[] = [
@@ -540,4 +547,3 @@ export const BannerProductsData: BannerProductProps[] = [
 //     ],
 //   },
 // ];
-
