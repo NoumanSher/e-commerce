@@ -124,7 +124,7 @@ export const footerData: FooterItem[] = [
     title: "Help",
     items: [
       { name: "My Account", url: "" },
-      { name: "Contact Us", url: "" }
+      { name: "Contact Us", url: "/pages/contact-us" }
     ]
   }
 ];
