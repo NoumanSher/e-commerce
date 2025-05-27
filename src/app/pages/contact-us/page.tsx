@@ -1,7 +1,7 @@
 'use client'
 import React, { useState } from 'react';
 import Head from 'next/head';
-import { FaPaperPlane, FaPhone, FaMapMarkerAlt, FaEnvelope } from 'react-icons/fa';
+import { FaPaperPlane, FaPhone, FaEnvelope } from 'react-icons/fa';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';

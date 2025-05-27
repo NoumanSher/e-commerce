@@ -16,8 +16,8 @@ export interface CategoriesResponse {
   categories: Category[];
 }
 
-export const fetchCategories = async (): Promise<CategoriesResponse> => {
-    
+export const fetchCategories = async (): Promise<CategoriesResponse> => { 
+    debugger
   const { data } = await axios.get(`${BASE_URL}/categories/all-parent`);
   return data;
 };
