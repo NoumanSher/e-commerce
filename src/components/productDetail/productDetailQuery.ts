@@ -3,7 +3,7 @@ import { productDetailById } from "./productDetailApi";
 
 export const useGetProductDetailById = (productId:string) => {
   return useQuery({
-    queryKey: ["productId", productId],
+    queryKey: ["product", productId],
     queryFn: () => productDetailById(productId),
     staleTime: Infinity,
     refetchOnMount: true,

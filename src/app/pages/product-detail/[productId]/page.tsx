@@ -1,106 +1,131 @@
 import React, { Suspense } from "react";
-import {
-  dehydrate,
-  HydrationBoundary,
-  QueryClient,
-} from "@tanstack/react-query";
+import { QueryClient } from "@tanstack/react-query";
 import { Metadata } from "next";
 import ProductDetailComponet from "@/components/productDetail";
 import { getStoreSetting } from "@/components/Slider/api/storeSettingApi";
-
 
 interface ProductDetailProps {
   params: { productId: string };
 }
 
-// Fetch product data from API
-async function getProductDataById(productId: string) {
-  const response = await fetch(
-    `https://e-commerce-backend-seven-xi.vercel.app/api/products/get-product/${productId}`
-  );
-  const data = await response.json();
-  return data.data;
+interface ImageProps {
+  src: string;
+  alt: string;
 }
 
-// **Next.js Metadata for SEO**
-export async function generateMetadata({ params }: ProductDetailProps): Promise<Metadata> {
-  const product = await getProductDataById(params.productId);
-  interface ImageProps {
-    src: string;
-    alt: string;
-  }
-  const queryClient = new QueryClient({
-    defaultOptions: {
-      queries: {
-        staleTime: 0,
-      },
+// Shared query client instance
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 60 * 1000, // 1 minute cache
     },
-  }); 
-  
-  const storeSettings = await queryClient.fetchQuery({
-    queryKey: ["settings"],
-    queryFn: getStoreSetting,
-    staleTime: 0,
-  });
+  },
+});
 
+// Memoized product data fetcher
+async function getProductData(productId: string) {
+  const response = await fetch(
+    `https://e-commerce-backend-seven-xi.vercel.app/api/products/get-product/${productId}`,
+    { next: { revalidate: 60 } } // ISR with 60-second revalidation
+  );
+  return response.json().then(data => data.data);
+}
 
-  const metadata: Metadata = {
-    title: product?.seo?.metaTitle || product?.productName || "Product Detail",
-    description: product?.seo?.metaDescription || product?.description || "Check out this amazing product.",
-    keywords: product?.seo?.metaKeywords?.join(", ") || "e-commerce, shopping, online store",
+// Parallel data fetching for metadata
+async function getPageData(productId: string) {
+  const [product, storeSettings] = await Promise.all([
+    getProductData(productId),
+    queryClient.fetchQuery({
+      queryKey: ["settings"],
+      queryFn: getStoreSetting,
+    }),
+  ]);
+  return { product, storeSettings };
+}
+
+export async function generateMetadata({
+  params,
+}: ProductDetailProps): Promise<Metadata> {
+  const { product, storeSettings } = await getPageData(params.productId);
+
+  const baseUrl = "https://pakshipper.com/pages/product-detail";
+  const productUrl = `${baseUrl}/${product._id}`;
+  const title = product?.seo?.metaTitle || product?.productName || "Product Detail";
+  const description = product?.seo?.metaDescription || product?.description || "Check out this amazing product.";
+  const keywords = product?.seo?.metaKeywords?.join(", ") || "e-commerce, shopping, online store";
+
+  return {
+    title,
+    description,
+    keywords,
     icons: {
-      icon: [{ url: `${storeSettings.logo}`, type: 'image/png', sizes: '32x32' }],
+      icon: [{ url: storeSettings.logo, type: "image/png", sizes: "32x32" }],
+    },
+    alternates: {
+      canonical: productUrl,
     },
     openGraph: {
-      title: product?.seo?.metaTitle || product?.productName,
-      description: product?.seo?.metaDescription || product?.description,
-      url: `https://e-commerce-pink-iota.vercel.app/pages/product-detail/${product?._id}`,
+      title,
+      description,
+      url: productUrl,
       images: product?.images?.map((img: ImageProps) => ({
         url: img.src,
         alt: img.alt,
       })),
       type: "website",
+      siteName: "Pakshipper",
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      images: product?.images?.map((img: ImageProps) => img.src),
     },
   };
-
-  return metadata;
 }
 
-export default async function ProductDetail({ params: { productId } }: ProductDetailProps) {
-  const queryClient = new QueryClient();
+function generateProductSchema(product: any) {
+  return {
+    "@context": "https://schema.org/",
+    "@type": "Product",
+    name: product.productName,
+    image: product.images?.map((img: any) => img.src),
+    description: product.seo.metaDescription,
+    sku: product.sku,
+    brand: {
+      "@type": "Brand",
+      name: "Pakshipper",
+    },
+    offers: {
+      "@type": "Offer",
+      priceCurrency: "PKR",
+      price: product.salePrice,
+      itemCondition: "https://schema.org/NewCondition",
+      availability: product.stock !== 0
+        ? "https://schema.org/InStock"
+        : "https://schema.org/OutOfStock",
+      url: `https://pakshipper.com/pages/product-detail/${product._id}`,
+    },
+  };
+}
 
-  // Prefetch product data
-   queryClient.prefetchQuery({
-    queryKey: ["productId", productId, Date.now()],
-    queryFn: () => getProductDataById(productId),
-  });
-
-  // const product = await getProductDataById(productId);
+export default async function ProductDetail({
+  params: { productId },
+}: ProductDetailProps) {
+  const { product } = await getPageData(productId);
 
   return (
     <>
-      {/* <script
+      <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
-          __html: JSON.stringify({
-            "@context": "https://schema.org/",
-            "@type": "Product",
-            "name": product.productName,
-            "image": product.images?.[0]?.src,
-            "description": product.description,
-            "offers": {
-              "@type": "Offer",
-              "price": product.salePrice,
-              "priceCurrency": "PKR"
-            }
-          })
+          __html: JSON.stringify(generateProductSchema(product)),
         }}
-      /> */}
-      <HydrationBoundary state={dehydrate(queryClient)}>
-        <Suspense fallback={".....loading detail"}>
-          <ProductDetailComponet productId={productId} />
-        </Suspense>
-      </HydrationBoundary>
+      />
+
+      <Suspense fallback={<div className="text-center py-10">Loading...</div>}>
+        <ProductDetailComponet productId={productId}  />
+      </Suspense>
     </>
   );
 }
