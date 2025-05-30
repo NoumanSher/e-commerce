@@ -1,4 +1,4 @@
-"use client";
+// "use client";
 import ImageGallerySkeleton from "./ImageGallerySkeleton";
 import { Skeleton } from "@/components/ui/skeleton";
 

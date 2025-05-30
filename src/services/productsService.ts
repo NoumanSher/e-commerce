@@ -14,6 +14,7 @@ export interface ProductsResponse {
   data: Product[];
   pagination?: Pagination;
 }
+export interface RelatedProductsResponse extends Omit<ProductsResponse, "pagination"> {}
 
 export interface ApiError {
   message: string;
@@ -33,7 +34,7 @@ export const fetchProducts = async (
   if (limit) params.append("limit", limit.toString());
 
   try {
-    debugger
+    debugger;
     const { data } = await axios.get(
       `${BASE_URL}/products/get-all-products?${params.toString()}`
     );

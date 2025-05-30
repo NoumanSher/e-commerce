@@ -1,99 +1,167 @@
-import React, { useState, useCallback, memo } from "react";
-import {
-  Dialog,
-  DialogTrigger,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
-} from "@/components/ui/dialog";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useStore } from "@/Context/storeContext";
+import { useGetRelatedProductsByCategoryId } from "@/components/productDetail/productDetailQuery";
+import MainCard from "../../Card/index";
+import { useQueryClient } from "@tanstack/react-query";
+import { useState, useEffect } from "react";
+import { fetchCategories } from "@/services/categoryService";
 
-const TABS = [
-  {
-    id: "delivery",
-    label: "DELIVERY AND RETURN",
-    content: (
-      <ul className="list-disc pl-5 space-y-2 text-sm text-gray-700">
-        <li>Standard delivery takes 3–7 business days depending on your location.</li>
-        <li>Express shipping options are available at checkout for faster delivery.</li>
-        <li>You have 14 days from the delivery date to return your item(s).</li>
-        <li>Products must be returned in their original condition, unworn and with tags attached.</li>
-        <li>Return shipping costs may apply.</li>
-        <li>Refunds are processed within 5–7 business days after receiving your return.</li>
-      </ul>
-    ),
-  },
-  {
-    id: "shipping",
-    label: "SHIPPING INFORMATION",
-    content: (
-      <ul className="list-disc pl-5 space-y-2 text-sm text-gray-700">
-        <li>We offer worldwide shipping.</li>
-        <li>Orders are processed within 1–2 business days.</li>
-        <li>Shipping rates and delivery times are calculated at checkout based on your location and selected shipping method.</li>
-        <li>Once your order is shipped, you’ll receive a confirmation email with tracking information.</li>
-        <li>Note: We are not responsible for customs duties or import taxes in your country.</li>
-      </ul>
-    ),
-  },
-  {
-    id: "composition",
-    label: "COMPOSITION AND CARE",
-    content: (
-      <ul className="list-disc pl-5 space-y-2 text-sm text-gray-700">
-        <li>Please refer to the product description for exact material details.</li>
-        <li>Most items are made with high-quality fabrics such as cotton, polyester, linen, or blends.</li>
-        <li>To maintain the quality of your item:</li>
-        <ul className="list-[circle] pl-5 space-y-1">
-          <li>Machine wash cold with like colors</li>
-          <li>Do not bleach</li>
-          <li>Tumble dry low or air dry</li>
-          <li>Iron on low heat if needed</li>
-          <li>Dry clean when specified</li>
-        </ul>
-      </ul>
-    ),
-  },
-];
+interface RelatedProductsProps {
+  productId: string;
+}
 
-const ProductDetailTabs: React.FC = memo(() => {
-  const [activeTabContent, setActiveTabContent] = useState<React.ReactNode>("");
+export default function RelatedProducts({ productId }: RelatedProductsProps) {
+  const queryClient = useQueryClient();
+  const { selectedCategory } = useStore();
 
-  const handleTabClick = useCallback((content: React.ReactNode) => {
-    setActiveTabContent(content);
-  }, []);
+  const [category, setCategory] = useState<any>(null);
+  const [recommendedCategoryId, setRecommendedCategoryId] = useState("");
+
+  // Fetch categories from cache or queryClient if not present
+  useEffect(() => {
+    const loadCategoryData = async () => {
+      let categoryData = queryClient.getQueryData(["categories"]) as any;
+
+      if (!categoryData) {
+        try {
+          categoryData = await queryClient.fetchQuery({
+            queryKey: ["categories"],
+            queryFn: fetchCategories,
+          });
+        } catch (error) {
+          console.error("Failed to fetch categories:", error);
+        }
+      }
+
+      const matchedCategory = categoryData?.categories?.find(
+        (item: any) => item._id === selectedCategory
+      );
+      setCategory(matchedCategory);
+    };
+
+    loadCategoryData();
+  }, [selectedCategory, queryClient]);
+
+  // Set recommended category ID based on current category
+  useEffect(() => {
+    if (!category) return;
+
+    let newRecommendedCategoryId = "";
+    if (category.slug === "all-categories") {
+      newRecommendedCategoryId = "67f250eb2f78a67e01f2b299";
+    } else if (category.slug === "Beauty & Health") {
+      newRecommendedCategoryId = "67f250a92f78a67e01f2b28e";
+    } else if (category.slug === "undergarments") {
+      newRecommendedCategoryId = "67f250eb2f78a67e01f2b299";
+    }
+
+    if (newRecommendedCategoryId) {
+      setRecommendedCategoryId(newRecommendedCategoryId);
+    }
+  }, [category]);
+
+  // Fetch related products
+  const {
+    data: relatedProducts,
+    isLoading: isRelatedLoading,
+    error: relatedError,
+  } = useGetRelatedProductsByCategoryId(selectedCategory as string);
+
+  // Fetch recommended products
+  const {
+    data: recommendedProducts,
+    isLoading: isRecommendedLoading,
+    error: recommendedError,
+  } = useGetRelatedProductsByCategoryId(recommendedCategoryId);
+
+  if (!category) {
+    return (
+      <div className="text-center text-gray-500 py-8">
+        No category information available
+      </div>
+    );
+  }
+
+  if (isRelatedLoading) {
+    return <div className="text-center py-8">Loading related products...</div>;
+  }
+
+  if (relatedError) {
+    return (
+      <div className="text-center text-red-500 py-8">
+        Error loading related products
+      </div>
+    );
+  }
+
+  const filteredRelatedProducts =
+    relatedProducts?.data?.filter((item) => item._id !== productId) || [];
+
+  const filteredRecommendedProducts =
+    recommendedProducts?.data?.filter((item) => item._id !== productId) || [];
 
   return (
-    <div>
-      <div className="tabs flex flex-wrap justify-between">
-        {TABS.map((tab) => (
-          <Dialog key={tab.id}>
-            <DialogTrigger asChild>
-              <button
-                onClick={() => handleTabClick(tab.content)}
-                className="nav-link pb-[2px] pt-2 focus:outline-none"
-              >
-                <p className="text-black text-sm font-medium text-opacity-95">
-                  {tab.label}
-                </p>
-              </button>
-            </DialogTrigger>
-            {activeTabContent === tab.content && (
-              <DialogContent>
-                <DialogHeader>
-                  <DialogTitle>{tab.label}</DialogTitle>
-                  <DialogDescription asChild>
-                    <div className="text-start">{tab.content}</div>
-                  </DialogDescription>
-                </DialogHeader>
-              </DialogContent>
-            )}
-          </Dialog>
-        ))}
-      </div>
-    </div>
-  );
-});
-ProductDetailTabs.displayName = "ProductDetailTabs";
+    <Tabs defaultValue="relatedProducts" className="mt-5">
+      <TabsList className="p-0 shadow-none space-x-4 bg-transparent mb-5">
+        <TabsTrigger
+          value="relatedProducts"
+          className="px-0 text-start text-lg font-medium data-[state=active]:bg-transparent data-[state=active]:shadow-none text-gray-600 data-[state=active]:border-b-2 data-[state=active]:border-black data-[state=active]:text-black rounded-none"
+        >
+          Related Products
+        </TabsTrigger>
+        <TabsTrigger
+          value="recommended"
+          className="px-0 bg-transparent text-lg font-medium text-gray-600 data-[state=active]:border-b-2 data-[state=active]:border-black data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:text-black rounded-none"
+        >
+          Recommended
+        </TabsTrigger>
+      </TabsList>
 
-export default ProductDetailTabs;
+      <TabsContent value="relatedProducts">
+        {filteredRelatedProducts.length > 0 ? (
+          <div className="flex flex-wrap gap-y-6">
+            {filteredRelatedProducts.map((item) => (
+              <div
+                key={item._id}
+                className="w-[50%] md:w-[33.333%] lg:w-[25%] px-2"
+              >
+                <MainCard item={item} />
+              </div>
+            ))}
+          </div>
+        ) : (
+          <div className="text-center text-gray-500 py-8">
+            No related products found
+          </div>
+        )}
+      </TabsContent>
+
+      <TabsContent value="recommended">
+        {isRecommendedLoading ? (
+          <div className="text-center py-8">
+            Loading recommended products...
+          </div>
+        ) : recommendedError ? (
+          <div className="text-center text-red-500 py-8">
+            Error loading recommended products
+          </div>
+        ) : filteredRecommendedProducts.length > 0 ? (
+          <div className="flex flex-wrap gap-y-6">
+            {filteredRecommendedProducts.map((item) => (
+              <div
+                key={item._id}
+                className="w-[50%] md:w-[33.333%] lg:w-[25%] px-2"
+              >
+                <MainCard item={item} />
+              </div>
+            ))}
+          </div>
+        ) : (
+          <div className="text-center text-gray-500 py-8">
+            No recommended products found
+          </div>
+        )}
+      </TabsContent>
+    </Tabs>
+  );
+}

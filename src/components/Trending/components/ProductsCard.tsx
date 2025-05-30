@@ -22,11 +22,7 @@ const ProductsCard = () => {
     gcTime: 1000 * 60 * 30, // 30 min in cache
   });
 
-  // useEffect(() => {
-  //   if (selectedCategory) {
-  //     refetch();
-  //   }
-  // }, [selectedCategory, refetch]);
+
 
   if (error) {
     const err = error as ApiError;

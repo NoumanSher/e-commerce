@@ -8,7 +8,7 @@ import WishlistButton from "./components/WishlistButton";
 import ProductMetaInfo from "./components/ProductMetaInfo";
 import ProductBasicInfo from "./components/ProductBasicInfo";
 import CheckOutBtn from "./components/CheckOutBtn";
-import Tabs from "./components/Tabs";
+import Tabs from "./components/DialogModal";
 import Breadcrumb from "./components/Breadcrumb";
 import { useRouter } from "next/navigation";
 import dynamic from "next/dynamic";
@@ -183,7 +183,7 @@ const ProductInfo: React.FC<ProductDetailsProps> = ({ product }) => {
     setSelectedQuantity(quantity);
   };
   return (
-    <div className="lg:px-8 pt-2 lg:w-[40%]  w-full">
+    <div className="lg:px-8 pt-2 lg:w-[40%]  w-full lg:h-screen overflow-y-auto">
       <Breadcrumb />
       <ProductBasicInfo
         title={productName}
