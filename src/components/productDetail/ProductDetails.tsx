@@ -25,7 +25,7 @@ interface ProductDetailsProps {
 }
 
 const ProductInfo: React.FC<ProductDetailsProps> = ({ product }) => {
-  const { updateProductDetailtData } = useStore();
+  const { updateProductDetailtData, userId } = useStore();
   const { addToCart } = useCart();
   const {
     _id,
@@ -140,7 +140,7 @@ const ProductInfo: React.FC<ProductDetailsProps> = ({ product }) => {
 
     let dataToPass = {
       productName: productName,
-      userId: "67d47dd27a43f7958263f0c5",
+      userId: userId,
       productId: _id,
       items: [
         {
@@ -157,7 +157,7 @@ const ProductInfo: React.FC<ProductDetailsProps> = ({ product }) => {
       subTotal: productPrice * selectedQuantity,
     };
     updateProductDetailtData(dataToPass);
-    
+
     router.push("/pages/cart?section=checkout");
     // Proceed with checkout logic
   }, [
@@ -171,10 +171,11 @@ const ProductInfo: React.FC<ProductDetailsProps> = ({ product }) => {
     selectedSize,
     selectedVarientId,
     updateProductDetailtData,
+    userId,
   ]);
 
-  const colors = options ? options[0]?.values ?? [] : [];
-  const sizes = options ? options[1]?.values ?? [] : [];
+  const colors = options ? (options[0]?.values ?? []) : [];
+  const sizes = options ? (options[1]?.values ?? []) : [];
   const handleQuantityChange = (quantity: number) => {
     if (quantity < 0) {
       setSelectedQuantity(0);
