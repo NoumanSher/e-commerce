@@ -17,7 +17,7 @@ export const useLogIn = () => {
   return useMutation<LogInResponse, CustomError, LogInPayload>({
     mutationFn: logInUser,
     onSuccess: (data) => {
-      debugger;
+      
       setIsLogIn(data.token);
       setUserId(data.data._id);
       toast.success(data.message);

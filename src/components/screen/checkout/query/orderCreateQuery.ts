@@ -12,11 +12,11 @@ export const useOrderCreate = () => {
   return useMutation({
     mutationFn: OrderCreate,
     onSuccess: (data) => {
-      debugger
+      
       toast.success("Order Create Successfully!");
     },
     onError: (error: ErrorLogin) => {
-      debugger;
+      
       if (error) {
         toast.error(error?.response.data.message);
       }

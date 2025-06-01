@@ -11,7 +11,7 @@ const ProductsCategories = () => {
   } = useCategories();
   const { updateSelectedCategory, selectedCategory } = useStore();
   useEffect(() => {
-    debugger
+    
     if (categoriesData?.categories && categoriesData.categories.length > 0) {
       updateSelectedCategory(categoriesData.categories[categoriesData.categories.length - 1]._id);
     }

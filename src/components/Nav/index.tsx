@@ -115,7 +115,7 @@ const Navbar = () => {
           </li>
           <li>
             <Link
-              href="/"
+              href="/pages/about-us"
               className="text-sm tracking-wide text-black font-medium hover:text-gray-600"
             >
               ABOUT
@@ -123,7 +123,7 @@ const Navbar = () => {
           </li>
           <li>
             <Link
-              href="/"
+              href="/pages/contact-us"
               className="text-sm tracking-wide text-black font-medium hover:text-gray-600"
             >
               CONTACT

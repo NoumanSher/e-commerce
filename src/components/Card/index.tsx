@@ -14,7 +14,7 @@ interface MainCardProps {
 }
 // Fetch product data from API
 async function getProductDataById(productId: string) {
-  debugger;
+  
   const response = await fetch(
     `https://e-commerce-backend-seven-xi.vercel.app/api/products/get-product/${productId}`,
     { cache: "no-store" }

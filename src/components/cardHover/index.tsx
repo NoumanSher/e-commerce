@@ -27,14 +27,14 @@ const CardHover = ({ isHovered, product }: ICardHover) => {
     e: React.MouseEvent<HTMLDivElement>, // Use the correct type for the event
     isVariant: boolean
   ) => {
-    debugger;
+    
     if (!product) {
       return;
     }
     e.stopPropagation(); // Prevent event bubbling
 
     if (isVariant) {
-      debugger;
+      
       // Redirect to product details page if the product has variants
       router.push(`/pages/product-detail/${product._id}`);
     } else {

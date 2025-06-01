@@ -29,7 +29,7 @@ const ProductBasicInfo: React.FC<ProductInfoProps> = ({
         </div>
       </div>
       <p className="text-lg font-semibold mb-3">Rs {price.toFixed(0)}</p>
-      <div className="text-gray-600 mb-4">
+      <div className="text-gray-600 mb-4 lg:h-80 lg:overflow-y-auto">
         {typeof description === "string" &&
         /<[a-z][\s\S]*>/i.test(description) ? (
           <>{ReactHtmlParser(description)}</> // Wrap in Fragment

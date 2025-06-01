@@ -13,7 +13,7 @@ const productDetailById = async (
 const relatedProductsByCategoryId = async (
   categoryId: string
 ): Promise<RelatedProductsResponse> => {
-  debugger;
+  
   const res = await axios.get<RelatedProductsResponse>(
     `${BASE_URL_LIVE}/products/get-products-by-category-priority?parentCategoryID=${categoryId}`
   );

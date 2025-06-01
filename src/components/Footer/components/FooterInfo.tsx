@@ -1,16 +1,46 @@
+"use client";
 import Image from "next/image";
-import React, { memo } from "react";
+import React, { memo, useEffect, useState } from "react";
 import Logo from "../../../assets/img/Logo.png";
 import { FooterLinksData } from "@/data/data";
 import { CiMail } from "react-icons/ci";
 import { MdOutlinePhone } from "react-icons/md";
+import { useQueryClient } from "@tanstack/react-query";
+import { getStoreSetting } from "@/components/Slider/api/storeSettingApi";
 
 const FooterInfo = () => {
+  const queryClient = useQueryClient();
+  const [logo, setLogo] = useState("");
+
+  // Prefetch data
+  useEffect(() => {
+    const loadSettingData = async () => {
+      let cacheData = queryClient.getQueryData(["settings"]) as any;
+      if (!cacheData) {
+        try {
+          cacheData = await queryClient.fetchQuery({
+            queryKey: ["settings"],
+            queryFn: getStoreSetting,
+          });
+          setLogo(cacheData.logo);
+        } catch (error) {
+          console.error("Failed to fetch logo:", error);
+        }
+      }else{
+      setLogo(cacheData.logo);
+
+      }
+    };
+
+    loadSettingData();
+  }, [queryClient]);
   return (
     <div>
       <Image
-        src={Logo}
+        src={logo}
         priority={true}
+        width={125}
+        height={125}
         loading="eager"
         alt="Logo"
         className=""
@@ -28,14 +58,14 @@ const FooterInfo = () => {
       <br />
       <div className="flex gap-3 items-center cursor-pointer">
         <MdOutlinePhone />
-         <a
-        className="text-[#222222] text-[14px]   font-medium leading-[1.7173px]"
-        href="tel:+923176872900"
-      >
-        03176872900
-      </a>
+        <a
+          className="text-[#222222] text-[14px]   font-medium leading-[1.7173px]"
+          href="tel:+923176872900"
+        >
+          03176872900
+        </a>
       </div>
-     
+
       <div className="flex gap-8 xl:gap-5 mt-8 lg:flex-wrap">
         {FooterLinksData.map((item, index) => (
           <a

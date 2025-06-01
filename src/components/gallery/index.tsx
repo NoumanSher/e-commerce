@@ -63,15 +63,8 @@ const ImageGallery: React.FC<ImageGalleryProps> = ({ images }) => {
 
       {/* Main Image */}
       <div className="lg:w-[82%] h-fit w-full relative  lg:order-2 order-1 group transition-all duration-300 ease-in-out">
-        <div className="relative  h-auto md:h-[690px] lg:h-[700px] overflow-hidden w-full">
-          {/* <div
-            key={images[currentIndex].src}
-            className={`absolute w-full h-full inset-0  ${
-              direction === "right"
-                ? "animate-slide-in-left"
-                : "animate-slide-in-right"
-            }`}
-          > */}
+        <div className="relative  md:h-[400px] lg:h-auto overflow-hidden w-full">
+    
             <Image
               src={images[currentIndex].src}
               alt={images[currentIndex].alt}
@@ -80,7 +73,6 @@ const ImageGallery: React.FC<ImageGalleryProps> = ({ images }) => {
               loading="eager"
               className="rounded w-full h-full object-contain"
             />
-          {/* </div> */}
         </div>
 
         {/* Navigation Buttons */}

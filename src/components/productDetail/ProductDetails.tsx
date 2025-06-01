@@ -157,7 +157,7 @@ const ProductInfo: React.FC<ProductDetailsProps> = ({ product }) => {
       subTotal: productPrice * selectedQuantity,
     };
     updateProductDetailtData(dataToPass);
-    debugger;
+    
     router.push("/pages/cart?section=checkout");
     // Proceed with checkout logic
   }, [
@@ -183,8 +183,8 @@ const ProductInfo: React.FC<ProductDetailsProps> = ({ product }) => {
     setSelectedQuantity(quantity);
   };
   return (
-    <div className="lg:px-8 pt-2 lg:w-[40%]  w-full lg:h-screen overflow-y-auto">
-      <Breadcrumb />
+    <div className="lg:px-8 pt-2 lg:w-[40%] flex flex-col   w-full">
+      {/* <Breadcrumb /> */}
       <ProductBasicInfo
         title={productName}
         stockAvailability={availableStock}
@@ -236,7 +236,7 @@ const ProductInfo: React.FC<ProductDetailsProps> = ({ product }) => {
 
       <Tabs />
 
-      <div className="flex justify-center mt-5">
+      <div className="lg:mt-auto  sticky bottom-0">
         <CheckOutBtn
           availableStock={availableStock}
           className="!w-[100%]"

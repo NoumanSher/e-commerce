@@ -34,7 +34,7 @@ export const fetchProducts = async (
   if (limit) params.append("limit", limit.toString());
 
   try {
-    debugger;
+    
     const { data } = await axios.get(
       `${BASE_URL}/products/get-all-products?${params.toString()}`
     );
