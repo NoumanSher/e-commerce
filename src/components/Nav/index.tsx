@@ -1,7 +1,7 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback, useRef } from "react";
 import { FaBars, FaTimes } from "react-icons/fa";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import Link from "next/link";
 import {
   SearchIcon,
@@ -15,175 +15,250 @@ import { useStore } from "@/Context/storeContext";
 import { useQuery } from "@tanstack/react-query";
 import { getStoreSetting } from "@/components/Slider/api/storeSettingApi";
 import Image from "next/image";
+
 const Navbar = () => {
+  const pathname = usePathname();
+  const isHomePage = pathname === "/";
   const { wishlistCount } = useWishlist();
   const { isLogIn } = useStore();
-
-  const [isMobile, setIsMobile] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [searchValue, setSearchValue] = useState("");
-  const [searching, setSearching] = useState(false); // To track if search results are being fetched
-  const [isClient, setIsClient] = useState(false); // To ensure client-only rendering
+  const [isClient, setIsClient] = useState(false);
+  const [isNavbarVisible, setIsNavbarVisible] = useState(true);
   const { cartCount } = useCart();
   const router = useRouter();
-  const { data } = useQuery({
+  const lastScrollY = useRef(0);
+  const navbarRef = useRef<HTMLDivElement>(null);
+  
+  const { data: storeSettings } = useQuery({
     queryKey: ["settings"],
     queryFn: getStoreSetting,
   });
+
+  // Scroll handler for hide/show navbar
+  const handleScroll = useCallback(() => {
+    if (isHomePage) return;
+    
+    const currentScrollY = window.scrollY;
+    const navbarHeight = navbarRef.current?.offsetHeight || 0;
+    
+    if (currentScrollY > lastScrollY.current && currentScrollY > navbarHeight) {
+      // Scrolling down
+      if (isNavbarVisible) {
+        setIsNavbarVisible(false);
+      }
+    } else if (currentScrollY < lastScrollY.current) {
+      // Scrolling up
+      if (!isNavbarVisible) {
+        setIsNavbarVisible(true);
+      }
+    }
+    
+    lastScrollY.current = currentScrollY;
+  }, [isHomePage, isNavbarVisible]);
+
   useEffect(() => {
-    setIsClient(true); // Set to true only after component mounts on client
+    setIsClient(true);
+    
+    if (!isHomePage) {
+      window.addEventListener('scroll', handleScroll, { passive: true });
+      return () => window.removeEventListener('scroll', handleScroll);
+    }
+  }, [isHomePage, handleScroll]);
+
+  useEffect(() => {
+    document.body.classList.toggle("no-scroll", isMobileMenuOpen);
+    return () => document.body.classList.remove("no-scroll");
+  }, [isMobileMenuOpen]);
+
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchValue(e.target.value);
+  };
+
+  const clearSearch = () => {
+    setSearchValue("");
+  };
+
+  const toggleMobileMenu = useCallback(() => {
+    setIsMobileMenuOpen(prev => !prev);
   }, []);
 
-  const handleChange = (e: {
-    target: { value: React.SetStateAction<string> };
-  }) => {
-    setSearchValue(e.target.value);
-    setSearching(!!e.target.value);
-  };
+  const handleProfileClick = useCallback(() => {
+    if (window.innerWidth < 768) {
+      toggleMobileMenu();
+    }
+    router.push(isLogIn ? "/pages/profile" : "/pages/login");
+  }, [isLogIn, router, toggleMobileMenu]);
 
-  const handleClear = () => {
-    setSearchValue("");
-    setSearching(false);
-  };
+  const handleNavigation = useCallback((path: string) => {
+    if (window.innerWidth < 768) {
+      toggleMobileMenu();
+    }
+    router.push(path);
+  }, [router, toggleMobileMenu]);
 
-  useEffect(() => {
-    document.body.classList.toggle("no-scroll", isMobile);
-
-    return () => {
-      document.body.classList.remove("no-scroll");
-    };
-  }, [isMobile]);
-
-  const handleClickProfile = () => {
-    // const isLogIn = localStorage.getItem("token");
-    window.innerWidth < 768 ? setIsMobile(!isMobile): ''
-    isLogIn ? router.push("/pages/profile") : router.push("/pages/login");
-  };
+  const navLinks = [
+    { path: "/", label: "HOME" },
+    { path: "/pages/about-us", label: "ABOUT" },
+    { path: "/pages/contact-us", label: "CONTACT" },
+  ];
 
   return (
-    <nav className="flex items-center justify-between p-4 border-b border-gray-200 bg-white container mx-auto lg:px-16">
-      <div className="flex items-center gap-x-20 lg:order-1 order-2">
-        <Link href={"/"} className="flex items-center text-2xl font-bold">
-          <Image src={data?.logo ?? ""} className="-my-6 object-contain" width={100} height={100} alt="logo" />
-        </Link>
+    <>
+      {/* Fixed position navbar that handles the hide/show animation */}
+      <div 
+        ref={navbarRef}
+        className={`
+          fixed top-0 left-0 right-0 z-50 
+          transition-transform duration-300 ease-in-out
+          ${isHomePage ? 'translate-y-0' : isNavbarVisible ? 'translate-y-0' : '-translate-y-full'}
+        `}
+      >
+        {/* Actual navbar content */}
+        <nav className="bg-white border-b border-gray-200">
+          <div className="container mx-auto px-4 py-2 lg:px-16 flex items-center justify-between h-16">
+            {/* Mobile Menu Button */}
+            <button
+              className="lg:hidden text-xl focus:outline-none"
+              onClick={toggleMobileMenu}
+              aria-label="Toggle menu"
+            >
+              {isMobileMenuOpen ? <FaTimes /> : <FaBars />}
+            </button>
 
-        <ul
-          className={`flex gap-x-10 lg:order-2 ${
-            isMobile
-              ? "flex-col absolute top-16 left-0 border-2 w-full bg-white border-t border-gray-200 h-screen z-50 px-4 pt-4"
-              : "hidden lg:flex"
-          }`}
-        >
-          <div className="relative">
-            <input
-              type="text"
-              name="search"
-              placeholder="Search Products"
-              value={searchValue}
-              onChange={handleChange}
-              className="lg:hidden border-gray-400 w-full border outline-none h-9 rounded-md px-2 pr-8"
-            />
-            <span className="absolute top-[10px] right-2">
-              {searching ? (
-                <FaTimes onClick={handleClear} className="cursor-pointer" />
-              ) : (
-                <SearchIcon className="lg:hidden" />
+            {/* Logo */}
+            <Link 
+              href="/" 
+              className="flex items-center mx-auto lg:mx-0 lg:mr-10 h-full"
+              onClick={() => isMobileMenuOpen && toggleMobileMenu()}
+            >
+              <div className="relative h-full">
+                <Image 
+                  src={storeSettings?.logo ?? "/default-logo.png"} 
+                  className="object-contain object-center -my-6"
+                  width={100}  
+                  height={100}
+                  alt="Store logo"
+                  priority
+                />
+              </div>
+            </Link>
+
+            {/* Desktop Navigation */}
+            <div className="hidden lg:flex items-center space-x-8 h-full">
+              {navLinks.map((link) => (
+                <Link
+                  key={link.path}
+                  href={link.path}
+                  className="text-sm tracking-wide text-black font-medium hover:text-gray-600 h-full flex items-center"
+                >
+                  {link.label}
+                </Link>
+              ))}
+            </div>
+
+            {/* Desktop Icons */}
+            <div className="hidden lg:flex items-center space-x-5 ml-auto h-full">
+              <SearchIcon className="text-lg cursor-pointer hover:text-gray-600" />
+              
+              <ProfileAvatarIcon
+                onClick={handleProfileClick}
+                className="text-lg cursor-pointer hover:text-gray-600"
+              />
+
+              <div className="relative h-full flex items-center">
+                <HeartIcon
+                  onClick={() => handleNavigation("/pages/wish-list")}
+                  className="cursor-pointer hover:text-gray-600"
+                />
+                {isClient && wishlistCount > 0 && (
+                  <span className="absolute -top-2 -right-2 w-4 h-4 bg-yellow-600 text-white text-xs font-medium rounded-full flex items-center justify-center">
+                    {wishlistCount}
+                  </span>
+                )}
+              </div>
+
+              <div className="relative cursor-pointer h-full flex items-center" onClick={() => handleNavigation("/pages/cart")}>
+                <CartIcon className="text-lg hover:text-gray-600" />
+                {isClient && cartCount > 0 && (
+                  <span className="absolute -top-2 -right-2 w-4 h-4 bg-yellow-600 text-white text-xs font-medium rounded-full flex items-center justify-center">
+                    {cartCount}
+                  </span>
+                )}
+              </div>
+            </div>
+
+            {/* Mobile Cart Icon */}
+            <div className="lg:hidden relative cursor-pointer" onClick={() => handleNavigation("/pages/cart")}>
+              <CartIcon className="text-lg hover:text-gray-600" />
+              {isClient && cartCount > 0 && (
+                <span className="absolute -top-2 -right-2 w-4 h-4 bg-yellow-600 text-white text-xs font-medium rounded-full flex items-center justify-center">
+                  {cartCount}
+                </span>
               )}
-            </span>
+            </div>
           </div>
-          <li
-            onClick={handleClickProfile}
-            className="text-base  tracking-wide lg:hidden md:block text-black font-medium hover:text-gray-600 mt-4"
-          >
-            Profile
-          </li>
-          <li
-            onClick={() => {
-              setIsMobile(!isMobile);
-              router.push("/pages/wish-list");
-            }}
-            className="text-base  tracking-wide lg:hidden md:block text-black font-medium hover:text-gray-600"
-          >
-            Wishlist
-          </li>
-          <li onClick={() => { window.innerWidth < 768 ? setIsMobile(!isMobile): ''}}>
-            <Link
-              href="/"
-              className="text-sm tracking-wide text-black font-medium hover:text-gray-600"
-            >
-              HOME
-            </Link>
-          </li>
-          <li>
-            <Link
-              href="/pages/about-us"
-              className="text-sm tracking-wide text-black font-medium hover:text-gray-600"
-            >
-              ABOUT
-            </Link>
-          </li>
-          <li>
-            <Link
-              href="/pages/contact-us"
-              className="text-sm tracking-wide text-black font-medium hover:text-gray-600"
-            >
-              CONTACT
-            </Link>
-          </li>
-        </ul>
+        </nav>
       </div>
 
-      <div className="lg:flex items-center space-x-6 hidden lg:order-3">
-        <SearchIcon className="text-lg cursor-pointer hover:text-gray-600 hidden lg:flex" />
-        <ProfileAvatarIcon
-          onClick={handleClickProfile}
-          className="text-lg cursor-pointer hover:text-gray-600"
-        />
+      {/* Mobile Menu (outside the fixed navbar) */}
+      {isMobileMenuOpen && (
+        <div className="lg:hidden fixed inset-0 bg-white z-40 mt-16 overflow-y-auto">
+          <div className="container mx-auto px-4 py-4">
+            {/* Mobile Search */}
+            <div className="relative mb-4">
+              <input
+                type="text"
+                placeholder="Search Products"
+                value={searchValue}
+                onChange={handleSearchChange}
+                className="w-full border border-gray-400 outline-none h-9 rounded-md px-3 pr-10"
+              />
+              <span className="absolute right-3 top-2.5">
+                {searchValue ? (
+                  <FaTimes onClick={clearSearch} className="cursor-pointer" />
+                ) : (
+                  <SearchIcon />
+                )}
+              </span>
+            </div>
 
-        <div className="relative">
-          <HeartIcon
-            onClick={() => router.push("/pages/wish-list")}
-            className="cursor-pointer"
-          />
-          {isClient && wishlistCount > 0 && (
-            <span className="absolute w-4 h-4 p-[4px] top-[15px] 2xl:-right-[5px] lg:-right-[5px] bg-yellow-600 text-white text-xs font-medium rounded-full flex items-center justify-center">
-              {wishlistCount}
-            </span>
-          )}
+            {/* Mobile Nav Links */}
+            <ul className="space-y-3">
+              <li>
+                <button
+                  onClick={handleProfileClick}
+                  className="text-base w-full text-left tracking-wide text-black font-medium hover:text-gray-600 py-1"
+                >
+                  Profile
+                </button>
+              </li>
+              <li>
+                <button
+                  onClick={() => handleNavigation("/pages/wish-list")}
+                  className="text-base w-full text-left tracking-wide text-black font-medium hover:text-gray-600 py-1"
+                >
+                  Wishlist
+                </button>
+              </li>
+              {navLinks.map((link) => (
+                <li key={link.path}>
+                  <button
+                    onClick={() => handleNavigation(link.path)}
+                    className="text-base w-full text-left tracking-wide text-black font-medium hover:text-gray-600 py-1"
+                  >
+                    {link.label}
+                  </button>
+                </li>
+              ))}
+            </ul>
+          </div>
         </div>
+      )}
 
-        <div
-          className="relative cursor-pointer"
-          onClick={() => router.push("/pages/cart")}
-        >
-          <CartIcon className="text-lg hover:text-gray-600" />
-
-          {isClient && cartCount > 0 && (
-            <span className="absolute top-[14px] -right-[6px] p-[4px] h-4 w-4 bg-yellow-600 text-white text-xs font-medium rounded-full flex items-center justify-center">
-              {cartCount}
-            </span>
-          )}
-        </div>
-      </div>
-
-      <div
-        className="relative cursor-pointer order-3 lg:hidden"
-        onClick={() => router.push("/pages/cart")}
-      >
-        <CartIcon className="text-lg hover:text-gray-600 hover:scale-150" />
-        {isClient && cartCount > 0 && (
-          <span className="absolute top-[14px] -right-[6px] w-4 h-4 p-[4px] bg-yellow-600 text-black text-xs font-bold rounded-full flex items-center justify-center">
-            {cartCount}
-          </span>
-        )}
-      </div>
-
-      <button
-        className="lg:hidden text-xl focus:outline-none order-1"
-        onClick={() => setIsMobile(!isMobile)}
-      >
-        <FaBars />
-      </button>
-    </nav>
+      {/* Spacer to prevent content from being hidden under fixed navbar */}
+      <div className="h-16"></div>
+    </>
   );
 };
 
