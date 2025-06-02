@@ -51,7 +51,7 @@ const MainCard = ({ item }: MainCardProps) => {
     <>
       <HydrationBoundary state={dehydrate(queryClient)}>
         <div
-          className=" mb-6 xl:mb-12   px-2  md:px-4 cursor-pointer"
+          className="mb-6 xl:mb-12   px-2  md:px-4 cursor-pointer"
           onClick={() => router.push(`/pages/product-detail/${item._id}`)}
           onMouseEnter={() => prefetchProduct(item._id)}
           onTouchStart={() => prefetchProduct(item._id)}
@@ -68,7 +68,7 @@ const MainCard = ({ item }: MainCardProps) => {
                 src={item.images[0]?.src}
                 width={250}
                 height={404}
-                alt="Product BAnner Img"
+                alt="Product  Img"
                 className="object-cover  w-full h-full transition-transform duration-700 ease-in-out transform-gpu "
               />
               {item.isNew && (

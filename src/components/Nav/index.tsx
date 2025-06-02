@@ -172,7 +172,7 @@ const Navbar = () => {
                   className="cursor-pointer hover:text-gray-600"
                 />
                 {isClient && wishlistCount > 0 && (
-                  <span className="absolute -top-2 -right-2 w-4 h-4 bg-yellow-600 text-white text-xs font-medium rounded-full flex items-center justify-center">
+                  <span className="absolute lg:top-[24px] -right-[7px] w-4 h-4 bg-yellow-600 text-white text-xs font-medium rounded-full flex items-center justify-center">
                     {wishlistCount}
                   </span>
                 )}
@@ -181,7 +181,7 @@ const Navbar = () => {
               <div className="relative cursor-pointer h-full flex items-center" onClick={() => handleNavigation("/pages/cart")}>
                 <CartIcon className="text-lg hover:text-gray-600" />
                 {isClient && cartCount > 0 && (
-                  <span className="absolute -top-2 -right-2 w-4 h-4 bg-yellow-600 text-white text-xs font-medium rounded-full flex items-center justify-center">
+                  <span className="absolute lg:top-[24px]  -right-2 w-4 h-4 bg-yellow-600 text-white text-xs font-medium rounded-full flex items-center justify-center">
                     {cartCount}
                   </span>
                 )}
@@ -192,7 +192,7 @@ const Navbar = () => {
             <div className="lg:hidden relative cursor-pointer" onClick={() => handleNavigation("/pages/cart")}>
               <CartIcon className="text-lg hover:text-gray-600" />
               {isClient && cartCount > 0 && (
-                <span className="absolute -top-2 -right-2 w-4 h-4 bg-yellow-600 text-white text-xs font-medium rounded-full flex items-center justify-center">
+                <span className="absolute top-[11px]  -right-2 w-4 h-4 bg-yellow-600 text-white text-xs font-medium rounded-full flex items-center justify-center">
                   {cartCount}
                 </span>
               )}
