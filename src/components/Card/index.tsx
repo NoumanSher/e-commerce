@@ -58,7 +58,7 @@ const MainCard = ({ item }: MainCardProps) => {
         >
           <div className=" cursor-pointer">
             <div
-              className="relative xl:h-[404px] "
+              className="relative xl:h-[404px] xxs:w-[130px] xxs:h-[167px] xs:w-[157px] xs:h-[200px] m:w-[185px] m:h-[231px] sm:w-auto sm:h-auto"
               onMouseEnter={() => handleMouseEnter(item._id)}
               onMouseLeave={handleMouseLeave}
             >
@@ -69,10 +69,10 @@ const MainCard = ({ item }: MainCardProps) => {
                 width={250}
                 height={404}
                 alt="Product  Img"
-                className="object-cover  w-full h-full transition-transform duration-700 ease-in-out transform-gpu "
+                className="object-center  w-full h-full transition-transform duration-700 ease-in-out transform-gpu "
               />
               {item.isNew && (
-                <div className="bg-white absolute top-0 mx-[8px] mt-[8px] py-[7px] px-[10px] ">
+                <div className="bg-white absolute top-0 mx-[8px] mt-[8px] sm:py-[7px] sm:px-[10px] py-[6px] px-[6px] ">
                   <h1 className="uppercase text-black text-[12px] leading-[1.25em] font-normal ">
                     New
                   </h1>
@@ -81,7 +81,7 @@ const MainCard = ({ item }: MainCardProps) => {
 
               {item.salePrice && (
                 <div
-                  className={`bg-black absolute top-0 mx-[8px] mt-[8px] py-[7px] px-[10px] ${
+                  className={`bg-black absolute top-0 mx-[8px] mt-[8px] sm:py-[7px] sm:px-[10px] py-[6px] px-[6px] ${
                     item.isNew ? "top-[36px]" : ""
                   } `}
                 >
@@ -91,7 +91,7 @@ const MainCard = ({ item }: MainCardProps) => {
                 </div>
               )}
               {item.discount && (
-                <div className="bg-[#c32929] absolute left-auto !right-0 top-0 flex flex-col  mx-[8px] mt-[8px] py-[7px] px-[10px] ">
+                <div className="bg-[#c32929] absolute left-auto !right-0 top-0 flex flex-col  mx-[8px] mt-[8px] sm:py-[7px] sm:px-[10px] py-[6px] px-[6px] ">
                   <h1 className="uppercase text-white text-[12px] leading-[1.25em] font-normal ">
                     {item.discount + "% off"}
                   </h1>

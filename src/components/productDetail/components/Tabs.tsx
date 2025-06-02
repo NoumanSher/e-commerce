@@ -123,7 +123,7 @@ export default function RelatedProducts({ productId }: RelatedProductsProps) {
             {filteredRelatedProducts.map((item) => (
               <div
                 key={item._id}
-                className="w-[50%] md:w-[33.333%] lg:w-[25%] px-2"
+                className="w-[50%] md:w-[33.333%] lg:w-[25%]"
               >
                 <MainCard item={item} />
               </div>

@@ -9,6 +9,11 @@ const config: Config = {
   ],
   theme: {
     extend: {
+       screens: {
+        xxs: '320px', // custom breakpoint for small screens
+        xs: '375px', // custom breakpoint for small screens
+        m: '425px', // custom breakpoint for small screens
+      },
       keyframes: {
         "slide-in-left": {
           "0%": { transform: "translateX(100%)" },

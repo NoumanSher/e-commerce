@@ -34,7 +34,7 @@ const ProductsCard = () => {
   }
 
   return (
-    <div className="xl:max-w-[1440px] mx-auto xl:mt-14 px-4">
+    <div className="xl:max-w-[1440px] mx-auto xl:mt-14">
       {isLoading || isFetching ? (
         <Loader />
       ) : (
@@ -42,7 +42,7 @@ const ProductsCard = () => {
           {productsData?.data.slice(0, 8).map((item) => (
             <div
               key={item._id}
-              className="w-[50%] md:w-[33.333%] lg:w-[25%] px-2"
+              className="w-[50%] md:w-[33.333%] lg:w-[25%]"
             >
               <MainCard item={item} />
             </div>

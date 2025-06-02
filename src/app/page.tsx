@@ -25,21 +25,21 @@ const ShoppingCartModal = dynamic(
   () => import("@/components/shoppingCartModal/client/shoppingCartModal"),
   {
     suspense: true,
-    loading: () => <div>Loading Cart...</div>,
-    ssr: false // Disable SSR for modal since it's client-side only
+    ssr: false, // Disable SSR for modal since it's client-side only
   }
 );
 
 // Shared query client configuration
-const createQueryClient = () => new QueryClient({
-  defaultOptions: {
-    queries: {
-      staleTime: 60 * 1000, // 1 minute cache
-      refetchOnWindowFocus: false,
-      refetchOnMount: false,
+const createQueryClient = () =>
+  new QueryClient({
+    defaultOptions: {
+      queries: {
+        staleTime: 60 * 1000, // 1 minute cache
+        refetchOnWindowFocus: false,
+        refetchOnMount: false,
+      },
     },
-  },
-});
+  });
 
 // Cache settings for 1 minute (adjust as needed)
 export const revalidate = 60;
@@ -87,7 +87,7 @@ export default async function LandingPage() {
 // Shared metadata generation
 export async function generateMetadata(): Promise<Metadata> {
   const queryClient = createQueryClient();
-  
+
   try {
     const storeSettings = await queryClient.fetchQuery({
       queryKey: ["settings"],
@@ -96,13 +96,14 @@ export async function generateMetadata(): Promise<Metadata> {
 
     return {
       title: storeSettings.title || "Pakshipper",
-      description: storeSettings.description || "Your favorite shopping destination",
+      description:
+        storeSettings.description || "Your favorite shopping destination",
       icons: {
         icon: [
-          { 
-            url: storeSettings.logo || "/default-logo.png", 
-            type: "image/png", 
-            sizes: "32x32" 
+          {
+            url: storeSettings.logo || "/default-logo.png",
+            type: "image/png",
+            sizes: "32x32",
           },
         ],
       },
