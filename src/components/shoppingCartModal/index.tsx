@@ -3,6 +3,7 @@ import React, { useEffect } from "react";
 import { toast } from "react-toastify";
 import { useCart } from "../hooks/useCart";
 import QuantitySelector from "../productDetail/components/QuantitySelector";
+import { on } from "events";
 
 interface ShoppingCartProps {
   isOpen: boolean;
@@ -170,13 +171,17 @@ const ShoppingCart: React.FC<ShoppingCartProps> = ({ isOpen, onClose }) => {
           </div>
           <button
             className="w-full bg-gray-800 text-white py-2 rounded-md mb-2"
-            onClick={() => router.push("/pages/cart?section=shoppingbag")}
+            onClick={() => {
+              router.push("/pages/cart?section=shoppingbag"), onClose();
+            }}
           >
             View Cart
           </button>
           <button
             className="w-full bg-blue-600 text-white py-2 rounded-md"
-            onClick={() => router.push("/pages/cart?section=checkout")}
+            onClick={() => {
+              router.push("/pages/cart?section=checkout"), onClose();
+            }}
           >
             Checkout
           </button>

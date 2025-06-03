@@ -72,7 +72,7 @@ export default async function LandingPage() {
         href={landingWhatsappURL}
         target="_blank"
         rel="noopener noreferrer"
-        className="fixed bottom-6 right-6 z-50 animate-bounce"
+        className="fixed bottom-6 right-6 z-40 animate-bounce"
         aria-label="Contact us on WhatsApp"
       >
         <div className="bg-green-500 hover:bg-green-600 text-white p-4 rounded-full shadow-lg flex items-center gap-2">

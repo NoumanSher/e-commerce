@@ -116,7 +116,7 @@ export const footerData: FooterItem[] = [
       },
       {
         name: "Beauty & Health",
-        url: "/pages/all-products?parent-category-id=67f250eb2f78a67e01f2b299"
+        url: "/pages/all-products?childCategoryID=683db0fa82b8595f32e61408"
       }
     ]
   },

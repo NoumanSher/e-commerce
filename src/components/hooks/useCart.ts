@@ -23,91 +23,95 @@ export const useCart = () => {
     return true;
   };
 
-  const addToCart = useCallback(
-    (item: CartItem) => {
-      if (!item.product || !item.product._id) {
-        toast.error("Invalid product information.");
+ const addToCart = useCallback(
+  (item: CartItem) => {
+    if (!item.product || !item.product._id) {
+      toast.error("Invalid product information.");
+      return;
+    }
+
+    const { product, quantity, variantID } = item;
+
+    if (!validateQuantity(quantity)) return;
+
+    let updatedProduct = product;
+    let updatedVariantID = variantID;
+
+    if (product.isVariant) {
+      if (!variantID) {
+        toast.error("Please select a product variant.");
         return;
       }
 
-      const { product, quantity, variantID } = item;
+      const matchingVariant = product.variants?.find(
+        (variant) => variant._id === variantID
+      );
 
-      if (!validateQuantity(quantity)) return;
-
-      if (product.isVariant) {
-        if (!variantID) {
-          toast.error("Please select a product variant.");
-          return;
-        }
-
-        const matchingVariant = product.variants?.find(
-          (variant) => variant._id === variantID
-        );
-
-        if (!matchingVariant) {
-          toast.error("Selected color and size combination is not available.");
-          return;
-        }
-
-        item.variantID = matchingVariant._id;
-        item.product = {
-          ...product,
-          stock: matchingVariant.stock,
-        };
-      }
-
-      const availableStock = item.variantID
-        ? item.product.stock || 0
-        : product.stock || 0;
-
-      if (quantity > availableStock) {
-        toast.error(
-          `Only ${availableStock} item(s) available for ${
-            product.productName || "this product"
-          }`
-        );
+      if (!matchingVariant) {
+        toast.error("Selected color and size combination is not available.");
         return;
       }
 
-      // Create unique toast IDs
-      const successToastId = `add-item-${product._id}-${variantID || 'novariant'}`;
-      const errorToastId = `add-error-${product._id}`;
+      updatedVariantID = matchingVariant._id;
+      updatedProduct = {
+        ...product,
+        stock: matchingVariant.stock,
+      };
+    }
 
-      setCartItems((prevItems) => {
-        const existingItemIndex = prevItems.findIndex(
-          (cartItem) =>
-            cartItem.product._id === product._id &&
-            cartItem.variantID === item.variantID
-        );
+    const availableStock = updatedVariantID
+      ? updatedProduct.stock || 0
+      : product.stock || 0;
 
-        if (existingItemIndex >= 0) {
-          const updatedItems = [...prevItems];
-          const existingItem = updatedItems[existingItemIndex];
+    if (quantity > availableStock) {
+      toast.error(
+        `Only ${availableStock} item(s) available for ${
+          product.productName || "this product"
+        }`
+      );
+      return;
+    }
 
-          if (existingItem.quantity + quantity > availableStock) {
-            // Show toast inside setCartItems to avoid multiple toasts
-            toast.error(
-              `No more item(s) can be added for ${
-                product.productName || "this product"
-              }`,
-              { toastId: errorToastId }
-            );
-            return updatedItems;
-          }
+    const successToastId = `add-item-${product._id}-${updatedVariantID || 'novariant'}`;
+    const errorToastId = `add-error-${product._id}`;
 
-          updatedItems[existingItemIndex].quantity += quantity;
-          // Show toast inside setCartItems to avoid multiple toasts
-          toast.success("Cart updated successfully!", { toastId: successToastId });
-          return updatedItems;
-        }
-
-        // Show toast inside setCartItems to avoid multiple toasts
-        toast.success("Item added to cart!", { toastId: successToastId });
-        return [...prevItems, item];
-      });
-    },
-    [setCartItems]
+    setCartItems((prevItems) => {
+  const existingItemIndex = prevItems.findIndex(
+    (cartItem) =>
+      cartItem.product._id === product._id &&
+      cartItem.variantID === item.variantID
   );
+
+  if (existingItemIndex >= 0) {
+    const updatedItems = [...prevItems];
+    const existingItem = updatedItems[existingItemIndex];
+
+    if (existingItem.quantity + quantity > availableStock) {
+      toast.error(
+        `No more item(s) can be added for ${
+          product.productName || "this product"
+        }`,
+        { toastId: errorToastId }
+      );
+      return updatedItems;
+    }
+
+    updatedItems[existingItemIndex] = {
+      ...existingItem,
+      quantity: existingItem.quantity + quantity,
+    };
+
+    toast.success("Cart updated successfully!", { toastId: successToastId });
+    return updatedItems;
+  }
+
+  toast.success("Item added to cart!", { toastId: successToastId });
+  return [...prevItems, item];
+});
+
+  },
+  [setCartItems]
+);
 
   const updateItemQuantity = useCallback(
     (productID: string, quantity: number, variantID?: string) => {

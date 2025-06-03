@@ -24,17 +24,19 @@ export interface ApiError {
 
 export const fetchProducts = async (
   categoryId?: string,
+  childCategoryID?: string,
   page: number = 1,
   limit: number = 8
 ): Promise<ProductsResponse> => {
   const params = new URLSearchParams();
-
+debugger
+  if (childCategoryID) params.append("childCategoryID", childCategoryID);
   if (categoryId) params.append("parentCategoryID", categoryId);
   if (page) params.append("page", page.toString());
   if (limit) params.append("limit", limit.toString());
 
   try {
-    
+    debugger
     const { data } = await axios.get(
       `${BASE_URL}/products/get-all-products?${params.toString()}`
     );

@@ -1,7 +1,7 @@
 import { useMutation } from "@tanstack/react-query";
 import { LogInPayload, LogInResponse, logInUser } from "./service";
 import { toast } from "react-toastify";
-import { useRouter } from "next/navigation";
+// import { useRouter } from "next/navigation";
 import { useStore } from "@/Context/storeContext";
 interface CustomError extends Error {
   response?: {
@@ -12,8 +12,7 @@ interface CustomError extends Error {
 }
 
 export const useLogIn = () => {
-  const { setIsLogIn, setUserId } = useStore();
-  const router = useRouter();
+  const { setIsLogIn ,setUserId} = useStore();
   return useMutation<LogInResponse, CustomError, LogInPayload>({
     mutationFn: logInUser,
     onSuccess: (data) => {
@@ -21,7 +20,6 @@ export const useLogIn = () => {
       setIsLogIn(data.token);
       setUserId(data.data._id);
       toast.success(data.message);
-      router.push("/");
     },
     onError: (error) => {
       toast.error(`${error.response?.data?.message}`);

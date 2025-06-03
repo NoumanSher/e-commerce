@@ -87,6 +87,7 @@ export default function Checkout({ checkValidation }: CheckoutProps) {
       onSubmit={(values) => {
         const { paymentMethod, ...rest } = values;
         if (section === "checkout") {
+          debugger
           let singleOrderObject = {
             userId: userId,
 
@@ -112,7 +113,8 @@ export default function Checkout({ checkValidation }: CheckoutProps) {
             mutate(singleOrderObject);
           } else {
             toast.error("Please login to place order");
-            setTimeout(() => router.push("/pages/login"), 3000);
+             const callbackUrl = encodeURIComponent('/pages/cart?section=checkout')
+            setTimeout(() => router.push(`/pages/login?callbackUrl=${callbackUrl}`), 3000);
           }
         } else {
           const items = cartItems.map((item) => ({
@@ -136,7 +138,8 @@ export default function Checkout({ checkValidation }: CheckoutProps) {
             mutate(dataToPass);
           } else {
             toast.error("Please login to place order");
-            setTimeout(() => router.push("/pages/login"), 3000);
+            const callbackUrl = encodeURIComponent('/pages/cart?section=checkout')
+            setTimeout(() => router.push(`/pages/login?callbackUrl=${callbackUrl}`), 3000);
           }
         }
       }}
