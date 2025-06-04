@@ -62,10 +62,10 @@ const ProductTable: React.FC = () => {
                     className="w-20 h-24 object-cover"
                   />
                 </td>
-                <td className="py-4 text-gray-700">
+                <td className="py-4 text-gray-700 w-[300px] ml-2">
                   {item.product.productName}
                 </td>
-                <td className="py-4 text-gray-700">${finalPrice.toFixed(0)}</td>
+                <td className="py-4 text-gray-800">${finalPrice.toFixed(0)}</td>
                 <td className="py-4">
                   <QuantitySelector
                     className="h-14"
@@ -85,7 +85,7 @@ const ProductTable: React.FC = () => {
                   />
                 </td>
                 <td className="py-4 text-gray-700">
-                  ${(finalPrice * item.quantity).toFixed(0)}
+                  {(finalPrice * item.quantity).toFixed(0)}
                 </td>
                 <td
                   className="py-4 text-gray-700 cursor-pointer"
