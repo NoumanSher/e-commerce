@@ -4,7 +4,6 @@ import AuthForm from "@/components/AuthForm";
 import * as Yup from "yup";
 import { LogInPayload } from "./service";
 import { useLogIn } from "./query";
-import { useStore } from "@/Context/storeContext";
 import { useSearchParams } from "next/navigation";
 import { useRouter } from "next/navigation";
 
@@ -13,7 +12,7 @@ export default function LoginForm() {
 
   const searchParams = useSearchParams(); // Access query parameters
   const callbackUrl = searchParams.get("callbackUrl"); // Get 'callbackUrl' param
-  const { mutate, isPending, data, isSuccess } = useLogIn();
+  const { mutate, isPending, isSuccess } = useLogIn();
   const Url = callbackUrl || "/";
   useEffect(() => {
     if (isSuccess) router.push(Url);
