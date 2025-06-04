@@ -183,6 +183,7 @@ const ProductInfo: React.FC<ProductDetailsProps> = ({ product }) => {
     }
     setSelectedQuantity(quantity);
   };
+  console.log(availableStock)
   return (
     <div className="lg:px-8 pt-2 lg:w-[40%] flex flex-col   w-full">
       {/* <Breadcrumb /> */}

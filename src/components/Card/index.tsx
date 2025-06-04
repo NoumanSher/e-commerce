@@ -14,7 +14,6 @@ interface MainCardProps {
 }
 // Fetch product data from API
 async function getProductDataById(productId: string) {
-  
   const response = await fetch(
     `https://e-commerce-backend-seven-xi.vercel.app/api/products/get-product/${productId}`,
     { cache: "no-store" }
@@ -34,7 +33,8 @@ const MainCard = ({ item }: MainCardProps) => {
     queryClient.prefetchQuery({
       queryKey: ["product", productId],
       queryFn: () => getProductDataById(productId),
-      staleTime: 60 * 1000, // Cache for 1 minute
+      staleTime: 1000 * 60 * 5, // 5 minutes fresh (extended for hover-to-click delay)
+      gcTime: 1000 * 60 * 30, // 30 minutes in cache (matches your detail page settings)
     });
   };
   const handleColorSelect = useCallback((color: string) => {
