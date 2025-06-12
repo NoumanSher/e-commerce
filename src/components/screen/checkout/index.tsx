@@ -131,46 +131,45 @@ export default function Checkout({ checkValidation }: CheckoutProps) {
         zipCode: "",
         phone: "",
         email: "",
-        paymentMethod: "",
+        paymentMethod: "cash",
       }}
       validationSchema={CheckoutSchema}
       onSubmit={handleSubmit}
     >
       {({ handleSubmit, ...formik }) => (
         <>
-          <PreviousAddressComponent
-            userId={userId}
-            onSelect={(prevAddress) => {
-              formik.setValues({
-                ...formik.values,
-                ...(prevAddress
-                  ? {
-                      firstName: prevAddress.firstName,
-                      lastName: prevAddress.lastName,
-                      streetAddress: prevAddress.streetAddress,
-                      city: prevAddress.city,
-                      zipCode: prevAddress.zipCode,
-                      phone: prevAddress.phone,
-                      email: prevAddress.email,
-                    }
-                  : {
-                      firstName: "",
-                      lastName: "",
-                      streetAddress: "",
-                      city: "",
-                      zipCode: "",
-                      phone: "",
-                      email: "",
-                    }),
-              });
-            }}
-          />
-
           <Form
             onSubmit={handleSubmit}
-            className="flex lg:flex-row flex-col gap-x-4"
+            className=" flex lg:flex-row flex-col gap-x-4 "
           >
             <div className="lg:w-[70%] w-full">
+              <PreviousAddressComponent
+                userId={userId}
+                onSelect={(prevAddress) => {
+                  formik.setValues({
+                    ...formik.values,
+                    ...(prevAddress
+                      ? {
+                          firstName: prevAddress.firstName,
+                          lastName: prevAddress.lastName,
+                          streetAddress: prevAddress.streetAddress,
+                          city: prevAddress.city,
+                          zipCode: prevAddress.zipCode,
+                          phone: prevAddress.phone,
+                          email: prevAddress.email,
+                        }
+                      : {
+                          firstName: "",
+                          lastName: "",
+                          streetAddress: "",
+                          city: "",
+                          zipCode: "",
+                          phone: "",
+                          email: "",
+                        }),
+                  });
+                }}
+              />
               <BillingDetailsComponent />
             </div>
             <div className="lg:w-[30%] w-full">
@@ -183,7 +182,7 @@ export default function Checkout({ checkValidation }: CheckoutProps) {
               ) : (
                 <button
                   type="submit"
-                  className="w-full bg-black text-white py-3 mt-4 lg:h-14 h-10 flex items-center justify-center"
+                  className="sticky bottom-0 w-full bg-black text-white py-3 mt-4 lg:h-14 h-10 flex items-center justify-center"
                 >
                   Place Order
                 </button>

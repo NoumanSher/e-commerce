@@ -5,11 +5,11 @@ import { useQuery } from "@tanstack/react-query";
 import { fetchProducts } from "@/services/productsService";
 import { Product } from "@/components/productDetail/productDetailDto";
 import { useStore } from "@/Context/storeContext";
-import { useSearchParams } from 'next/navigation';
+import { useSearchParams } from "next/navigation";
 const AllCAtegoriesCardSection = () => {
   const searchParams = useSearchParams();
-  
-   const childCategoryID = searchParams.get('childCategoryID');
+
+  const childCategoryID = searchParams.get("childCategoryID");
   const { selectedCategory } = useStore();
   const [page, setPage] = useState(1); // Track current page
   const [products, setProducts] = useState<Product[]>([]);
@@ -23,7 +23,13 @@ const AllCAtegoriesCardSection = () => {
     refetch,
   } = useQuery({
     queryKey: ["products", selectedCategory, page],
-    queryFn: () => fetchProducts(selectedCategory as string,childCategoryID as string, page, 10,), // Fetch 3 products each time
+    queryFn: () =>
+      fetchProducts(
+        selectedCategory as string,
+        childCategoryID as string,
+        page,
+        10
+      ),
     enabled: !!selectedCategory, // Ensures query doesn't run if there's no selected category
     staleTime: 0,
   });

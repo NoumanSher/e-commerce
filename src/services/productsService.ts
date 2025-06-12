@@ -29,7 +29,7 @@ export const fetchProducts = async (
   limit: number = 8
 ): Promise<ProductsResponse> => {
   const params = new URLSearchParams();
-debugger
+debugger 
   if (childCategoryID) params.append("childCategoryID", childCategoryID);
   if (categoryId) params.append("parentCategoryID", categoryId);
   if (page) params.append("page", page.toString());
