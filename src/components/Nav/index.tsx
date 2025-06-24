@@ -87,7 +87,7 @@ const Navbar = () => {
     if (window.innerWidth < 768) {
       toggleMobileMenu();
     }
-    router.push(isLogIn ? "/pages/profile" : "/pages/login");
+    router.push(isLogIn ? "/profile" : "/login");
   }, [isLogIn, router, toggleMobileMenu]);
 
   const handleNavigation = useCallback((path: string) => {
@@ -99,8 +99,8 @@ const Navbar = () => {
 
   const navLinks = [
     { path: "/", label: "HOME" },
-    { path: "/pages/about-us", label: "ABOUT" },
-    { path: "/pages/contact-us", label: "CONTACT" },
+    { path: "/about-us", label: "ABOUT" },
+    { path: "/contact-us", label: "CONTACT" },
   ];
 
   return (
@@ -168,7 +168,7 @@ const Navbar = () => {
 
               <div className="relative h-full flex items-center">
                 <HeartIcon
-                  onClick={() => handleNavigation("/pages/wish-list")}
+                  onClick={() => handleNavigation("/wish-list")}
                   className="cursor-pointer hover:text-gray-600"
                 />
                 {isClient && wishlistCount > 0 && (
@@ -178,7 +178,7 @@ const Navbar = () => {
                 )}
               </div>
 
-              <div className="relative cursor-pointer h-full flex items-center" onClick={() => handleNavigation("/pages/cart")}>
+              <div className="relative cursor-pointer h-full flex items-center" onClick={() => handleNavigation("/cart")}>
                 <CartIcon className="text-lg hover:text-gray-600" />
                 {isClient && cartCount > 0 && (
                   <span className="absolute lg:top-[24px]  -right-2 w-4 h-4 bg-yellow-600 text-white text-xs font-medium rounded-full flex items-center justify-center">
@@ -189,7 +189,7 @@ const Navbar = () => {
             </div>
 
             {/* Mobile Cart Icon */}
-            <div className="lg:hidden relative cursor-pointer" onClick={() => handleNavigation("/pages/cart")}>
+            <div className="lg:hidden relative cursor-pointer" onClick={() => handleNavigation("/cart")}>
               <CartIcon className="text-lg hover:text-gray-600" />
               {isClient && cartCount > 0 && (
                 <span className="absolute top-[11px]  -right-2 w-4 h-4 bg-yellow-600 text-white text-xs font-medium rounded-full flex items-center justify-center">
@@ -235,7 +235,7 @@ const Navbar = () => {
               </li>
               <li>
                 <button
-                  onClick={() => handleNavigation("/pages/wish-list")}
+                  onClick={() => handleNavigation("/wish-list")}
                   className="text-base w-full text-left tracking-wide text-black font-medium hover:text-gray-600 py-1"
                 >
                   Wishlist

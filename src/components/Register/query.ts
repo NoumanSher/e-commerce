@@ -16,7 +16,7 @@ export const useRegister = () => {
     mutationFn: registerUser,
     onSuccess: (data) => {
       toast.success(data.message);
-      router.push('/pages/login')
+      router.push('/login')
 
     },
     onError: (error) => {

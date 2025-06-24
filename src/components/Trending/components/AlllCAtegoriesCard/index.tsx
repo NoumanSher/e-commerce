@@ -101,12 +101,12 @@ const AllCAtegoriesCardSection = () => {
 
   const handleParentCategoryClick = (categoryId: string) => {
     updateSelectedCategory(categoryId);
-    router.push(`/pages/all-products?parentCategoryID=${categoryId}`);
+    router.push(`/all-products?parentCategoryID=${categoryId}`);
   };
 
   const handleChildCategoryClick = (categoryId: string) => {
     setSelectedChildCategory(categoryId);
-    router.push(`/pages/all-products?childCategoryID=${categoryId}`);
+    router.push(`/all-products?childCategoryID=${categoryId}`);
   };
 
   if (productsError) {

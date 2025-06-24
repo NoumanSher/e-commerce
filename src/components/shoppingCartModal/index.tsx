@@ -172,7 +172,7 @@ const ShoppingCart: React.FC<ShoppingCartProps> = ({ isOpen, onClose }) => {
           <button
             className="w-full bg-gray-800 text-white py-2 rounded-md mb-2"
             onClick={() => {
-              router.push("/pages/cart?section=shoppingbag"), onClose();
+              router.push("/cart?section=shoppingbag"), onClose();
             }}
           >
             View Cart
@@ -180,7 +180,7 @@ const ShoppingCart: React.FC<ShoppingCartProps> = ({ isOpen, onClose }) => {
           <button
             className="w-full bg-blue-600 text-white py-2 rounded-md"
             onClick={() => {
-              router.push("/pages/cart?section=checkout"), onClose();
+              router.push("/cart?section=checkout"), onClose();
             }}
           >
             Checkout

@@ -1,5 +1,5 @@
 // profileTypes.ts
-import {Order} from "@/app/pages/profile/profileDtos";
+import {Order} from "@/app/(pages)/profile/profileDtos";
 
   
   export interface ProfileInfoProps {

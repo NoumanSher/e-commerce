@@ -107,9 +107,9 @@ export default function Checkout({ checkValidation }: CheckoutProps) {
     (values: any) => {
       if (!isLogIn) {
         toast.error("Please login to place order");
-        const callbackUrl = encodeURIComponent("/pages/cart?section=checkout");
+        const callbackUrl = encodeURIComponent("/cart?section=checkout");
         setTimeout(
-          () => router.push(`/pages/login?callbackUrl=${callbackUrl}`),
+          () => router.push(`/login?callbackUrl=${callbackUrl}`),
           3000
         );
         return;

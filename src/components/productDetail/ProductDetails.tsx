@@ -158,7 +158,7 @@ const ProductInfo: React.FC<ProductDetailsProps> = ({ product }) => {
     };
     updateProductDetailtData(dataToPass);
 
-    router.push("/pages/cart?section=checkout");
+    router.push("/cart?section=checkout");
     // Proceed with checkout logic
   }, [
     _id,
@@ -253,7 +253,7 @@ const ProductInfo: React.FC<ProductDetailsProps> = ({ product }) => {
           sku: sku,
           size: selectedSize,
           color: selectedColor,
-          url: `https://e-commerce-pink-iota.vercel.app/pages/product-detail/${_id}`,
+          url: `https://e-commerce-pink-iota.vercel.app/product-detail/${_id}`,
         }}
       />
     </div>

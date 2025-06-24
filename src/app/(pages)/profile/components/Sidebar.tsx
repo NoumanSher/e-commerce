@@ -16,10 +16,10 @@ const Sidebar: React.FC = () => {
   };
 
   const menuItems = [
-    { label: "Overview", href: "/pages/profile", icon: "📊" },
+    { label: "Overview", href: "/profile", icon: "📊" },
     {
       label: "Order History",
-      href: "/pages/profile/order-history",
+      href: "/profile/order-history",
       icon: "🕒",
     },
     { label: "Log-out", href: "", icon: "🚪", onClick: handleLogout },

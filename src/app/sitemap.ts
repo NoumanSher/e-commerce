@@ -8,7 +8,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const staticPaths = ['', '/about-us', '/contact-us'];
   staticPaths.forEach((path) => {
     urls.push({
-      url: `${baseUrl}${path === '' ? '' : `/pages${path}`}`,
+      url: `${baseUrl}${path === '' ? '' : `${path}`}`,
       lastModified: new Date(),
       changeFrequency: path === '' ? 'weekly' : 'monthly',
       priority: path === '' ? 1.0 : 0.8,
@@ -22,7 +22,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   for (const category of categories) {
     urls.push({
-      url: `${baseUrl}/pages/all-products?parent-category-id=${category._id}`,
+      url: `${baseUrl}/all-products?parent-category-id=${category._id}`,
       lastModified: new Date(),
       changeFrequency: 'weekly',
       priority: 0.8,
@@ -34,7 +34,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
     for (const product of productData.data) {
       urls.push({
-        url: `${baseUrl}/pages/product-detail/${product._id}`,
+        url: `${baseUrl}/product-detail/${product._id}`,
         lastModified: new Date(),
         changeFrequency: 'monthly',
         priority: 0.6,

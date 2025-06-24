@@ -103,11 +103,11 @@ const AuthForm: React.FC<AuthFormProps> = ({
                     className="font-medium underline text-black hover:text-red-500"
                   >
                     {formType === "login" ? (
-                      <span onClick={() => router.push("/pages/register")}>
+                      <span onClick={() => router.push("/register")}>
                         Create an account
                       </span>
                     ) : (
-                      <span onClick={() => router.push("/pages/login")}>
+                      <span onClick={() => router.push("/login")}>
                         Login
                       </span>
                     )}

@@ -52,7 +52,7 @@ const MainCard = ({ item }: MainCardProps) => {
       <HydrationBoundary state={dehydrate(queryClient)}>
         <div
           className="mb-6 xl:mb-12   px-2  md:px-4 cursor-pointer"
-          onClick={() => router.push(`/pages/product-detail/${item._id}`)}
+          onClick={() => router.push(`/product-detail/${item._id}`)}
           onMouseEnter={() => prefetchProduct(item._id)}
           onTouchStart={() => prefetchProduct(item._id)}
         >

@@ -11,7 +11,7 @@ const OrderHistoryTabel: React.FC<
         <h2 className="text-lg font-semibold">{title}</h2>
         {isButtonVisible && (
           <Link
-            href="/pages/profile/order-history"
+            href="/profile/order-history"
             className="text-blue-500 underline"
           >
             View All
@@ -37,7 +37,7 @@ const OrderHistoryTabel: React.FC<
               <td className="py-2">{order.orderStatuses[order.orderStatuses.length -1].status}</td>
               <td className="py-2 text-blue-500 underline cursor-pointer">
                 <Link
-                  href={`/pages/profile/order-details?orderId=${encodeURIComponent(order.orderNo)}`}
+                  href={`/profile/order-details?orderId=${encodeURIComponent(order.orderNo)}`}
                   className="text-blue-500 underline"
                 >
                   View Details
@@ -55,7 +55,7 @@ const OrderHistoryTabel: React.FC<
         <h2 className="text-lg font-semibold">{title}</h2>
         {isButtonVisible && (
           <Link
-            href="/pages/profile/order-history"
+            href="/profile/order-history"
             className="text-blue-500 underline"
           >
             View All
@@ -71,7 +71,7 @@ const OrderHistoryTabel: React.FC<
             <div className="flex justify-between items-center mb-2">
               <div className="font-semibold">Order ID: {order.orderNo}</div>
               <Link
-                href={`/pages/profile/order-details?orderId=${encodeURIComponent(order.orderNo)}`}
+                href={`/profile/order-details?orderId=${encodeURIComponent(order.orderNo)}`}
                 className="text-blue-500 underline"
               >
                 View Details

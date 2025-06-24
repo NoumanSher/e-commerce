@@ -36,7 +36,7 @@ const CardHover = ({ isHovered, product }: ICardHover) => {
     if (isVariant) {
       
       // Redirect to product details page if the product has variants
-      router.push(`/pages/product-detail/${product._id}`);
+      router.push(`/product-detail/${product._id}`);
     } else {
       // Add product to cart
       addToCart({ product, quantity: 1 });

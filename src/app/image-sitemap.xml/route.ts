@@ -1,8 +1,8 @@
 import { NextResponse } from "next/server";
 
 export async function GET() {
-  const baseUrl = "http://localhost:3000";
-  // const baseUrl = "https://pakshipper.com";
+  // const baseUrl = "http://localhost:3000";
+  const baseUrl = "https://pakshipper.com";
   const response = await fetch(
     "https://e-commerce-backend-seven-xi.vercel.app/api/products/get-all-products"
   );
@@ -24,7 +24,7 @@ export async function GET() {
 
   for (const product of data.data) {
     xml += `<url>
-      <loc>${escapeXml(`${baseUrl}/pages/product-detail/${product._id}`)}</loc>`;
+      <loc>${escapeXml(`${baseUrl}/product-detail/${product._id}`)}</loc>`;
     for (const img of product.images) {
       xml += `
         <image:image>

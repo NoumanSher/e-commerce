@@ -1,9 +1,9 @@
 import {
-  BsYoutubeIcon,
+  // BsYoutubeIcon,
   DeliveryIcon,
   FaFacebookFIcon,
-  FaPinterestIcon,
-  FaTwitterIcon,
+  // FaPinterestIcon,
+  // FaTwitterIcon,
   IoLogoInstagramIcon,
   MoneyBackGuaranteeIcon,
   ServiceIcon,
@@ -36,7 +36,7 @@ import {
   FooterCopyRightProps,
   FooterItem,
   FooterLinksProps,
-  ProductCardDataProps,
+  // ProductCardDataProps,
   ServicesDataProps,
 } from "./dataProps";
 
@@ -104,7 +104,7 @@ export const footerData: FooterItem[] = [
 {
     title: "Company",
     items: [
-      { name: "About Us", url: "/pages/about-us" }
+      { name: "About Us", url: "/about-us" }
     ]
   },
   {
@@ -112,11 +112,11 @@ export const footerData: FooterItem[] = [
     items: [
       {
         name: "Shop All",
-        url: "/pages/all-products?parent-category-id=67f250a92f78a67e01f2b28e"
+        url: "/all-products?parent-category-id=67f250a92f78a67e01f2b28e"
       },
       {
         name: "Beauty & Health",
-        url: "/pages/all-products?childCategoryID=683db0fa82b8595f32e61408"
+        url: "/all-products?childCategoryID=683db0fa82b8595f32e61408"
       }
     ]
   },
@@ -124,7 +124,7 @@ export const footerData: FooterItem[] = [
     title: "Help",
     items: [
       { name: "My Account", url: "" },
-      { name: "Contact Us", url: "/pages/contact-us" }
+      { name: "Contact Us", url: "/contact-us" }
     ]
   }
 ];

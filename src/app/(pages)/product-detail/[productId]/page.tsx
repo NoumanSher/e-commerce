@@ -48,7 +48,7 @@ export async function generateMetadata({
 }: ProductDetailProps): Promise<Metadata> {
   const { product, storeSettings } = await getPageData(params.productId);
 
-  const baseUrl = "https://pakshipper.com/pages/product-detail";
+  const baseUrl = "https://pakshipper.com/product-detail";
   const productUrl = `${baseUrl}/${product._id}`;
   const title = product?.seo?.metaTitle || product?.productName || "Product Detail";
   const description = product?.seo?.metaDescription || product?.description || "Check out this amazing product.";
@@ -104,7 +104,7 @@ function generateProductSchema(product: any) {
       availability: product.stock !== 0
         ? "https://schema.org/InStock"
         : "https://schema.org/OutOfStock",
-      url: `https://pakshipper.com/pages/product-detail/${product._id}`,
+      url: `https://pakshipper.com/product-detail/${product._id}`,
     },
   };
 }
