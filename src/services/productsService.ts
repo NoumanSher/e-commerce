@@ -8,13 +8,40 @@ export interface Pagination {
   currentPage: number;
   pageSize: number;
 }
+interface Category {
+  _id: string;
+  name: string;
+  slug: string;
+  description: string;
+  createdAt: string;
+  updatedAt: string;
+  __v: number;
+  children?: ChildCategory[]; // Optional array of child categories
+}
+
+interface ChildCategory {
+  _id: string;
+  name: string;
+  slug: string;
+  description: string;
+  parentCategory: string; // Reference to parent category ID
+  createdAt: string;
+  updatedAt: string;
+  __v: number;
+}
+
+interface ParentCategoriesResponse {
+  message: string;
+  categories: Category[];
+}
 
 export interface ProductsResponse {
   message: string;
   data: Product[];
   pagination?: Pagination;
 }
-export interface RelatedProductsResponse extends Omit<ProductsResponse, "pagination"> {}
+export interface RelatedProductsResponse
+  extends Omit<ProductsResponse, "pagination"> {}
 
 export interface ApiError {
   message: string;
@@ -29,16 +56,33 @@ export const fetchProducts = async (
   limit: number = 8
 ): Promise<ProductsResponse> => {
   const params = new URLSearchParams();
-debugger 
   if (childCategoryID) params.append("childCategoryID", childCategoryID);
   if (categoryId) params.append("parentCategoryID", categoryId);
   if (page) params.append("page", page.toString());
   if (limit) params.append("limit", limit.toString());
 
   try {
-    debugger
     const { data } = await axios.get(
       `${BASE_URL}/products/get-all-products?${params.toString()}`
+    );
+debugger
+    return data;
+  } catch (error) {
+    const err = error as AxiosError;
+    console.log(err);
+    throw {
+      message: err.message,
+      statusCode: err.response?.status,
+      response: err.response?.data,
+    } satisfies ApiError;
+  }
+};
+export const fetchAllCategories = async (): Promise<ParentCategoriesResponse> => {
+
+
+  try {
+    const { data } = await axios.get(
+      `${BASE_URL}/categories/all`
     );
 
     return data;

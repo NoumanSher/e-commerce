@@ -33,7 +33,7 @@ const Navbar = () => {
   const { data: storeSettings } = useQuery({
     queryKey: ["settings"],
     queryFn: getStoreSetting,
-  });
+  }); 
 
   // Scroll handler for hide/show navbar
   const handleScroll = useCallback(() => {

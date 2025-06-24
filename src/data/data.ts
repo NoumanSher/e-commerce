@@ -76,7 +76,7 @@ export const FooterLinksData: FooterLinksProps[] = [
   {
     _id: "abcde",
     icon: FaFacebookFIcon,
-    path: "https://www.facebook.com/profile.php?id=61576246324499",
+    path: "https://www.facebook.com/people/PakShipper/61577806854227/",
   },
   // {
   //   _id: "hello",

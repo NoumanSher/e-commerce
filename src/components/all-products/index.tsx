@@ -6,9 +6,9 @@ import AllCAtegoriesCardSection from "../Trending/components/AlllCAtegoriesCard/
 export default function AllProductsMain() {
   return (
     <div>
-      <h1 className="text-primary text-2xl text-center mt-5">
+      {/* <h1 className="text-primary text-2xl text-center mt-5">
         All produts here
-      </h1>
+      </h1> */}
       <AllCAtegoriesCardSection  />
     </div>
   );

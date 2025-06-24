@@ -11,6 +11,8 @@ import { getStoreSetting } from "@/components/Slider/api/storeSettingApi";
 const FooterInfo = () => {
   const queryClient = useQueryClient();
   const [logo, setLogo] = useState("");
+  const [number, setNumber] = useState("");
+  const [email, setEmail] = useState("");
 
   // Prefetch data
   useEffect(() => {
@@ -23,12 +25,15 @@ const FooterInfo = () => {
             queryFn: getStoreSetting,
           });
           setLogo(cacheData.logo);
+          setNumber(cacheData.mobile);
+          setEmail(cacheData.email);
         } catch (error) {
           console.error("Failed to fetch logo:", error);
         }
-      }else{
-      setLogo(cacheData.logo);
-
+      } else {
+        setLogo(cacheData.logo);
+        setNumber(cacheData.mobile);
+        setEmail(cacheData.email);
       }
     };
 
@@ -51,7 +56,7 @@ const FooterInfo = () => {
           className="text-[#222222] text-[14px]  font-semibold leading-[1.7173em]"
           href="mailto:pakshipperstore@gmail.com"
         >
-          pakshipperstore@gmail.com
+          {email}
         </a>
       </div>
 
@@ -62,7 +67,7 @@ const FooterInfo = () => {
           className="text-[#222222] text-[14px]   font-medium leading-[1.7173px]"
           href="tel:+923176872900"
         >
-          03176872900
+          {number}
         </a>
       </div>
 
