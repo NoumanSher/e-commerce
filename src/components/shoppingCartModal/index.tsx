@@ -4,6 +4,7 @@ import { toast } from "react-toastify";
 import { useCart } from "../hooks/useCart";
 import QuantitySelector from "../productDetail/components/QuantitySelector";
 import { on } from "events";
+import Image from "next/image";
 
 interface ShoppingCartProps {
   isOpen: boolean;
@@ -98,13 +99,15 @@ const ShoppingCart: React.FC<ShoppingCartProps> = ({ isOpen, onClose }) => {
                 <div key={index}>
                   {/* Product Item */}
                   <div className="flex h-32 items-center mb-4">
-                    <img
+                    <Image
                       src={cartItem.product.images[0].src}
                       alt={cartItem.product.images[0].alt}
+                      width={112}
+                      height={112}
                       className="w-[7rem] h-[7rem] object-cover"
                     />
                     <div className="flex-1 ml-4">
-                      <h3 className="font-semibold">
+                      <h3 className="font-semibold line-clamp-1">
                         {cartItem.product.productName}
                       </h3>
                       {cartItem.product.isVariant && (
@@ -147,7 +150,7 @@ const ShoppingCart: React.FC<ShoppingCartProps> = ({ isOpen, onClose }) => {
                       >
                         &times;
                       </button>
-                      <p className="font-bold">${finalPrice}</p>
+                      <p className="font-bold">{finalPrice}</p>
                     </div>
                   </div>
 
@@ -167,7 +170,7 @@ const ShoppingCart: React.FC<ShoppingCartProps> = ({ isOpen, onClose }) => {
         <div className="p-6 border-t">
           <div className="flex justify-between mb-4">
             <span className="font-bold">Subtotal:</span>
-            <span className="font-bold">${totalCost.toFixed(0)}</span>
+            <span className="font-bold">{totalCost.toFixed(0)}</span>
           </div>
           <button
             className="w-full bg-gray-800 text-white py-2 rounded-md mb-2"
