@@ -1,4 +1,4 @@
-import React, { Suspense } from "react";
+import React from "react";
 import dynamic from "next/dynamic";
 import {
   QueryClient,
@@ -9,6 +9,9 @@ import { getStoreSetting } from "@/components/Slider/api/storeSettingApi";
 import { Metadata } from "next";
 import { FaWhatsapp } from "react-icons/fa";
 import Slider from "@/components/Slider/Slider";
+import { auth } from "@/auth";
+import StoreError from "./StoreError";
+import { StoreInfo } from "@/components/Slider/dto/storeSettingDto";
 
 // Dynamic imports with loading states
 const Trending = dynamic(() => import("@/components/Trending/trending"), {
@@ -45,15 +48,24 @@ const createQueryClient = () =>
 export const revalidate = 60;
 
 export default async function LandingPage() {
+  const sesion = await auth();
+    console.log(sesion);
+
   const queryClient = createQueryClient();
   const landingWhatsappURL = `https://wa.me/923176872900`;
 
-  // Prefetch data
-  const storeSettings = await queryClient.fetchQuery({
+// Try to get from cache first
+let storeSettings = queryClient.getQueryData<StoreInfo>(["settings"]);
+
+if (!storeSettings) {
+  storeSettings = await queryClient.fetchQuery({
     queryKey: ["settings"],
     queryFn: getStoreSetting,
   });
-
+}
+ if (!storeSettings) {
+    return <StoreError message="Unable to load store settings. Please check your connection or try again later." />;
+  }
   return (
     <>
       <ShoppingCartModal />
@@ -95,20 +107,20 @@ export async function generateMetadata(): Promise<Metadata> {
     });
 
     return {
-      title: storeSettings.title || "Pakshipper",
+      title: storeSettings?.title || "Pakshipper",
       description:
-        storeSettings.description || "Your favorite shopping destination",
+        storeSettings?.description || "Your favorite shopping destination",
       icons: {
         icon: [
           {
-            url: storeSettings.logo || "/default-logo.png",
+            url: storeSettings?.logo || "/default-logo.png",
             type: "image/png",
             sizes: "32x32",
           },
         ],
       },
       creator: "Blazlogic",
-      applicationName: "Pakshipper",
+      applicationName: "PakShipperStore",
       generator: "Next.js",
     };
   } catch (error) {
