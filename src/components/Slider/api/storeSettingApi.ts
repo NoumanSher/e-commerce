@@ -2,7 +2,7 @@ import axios from "axios";
 import { BASE_URL_LIVE } from "@/appConst/appConst";
 import { StoreInfo } from "../dto/storeSettingDto";
 
-const getStoreSetting = async (): Promise<StoreInfo | null | undefined> => {
+const getStoreSetting = async (): Promise<StoreInfo | null> => {
   try {
     const res = await axios.get<StoreInfo>(`${BASE_URL_LIVE}/settings`, {
       headers: {
@@ -15,7 +15,7 @@ const getStoreSetting = async (): Promise<StoreInfo | null | undefined> => {
     return res.data;
   } catch (error) {
     console.error("Failed to fetch store settings:", error);
-    return undefined; // or throw custom error if you want
+    return null; // or throw custom error if you want
   }
 };
 
