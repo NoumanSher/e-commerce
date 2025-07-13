@@ -16,7 +16,7 @@ const ProductBasicInfo: React.FC<ProductInfoProps> = ({
   return (
     <>
       <div className="flex justify-between items-center mb-3">
-        <h1 className="text-2xl font-medium">{title}</h1>
+        <h1 className="text-2xl font-medium line-clamp-1">{title}</h1>
         <div>
           <span
             className={`mr-2  ${

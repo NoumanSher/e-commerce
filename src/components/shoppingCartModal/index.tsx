@@ -3,8 +3,8 @@ import React, { useEffect } from "react";
 import { toast } from "react-toastify";
 import { useCart } from "../hooks/useCart";
 import QuantitySelector from "../productDetail/components/QuantitySelector";
-import { on } from "events";
 import Image from "next/image";
+import useSwipeClose from "@/hooks/useSwipeClose";
 
 interface ShoppingCartProps {
   isOpen: boolean;
@@ -19,7 +19,9 @@ const ShoppingCart: React.FC<ShoppingCartProps> = ({ isOpen, onClose }) => {
     cartCount,
     removeFromCart,
   } = useCart();
+
   const router = useRouter();
+  useSwipeClose("shopping-cart-panel", onClose);
 
   useEffect(() => {
     if (isOpen) {
@@ -68,6 +70,7 @@ const ShoppingCart: React.FC<ShoppingCartProps> = ({ isOpen, onClose }) => {
 
       {/* Shopping Cart Modal */}
       <div
+        id="shopping-cart-panel"
         className={`fixed top-0 right-0 w-full sm:w-[25rem] h-full bg-white shadow-lg z-50 transform transition-transform ${
           isOpen ? "translate-x-0" : "translate-x-full"
         } flex flex-col`}

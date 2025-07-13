@@ -9,6 +9,7 @@ import {
 } from "@tanstack/react-query";
 import CardHover from "../cardHover";
 import { Product } from "@/components/productDetail/productDetailDto";
+import useIsMobileOrTablet from "@/hooks/useIsHoveredOrMobile";
 interface MainCardProps {
   item: Product;
 }
@@ -25,10 +26,10 @@ const MainCard = ({ item }: MainCardProps) => {
   const queryClient = useQueryClient();
   // console.log("New Chages");
   const router = useRouter();
-  const [hoveredCard, setHoveredCard] = useState<string | null>(null);
   const [selectedColor, setSelectedColor] = useState<string | null>("gray");
-  const isHovered = hoveredCard === item._id;
-  // Prefetch product data on hover
+  const [hoveredCard, setHoveredCard] = useState<string | null>(null);
+const isMobileOrTablet = useIsMobileOrTablet();
+const isHovered = isMobileOrTablet || hoveredCard === item._id;  // Prefetch product data on hover
   const prefetchProduct = (productId: string) => {
     queryClient.prefetchQuery({
       queryKey: ["product", productId],
@@ -47,6 +48,7 @@ const MainCard = ({ item }: MainCardProps) => {
   const handleMouseLeave = useCallback(() => {
     setHoveredCard(null); // Reset the hovered state
   }, []);
+  
   return (
     <>
       <HydrationBoundary state={dehydrate(queryClient)}>
@@ -101,9 +103,9 @@ const MainCard = ({ item }: MainCardProps) => {
             </div>
             <div className="mt-4">
               {/* <h1 className="mb-[4px] font-normal leading-[1.7143rem] text-[#767676] text-[14px]">
-              {item.productCategory}
+              {item.childCategoryName}
             </h1> */}
-              <p className="font-normal leading-[1.2em] text-[16px]">
+              <p className="font-normal leading-[1.2em] text-[16px] line-clamp-1">
                 {item.productName}
               </p>
               <p className="font-semibold leading-[1.7143rem]  text-[16px]">

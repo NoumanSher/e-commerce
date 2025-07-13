@@ -17,7 +17,7 @@ export default function CheckOutBtn({
     <Button
       disabled={availableStock === 0 || selectedQuantity === 0}
       onClick={onClick}
-      className={`${className} rounded-none shadow-none bg-opacity-95 bg-black border-0 h-14 w-[50%] uppercase py-3 transition-all duration-500 hover:bg-white group hover:border border-black`}
+      className={`${className} md:mt-4 rounded-none shadow-none bg-opacity-95 bg-black border-0 h-14 w-[50%] uppercase py-3 transition-all duration-500 hover:bg-white group hover:border border-black`}
     >
       <p className="text-[14px] font-semibold leading-[1.72] group-hover:text-black">
         Proceed to CheckOut

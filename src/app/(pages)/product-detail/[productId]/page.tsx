@@ -59,7 +59,7 @@ export async function generateMetadata({
     description,
     keywords,
     icons: {
-      icon: [{ url: storeSettings.logo, type: "image/png", sizes: "32x32" }],
+      icon: [{ url: storeSettings ? storeSettings.logo : '', type: "image/png", sizes: "32x32" }],
     },
     alternates: {
       canonical: productUrl,
