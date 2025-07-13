@@ -55,17 +55,23 @@ export default async function LandingPage() {
   const landingWhatsappURL = `https://wa.me/923176872900`;
 
 // Try to get from cache first
-let storeSettings = queryClient.getQueryData<StoreInfo>(["settings"]);
+try {
+  let storeSettings = queryClient.getQueryData<StoreInfo>(["settings"]);
 
-if (!storeSettings) {
-  storeSettings = await queryClient.fetchQuery({
-    queryKey: ["settings"],
-    queryFn: getStoreSetting,
-  });
-}
- if (!storeSettings) {
-    return <StoreError message="Unable to load store settings. Please check your connection or try again later." />;
+  if (!storeSettings) {
+    storeSettings = await queryClient.fetchQuery({
+      queryKey: ["settings"],
+      queryFn: getStoreSetting,
+    });
   }
+
+  // use storeSettings
+} catch (error) {
+
+      return <StoreError message="Unable to load store settings. Please check your connection or try again later." />;
+
+}
+  const storeSettings = queryClient.getQueryData<StoreInfo>(["settings"]);
   return (
     <>
       <ShoppingCartModal />
