@@ -9,7 +9,7 @@ import { getStoreSetting } from "@/components/Slider/api/storeSettingApi";
 import { Metadata } from "next";
 import { FaWhatsapp } from "react-icons/fa";
 import Slider from "@/components/Slider/Slider";
-import { auth } from "@/auth";
+// import { auth } from "@/auth";
 import StoreError from "./StoreError";
 import { StoreInfo } from "@/components/Slider/dto/storeSettingDto";
 
@@ -48,8 +48,8 @@ const createQueryClient = () =>
 export const revalidate = 60;
 
 export default async function LandingPage() {
-  const sesion = await auth();
-    console.log(sesion);
+  // const sesion = await auth();
+    // console.log(sesion);
 
   const queryClient = createQueryClient();
   const landingWhatsappURL = `https://wa.me/923176872900`;
