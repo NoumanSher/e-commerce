@@ -6,12 +6,16 @@ import {
   HydrationBoundary,
 } from "@tanstack/react-query";
 import { getStoreSetting } from "@/components/Slider/api/storeSettingApi";
-import { Metadata } from "next";
+// import { Metadata } from "next";
 import { FaWhatsapp } from "react-icons/fa";
 import Slider from "@/components/Slider/Slider";
 // import { auth } from "@/auth";
 import StoreError from "./StoreError";
 import { StoreInfo } from "@/components/Slider/dto/storeSettingDto";
+// app/landing/page.tsx
+
+import { getLandingMetadata } from "@/app/utils/metadata/landingMetadata";
+
 
 // Dynamic imports with loading states
 const Trending = dynamic(() => import("@/components/Trending/trending"), {
@@ -49,29 +53,25 @@ export const revalidate = 60;
 
 export default async function LandingPage() {
   // const sesion = await auth();
-    // console.log(sesion);
+  // console.log(sesion);
 
   const queryClient = createQueryClient();
   const landingWhatsappURL = `https://wa.me/923176872900`;
 
-// Try to get from cache first
-try {
-  let storeSettings = queryClient.getQueryData<StoreInfo>(["settings"]);
-
-  if (!storeSettings) {
-    storeSettings = await queryClient.fetchQuery({
+  // Try to get from cache first
+  let storeSettings: StoreInfo | undefined;
+  try {
+    storeSettings = await queryClient.ensureQueryData({
       queryKey: ["settings"],
       queryFn: getStoreSetting,
     });
+
+    // use storeSettings
+  } catch (error) {
+    return (
+      <StoreError message="Unable to load store settings. Please check your connection or try again later." />
+    );
   }
-
-  // use storeSettings
-} catch (error) {
-
-      return <StoreError message="Unable to load store settings. Please check your connection or try again later." />;
-
-}
-  const storeSettings = queryClient.getQueryData<StoreInfo>(["settings"]);
   return (
     <>
       <ShoppingCartModal />
@@ -103,36 +103,38 @@ try {
 }
 
 // Shared metadata generation
-export async function generateMetadata(): Promise<Metadata> {
-  const queryClient = createQueryClient();
+// export async function generateMetadata(): Promise<Metadata> {
+//   const queryClient = createQueryClient();
 
-  try {
-    const storeSettings = await queryClient.fetchQuery({
-      queryKey: ["settings"],
-      queryFn: getStoreSetting,
-    });
+//   try {
+//     const storeSettings = await queryClient.fetchQuery({
+//       queryKey: ["settings"],
+//       queryFn: getStoreSetting,
+//     });
 
-    return {
-      title: storeSettings?.title || "Pakshipper",
-      description:
-        storeSettings?.description || "Your favorite shopping destination",
-      icons: {
-        icon: [
-          {
-            url: storeSettings?.logo || "/default-logo.png",
-            type: "image/png",
-            sizes: "32x32",
-          },
-        ],
-      },
-      creator: "Blazlogic",
-      applicationName: "PakShipperStore",
-      generator: "Next.js",
-    };
-  } catch (error) {
-    return {
-      title: "Pakshipper",
-      description: "Your favorite shopping destination",
-    };
-  }
-}
+//     return {
+//       title: storeSettings?.title || "Pakshipper",
+//       description:
+//         storeSettings?.description || "Your favorite shopping destination",
+//       icons: {
+//         icon: [
+//           {
+//             url: storeSettings?.logo || "/default-logo.png",
+//             type: "image/png",
+//             sizes: "32x32",
+//           },
+//         ],
+//       },
+//       creator: "Blazlogic",
+//       applicationName: "PakShipperStore",
+//       generator: "Next.js",
+//     };
+//   } catch (error) {
+//     return {
+//       title: "Pakshipper",
+//       description: "Your favorite shopping destination",
+//     };
+//   }
+// }
+
+export const generateMetadata = getLandingMetadata;
