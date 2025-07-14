@@ -10,6 +10,7 @@ import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 
 import Provider from "@/Context/react-query-provider";
 import { Analytics } from "@vercel/analytics/next"
+import { SpeedInsights } from "@vercel/speed-insights/next"
 // const jost = Jost({ subsets: ["latin"] }); // Load the Jost font
 
 const jost = Jost({
@@ -32,6 +33,7 @@ export default function RootLayout({
     <html lang="en">
       <body className={jost.className}>
         <Analytics/>
+        <SpeedInsights/>
         <Provider>
           <StoreTypeProviderWrapper>
             <ToastContainer
