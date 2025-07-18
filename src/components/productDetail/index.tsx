@@ -3,13 +3,15 @@
 import { lazy, Suspense, useEffect, useState } from "react";
 import { useGetProductDetailById } from "./productDetailQuery";
 import ProductDetailSkeleton from "./components/ProductDetailSkeleton";
+import { useInView } from "react-intersection-observer";
 
 // Above-the-fold components
-const ProductImageGallery = lazy(() => import("@/components/gallery"));
-const ProductInfo = lazy(() => import("@/components/productDetail/ProductDetails"));
+// Critical components loaded immediately
+import ProductImageGallery from "@/components/gallery";
+import ProductInfo from "@/components/productDetail/ProductDetails";
 
 // Below-the-fold component (loaded after initial render)
-const RelatedProducts = lazy(() => import("./components/Tabs"));
+const Tabs = lazy(() => import("./components/Tabs"));
 
 interface ProductDetailProps {
   productId: string;
@@ -17,17 +19,17 @@ interface ProductDetailProps {
 
 const ProductDetail: React.FC<ProductDetailProps> = ({ productId }) => {
   const { data, isLoading } = useGetProductDetailById(productId);
-  const [showRelatedProducts, setShowRelatedProducts] = useState(false);
+  const [showBelowFold, setShowBelowFold] = useState(false);
+  const { ref: belowFoldRef, inView } = useInView({
+    threshold: 0.2,
+    triggerOnce: true,
+  });
 
   useEffect(() => {
-    // Load related products after main content is rendered
-    const timer = setTimeout(() => {
-      setShowRelatedProducts(true);
-    }, 0); // Using 0ms to leverage browser's idle time
-
-    return () => clearTimeout(timer);
-  }, []);
-
+    if (inView) {
+      setShowBelowFold(true);
+    }
+  }, [inView]);
   if (isLoading || !data) {
     return <ProductDetailSkeleton />;
   }
@@ -35,17 +37,22 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ productId }) => {
   return (
     <div className="lg:p-8 p-4 container mx-auto">
       {/* Above-the-fold content */}
-      <Suspense fallback={<ProductDetailSkeleton />}>
+      {/* <Suspense fallback={<ProductDetailSkeleton />}> */}
         <div className="flex flex-col lg:flex-row">
-          <ProductImageGallery images={data.data.images ?? []} />
+          <ProductImageGallery productName={data.data.productName} images={data.data.images ?? []} />
           <ProductInfo product={data.data} />
         </div>
-      </Suspense>
+      {/* </Suspense> */}
 
-      {/* Below-the-fold content (lazy loaded) */}
-      {showRelatedProducts && (
-        <Suspense fallback={<div className="h-40">Loading related products...</div>}>
-          <RelatedProducts productId={productId} />
+      {/* Below-the-fold trigger */}
+      <div ref={belowFoldRef} className="h-1" />
+
+      {/* Below-the-fold content */}
+      {showBelowFold && (
+        <Suspense
+          fallback={<div className="h-40">Loading related products...</div>}
+        >
+          <Tabs productId={productId} />
         </Suspense>
       )}
     </div>

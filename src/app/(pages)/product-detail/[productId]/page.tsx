@@ -3,7 +3,7 @@ import { QueryClient } from "@tanstack/react-query";
 import { Metadata } from "next";
 import ProductDetailComponet from "@/components/productDetail";
 import { getStoreSetting } from "@/components/Slider/api/storeSettingApi";
-
+import ProductDetailSkeleton from "@/components/productDetail/components/ProductDetailSkeleton";
 interface ProductDetailProps {
   params: { productId: string };
 }
@@ -123,7 +123,7 @@ export default async function ProductDetail({
         }}
       />
 
-      <Suspense fallback={<div className="text-center py-10">Loading...</div>}>
+      <Suspense fallback={<ProductDetailSkeleton />}>
         <ProductDetailComponet productId={productId}  />
       </Suspense>
     </>

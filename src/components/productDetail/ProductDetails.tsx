@@ -9,7 +9,6 @@ import ProductMetaInfo from "./components/ProductMetaInfo";
 import ProductBasicInfo from "./components/ProductBasicInfo";
 import CheckOutBtn from "./components/CheckOutBtn";
 import Tabs from "./components/DialogModal";
-// import Breadcrumb from "./components/Breadcrumb";
 import { useRouter } from "next/navigation";
 import dynamic from "next/dynamic";
 import { Product } from "./productDetailDto";

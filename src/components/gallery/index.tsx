@@ -1,104 +1,158 @@
-import { memo, useCallback, useEffect, useState } from "react";
+"use client";
+
+import { memo, useCallback, useEffect, useState, useMemo } from "react";
 import Image from "next/image";
-import {
-  MdOutlineKeyboardArrowLeft,
-  MdOutlineKeyboardArrowRight,
-} from "react-icons/md";
+import { ChevronLeft, ChevronRight } from "lucide-react";
+
 interface ImageGalleryProps {
   images: { src: string; alt: string }[];
+  productName: string;
+  priority?: boolean;
 }
 
-const ImageGallery: React.FC<ImageGalleryProps> = ({ images }) => {
+const OptimizedImageGallery = memo<ImageGalleryProps>(({ 
+  images, 
+  productName, 
+  priority = false 
+}) => {
   const [currentIndex, setCurrentIndex] = useState(0);
-  // const [direction, setDirection] = useState<"left" | "right">("right");
-  // Preload adjacent images
-  const preloadImage = useCallback(
-    (index: number) => {
-      if (!images[index]) return;
-      const img = new window.Image();
-      img.src = images[index].src;
-    },
-    [images]
-  );
+  const [imagesLoaded, setImagesLoaded] = useState<Set<number>>(new Set());
+  const [isClient, setIsClient] = useState(false);
 
+  // Ensure client-side rendering for interactive elements
   useEffect(() => {
+    setIsClient(true);
+  }, []);
+
+  // Memoize navigation handlers
+  const handleNext = useCallback(() => {
+    setCurrentIndex((prev) => (prev + 1) % images.length);
+  }, [images.length]);
+
+  const handlePrev = useCallback(() => {
+    setCurrentIndex((prev) => (prev - 1 + images.length) % images.length);
+  }, [images.length]);
+
+  const handleThumbnailClick = useCallback((index: number) => {
+    setCurrentIndex(index);
+  }, []);
+
+  // Preload adjacent images
+  useEffect(() => {
+    if (!isClient) return;
+
+    const preloadImage = (index: number) => {
+      if (images[index] && !imagesLoaded.has(index)) {
+        const img = new window.Image();
+        img.onload = () => {
+          setImagesLoaded(prev => new Set(prev).add(index));
+        };
+        img.src = images[index].src;
+      }
+    };
+
+    // Preload current and adjacent images
+    preloadImage(currentIndex);
     preloadImage((currentIndex + 1) % images.length);
     preloadImage((currentIndex - 1 + images.length) % images.length);
-  }, [currentIndex, images.length, preloadImage]);
+  }, [currentIndex, images, imagesLoaded, isClient]);
 
-  const handleNext = () => {
-    // setDirection("right");
-    setCurrentIndex((prevIndex) => (prevIndex + 1) % images.length);
-  };
-  const handlePrev = () => {
-    // setDirection("left");
-    setCurrentIndex(
-      (prevIndex) => (prevIndex - 1 + images.length) % images.length
+  // Memoize thumbnail list
+  const thumbnailList = useMemo(() => 
+    images.map((image, index) => (
+      <div 
+        key={`${image.src}-${index}`} 
+        className="flex-shrink-0 w-20 h-20 lg:w-24 lg:h-24"
+      >
+        <Image
+          src={image.src}
+          alt={`${productName} thumbnail ${index + 1}`}
+          width={96}
+          height={96}
+          sizes="(max-width: 768px) 80px, 96px"
+          className={`cursor-pointer w-full h-full object-cover rounded-lg transition-all duration-200 ${
+            index === currentIndex 
+              ? "ring-2 ring-blue-500 opacity-100" 
+              : "opacity-70 hover:opacity-90"
+          }`}
+          onClick={() => handleThumbnailClick(index)}
+          priority={index === 0}
+          loading={index === 0  ? "eager" : "lazy"}
+        />
+      </div>
+    )), [images, productName, currentIndex, handleThumbnailClick]);
+
+  if (!images.length) {
+    return (
+      <div className="w-full lg:w-[60%] aspect-square bg-gray-100 rounded-lg flex items-center justify-center">
+        <p className="text-gray-500">No images available</p>
+      </div>
     );
-  };
-  if (!images.length) return <p>No images to show.</p>;
+  }
 
   return (
-    <div className="flex flex-col lg:flex-row gap-2 w-full lg:w-[60%]">
+    <div className="flex flex-col lg:flex-row gap-4 w-full lg:w-[60%]">
       {/* Thumbnails */}
-      <div className="overflow-x-auto lg:overflow-x-hidden  flex lg:flex-col flex-row gap-1 lg:order-1 order-2">
-        {images.map((image, index) => (
-          <div key={index} className="w-[100px] h-[100px] ">
-            <Image
-              key={index}
-              src={image.src}
-              alt={image.alt}
-              width={100}
-              height={100}
-              sizes="(max-width: 768px) 100vw, 160px"
-              className={`cursor-pointer   aspect-auto w-full h-full rounded transition-opacity duration-200 ${
-                index === currentIndex ? "opacity-100" : "opacity-50"
-              }`}
-              onClick={() => setCurrentIndex(index)}
-              priority={index === 0}
-            />
-          </div>
-        ))}
+      <div className="flex lg:flex-col gap-2 overflow-x-auto lg:overflow-visible lg:order-1 order-2 px-1 py-2 lg:py-0 lg:px-0">
+        {thumbnailList}
       </div>
 
       {/* Main Image */}
-      <div className="lg:w-[82%] h-fit w-full relative  lg:order-2 order-1 group transition-all duration-300 ease-in-out">
-        <div className="relative  md:h-[400px] lg:h-auto overflow-hidden w-full">
-    
-            <Image
-              src={images[currentIndex].src}
-              alt={images[currentIndex].alt}
-              height={500}
-              width={500}
-              loading="eager"
-              className="rounded w-full h-full object-contain"
-            />
+      <div className="flex-1 lg:order-2 order-1 group relative">
+        <div className="relative aspect-square w-full overflow-hidden rounded-lg bg-gray-100">
+          <Image
+            src={images[currentIndex].src}
+            alt={`${productName} - Image ${currentIndex + 1}`}
+            fill
+            sizes="(max-width: 768px) 100vw, 60vw"
+            className="object-contain transition-opacity duration-300"
+            priority={true}
+            loading="eager"
+            // quality={85}
+          />
         </div>
 
-        {/* Navigation Buttons */}
-        <button
-          onClick={handlePrev}
-          onMouseEnter={() => preloadImage(currentIndex - 1)}
-          className="absolute -left-[15px] border-black border lg:border-0 lg:left-7 flex justify-center items-center bg-white lg:hover:bg-red-500 lg:h-12 lg:w-12 h-8 w-8 rounded-full shadow-sm lg:invisible group-hover:lg:visible  top-1/2 transform -translate-y-1/2 p-2"
-        >
-          <MdOutlineKeyboardArrowLeft
-            size={100}
-            className="text-black  lg:hover:text-white"
-          />
-        </button>
-        <button
-          onClick={handleNext}
-          onMouseEnter={() => preloadImage(currentIndex + 1)}
-          className="absolute border-black border lg:border-0 -bottom-[88px] lg:-bottom-[101px] lg:h-12 lg:w-12 h-8 w-8 flex justify-center items-center rounded-full shadow-sm lg:right-7 lg:invisible bg-white lg:hover:bg-red-500 group-hover:lg:visible  -right-[15px] top-1/2 transform -translate-y-1/2  p-2"
-        >
-          <MdOutlineKeyboardArrowRight
-            size={100}
-            className="text-black lg:hover:text-white"
-          />
-        </button>
+        {/* Navigation Buttons - Only render on client */}
+        {isClient && images.length > 1 && (
+          <>
+            <button
+              onClick={handlePrev}
+              className="absolute left-2 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white text-gray-800 p-2 rounded-full shadow-md transition-all duration-200 opacity-0 group-hover:opacity-100 z-10"
+              aria-label="Previous image"
+            >
+              <ChevronLeft size={20} />
+            </button>
+            
+            <button
+              onClick={handleNext}
+              className="absolute right-2 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white text-gray-800 p-2 rounded-full shadow-md transition-all duration-200 opacity-0 group-hover:opacity-100 z-10"
+              aria-label="Next image"
+            >
+              <ChevronRight size={20} />
+            </button>
+          </>
+        )}
+
+        {/* Image indicator */}
+        {images.length > 1 && (
+          <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2">
+            {images.map((_, index) => (
+              <button
+                key={index}
+                onClick={() => handleThumbnailClick(index)}
+                className={`w-2 h-2 rounded-full transition-all duration-200 ${
+                  index === currentIndex ? "bg-white" : "bg-white/50"
+                }`}
+                aria-label={`Go to image ${index + 1}`}
+              />
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );
-};
+});
 
-export default memo(ImageGallery);
+OptimizedImageGallery.displayName = 'OptimizedImageGallery';
+
+export default OptimizedImageGallery;
