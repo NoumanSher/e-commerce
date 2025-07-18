@@ -7,13 +7,11 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 interface ImageGalleryProps {
   images: { src: string; alt: string }[];
   productName: string;
-  priority?: boolean;
 }
 
 const OptimizedImageGallery = memo<ImageGalleryProps>(({ 
   images, 
   productName, 
-  priority = false 
 }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [imagesLoaded, setImagesLoaded] = useState<Set<number>>(new Set());
@@ -36,26 +34,27 @@ const OptimizedImageGallery = memo<ImageGalleryProps>(({
   const handleThumbnailClick = useCallback((index: number) => {
     setCurrentIndex(index);
   }, []);
+const preloadImage = useCallback((index: number) => {
+  if (images[index] && !imagesLoaded.has(index)) {
+    const img = new window.Image();
+    img.onload = () => {
+      setImagesLoaded(prev => new Set(prev).add(index));
+    };
+    img.src = images[index].src;
+  }
+}, [images, imagesLoaded]);
 
   // Preload adjacent images
   useEffect(() => {
     if (!isClient) return;
 
-    const preloadImage = (index: number) => {
-      if (images[index] && !imagesLoaded.has(index)) {
-        const img = new window.Image();
-        img.onload = () => {
-          setImagesLoaded(prev => new Set(prev).add(index));
-        };
-        img.src = images[index].src;
-      }
-    };
+   
 
     // Preload current and adjacent images
     preloadImage(currentIndex);
     preloadImage((currentIndex + 1) % images.length);
     preloadImage((currentIndex - 1 + images.length) % images.length);
-  }, [currentIndex, images, imagesLoaded, isClient]);
+  }, [currentIndex, images, imagesLoaded, isClient, preloadImage]);
 
   // Memoize thumbnail list
   const thumbnailList = useMemo(() => 
@@ -108,7 +107,7 @@ const OptimizedImageGallery = memo<ImageGalleryProps>(({
             className="object-contain transition-opacity duration-300"
             priority={true}
             loading="eager"
-            // quality={85}
+            quality={90}
           />
         </div>
 
@@ -117,6 +116,7 @@ const OptimizedImageGallery = memo<ImageGalleryProps>(({
           <>
             <button
               onClick={handlePrev}
+              onMouseEnter={() => preloadImage((currentIndex - 1 + images.length) % images.length)}
               className="absolute left-2 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white text-gray-800 p-2 rounded-full shadow-md transition-all duration-200 opacity-0 group-hover:opacity-100 z-10"
               aria-label="Previous image"
             >
@@ -125,6 +125,7 @@ const OptimizedImageGallery = memo<ImageGalleryProps>(({
             
             <button
               onClick={handleNext}
+              onMouseEnter={() => preloadImage((currentIndex + 1) % images.length)}
               className="absolute right-2 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white text-gray-800 p-2 rounded-full shadow-md transition-all duration-200 opacity-0 group-hover:opacity-100 z-10"
               aria-label="Next image"
             >
