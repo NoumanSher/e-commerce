@@ -1,18 +1,18 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { ProductReviews } from "@/components/reviews/ProductReviews";
 import { useStore } from "@/Context/storeContext";
 import { useGetRelatedProductsByCategoryId } from "@/components/productDetail/productDetailQuery";
 import MainCard from "../../Card/index";
 import { useQueryClient } from "@tanstack/react-query";
 import { useState, useEffect } from "react";
 import { fetchCategories } from "@/services/categoryService";
-
 interface RelatedProductsProps {
   productId: string;
 }
 
 export default function RelatedProducts({ productId }: RelatedProductsProps) {
   const queryClient = useQueryClient();
-  const { selectedCategory } = useStore();
+  const { selectedCategory, userId, isLogIn } = useStore();
 
   const [category, setCategory] = useState<any>(null);
   const [recommendedCategoryId, setRecommendedCategoryId] = useState("");
@@ -99,7 +99,7 @@ export default function RelatedProducts({ productId }: RelatedProductsProps) {
 
   const filteredRecommendedProducts =
     recommendedProducts?.data?.filter((item) => item._id !== productId) || [];
-
+console.log(userId)
   return (
     <Tabs defaultValue="relatedProducts" className="mt-5">
       <TabsList className="p-0 shadow-none space-x-4 bg-transparent mb-5">
@@ -115,16 +115,19 @@ export default function RelatedProducts({ productId }: RelatedProductsProps) {
         >
           Recommended
         </TabsTrigger>
+        <TabsTrigger
+          value="reviews"
+          className="px-0 bg-transparent text-lg font-medium text-gray-600 data-[state=active]:border-b-2 data-[state=active]:border-black data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:text-black rounded-none"
+        >
+          Reviews
+        </TabsTrigger>
       </TabsList>
 
       <TabsContent value="relatedProducts">
         {filteredRelatedProducts.length > 0 ? (
           <div className="flex flex-wrap gap-y-6">
             {filteredRelatedProducts.map((item) => (
-              <div
-                key={item._id}
-                className="w-[50%] md:w-[33.333%] lg:w-[25%]"
-              >
+              <div key={item._id} className="w-[50%] md:w-[33.333%] lg:w-[25%]">
                 <MainCard item={item} />
               </div>
             ))}
@@ -161,6 +164,14 @@ export default function RelatedProducts({ productId }: RelatedProductsProps) {
             No recommended products found
           </div>
         )}
+      </TabsContent>
+      <TabsContent value="reviews">
+        <ProductReviews
+          productId={productId}
+          userId={userId}
+          isAuthenticated={Boolean(isLogIn ? true : false)}
+          canReview={true}
+        />
       </TabsContent>
     </Tabs>
   );

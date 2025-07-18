@@ -61,7 +61,7 @@ interface Variant {
   _id: string;
 }
 
-interface Address {
+export interface Address {
   _id: string;
   firstName: string;
   lastName: string;
@@ -71,4 +71,9 @@ interface Address {
   phone: string;
   email: string;
   isFirst: boolean;
+}
+
+export interface AddressResponse {
+    message: string;
+    address: Address;
 }

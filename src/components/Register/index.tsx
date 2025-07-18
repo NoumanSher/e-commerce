@@ -1,10 +1,10 @@
 "use client";
-import React from "react";
+import React, { use, useEffect } from "react";
 import * as Yup from "yup";
 import { useRegister } from "./query";
 import { RegisterPayload } from "./service";
 import AuthForm from "../AuthForm";
-
+import { useRouter, useSearchParams } from "next/navigation";
 const RegisterSchema = Yup.object().shape({
   email: Yup.string()
     .email("Invalid email address")
@@ -23,7 +23,14 @@ const RegisterSchema = Yup.object().shape({
 });
 
 export default function Register() {
-  const { mutate, isPending } = useRegister();
+  const router = useRouter();
+  const searchParams = useSearchParams(); // Access query parameters
+  const { mutate, isPending, isSuccess } = useRegister();
+  const callbackUrl = searchParams.get("callbackUrl"); // Get 'callbackUrl' param
+  const Url = callbackUrl || "/";
+  useEffect(() => {
+    if (isSuccess) router.push("/login?callbackUrl=" + Url);
+  }, [Url, isSuccess, router]);
 
   const handleSubmit = (values: RegisterPayload) => {
     mutate(values);

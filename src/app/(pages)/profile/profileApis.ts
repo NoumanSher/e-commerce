@@ -1,9 +1,19 @@
 import axios from "axios";
 
 import { BASE_URL_LIVE } from "@/appConst/appConst";
-import { OrderResponse,OrderResponseByOrderNumber } from "./profileDtos";
+import { OrderResponse,OrderResponseByOrderNumber ,AddressResponse} from "./profileDtos";
 
-const getUserDetailById = async (userId: string): Promise<OrderResponse> => {
+const getUserDetailById = async (userId: string): Promise<AddressResponse> => {
+  try {
+    const response = await axios.get(
+      `${BASE_URL_LIVE}/order/userAdress/${userId}`
+    );
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+const getOrdersDetailByUserId = async (userId: string): Promise<OrderResponse> => {
   try {
     const response = await axios.get(
       `${BASE_URL_LIVE}/order/user-all-orders/${userId}`
@@ -24,4 +34,4 @@ const getOrderDeatilsByOrderNumber = async (orderNumber: string): Promise<OrderR
   }
 };
 
-export { getUserDetailById,getOrderDeatilsByOrderNumber };
+export { getUserDetailById,getOrderDeatilsByOrderNumber ,getOrdersDetailByUserId};
