@@ -1,22 +1,24 @@
-import axios from "axios";
-import { BASE_URL_LIVE } from "@/appConst/appConst";
+// src/components/Slider/api/storeSettingApi.ts
 import { StoreInfo } from "../dto/storeSettingDto";
+import { BASE_URL_LIVE } from "@/appConst/appConst";
 
-const getStoreSetting = async (): Promise<StoreInfo | null> => {
+export async function getStoreSetting(): Promise<StoreInfo | null> {
   try {
-    const res = await axios.get<StoreInfo>(`${BASE_URL_LIVE}/settings`, {
-      headers: {
-        'Cache-Control': 'no-cache',
-        'Pragma': 'no-cache',
-        'Expires': '0',
-      }
+    const res = await fetch(`${BASE_URL_LIVE}/settings`, {
+      // Next.js ISR cache config
+      next: { revalidate: 60 }, // revalidate every 60 seconds
+      // optional: make sure fresh response is pulled
     });
 
-    return res.data;
-  } catch (error) {
-    console.error("Failed to fetch store settings:", error);
-    return null; // or throw custom error if you want
-  }
-};
+    if (!res.ok) {
+      console.error(`Failed to fetch settings: ${res.status}`);
+      return null;
+    }
 
-export { getStoreSetting };
+    const data: StoreInfo = await res.json();
+    return data;
+  } catch (error) {
+    console.error("Error fetching store settings:", error);
+    return null;
+  }
+}
