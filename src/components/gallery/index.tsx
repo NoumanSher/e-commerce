@@ -107,7 +107,7 @@ const preloadImage = useCallback((index: number) => {
             className="object-contain transition-opacity duration-300"
             priority={true}
             loading="eager"
-            quality={90}
+            quality={85}
           />
         </div>
 
