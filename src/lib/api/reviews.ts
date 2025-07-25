@@ -1,73 +1,86 @@
-import { ReviewsResponse, CreateReviewPayload } from '@/types';
-import { BASE_URL } from '@/constants';
+import { ReviewsResponse, CreateReviewPayload ,MarkHelpfulResponse} from "@/types";
+import { BASE_URL } from "@/constants";
 
 export class ReviewsAPI {
   static async getProductReviews(
     productId: string,
     page: number = 1,
-    sort: string = 'recent'
+    sort: string = "asc",
+    sortBY: string = "rating",
+    userId: string
   ): Promise<ReviewsResponse> {
     try {
       const response = await fetch(
-        `${BASE_URL}/reviews/product/${productId}?page=${page}&sort=${sort}`,
+        `${BASE_URL}/reviews/product/${productId}?page=${page}&sortOrder=${sort}&sortBY=${sortBY}&userId=${userId}`,
         {
-          method: 'GET',
+          method: "GET",
           headers: {
-            'Content-Type': 'application/json',
+            "Content-Type": "application/json",
           },
         }
       );
+      console.log(response);
 
       if (!response.ok) {
+        debugger;
         throw new Error(`Failed to fetch reviews: ${response.statusText}`);
       }
 
       return await response.json();
     } catch (error) {
-      console.error('Error fetching reviews:', error);
+      console.error("Error fetching reviews:", error);
       throw error;
     }
   }
 
-static async createReview(payload: CreateReviewPayload): Promise<any> {
-  const response = await fetch(`${BASE_URL}/reviews`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      // 'Authorization': `Bearer ${token}`,
-    },
-    body: JSON.stringify(payload),
-  });
+  static async createReview(payload: CreateReviewPayload): Promise<any> {
+    const response = await fetch(`${BASE_URL}/reviews`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        // 'Authorization': `Bearer ${token}`,
+      },
+      body: JSON.stringify(payload),
+    });
 
-  const data = await response.json(); // Always parse JSON first
+    const data = await response.json(); // Always parse JSON first
 
-  if (!response.ok) {
-    debugger
-    // Use the error message from server if available
-    throw new Error(data.message || `Failed to create review: ${response.statusText}`);
+    if (!response.ok) {
+      debugger;
+      // Use the error message from server if available
+      throw new Error(
+        data.message || `Failed to create review: ${response.statusText}`
+      );
+    }
+
+    return data;
   }
 
-  return data;
-}
-
-  static async markHelpful(reviewId: string): Promise<any> {
+  static async markHelpful(reviewId: string, userId: string,token:string): Promise<MarkHelpfulResponse> {
+    debugger
+ 
     try {
-      const response = await fetch(`${BASE_URL}/reviews/${reviewId}/helpful`, {
-        method: 'POST',
+      const response = await fetch(`${BASE_URL}/reviews/review/helpful`, {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
-          // Add authorization header if needed
-          // 'Authorization': `Bearer ${token}`,
+          "Content-Type": "application/json",
+          'Authorization': `Bearer ${token}`,
         },
+        body: JSON.stringify({
+          userId: userId,
+          reviewId: reviewId,
+        }),
       });
 
       if (!response.ok) {
-        throw new Error(`Failed to mark review as helpful: ${response.statusText}`);
+        throw new Error(
+          `Failed to mark review as helpful: ${response.statusText}`
+        );
       }
 
       return await response.json();
     } catch (error) {
-      console.error('Error marking review as helpful:', error);
+      console.error("Error marking review as helpful:", error);
       throw error;
     }
   }

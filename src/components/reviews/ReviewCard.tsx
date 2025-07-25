@@ -13,24 +13,28 @@ import { cn } from '@/lib/utils';
 
 interface ReviewCardProps {
   review: Review;
-  onHelpfulUpdate?: (reviewId: string, newCount: number) => void;
+  userId: string;
+  token: string;
+  onHelpfulUpdate?: (reviewId: string) => void;
 }
 
-export function ReviewCard({ review, onHelpfulUpdate }: ReviewCardProps) {
+export function ReviewCard({ review, onHelpfulUpdate ,userId,token}: ReviewCardProps) {
   const [helpfulCount, setHelpfulCount] = useState(review.helpfulCount);
   const [isMarkingHelpful, setIsMarkingHelpful] = useState(false);
   const [hasMarkedHelpful, setHasMarkedHelpful] = useState(false);
+
+  const isAlreadyMarkedHelpful = review.helpfulBy.includes(userId);
 
   const handleMarkHelpful = async () => {
     if (hasMarkedHelpful || isMarkingHelpful) return;
 
     setIsMarkingHelpful(true);
     try {
-      await ReviewsAPI.markHelpful(review._id);
-      const newCount = helpfulCount + 1;
-      setHelpfulCount(newCount);
+      await ReviewsAPI.markHelpful(review._id,userId,token);
+      // const newCount = helpfulCount + 1;
+      // setHelpfulCount(newCount);
       setHasMarkedHelpful(true);
-      onHelpfulUpdate?.(review._id, newCount);
+      onHelpfulUpdate?.(review._id);
     } catch (error) {
       console.error('Failed to mark review as helpful:', error);
     } finally {
@@ -92,7 +96,7 @@ export function ReviewCard({ review, onHelpfulUpdate }: ReviewCardProps) {
                 variant="ghost"
                 size="sm"
                 onClick={handleMarkHelpful}
-                disabled={hasMarkedHelpful || isMarkingHelpful}
+                disabled={hasMarkedHelpful || isMarkingHelpful || isAlreadyMarkedHelpful}
                 className={cn(
                   'text-muted-foreground hover:text-foreground',
                   hasMarkedHelpful && 'text-primary'
@@ -102,11 +106,11 @@ export function ReviewCard({ review, onHelpfulUpdate }: ReviewCardProps) {
                 Helpful ({helpfulCount})
               </Button>
 
-              {review.status === 'pending' && (
+              {/* {review.status === 'pending' && (
                 <Badge variant="outline" className="text-xs">
                   Pending Approval
                 </Badge>
-              )}
+              )} */}
             </div>
           </div>
         </div>

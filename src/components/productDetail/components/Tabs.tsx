@@ -45,17 +45,18 @@ export default function RelatedProducts({ productId }: RelatedProductsProps) {
   // Set recommended category ID based on current category
   useEffect(() => {
     if (!category) return;
-
+debugger
     let newRecommendedCategoryId = "";
     if (category.slug === "all-categories") {
-      newRecommendedCategoryId = "67f250eb2f78a67e01f2b299";
-    } else if (category.slug === "Beauty & Health") {
-      newRecommendedCategoryId = "67f250a92f78a67e01f2b28e";
+      newRecommendedCategoryId = "687e2abfec2eff18b9b2d1e3";
     } else if (category.slug === "undergarments") {
-      newRecommendedCategoryId = "67f250eb2f78a67e01f2b299";
+      newRecommendedCategoryId = "687e2abfec2eff18b9b2d1e3";
+    } else if (category.slug === "nighties") {
+      newRecommendedCategoryId = '687e104aa865a8d496318c29';
     }
 
     if (newRecommendedCategoryId) {
+      debugger
       setRecommendedCategoryId(newRecommendedCategoryId);
     }
   }, [category]);
@@ -99,7 +100,6 @@ export default function RelatedProducts({ productId }: RelatedProductsProps) {
 
   const filteredRecommendedProducts =
     recommendedProducts?.data?.filter((item) => item._id !== productId) || [];
-console.log(userId)
   return (
     <Tabs defaultValue="relatedProducts" className="mt-5">
       <TabsList className="p-0 shadow-none space-x-4 bg-transparent mb-5">
@@ -170,7 +170,6 @@ console.log(userId)
           productId={productId}
           userId={userId}
           isAuthenticated={Boolean(isLogIn ? true : false)}
-          canReview={true}
         />
       </TabsContent>
     </Tabs>

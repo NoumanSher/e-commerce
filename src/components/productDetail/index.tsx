@@ -9,6 +9,7 @@ import { useInView } from "react-intersection-observer";
 // Critical components loaded immediately
 import ProductImageGallery from "@/components/gallery";
 import ProductInfo from "@/components/productDetail/ProductDetails";
+import { useStore } from "@/Context/storeContext";
 
 // Below-the-fold component (loaded after initial render)
 const Tabs = lazy(() => import("./components/Tabs"));
@@ -20,10 +21,19 @@ interface ProductDetailProps {
 const ProductDetail: React.FC<ProductDetailProps> = ({ productId }) => {
   const { data, isLoading } = useGetProductDetailById(productId);
   const [showBelowFold, setShowBelowFold] = useState(false);
+    const {  updateSelectedCategory } = useStore();
+  
   const { ref: belowFoldRef, inView } = useInView({
     threshold: 0.2,
     triggerOnce: true,
   });
+
+  useEffect(() => {
+    if (data?.data?.parentCategoryID) {
+    
+      updateSelectedCategory(data?.data.parentCategoryID);
+    }
+  }, [data, updateSelectedCategory]);
 
   useEffect(() => {
     if (inView) {

@@ -35,8 +35,8 @@ interface SEO {
     seo: SEO;
     _id: string;
     productName: string;
-    parentCategoryID: Category;
-    childCategoryID: Category;
+    parentCategoryID: string;
+    childCategoryID: string;
     description: string;
     isVariant: boolean;
     salePrice: number;

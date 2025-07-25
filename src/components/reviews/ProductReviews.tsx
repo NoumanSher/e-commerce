@@ -7,23 +7,22 @@ import { ReviewsStats } from "./ReviewsStats";
 import { ReviewsFilter } from "./ReviewsFilter";
 import { ReviewsPagination } from "./ReviewsPagination";
 import { ReviewsAPI } from "@/lib/api/reviews";
-import { Review, ReviewsResponse, SortOption } from "@/types";
+import {  ReviewsResponse, SortOption } from "@/types";
 import { Loader2, AlertCircle } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-
+import { useStore } from "@/Context/storeContext";
 interface ProductReviewsProps {
   productId: string;
   userId?: string;
   isAuthenticated?: boolean;
-  canReview?: boolean;
 }
 
 export function ProductReviews({
   productId,
   userId,
   isAuthenticated = false,
-  canReview = false,
 }: ProductReviewsProps) {
+  const { isLogIn } = useStore();
   const [reviewsData, setReviewsData] = useState<ReviewsResponse | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -35,7 +34,7 @@ const fetchReviews = useCallback(
     try {
       setLoading(true);
       setError(null);
-      const data = await ReviewsAPI.getProductReviews(productId, page, sort);
+      const data = await ReviewsAPI.getProductReviews(productId, page, sort,sortBy,userId as string);
       setReviewsData(data);
     } catch (err) {
       setError("Failed to load reviews. Please try again later.");
@@ -44,7 +43,7 @@ const fetchReviews = useCallback(
       setLoading(false);
     }
   },
-  [productId] // <- dependencies
+  [productId, sortBy, userId] // <- dependencies
 );
 
   useEffect(() => {
@@ -66,19 +65,19 @@ const fetchReviews = useCallback(
     setCurrentPage(1);
   };
 
-  const handleHelpfulUpdate = (reviewId: string, newCount: number) => {
-    debugger
-    if (!reviewsData) return;
+  // const handleHelpfulUpdate = (reviewId: string) => {
+  //   debugger
+  //   if (!reviewsData) return;
 
-    const updatedReviews = reviewsData.reviews.map((review) =>
-      review._id === reviewId ? { ...review, helpfulCount: newCount } : review
-    );
+  //   const updatedReviews = reviewsData.reviews.map((review) =>
+  //     review._id === reviewId ? { ...review, helpfulCount: newCount } : review
+  //   );
 
-    setReviewsData({
-      ...reviewsData,
-      reviews: updatedReviews,
-    });
-  };
+  //   setReviewsData({
+  //     ...reviewsData,
+  //     reviews: updatedReviews,
+  //   });
+  // };
 
   if (loading && !reviewsData) {
     return (
@@ -100,7 +99,6 @@ const fetchReviews = useCallback(
   }
 
   if (!reviewsData) return null;
-  console.log( userId);
   return (
     <div className="space-y-8">
       {/* Reviews Stats */}
@@ -111,7 +109,7 @@ const fetchReviews = useCallback(
         productId={productId}
         userId={userId}
         isAuthenticated={isAuthenticated}
-        canReview={canReview}
+        canReview={reviewsData.canReview}
         onReviewSubmitted={handleReviewSubmitted}
       />
 
@@ -121,7 +119,7 @@ const fetchReviews = useCallback(
           {/* Filter */}
           <div className="flex items-center justify-between">
             <h3 className="text-lg font-semibold">
-              Reviews ({reviewsData.stats.totalReviews})
+              Reviews ({reviewsData.stats.totalReviews === 0 ? reviewsData.pagination.totalReviews: reviewsData.stats.totalReviews})
             </h3>
             <ReviewsFilter
               currentSort={sortBy}
@@ -135,7 +133,9 @@ const fetchReviews = useCallback(
               <ReviewCard
                 key={review._id}
                 review={review}
-                onHelpfulUpdate={handleHelpfulUpdate}
+                userId={userId as string}
+                token={isLogIn}
+                // onHelpfulUpdate={handleHelpfulUpdate}
               />
             ))}
           </div>

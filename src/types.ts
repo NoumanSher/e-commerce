@@ -39,6 +39,7 @@ export interface Review {
   status: 'approved' | 'pending' | 'rejected';
   isVerifiedPurchase: boolean;
   helpfulCount: number;
+  helpfulBy: string[];
   createdAt: string;
   updatedAt: string;
   __v: number;
@@ -61,8 +62,13 @@ export interface ReviewsResponse {
   reviews: Review[];
   pagination: ReviewsPagination;
   stats: ReviewsStats;
+  canReview:boolean
 }
-
+export interface MarkHelpfulResponse {
+  message: string;
+  helpfulCount: number;
+  helpfulBy: string[];
+}
 export interface CreateReviewPayload {
   userId: string;
   productId: string;
