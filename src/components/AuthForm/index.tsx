@@ -1,6 +1,8 @@
+import { logIn , logOut} from "@/app/actions/auth";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
+
 interface FormField {
   name: string;
   type: string;
@@ -43,7 +45,10 @@ const AuthForm: React.FC<AuthFormProps> = ({
   isLoading
 }) => {
   const router = useRouter();
-
+// console.log(AuthData())
+  const searchParams = useSearchParams(); // Access query parameters
+  const callbackUrl = searchParams.get("callbackUrl"); // Get 'callbackUrl' param
+   const Url = callbackUrl || "/";
   return (
     <div className="flex items-center justify-center min-h-[90vh]">
       <div className="p-8 w-full max-w-xl">
@@ -92,6 +97,7 @@ const AuthForm: React.FC<AuthFormProps> = ({
                   A password will be sent to your email address.
                 </p>
               )}
+                 
 
               <div className="text-center text-sm">
                 <p className="text-gray-900">
@@ -103,11 +109,11 @@ const AuthForm: React.FC<AuthFormProps> = ({
                     className="font-medium underline text-black hover:text-red-500"
                   >
                     {formType === "login" ? (
-                      <span onClick={() => router.push("/register")}>
+                      <span onClick={() => router.push("/register?callbackUrl=" + Url)}>
                         Create an account
                       </span>
                     ) : (
-                      <span onClick={() => router.push("/login")}>
+                      <span onClick={() => router.push("/login?callbackUrl=" + Url)}>
                         Login
                       </span>
                     )}
@@ -117,6 +123,8 @@ const AuthForm: React.FC<AuthFormProps> = ({
             </Form>
           )}
         </Formik>
+         {/* <button onClick={() => logIn()}>google</button><br />
+                  <button onClick={() => logOut()}>logout</button> */}
       </div>
     </div>
   );
