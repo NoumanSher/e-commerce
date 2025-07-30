@@ -16,7 +16,8 @@ export async function getLandingMetadata(): Promise<Metadata> {
 
     return {
       title: storeSettings.title || "Pakshipperr",
-      description: storeSettings.description || "Your favorite shopping destination",
+      description:
+        storeSettings.description || "Your favorite shopping destination",
       icons: {
         icon: [
           {
@@ -29,9 +30,9 @@ export async function getLandingMetadata(): Promise<Metadata> {
       creator: "Blazlogic",
       applicationName: "PakShipperStore",
       generator: "Next.js",
-      other: {
-    'google-site-verification': 'google4a8d7d36caedec74',
-  },
+      verification: {
+        google: "google4a8d7d36caedec74",
+      },
     };
   } catch {
     return {
