@@ -31,7 +31,7 @@ export async function getLandingMetadata(): Promise<Metadata> {
       applicationName: "PakShipperStore",
       generator: "Next.js",
       verification: {
-        google: "google4a8d7d36caedec74",
+        google: "google64804af1395a8cb7",
       },
     };
   } catch {
