@@ -30,9 +30,6 @@ export async function getLandingMetadata(): Promise<Metadata> {
       creator: "Blazlogic",
       applicationName: "PakShipperStore",
       generator: "Next.js",
-      verification: {
-        google: "google64804af1395a8cb7",
-      },
     };
   } catch {
     return {

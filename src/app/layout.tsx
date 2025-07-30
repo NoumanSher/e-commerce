@@ -7,7 +7,7 @@ import StoreTypeProviderWrapper from "@/Context/StoreTypeProviderWrapper";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
-
+import GoogleAnalytics from '@/components/GoogleAnalytics';
 import Provider from "@/Context/react-query-provider";
 import { Analytics } from "@vercel/analytics/next"
 import { SpeedInsights } from "@vercel/speed-insights/next"
@@ -23,7 +23,6 @@ export const metadata: Metadata = {
   title: "PakShipperStore - E-commerce",
   description: "Your favorite shopping destination",
 };
-
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -32,6 +31,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={jost.className}>
+        <GoogleAnalytics gaId={process.env.GA_MEASUREMENT_ID as string} />
         <Analytics/>
         <SpeedInsights/>
         <Provider>
