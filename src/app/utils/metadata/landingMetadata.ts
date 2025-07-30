@@ -29,6 +29,9 @@ export async function getLandingMetadata(): Promise<Metadata> {
       creator: "Blazlogic",
       applicationName: "PakShipperStore",
       generator: "Next.js",
+      other: {
+    'google-site-verification': 'google4a8d7d36caedec74',
+  },
     };
   } catch {
     return {

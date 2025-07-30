@@ -76,4 +76,4 @@ export interface CreateReviewPayload {
   description: string;
 }
 
-export type SortOption = 'recent' | 'oldest' | 'highest' | 'lowest' | 'helpful';
+export type SortOption = 'recent' | 'oldest' | 'highest' | 'lowest' | 'helpful' ;

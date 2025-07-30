@@ -1,4 +1,8 @@
-import { ReviewsResponse, CreateReviewPayload ,MarkHelpfulResponse} from "@/types";
+import {
+  ReviewsResponse,
+  CreateReviewPayload,
+  MarkHelpfulResponse,
+} from "@/types";
 import { BASE_URL } from "@/constants";
 
 export class ReviewsAPI {
@@ -9,6 +13,23 @@ export class ReviewsAPI {
     sortBY: string = "rating",
     userId: string
   ): Promise<ReviewsResponse> {
+if (sortBY === "recent") {
+  sort = "asc";
+  sortBY = "CreatedAt";
+} else if (sortBY === "oldest") {
+  sort = "desc";
+  sortBY = "CreatedAt";
+} else if (sortBY === "highest") {
+  sortBY = "rating";
+  sort = "asc";
+} else if (sortBY === "lowest") {
+  sortBY = "rating";
+  sort = "desc";
+} else if (sortBY === "helpful") {
+  sortBY = "helpfulCount";
+  sort = "asc";
+}
+    debugger;
     try {
       const response = await fetch(
         `${BASE_URL}/reviews/product/${productId}?page=${page}&sortOrder=${sort}&sortBY=${sortBY}&userId=${userId}`,
@@ -56,15 +77,19 @@ export class ReviewsAPI {
     return data;
   }
 
-  static async markHelpful(reviewId: string, userId: string,token:string): Promise<MarkHelpfulResponse> {
-    debugger
- 
+  static async markHelpful(
+    reviewId: string,
+    userId: string,
+    token: string
+  ): Promise<MarkHelpfulResponse> {
+    debugger;
+
     try {
       const response = await fetch(`${BASE_URL}/reviews/review/helpful`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          'Authorization': `Bearer ${token}`,
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
           userId: userId,

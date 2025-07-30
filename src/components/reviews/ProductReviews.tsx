@@ -7,7 +7,7 @@ import { ReviewsStats } from "./ReviewsStats";
 import { ReviewsFilter } from "./ReviewsFilter";
 import { ReviewsPagination } from "./ReviewsPagination";
 import { ReviewsAPI } from "@/lib/api/reviews";
-import {  ReviewsResponse, SortOption } from "@/types";
+import { ReviewsResponse, SortOption } from "@/types";
 import { Loader2, AlertCircle } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { useStore } from "@/Context/storeContext";
@@ -29,25 +29,38 @@ export function ProductReviews({
   const [currentPage, setCurrentPage] = useState(1);
   const [sortBy, setSortBy] = useState<SortOption>("recent");
 
-const fetchReviews = useCallback(
-  async (page: number = 1, sort: SortOption = "recent") => {
-    try {
-      setLoading(true);
-      setError(null);
-      const data = await ReviewsAPI.getProductReviews(productId, page, sort,sortBy,userId as string);
-      setReviewsData(data);
-    } catch (err) {
-      setError("Failed to load reviews. Please try again later.");
-      console.error("Error fetching reviews:", err);
-    } finally {
-      setLoading(false);
-    }
-  },
-  [productId, sortBy, userId] // <- dependencies
-);
+  const fetchReviews = useCallback(
+    async (page: number = 1, sort = "asc") => {
+      debugger
+      try {
+        setLoading(true);
+        setError(null);
+        const data = await ReviewsAPI.getProductReviews(
+          productId,
+          page,
+          sort,
+          sortBy,
+          userId as string
+        );
+        setReviewsData(data);
+      } catch (err) {
+        setError("Failed to load reviews. Please try again later.");
+        console.error("Error fetching reviews:", err);
+      } finally {
+        setLoading(false);
+      }
+    },
+    [productId, sortBy, userId] // <- dependencies
+  );
 
   useEffect(() => {
-    fetchReviews(currentPage, sortBy);
+    let sort;
+    if (sortBy === "recent") {
+      sort = "asc";
+    } else if (sortBy === "oldest") {
+      sort = "dsc";
+    }
+    fetchReviews(currentPage, sort);
   }, [productId, currentPage, sortBy, fetchReviews]);
 
   const handleSortChange = (newSort: SortOption) => {
@@ -89,7 +102,7 @@ const fetchReviews = useCallback(
   }
 
   if (error && !reviewsData) {
-    debugger
+    debugger;
     return (
       <Alert variant="destructive">
         <AlertCircle className="h-4 w-4" />
@@ -119,7 +132,11 @@ const fetchReviews = useCallback(
           {/* Filter */}
           <div className="flex items-center justify-between">
             <h3 className="text-lg font-semibold">
-              Reviews ({reviewsData.stats.totalReviews === 0 ? reviewsData.pagination.totalReviews: reviewsData.stats.totalReviews})
+              Reviews (
+              {reviewsData.stats.totalReviews === 0
+                ? reviewsData.pagination.totalReviews
+                : reviewsData.stats.totalReviews}
+              )
             </h3>
             <ReviewsFilter
               currentSort={sortBy}

@@ -102,39 +102,6 @@ export default async function LandingPage() {
   );
 }
 
-// Shared metadata generation
-// export async function generateMetadata(): Promise<Metadata> {
-//   const queryClient = createQueryClient();
 
-//   try {
-//     const storeSettings = await queryClient.fetchQuery({
-//       queryKey: ["settings"],
-//       queryFn: getStoreSetting,
-//     });
-
-//     return {
-//       title: storeSettings?.title || "Pakshipper",
-//       description:
-//         storeSettings?.description || "Your favorite shopping destination",
-//       icons: {
-//         icon: [
-//           {
-//             url: storeSettings?.logo || "/default-logo.png",
-//             type: "image/png",
-//             sizes: "32x32",
-//           },
-//         ],
-//       },
-//       creator: "Blazlogic",
-//       applicationName: "PakShipperStore",
-//       generator: "Next.js",
-//     };
-//   } catch (error) {
-//     return {
-//       title: "Pakshipper",
-//       description: "Your favorite shopping destination",
-//     };
-//   }
-// }
 
 export const generateMetadata = getLandingMetadata;
