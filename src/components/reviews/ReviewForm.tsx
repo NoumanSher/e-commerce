@@ -71,8 +71,10 @@ export function ReviewForm({
       // Notify parent component
       onReviewSubmitted?.();
     } catch (error) {
-      debugger
-      setError(error instanceof Error ? error.message : "Failed to submit review");
+      debugger;
+      setError(
+        error instanceof Error ? error.message : "Failed to submit review"
+      );
       console.error("Error submitting review:", error);
     } finally {
       setIsSubmitting(false);
@@ -81,7 +83,7 @@ export function ReviewForm({
 
   const handleClickLogin = () => {
     const callbackUrl = encodeURIComponent(`/product-detail/${productId}`);
-    router.push(`/login?callbackUrl=${callbackUrl}`)
+    router.push(`/login?callbackUrl=${callbackUrl}`);
   };
   if (!isAuthenticated) {
     return (
@@ -98,85 +100,91 @@ export function ReviewForm({
     );
   }
 
-  if (isReviewed) {
-    return (
-      <Card>
-        <CardContent className="p-6 text-center">
-          <p className="text-muted-foreground">
-           You have already reviewed this product
-          </p>
-        </CardContent>
-      </Card>
-    );
-  }
-  if (!canReview) {
-    return (
-      <Card>
-        <CardContent className="p-6 text-center">
-          <p className="text-muted-foreground">
-            You must purchase and receive this product before you can write a
-            review
-          </p>
-        </CardContent>
-      </Card>
-    );
-  }
+  // if (isReviewed) {
+  //   return (
+  //     <Card>
+  //       <CardContent className="p-6 text-center">
+  //         <p className="text-muted-foreground">
+  //           You have already reviewed this product
+  //         </p>
+  //       </CardContent>
+  //     </Card>
+  //   );
+  // }
+  // if (!canReview) {
+  //   return (
+  //     <Card>
+  //       <CardContent className="p-6 text-center">
+  //         <p className="text-muted-foreground">
+  //           You must purchase and receive this product before you can write a
+  //           review
+  //         </p>
+  //       </CardContent>
+  //     </Card>
+  //   );
+  // }
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Write a Review</CardTitle>
-      </CardHeader>
-      <CardContent>
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <div className="space-y-2">
-            <Label>Rating *</Label>
-            <div className="flex items-center gap-2">
-              <StarRating
-                rating={rating}
-                interactive
-                onRatingChange={setRating}
-                size="lg"
-              />
-              <span className="text-sm text-muted-foreground ml-2">
-                {rating > 0 ? `${rating}/5` : "Select rating"}
-              </span>
-            </div>
-          </div>
+    <div>
+      {!isReviewed && (
+        <Card>
+          <CardHeader>
+            <CardTitle>Write a Review</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <form onSubmit={handleSubmit} className="space-y-6">
+              <div className="space-y-2">
+                <Label>Rating *</Label>
+                <div className="flex items-center gap-2">
+                  <StarRating
+                    rating={rating}
+                    interactive
+                    onRatingChange={setRating}
+                    size="lg"
+                  />
+                  <span className="text-sm text-muted-foreground ml-2">
+                    {rating > 0 ? `${rating}/5` : "Select rating"}
+                  </span>
+                </div>
+              </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="description">Review *</Label>
-            <Textarea
-              id="description"
-              placeholder="Share your experience with this product..."
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              rows={4}
-              className="resize-none"
-            />
-            <p className="text-xs text-muted-foreground">
-              Minimum 10 characters ({description.length}/10)
-            </p>
-          </div>
+              <div className="space-y-2">
+                <Label htmlFor="description">Review *</Label>
+                <Textarea
+                  id="description"
+                  placeholder="Share your experience with this product..."
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
+                  rows={4}
+                  className="resize-none"
+                />
+                <p className="text-xs text-muted-foreground">
+                  Minimum 10 characters ({description.length}/10)
+                </p>
+              </div>
 
-          {error && (
-            <div className="text-sm text-destructive bg-destructive/10 p-3 rounded-md">
-              {error}
-            </div>
-          )}
+              {error && (
+                <div className="text-sm text-destructive bg-destructive/10 p-3 rounded-md">
+                  {error}
+                </div>
+              )}
 
-          <Button
-            type="submit"
-            disabled={
-              isSubmitting || rating === 0 || description.trim().length < 10
-            }
-            className="w-full"
-          >
-            {isSubmitting && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
-            {isSubmitting ? "Submitting..." : "Submit Review"}
-          </Button>
-        </form>
-      </CardContent>
-    </Card>
+              <Button
+                type="submit"
+                disabled={
+                  isSubmitting || rating === 0 || !canReview || description.trim().length < 10
+                }
+                className="w-full"
+              >
+                {isSubmitting && (
+                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                )}
+                {isSubmitting ? "Submitting..." : "Submit Review"}
+              </Button>
+            </form>
+          </CardContent>
+        </Card>
+      )}
+    </div>
   );
 }
