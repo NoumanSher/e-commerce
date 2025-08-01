@@ -15,6 +15,7 @@ interface ReviewFormProps {
   userId?: string;
   isAuthenticated?: boolean;
   canReview?: boolean;
+  isReviewed?: boolean;
   onReviewSubmitted?: () => void;
 }
 
@@ -23,6 +24,7 @@ export function ReviewForm({
   userId,
   isAuthenticated = false,
   canReview = false,
+  isReviewed = false,
   onReviewSubmitted,
 }: ReviewFormProps) {
   const router = useRouter();
@@ -96,6 +98,17 @@ export function ReviewForm({
     );
   }
 
+  if (isReviewed) {
+    return (
+      <Card>
+        <CardContent className="p-6 text-center">
+          <p className="text-muted-foreground">
+           You have already reviewed this product
+          </p>
+        </CardContent>
+      </Card>
+    );
+  }
   if (!canReview) {
     return (
       <Card>

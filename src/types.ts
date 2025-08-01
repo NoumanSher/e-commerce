@@ -63,6 +63,7 @@ export interface ReviewsResponse {
   pagination: ReviewsPagination;
   stats: ReviewsStats;
   canReview:boolean
+  isReviewed:boolean
 }
 export interface MarkHelpfulResponse {
   message: string;

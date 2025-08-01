@@ -123,6 +123,7 @@ export function ProductReviews({
         userId={userId}
         isAuthenticated={isAuthenticated}
         canReview={reviewsData.canReview}
+        isReviewed={reviewsData.isReviewed}
         onReviewSubmitted={handleReviewSubmitted}
       />
 
