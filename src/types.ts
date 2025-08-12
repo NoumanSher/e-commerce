@@ -40,6 +40,7 @@ export interface Review {
   isVerifiedPurchase: boolean;
   helpfulCount: number;
   helpfulBy: string[];
+  images: string[];
   createdAt: string;
   updatedAt: string;
   __v: number;
@@ -75,6 +76,7 @@ export interface CreateReviewPayload {
   productId: string;
   rating: string;
   description: string;
+  images:string[]
 }
 
 export type SortOption = 'recent' | 'oldest' | 'highest' | 'lowest' | 'helpful' ;

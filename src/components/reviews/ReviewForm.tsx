@@ -10,6 +10,8 @@ import { ReviewsAPI } from "@/lib/api/reviews";
 import { CreateReviewPayload } from "@/types";
 import { Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
+import ReviewImagesUploader from "./ReviewImagesUpload";
+import UploadImages from "@/hooks/UploadImages";
 interface ReviewFormProps {
   productId: string;
   userId?: string;
@@ -32,8 +34,10 @@ export function ReviewForm({
   const [description, setDescription] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState("");
+    const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
 
   const handleSubmit = async (e: React.FormEvent) => {
+
     e.preventDefault();
 
     if (!userId) {
@@ -51,15 +55,22 @@ export function ReviewForm({
       return;
     }
 
+
+
     setIsSubmitting(true);
     setError("");
 
     try {
+       let uploadedUrls: string[] = [];
+      if (selectedFiles.length > 0) {
+        uploadedUrls = await UploadImages(selectedFiles);
+      }
       const payload: CreateReviewPayload = {
         userId,
         productId,
         rating: rating.toString(),
         description: description.trim(),
+        images: uploadedUrls,
       };
 
       await ReviewsAPI.createReview(payload);
@@ -100,29 +111,7 @@ export function ReviewForm({
     );
   }
 
-  // if (isReviewed) {
-  //   return (
-  //     <Card>
-  //       <CardContent className="p-6 text-center">
-  //         <p className="text-muted-foreground">
-  //           You have already reviewed this product
-  //         </p>
-  //       </CardContent>
-  //     </Card>
-  //   );
-  // }
-  // if (!canReview) {
-  //   return (
-  //     <Card>
-  //       <CardContent className="p-6 text-center">
-  //         <p className="text-muted-foreground">
-  //           You must purchase and receive this product before you can write a
-  //           review
-  //         </p>
-  //       </CardContent>
-  //     </Card>
-  //   );
-  // }
+
 
   return (
     <div>
@@ -162,6 +151,8 @@ export function ReviewForm({
                   Minimum 10 characters ({description.length}/10)
                 </p>
               </div>
+
+             <ReviewImagesUploader  onFilesChange={setSelectedFiles}/>
 
               {error && (
                 <div className="text-sm text-destructive bg-destructive/10 p-3 rounded-md">

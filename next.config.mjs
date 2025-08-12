@@ -19,6 +19,10 @@ const nextConfig = {
         protocol: "https",
         hostname: "e-commerce-backend-seven-xi.vercel.app",
       },
+      {
+        protocol: "https",
+        hostname: "res.cloudinary.com",
+      },
     ],
   },
 };

@@ -3,7 +3,7 @@
 import { Metadata } from "next";
 import { StoreInfo } from "@/components/Slider/dto/storeSettingDto";
 import { BASE_URL_LIVE } from "@/appConst/appConst";
-
+import logo from '@/assets/img/logo.webp'
 export async function getLandingMetadata(): Promise<Metadata> {
   try {
     const res = await fetch(`${BASE_URL_LIVE}/settings`, {
@@ -21,7 +21,7 @@ export async function getLandingMetadata(): Promise<Metadata> {
       icons: {
         icon: [
           {
-            url: storeSettings.logo || "/default-logo.png",
+            url: storeSettings.logo || logo.src,
             type: "image/png",
             sizes: "32x32",
           },

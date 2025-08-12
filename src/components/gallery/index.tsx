@@ -3,7 +3,8 @@
 import { memo, useCallback, useEffect, useState, useMemo, useRef } from "react";
 import Image from "next/image";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-
+import ImageLightbox from "../ImageLightbox";
+import { Fullscreen } from 'lucide-react';
 interface ImageGalleryProps {
   images: { src: string; alt: string }[];
   productName: string;
@@ -12,6 +13,7 @@ interface ImageGalleryProps {
 const OptimizedImageGallery = memo<ImageGalleryProps>(
   ({ images, productName }) => {
     const [currentIndex, setCurrentIndex] = useState(0);
+      const [isOpen, setIsOpen] = useState(false);
     const [imagesLoaded, setImagesLoaded] = useState<Set<number>>(new Set());
     const [isClient, setIsClient] = useState(false);
     const preloadLinkRef = useRef<HTMLLinkElement | null>(null);
@@ -113,7 +115,9 @@ useEffect(() => {
     }
 
     return (
-      <div className="flex flex-col lg:flex-row gap-4 w-full lg:w-[60%]">
+      <div className="relative flex flex-col lg:flex-row gap-4 w-full lg:w-[60%]">
+        {/* zoom button */}
+        <button className="top-2 right-2 absolute z-10" onClick={() => setIsOpen(true)}><Fullscreen className="hover:scale-105" /></button>
         {/* Thumbnails */}
         <div className="flex lg:flex-col gap-2 overflow-x-auto lg:overflow-visible lg:order-1 order-2 px-1 py-2 lg:py-0 lg:px-0">
           {thumbnailList}
@@ -181,6 +185,14 @@ useEffect(() => {
             </div>
           )}
         </div>
+           {isOpen && (
+                <ImageLightbox
+                  images={images}
+                  initialIndex={currentIndex}
+                  onClose={() => setIsOpen(false)}
+                  imageKey='src'
+                />
+              )}
       </div>
     );
   }

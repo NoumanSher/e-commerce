@@ -1,7 +1,7 @@
 "use client";
 import Image from "next/image";
 import React, { memo, useEffect, useState } from "react";
-import Logo from "../../../assets/img/Logo.png";
+import Logo from "../../../assets/img/logo.webp";
 import { FooterLinksData } from "@/data/data";
 import { CiMail } from "react-icons/ci";
 import { MdOutlinePhone } from "react-icons/md";
@@ -42,13 +42,12 @@ const FooterInfo = () => {
   return (
     <div>
       <Image
-        src={logo}
+        src={logo || Logo}
         priority={true}
         width={125}
         height={125}
         loading="eager"
         alt="Logo"
-        className=""
       />
       <div className="flex gap-2 mt-8 items-center cursor-pointer">
         <CiMail size={20} />

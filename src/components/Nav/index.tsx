@@ -15,6 +15,7 @@ import { useStore } from "@/Context/storeContext";
 import { useQuery } from "@tanstack/react-query";
 import { getStoreSetting } from "@/components/Slider/api/storeSettingApi";
 import Image from "next/image";
+import logo from '@/assets/img/logo.webp'
 
 const Navbar = () => {
   const pathname = usePathname();
@@ -92,6 +93,10 @@ const Navbar = () => {
 
   const handleNavigation = useCallback((path: string) => {
     if (window.innerWidth < 768) {
+      if(path === "/cart") {
+            router.push(path);
+            return;
+      }
       toggleMobileMenu();
     }
     router.push(path);
@@ -134,7 +139,7 @@ const Navbar = () => {
             >
               <div className="relative h-full">
                 <Image 
-                  src={storeSettings?.logo ?? "/default-logo.png"} 
+                  src={storeSettings?.logo ?? logo.src} 
                   className="object-contain object-center -my-6"
                   width={100}  
                   height={100}

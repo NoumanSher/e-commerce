@@ -1,15 +1,17 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { Avatar, AvatarFallback } from '@/components/ui/avatar';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { ThumbsUp, User, ShieldCheck } from 'lucide-react';
-import { StarRating } from './StarRating';
-import { Review } from '@/types';
-import { ReviewsAPI } from '@/lib/api/reviews';
-import { cn } from '@/lib/utils';
+import { useState } from "react";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { ThumbsUp, User, ShieldCheck, Divide } from "lucide-react";
+import { StarRating } from "./StarRating";
+import { Review } from "@/types";
+import { ReviewsAPI } from "@/lib/api/reviews";
+import { cn } from "@/lib/utils";
+import Image from "next/image";
+import ImageLightbox from "@/components/ImageLightbox";
 
 interface ReviewCardProps {
   review: Review;
@@ -18,11 +20,17 @@ interface ReviewCardProps {
   onHelpfulUpdate?: (reviewId: string) => void;
 }
 
-export function ReviewCard({ review, onHelpfulUpdate ,userId,token}: ReviewCardProps) {
+export function ReviewCard({
+  review,
+  onHelpfulUpdate,
+  userId,
+  token,
+}: ReviewCardProps) {
   const [helpfulCount, setHelpfulCount] = useState(review.helpfulCount);
   const [isMarkingHelpful, setIsMarkingHelpful] = useState(false);
   const [hasMarkedHelpful, setHasMarkedHelpful] = useState(false);
-
+  const [isOpen, setIsOpen] = useState(false);
+  const [startIndex, setStartIndex] = useState(0);
   const isAlreadyMarkedHelpful = review.helpfulBy.includes(userId);
 
   const handleMarkHelpful = async () => {
@@ -30,23 +38,23 @@ export function ReviewCard({ review, onHelpfulUpdate ,userId,token}: ReviewCardP
 
     setIsMarkingHelpful(true);
     try {
-      await ReviewsAPI.markHelpful(review._id,userId,token);
+      await ReviewsAPI.markHelpful(review._id, userId, token);
       // const newCount = helpfulCount + 1;
       // setHelpfulCount(newCount);
       setHasMarkedHelpful(true);
       onHelpfulUpdate?.(review._id);
     } catch (error) {
-      console.error('Failed to mark review as helpful:', error);
+      console.error("Failed to mark review as helpful:", error);
     } finally {
       setIsMarkingHelpful(false);
     }
   };
 
   const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
+    return new Date(dateString).toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
     });
   };
 
@@ -91,15 +99,48 @@ export function ReviewCard({ review, onHelpfulUpdate ,userId,token}: ReviewCardP
               {review.description}
             </p>
 
+          <>
+      <div className="flex flex-wrap gap-2 mt-2">
+        {review.images.map((url, index) => (
+          <div
+            key={index}
+            onClick={() => {
+              setStartIndex(index);
+              setIsOpen(true);
+            }}
+            className="cursor-pointer"
+          >
+            <Image
+              height={96}
+              width={96}
+              src={url}
+              alt="Review image"
+              className="rounded-md hover:opacity-80 transition aspect-square object-cover"
+            />
+          </div>
+        ))}
+      </div>
+
+      {isOpen && (
+        <ImageLightbox
+          images={review.images}
+          initialIndex={startIndex}
+          onClose={() => setIsOpen(false)}
+        />
+      )}
+    </>
+
             <div className="flex items-center justify-between pt-2">
               <Button
                 variant="ghost"
                 size="sm"
                 onClick={handleMarkHelpful}
-                disabled={hasMarkedHelpful || isMarkingHelpful || isAlreadyMarkedHelpful}
+                disabled={
+                  hasMarkedHelpful || isMarkingHelpful || isAlreadyMarkedHelpful
+                }
                 className={cn(
-                  'text-muted-foreground hover:text-foreground',
-                  hasMarkedHelpful && 'text-primary'
+                  "text-muted-foreground hover:text-foreground",
+                  hasMarkedHelpful && "text-primary"
                 )}
               >
                 <ThumbsUp className="w-4 h-4 mr-2" />
