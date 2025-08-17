@@ -3,7 +3,8 @@
 
 import React from 'react';
 import { useRouter } from 'next/navigation';
-
+import { IoArrowBack } from "react-icons/io5";
+import { RiArrowGoBackLine } from "react-icons/ri";
 const Header: React.FC<{ orderDate: string }> = ({ orderDate }) => {
   const router = useRouter();
 
@@ -13,8 +14,8 @@ const Header: React.FC<{ orderDate: string }> = ({ orderDate }) => {
         <h2 className="lg:text-xl text-base font-semibold text-primary">Order Details</h2>
         <p>{orderDate}</p>
       </div>
-      <button onClick={() => router.back()} className="text-blue-500 underline">
-        Back to List
+      <button onClick={() => router.back()} className="text-black">
+       <RiArrowGoBackLine title='Go back' size={30} />
       </button>
     </div>
   );

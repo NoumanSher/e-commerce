@@ -11,14 +11,13 @@ import {
   useCallback,
 } from "react";
 import { Product } from "@/components/productDetail/productDetailDto";
-import { ProductDetailData,CartItem } from "@/types"; // Import interface
-
-
+import { ProductDetailData, CartItem } from "@/types"; // Import interface
 
 interface StoreContextProps {
   isCartOpen: boolean;
   orderNumber: string;
   userId: string;
+  userName: string;
   selectedCategory: string | null;
   updateSelectedCategory: (categoryId: string) => void;
   updateProductDetailtData: (object: ProductDetailData) => void;
@@ -29,6 +28,7 @@ interface StoreContextProps {
   setIsCartOpen: (value: boolean) => void;
   setOrderNumber: (value: string) => void;
   setUserId: (value: string) => void;
+  setUserName: (value: string) => void;
   setIsLogIn: (value: string) => void;
   setWishlist: Dispatch<SetStateAction<Product[]>>;
   setCartItems: Dispatch<SetStateAction<CartItem[]>>;
@@ -94,6 +94,15 @@ const saveUserIdInStorage = (userId: string) => {
     }
   }
 };
+const saveUserNameInStorage = (userName: string) => {
+  if (typeof window !== "undefined") {
+    try {
+      localStorage.setItem("userName", userName);
+    } catch {
+      console.warn("Failed to save userName in localStorage.");
+    }
+  }
+};
 const getInitialWishlist = (): Product[] => {
   if (typeof window !== "undefined") {
     const savedWishlist = localStorage.getItem("wishlist");
@@ -115,10 +124,18 @@ const getUserId = (): string => {
   }
   return "";
 };
+const getUserName = (): string => {
+  if (typeof window !== "undefined") {
+    const userName = localStorage.getItem("userName");
+    return userName ? userName : "";
+  }
+  return "";
+};
 
 export const StoreProvider = ({ children }: { children: ReactNode }) => {
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [orderNumber, setOrderNumber] = useState("");
+  const [userName, setUserName] = useState(getUserName());
   const [isLogIn, setIsLogIn] = useState(getIsLogIn());
   const [userId, setUserId] = useState(getUserId());
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
@@ -168,6 +185,13 @@ export const StoreProvider = ({ children }: { children: ReactNode }) => {
       localStorage.removeItem("userId"); // Clear userId if logged out
     }
   }, [userId]);
+  useEffect(() => {
+    if (userName) {
+      saveUserNameInStorage(userName); // Save userName if logged in
+    } else {
+      localStorage.removeItem("userName"); // Clear userName if logged out
+    }
+  }, [userName]);
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -193,18 +217,10 @@ export const StoreProvider = ({ children }: { children: ReactNode }) => {
       setOrderNumber,
       userId,
       setUserId,
+      userName,
+      setUserName
     }),
-    [
-      isCartOpen,
-      orderNumber,
-      selectedCategory,
-      updateSelectedCategory,
-      wishlist,
-      cartItems,
-      isLogIn,
-      userId,
-      productDetail,
-    ]
+    [isCartOpen, selectedCategory, updateSelectedCategory, wishlist, cartItems, isLogIn, productDetail, orderNumber, userId, userName]
   );
 
   return (

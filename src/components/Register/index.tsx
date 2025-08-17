@@ -11,7 +11,7 @@ const RegisterSchema = Yup.object().shape({
     .required("Email address is required"),
   username: Yup.string().required("Username is required"),
   mobilePhone: Yup.string()
-    .matches(/^\+92\d{9,10}$/, "Phone number must start with +92 and be valid")
+    .matches(/^(?:\+923\d{9}|03\d{9})$/, "Enter valid phone number +923XXXXXXXXX  or 03XXXXXXXXX")
     .required("Phone number is required"),
   password: Yup.string()
     .required("Password is required")
@@ -33,6 +33,21 @@ export default function Register() {
   }, [Url, isSuccess, router]);
 
   const handleSubmit = (values: RegisterPayload) => {
+    let phone = values.mobilePhone.trim();
+
+    // If starts with 03 -> convert to +923
+    if (/^03\d{9}$/.test(phone)) {
+      phone = "+92" + phone.slice(1);
+    }
+
+    // If starts with 92 without + -> fix it
+    if (/^92\d{10}$/.test(phone)) {
+      phone = "+" + phone;
+    }
+
+    
+
+    values.mobilePhone = phone; // normalized value
     mutate(values);
   };
 

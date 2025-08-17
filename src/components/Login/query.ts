@@ -12,13 +12,14 @@ interface CustomError extends Error {
 }
 
 export const useLogIn = () => {
-  const { setIsLogIn ,setUserId} = useStore();
+  const { setIsLogIn ,setUserId,setUserName} = useStore();
   return useMutation<LogInResponse, CustomError, LogInPayload>({
     mutationFn: logInUser,
     onSuccess: (data) => {
       
       setIsLogIn(data.token);
       setUserId(data.data._id);
+      setUserName(data.data.username);
       toast.success(data.message);
     },
     onError: (error) => {
