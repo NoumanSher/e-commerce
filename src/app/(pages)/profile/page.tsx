@@ -1,6 +1,6 @@
 "use client";
 
-import React, { use, useMemo } from "react";
+import React, { useMemo, useEffect, useState } from "react";
 import ProfileInfo from "./components/ProfileInfo";
 import AddressInfo from "./components/AddressInfo";
 import OrderHistoryTabel from "./components/OrderHistoryTabel";
@@ -11,28 +11,27 @@ import {
 import { useStore } from "@/Context/storeContext";
 import Loader from "@/components/Loader";
 import { Address } from "./profileDtos";
-const getSafeData = (data: any) => {
-  return {
-    orders: data?.data?.slice(0, 3) ?? [],
-  };
-};
-const getSafeDataForProfile = (data: Address): Address => {
-  return data;
-};
+
+const getSafeData = (data: any) => ({
+  orders: data?.data?.slice(0, 3) ?? [],
+});
 
 const ProfilePage = () => {
   const { userId, userName } = useStore();
   const { data, isLoading } = useGetOrdersByUserId(userId);
   const { data: profileDataResponse } = useGetProfileDetailByUserId(userId);
-  console.log(profileDataResponse);
+
+  const [mounted, setMounted] = useState(false);
+
+  // Ensure hydration consistency
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const OrdersData = useMemo(() => getSafeData(data), [data]);
-  const profileData = useMemo(
-    () => getSafeDataForProfile(profileDataResponse?.address as Address),
-    [profileDataResponse]
-  );
+  const profileData = profileDataResponse?.address as Address | undefined;
 
-  if (isLoading) return <Loader />;
+  if (!mounted || isLoading) return <Loader />;
 
   return (
     <div className="flex flex-col gap-y-3 lg:p-6">
@@ -40,16 +39,17 @@ const ProfilePage = () => {
         <ProfileInfo
           name={
             profileData
-              ? profileData?.firstName + " " + profileData?.lastName
+              ? `${profileData.firstName} ${profileData.lastName}`
               : userName
           }
         />
+
         {profileData ? (
           <AddressInfo
-            name={profileData?.firstName + " " + profileData?.lastName}
-            email={profileData?.email}
-            phone={profileData?.phone}
-            address={profileData?.streetAddress}
+            name={`${profileData.firstName} ${profileData.lastName}`}
+            email={profileData.email}
+            phone={profileData.phone}
+            address={profileData.streetAddress}
           />
         ) : (
           <div className="bg-card lg:w-[50%] w-full text-card-foreground p-4 rounded-lg shadow-md">
@@ -70,17 +70,18 @@ const ProfilePage = () => {
 
               <p className="text-lg font-medium">No delivery address</p>
               <p className="text-sm mt-1 mb-4">
-                Add an address to get your orders delivered in checkout time
+                Add an address to get your orders delivered at checkout
               </p>
             </div>
           </div>
         )}
       </div>
+
       <OrderHistoryTabel
         orders={OrdersData.orders}
         title="Recent Order History"
-        ordersLAutalLength={data?.data.length || 0}
-        isButtonVisible={true}
+        ordersLAutalLength={data?.data?.length || 0}
+        isButtonVisible
       />
     </div>
   );
