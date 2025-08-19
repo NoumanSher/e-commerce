@@ -38,6 +38,7 @@ const ProductInfo: React.FC<ProductDetailsProps> = ({ product }) => {
     sku,
     parentCategoryName,
     childCategoryName,
+    discount
   } = product;
 
   const [selectedColor, setSelectedColor] = useState("");
@@ -190,6 +191,7 @@ const ProductInfo: React.FC<ProductDetailsProps> = ({ product }) => {
         stockAvailability={availableStock}
         price={Number(productPrice)}
         description={description}
+        discount={discount}
       />
       {colors.length > 0 && (
         <SelectColorAndSize
@@ -236,7 +238,7 @@ const ProductInfo: React.FC<ProductDetailsProps> = ({ product }) => {
 
       <Tabs />
 
-      <div className="lg:mt-auto  sticky bottom-0">
+      <div className="mt-2 sm:mt-0  sticky bottom-0">
         <CheckOutBtn
           availableStock={availableStock}
           className="!w-[100%]"

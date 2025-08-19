@@ -2,7 +2,7 @@
 
 import React, { Suspense, lazy } from "react";
 import { useWishlist } from "@/components/hooks/useWishlist";
-// import WishCardList from "./WishCardList";
+import Loader from "@/components/Loader";
 const WishCardList = lazy(
   () => import("./WishCardList")
 );
@@ -12,8 +12,7 @@ export default function WishListPage() {
 
   return (
     <>
-      <Suspense fallback={<div>Loading Wish list .........</div>}>
-        <h1 className="text-3xl text-primary text-center mt-5">Wish List</h1>
+      <Suspense fallback={<Loader />}>
         <WishCardList products={wishlist} />
       </Suspense>
     </>

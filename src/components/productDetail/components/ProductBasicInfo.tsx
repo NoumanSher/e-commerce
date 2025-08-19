@@ -4,6 +4,7 @@ interface ProductInfoProps {
   title: string;
   price: number;
   stockAvailability: number;
+  discount: number;
   description: string;
 }
 
@@ -12,23 +13,30 @@ const ProductBasicInfo: React.FC<ProductInfoProps> = ({
   price,
   description,
   stockAvailability,
+  discount,
 }) => {
   return (
     <>
       <div className="flex justify-between items-center mb-3">
-        <h1 className="text-2xl font-medium line-clamp-1">{title}</h1>
-        <div>
-          <span
-            className={`mr-2  ${
-              stockAvailability === 0 ? "text-red-500" : "text-green-500"
-            }`}
-          >
-            Stock Availability
-          </span>
-          <span>{stockAvailability}</span>
+        <h1 className="text-2xl font-medium">{title}</h1>
+      </div>
+      <div className="flex justify-between items-center mb-3">
+        <div className="flex gap-x-4">
+          <p className="text-lg font-semibold">Rs {price.toFixed(0)}</p>
+          <p className="text-lg font-semibold">
+            <span className="text-red-500">Discount</span> {discount}% OFF
+          </p>
+        </div>
+        <div className="flex items-center">
+          {stockAvailability === 0 ? (
+            <span className="text-red-500">Out of Stock</span>
+          ) : (
+            <span className="text-green-600 text-base">
+              In Stock {stockAvailability}
+            </span>
+          )}
         </div>
       </div>
-      <p className="text-lg font-semibold mb-3">Rs {price.toFixed(0)}</p>
       <div className="text-gray-600 mb-4 lg:h-80 lg:overflow-y-auto">
         {typeof description === "string" &&
         /<[a-z][\s\S]*>/i.test(description) ? (
@@ -38,7 +46,7 @@ const ProductBasicInfo: React.FC<ProductInfoProps> = ({
         )}
       </div>
     </>
-  ); 
+  );
 };
 ProductBasicInfo.displayName = "ProductBasicInfo";
 

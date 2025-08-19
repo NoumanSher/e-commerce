@@ -7,7 +7,7 @@ const FooterInfo = lazy(() => import("./FooterInfo"));
 
 const  FooterMain=()=> {
   return (
-    <div  className="bg-[#e4e4e4]">
+    <div  className="bg-[#e4e4e4] mt-auto">
        <div>
         <Suspense fallback={<div>Loading...</div>}>
           <Services />

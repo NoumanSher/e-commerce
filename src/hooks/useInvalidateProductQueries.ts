@@ -32,7 +32,11 @@ export const useInvalidateProductQueries = (
       queryClient.invalidateQueries({ queryKey: ["product", id] })
     );
 
-    if (section !== "checkout") clearCart();
+    if (section !== "checkout") {
+      if (isSuccess) {
+        setTimeout(() => clearCart(), 3000);
+      }
+    }
 
     if (orderNo) setOrderNumber(orderNo);
     checkValidation();

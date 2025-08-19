@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Jost } from "next/font/google"; // Import Jost instead of Inter
+import { Jost } from "next/font/google"; 
 import "./globals.css";
 import Navbar from "@/components/Nav";
 import Footer from "@/components/Footer/footer";
@@ -7,10 +7,10 @@ import StoreTypeProviderWrapper from "@/Context/StoreTypeProviderWrapper";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
-import GoogleAnalytics from '@/components/GoogleAnalytics';
+import GoogleAnalytics from "@/components/GoogleAnalytics";
 import Provider from "@/Context/react-query-provider";
-import { Analytics } from "@vercel/analytics/next"
-import { SpeedInsights } from "@vercel/speed-insights/next"
+import { Analytics } from "@vercel/analytics/next";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 // const jost = Jost({ subsets: ["latin"] }); // Load the Jost font
 
 const jost = Jost({
@@ -30,10 +30,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={jost.className}>
+      <body className={`${jost.className} flex flex-col min-h-screen`}>
         <GoogleAnalytics gaId={process.env.GA_MEASUREMENT_ID as string} />
-        <Analytics/>
-        <SpeedInsights/>
+        <Analytics />
+        <SpeedInsights />
         <Provider>
           <StoreTypeProviderWrapper>
             <ToastContainer
@@ -42,7 +42,7 @@ export default function RootLayout({
               position="top-right"
             />
             <Navbar />
-            {children}
+           <main className="flex-1">{children}</main>
             <Footer />
             <ReactQueryDevtools initialIsOpen={false} />
           </StoreTypeProviderWrapper>

@@ -83,7 +83,7 @@ useEffect(() => {
         images.map((image, index) => (
           <div
             key={`${image.src}-${index}`}
-            className="flex-shrink-0 w-20 h-20 lg:w-24 lg:h-24"
+            className="flex-shrink-0 w-20 h-20 lg:w-24 lg:h-24 "
           >
             <Image
               src={image.src}
@@ -119,7 +119,7 @@ useEffect(() => {
         {/* zoom button */}
         <button className="top-2 right-2 absolute z-10" onClick={() => setIsOpen(true)}><Fullscreen className="hover:scale-105" /></button>
         {/* Thumbnails */}
-        <div className="flex lg:flex-col gap-2 overflow-x-auto lg:overflow-visible lg:order-1 order-2 px-1 py-2 lg:py-0 lg:px-0">
+        <div className="flex scrollbarHide lg:flex-col gap-2 overflow-x-auto lg:overflow-visible lg:order-1 order-2 px-1 py-2 lg:py-0 lg:px-0">
           {thumbnailList}
         </div>
 

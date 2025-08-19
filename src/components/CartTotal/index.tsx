@@ -1,12 +1,11 @@
 // /components/CartTotals.tsx
-import React, { useState } from "react";
 import { useCart } from "../hooks/useCart";
 
 interface ShoppingBagProps {
   checkValidation: any;
 }
 const CartTotals: React.FC<ShoppingBagProps> = ({ checkValidation }) => {
-  const [selectedShipping, setSelectedShipping] = useState("free");
+  // const [selectedShipping, setSelectedShipping] = useState("free");
   const { subTotal, totalCost } = useCart();
 
   return (
@@ -20,9 +19,9 @@ const CartTotals: React.FC<ShoppingBagProps> = ({ checkValidation }) => {
       </div>
 
       <div className="mb-4">
-        <span className="text-gray-700">SHIPPING</span>
+        {/* <span className="text-gray-700">SHIPPING</span> */}
         <div className="mt-2">
-          <label className="block">
+          {/* <label className="block">
             <input
               type="radio"
               name="shipping"
@@ -32,7 +31,7 @@ const CartTotals: React.FC<ShoppingBagProps> = ({ checkValidation }) => {
               className="mr-2"
             />
             Free shipping
-          </label>
+          </label> */}
           {/* <label className="block">
             <input
               type="radio"

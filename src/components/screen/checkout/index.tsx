@@ -7,7 +7,7 @@ import OrderSummaryComponent from "@/components/OrderSummary";
 import PaymentMethodComponent from "@/components/PaymentMethod";
 import { useStore } from "@/Context/storeContext";
 import { useOrderCreate } from "./query/orderCreateQuery";
-import { useSearchParams, useRouter } from "next/navigation"; 
+import { useSearchParams, useRouter } from "next/navigation";
 import { useCart } from "@/components/hooks/useCart";
 import { toast } from "react-toastify";
 import PreviousAddressComponent from "@/components/previousAddress/PreviousAddressComponent";
@@ -175,18 +175,13 @@ export default function Checkout({ checkValidation }: CheckoutProps) {
             <div className="lg:w-[30%] w-full">
               <OrderSummaryComponent />
               <PaymentMethodComponent />
-              {isPending ? (
-                <div className="flex items-center justify-center py-3 mt-4 lg:h-14 h-10">
-                  ...loading
-                </div>
-              ) : (
-                <button
-                  type="submit"
-                  className="sticky bottom-0 w-full bg-black text-white py-3 mt-4 lg:h-14 h-10 flex items-center justify-center"
-                >
-                  Place Order
-                </button>
-              )}
+
+              <button
+                type="submit"
+                className="sticky bottom-0 w-full bg-black text-white py-3 mt-4 lg:h-14 h-10 flex items-center justify-center"
+              >
+                {isPending ? "loading..." : "Place Order"}
+              </button>
             </div>
           </Form>
         </>
