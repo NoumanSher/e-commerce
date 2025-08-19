@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
+import { FaMinus, FaPlus } from "react-icons/fa";
 
 interface QuantitySelectorProps {
   quantity: number;
@@ -15,7 +16,6 @@ const QuantitySelector: React.FC<QuantitySelectorProps> = ({
   onQuantityChange,
   stock,
 }) => {
-  
   const [currentQuantity, setCurrentQuantity] = useState(quantity);
   useEffect(() => {
     setCurrentQuantity(quantity);
@@ -50,19 +50,19 @@ const QuantitySelector: React.FC<QuantitySelectorProps> = ({
     >
       <button
         onClick={handleDecrement}
-        className="rounded text-gray-400  hover:text-rose-800 transition-colors duration-200"
+        className="rounded text-gray-700  hover:text-rose-800 transition-colors duration-200"
         disabled={currentQuantity === 1 || currentQuantity === 0} // Disable decrement button when quantity is 0
         style={{
           cursor: currentQuantity === 0 ? "not-allowed" : "pointer",
           opacity: currentQuantity === 0 ? 0.5 : 1,
         }}
       >
-           <b>--</b>
+        <FaMinus />
       </button>
-      <span className="font-medium text-gray-400">{currentQuantity}</span>
+      <span className="font-semibold text-black">{currentQuantity}</span>
       <button
         onClick={handleIncrement}
-        className="rounded text-gray-400 hover:text-rose-800 transition-colors duration-200"
+        className="rounded text-gray-700 hover:text-rose-800 transition-colors duration-200"
         disabled={stock !== undefined && currentQuantity >= stock} // Disable increment button when quantity reaches stock limit
         style={{
           cursor:
@@ -72,7 +72,7 @@ const QuantitySelector: React.FC<QuantitySelectorProps> = ({
           opacity: stock !== undefined && currentQuantity >= stock ? 0.5 : 1,
         }}
       >
-        +
+        <FaPlus />
       </button>
     </div>
   );

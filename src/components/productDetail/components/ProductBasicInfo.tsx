@@ -23,9 +23,11 @@ const ProductBasicInfo: React.FC<ProductInfoProps> = ({
       <div className="flex justify-between items-center mb-3">
         <div className="flex gap-x-4">
           <p className="text-lg font-semibold">Rs {price.toFixed(0)}</p>
-          <p className="text-lg font-semibold">
-            <span className="text-red-500">Discount</span> {discount}% OFF
-          </p>
+          {discount && (
+            <p className="text-lg font-semibold">
+              <span className="text-red-500">Discount</span> {discount}% OFF
+            </p>
+          )}
         </div>
         <div className="flex items-center">
           {stockAvailability === 0 ? (
