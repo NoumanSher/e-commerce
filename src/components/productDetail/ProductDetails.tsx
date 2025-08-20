@@ -16,7 +16,7 @@ import { useStore } from "@/Context/storeContext";
 import { useCart } from "../hooks/useCart";
 const SocialMediaShareWithNoSSR = dynamic(
   () => import("./components/SocialMediaShare"),
-  { ssr: false }
+  { ssr: false, loading: () => <div className="h-10 w-20  animate-pulse rounded-lg bg-gray-300" /> }
 );
 
 interface ProductDetailsProps {
@@ -38,7 +38,7 @@ const ProductInfo: React.FC<ProductDetailsProps> = ({ product }) => {
     sku,
     parentCategoryName,
     childCategoryName,
-    discount
+    discount,
   } = product;
 
   const [selectedColor, setSelectedColor] = useState("");
@@ -227,7 +227,9 @@ const ProductInfo: React.FC<ProductDetailsProps> = ({ product }) => {
 
       <div className="flex gap-x-7 items-center mb-5">
         <WishlistButton product={product} />
-        <SocialMediaShareWithNoSSR />
+        <SocialMediaShareWithNoSSR
+          url={`https://www.pakshipper.com/product-detail/${_id}`}
+        />
       </div>
 
       <ProductMetaInfo

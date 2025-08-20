@@ -1,64 +1,120 @@
+import React, { useEffect, useState } from "react";
+import { Share, MessageCircle } from "lucide-react";
 import { PiShareNetworkThin } from "react-icons/pi";
-import {
-  HoverCard,
-  HoverCardContent,
-  HoverCardTrigger,
-} from "@/components/ui/hover-card";
-import { useEffect, useState } from "react";
-import React from "react";
+import { toast } from "react-toastify";
+interface SocialMediaShareProps {
+  url?: string;
+}
 
-const SocialMediaShare: React.FC = () => {
-  const [isOpen, setIsOpen] = useState(false);
-  const [isMobile, setIsMobile] = useState(() => window.innerWidth <= 768); // Initial state based on window width
+const SocialMediaShare: React.FC<SocialMediaShareProps> = ({ url = "" }) => {
+  const [isMobile, setIsMobile] = useState(false);
+  const [open, setOpen] = useState(false);
 
   useEffect(() => {
-    const handleResize = () => {
-      const isMobileScreen = window.innerWidth <= 768;
-      setIsMobile((prev) => (prev !== isMobileScreen ? isMobileScreen : prev));
-    };
-
-    window.addEventListener("resize", handleResize);
-    
-    return () => window.removeEventListener("resize", handleResize);
+    const update = () => setIsMobile(window.innerWidth <= 768);
+    update();
+    window.addEventListener("resize", update);
+    return () => window.removeEventListener("resize", update);
   }, []);
 
-  const toggleOpen = () => {
-    if (isMobile) {
-      setIsOpen((prev) => !prev); // Toggle open only on mobile
+  const encodedUrl = encodeURIComponent(url);
+
+  const handleFacebookClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    e.stopPropagation();
+    setOpen(false);
+  };
+
+  const handleInstagramClick = async (
+    e: React.MouseEvent<HTMLButtonElement>
+  ) => {
+    e.stopPropagation();
+    try {
+      await navigator.clipboard.writeText(url);
+      toast.success("Link copied to clipboard for Instagram sharing!");
+      setOpen(false);
+    } catch (err) {
+      console.error(err);
+      toast.error("Failed to copy link");
     }
   };
 
-  return (
-    <HoverCard openDelay={100} open={isMobile ? isOpen : undefined}>
-      <HoverCardTrigger className="group cursor-pointer" onClick={toggleOpen}>
-        <div className="flex gap-x-2 items-center pb-2">
+  const shareOptions = (
+    <div className="bg-white border border-gray-200 rounded-lg shadow-lg p-2 w-40 space-y-2">
+      <a
+        href={`https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}`}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="flex items-center gap-2 p-2 rounded hover:text-rose-800 hover:bg-gray-50 transition-colors"
+        onClick={handleFacebookClick}
+      >
+        <Share size={16} /> Facebook
+      </a>
+
+      <button
+        onClick={handleInstagramClick}
+        className="flex items-center gap-2 p-2 rounded hover:text-rose-800 hover:bg-gray-50 transition-colors w-full text-left"
+      >
+        <MessageCircle size={16} /> Instagram (Copy Link)
+      </button>
+    </div>
+  );
+
+  if (isMobile) {
+    return (
+      <div className="relative">
+        <div
+          className="flex gap-x-2 items-center pb-2 cursor-pointer group"
+          onClick={(e: React.MouseEvent<HTMLDivElement>) => {
+            e.preventDefault();
+            e.stopPropagation();
+            setOpen(!open);
+          }}
+        >
           <PiShareNetworkThin
-            className="group-hover:text-rose-800"
+            className="group-hover:text-rose-800 transition-colors"
             size={20}
-            title="share with your love"
           />
-          <p className="uppercase group-hover:text-rose-800 text-sm font-medium">
+          <p className="uppercase group-hover:text-rose-800 text-sm font-medium transition-colors">
             share
           </p>
         </div>
-      </HoverCardTrigger>
-      <HoverCardContent className="flex flex-col w-32">
-        <a href="http://" className="hover:text-rose-800">
-          Facebook
-        </a>
-        <a href="http://" className="hover:text-rose-800">
-          Twitter
-        </a>
-        <a href="http://" className="hover:text-rose-800">
-          Linkedin
-        </a>
-        <a href="http://" className="hover:text-rose-800">
-          Pinterest
-        </a>
-      </HoverCardContent>
-    </HoverCard>
+
+        {open && (
+          <>
+            <div
+              className="fixed inset-0 z-10"
+              onClick={() => setOpen(false)}
+            />
+            <div className="absolute top-full left-0 z-20 mt-1">
+              {shareOptions}
+            </div>
+          </>
+        )}
+      </div>
+    );
+  }
+
+  return (
+    <div
+      className="relative"
+      onMouseEnter={() => setOpen(true)}
+      onMouseLeave={() => setOpen(false)}
+    >
+      <div className="flex gap-x-2 items-center pb-2 cursor-pointer group">
+        <PiShareNetworkThin
+          className="group-hover:text-rose-800 transition-colors"
+          size={20}
+        />
+        <p className="uppercase group-hover:text-rose-800 text-sm font-medium transition-colors">
+          share
+        </p>
+      </div>
+
+      {open && (
+        <div className="absolute top-full left-0 z-20 mt-1">{shareOptions}</div>
+      )}
+    </div>
   );
 };
-SocialMediaShare.displayName = "SocialMediaShare";
 
-export default React.memo(SocialMediaShare);
+export default SocialMediaShare;
