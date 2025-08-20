@@ -5,6 +5,7 @@ import Image from "next/image";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import ImageLightbox from "../ImageLightbox";
 import { Fullscreen } from 'lucide-react';
+
 interface ImageGalleryProps {
   images: { src: string; alt: string }[];
   productName: string;
@@ -13,77 +14,154 @@ interface ImageGalleryProps {
 const OptimizedImageGallery = memo<ImageGalleryProps>(
   ({ images, productName }) => {
     const [currentIndex, setCurrentIndex] = useState(0);
-      const [isOpen, setIsOpen] = useState(false);
-    const [imagesLoaded, setImagesLoaded] = useState<Set<number>>(new Set());
+    const [isOpen, setIsOpen] = useState(false);
     const [isClient, setIsClient] = useState(false);
-    const preloadLinkRef = useRef<HTMLLinkElement | null>(null);
-useEffect(() => {
-    const nextIdx = (currentIndex + 1) % images.length;
-    // Create and append
-    const link = document.createElement('link');
-    link.rel = 'preload';
-    link.as  = 'image';
-    link.href = images[nextIdx].src;
-    document.head.appendChild(link);
+    
+    // Use refs instead of state to avoid unnecessary re-renders
+    const imagesLoadedRef = useRef<Set<number>>(new Set());
+    const preloadLinksRef = useRef<Set<HTMLLinkElement>>(new Set());
+    const loadingImagesRef = useRef<Set<number>>(new Set());
+    const isMountedRef = useRef(true);
 
-    // Save it so cleanup knows exactly which node to drop
-    preloadLinkRef.current = link;
+    // Cleanup on unmount
+    useEffect(() => {
+      isMountedRef.current = true;
+          const preloadLinks = preloadLinksRef.current;
 
-    return () => {
-      if (preloadLinkRef.current && document.head.contains(preloadLinkRef.current)) {
-        document.head.removeChild(preloadLinkRef.current);
+      return () => {
+        isMountedRef.current = false;
+        // Cleanup preload links
+        preloadLinks.forEach(link => {
+          if (document.head.contains(link)) {
+            document.head.removeChild(link);
+          }
+        });
+        preloadLinks.clear();
+      };
+    }, []);
+
+    // Optimized preload function with better error handling and cleanup
+    const preloadImage = useCallback((index: number) => {
+      if (!images[index] || 
+          imagesLoadedRef.current.has(index) || 
+          loadingImagesRef.current.has(index) ||
+          !isMountedRef.current) {
+        return;
       }
-      preloadLinkRef.current = null;
-    };
-  }, [currentIndex, images]);
 
-    // Ensure client-side rendering for interactive elements
+      loadingImagesRef.current.add(index);
+      
+      const img = new window.Image();
+      const src = images[index].src;
+      
+      const handleLoad = () => {
+        if (isMountedRef.current) {
+          imagesLoadedRef.current.add(index);
+          loadingImagesRef.current.delete(index);
+        }
+        cleanup();
+      };
+      
+      const handleError = () => {
+        if (isMountedRef.current) {
+          loadingImagesRef.current.delete(index);
+        }
+        cleanup();
+      };
+      
+      const cleanup = () => {
+        img.removeEventListener('load', handleLoad);
+        img.removeEventListener('error', handleError);
+      };
+      
+      img.addEventListener('load', handleLoad);
+      img.addEventListener('error', handleError);
+      img.src = src;
+    }, [images]);
+
+    // More efficient preloading with link tags
+    useEffect(() => {
+      if (!isClient || !images.length) return;
+
+      // Clear existing preload links
+      preloadLinksRef.current.forEach(link => {
+        if (document.head.contains(link)) {
+          document.head.removeChild(link);
+        }
+      });
+      preloadLinksRef.current.clear();
+
+      // Preload current and adjacent images with link tags (more efficient)
+      const indicesToPreload = [
+        currentIndex,
+        (currentIndex + 1) % images.length,
+        (currentIndex - 1 + images.length) % images.length
+      ];
+
+      indicesToPreload.forEach(index => {
+        if (images[index]) {
+          const link = document.createElement('link');
+          link.rel = 'preload';
+          link.as = 'image';
+          link.href = images[index].src;
+          document.head.appendChild(link);
+          preloadLinksRef.current.add(link);
+        }
+      });
+
+      // Fallback preloading for browsers that don't support link preload well
+      indicesToPreload.forEach(preloadImage);
+
+    }, [currentIndex, images, isClient, preloadImage]);
+
+    // Client-side rendering check
     useEffect(() => {
       setIsClient(true);
     }, []);
 
-    // Memoize navigation handlers
+    // Memoized navigation handlers with better performance
     const handleNext = useCallback(() => {
-      setCurrentIndex((prev) => (prev + 1) % images.length);
-    }, [images.length]);
+      setCurrentIndex((prev) => {
+        const next = (prev + 1) % images.length;
+        // Preload next image immediately
+        if (isClient) {
+          const nextNext = (next + 1) % images.length;
+          preloadImage(nextNext);
+        }
+        return next;
+      });
+    }, [images.length, isClient, preloadImage]);
 
     const handlePrev = useCallback(() => {
-      setCurrentIndex((prev) => (prev - 1 + images.length) % images.length);
-    }, [images.length]);
+      setCurrentIndex((prev) => {
+        const prevIndex = (prev - 1 + images.length) % images.length;
+        // Preload previous image immediately
+        if (isClient) {
+          const prevPrev = (prevIndex - 1 + images.length) % images.length;
+          preloadImage(prevPrev);
+        }
+        return prevIndex;
+      });
+    }, [images.length, isClient, preloadImage]);
 
     const handleThumbnailClick = useCallback((index: number) => {
-      setCurrentIndex(index);
-    }, []);
-    const preloadImage = useCallback(
-      (index: number) => {
-        if (images[index] && !imagesLoaded.has(index)) {
-          const img = new window.Image();
-          img.onload = () => {
-            setImagesLoaded((prev) => new Set(prev).add(index));
-          };
-          img.src = images[index].src;
+      if (index !== currentIndex) {
+        setCurrentIndex(index);
+        // Preload adjacent images when thumbnail is clicked
+        if (isClient) {
+          preloadImage((index + 1) % images.length);
+          preloadImage((index - 1 + images.length) % images.length);
         }
-      },
-      [images, imagesLoaded]
-    );
+      }
+    }, [currentIndex, isClient, preloadImage, images.length]);
 
-    // Preload adjacent images
-    useEffect(() => {
-      if (!isClient) return;
-
-      // Preload current and adjacent images
-      preloadImage(currentIndex);
-      preloadImage((currentIndex + 1) % images.length);
-      preloadImage((currentIndex - 1 + images.length) % images.length);
-    }, [currentIndex, images, imagesLoaded, isClient, preloadImage]);
-
-    // Memoize thumbnail list
+    // Optimized thumbnail rendering with better key and reduced re-renders
     const thumbnailList = useMemo(
       () =>
         images.map((image, index) => (
           <div
-            key={`${image.src}-${index}`}
-            className="flex-shrink-0 w-20 h-20 lg:w-24 lg:h-24 "
+            key={`thumb-${index}-${image.src}`}
+            className="flex-shrink-0 w-20 h-20 lg:w-24 lg:h-24"
           >
             <Image
               src={image.src}
@@ -97,15 +175,23 @@ useEffect(() => {
                   : "opacity-70 hover:opacity-90"
               }`}
               onClick={() => handleThumbnailClick(index)}
-              onMouseEnter={() => handleThumbnailClick(index)}
-              priority={index === 0}
-              loading={index === 0 ? "eager" : "lazy"}
+              onMouseEnter={() => {
+                // Only preload on hover, don't change current image
+                preloadImage(index);
+              }}
+              priority={index <= 2} // Prioritize first 3 images
+              loading={index <= 2 ? "eager" : "lazy"}
+              onLoad={() => {
+                // Mark as loaded when Next.js Image component loads
+                imagesLoadedRef.current.add(index);
+              }}
             />
           </div>
         )),
-      [images, productName, currentIndex, handleThumbnailClick]
+      [images, productName, currentIndex, handleThumbnailClick, preloadImage]
     );
 
+    // Early return for empty images
     if (!images.length) {
       return (
         <div className="w-full lg:w-[60%] aspect-square bg-gray-100 rounded-lg flex items-center justify-center">
@@ -116,8 +202,15 @@ useEffect(() => {
 
     return (
       <div className="relative flex flex-col lg:flex-row gap-4 w-full lg:w-[60%]">
-        {/* zoom button */}
-        <button className="top-2 right-2 absolute z-10" onClick={() => setIsOpen(true)}><Fullscreen className="hover:scale-105" /></button>
+        {/* Zoom button */}
+        <button 
+          className="top-2 right-2 absolute z-10 bg-white/80 hover:bg-white p-2 rounded-full shadow-md transition-all duration-200" 
+          onClick={() => setIsOpen(true)}
+          aria-label="Open image in fullscreen"
+        >
+          <Fullscreen className="hover:scale-105 w-4 h-4" />
+        </button>
+
         {/* Thumbnails */}
         <div className="flex scrollbarHide lg:flex-col gap-2 overflow-x-auto lg:overflow-visible lg:order-1 order-2 px-1 py-2 lg:py-0 lg:px-0">
           {thumbnailList}
@@ -132,11 +225,9 @@ useEffect(() => {
               fill
               sizes="(max-width: 768px) 100vw, 60vw"
               className="object-contain transition-opacity duration-300"
-              priority={true}
-              // quality={100}
+              priority={currentIndex <= 2}
               loading="eager"
-              // placeholder="blur"
-              // blurDataURL={images[currentIndex].src}
+              quality={90} // Slightly reduced quality for better performance
             />
           </div>
 
@@ -145,11 +236,6 @@ useEffect(() => {
             <>
               <button
                 onClick={handlePrev}
-                onMouseEnter={() =>
-                  preloadImage(
-                    (currentIndex - 1 + images.length) % images.length
-                  )
-                }
                 className="absolute left-2 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white text-gray-800 p-2 rounded-full shadow-md transition-all duration-200 opacity-0 group-hover:opacity-100 z-10"
                 aria-label="Previous image"
               >
@@ -158,9 +244,6 @@ useEffect(() => {
 
               <button
                 onClick={handleNext}
-                onMouseEnter={() =>
-                  preloadImage((currentIndex + 1) % images.length)
-                }
                 className="absolute right-2 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white text-gray-800 p-2 rounded-full shadow-md transition-all duration-200 opacity-0 group-hover:opacity-100 z-10"
                 aria-label="Next image"
               >
@@ -169,12 +252,12 @@ useEffect(() => {
             </>
           )}
 
-          {/* Image indicator */}
+          {/* Image indicator dots */}
           {images.length > 1 && (
             <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2">
               {images.map((_, index) => (
                 <button
-                  key={index}
+                  key={`dot-${index}`}
                   onClick={() => handleThumbnailClick(index)}
                   className={`w-2 h-2 rounded-full transition-all duration-200 ${
                     index === currentIndex ? "bg-white" : "bg-white/50"
@@ -185,14 +268,16 @@ useEffect(() => {
             </div>
           )}
         </div>
-           {isOpen && (
-                <ImageLightbox
-                  images={images}
-                  initialIndex={currentIndex}
-                  onClose={() => setIsOpen(false)}
-                  imageKey='src'
-                />
-              )}
+
+        {/* Lightbox */}
+        {isOpen && (
+          <ImageLightbox
+            images={images}
+            initialIndex={currentIndex}
+            onClose={() => setIsOpen(false)}
+            imageKey='src'
+          />
+        )}
       </div>
     );
   }
