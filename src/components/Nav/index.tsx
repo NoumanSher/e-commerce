@@ -15,7 +15,8 @@ import { useStore } from "@/Context/storeContext";
 import { useQuery } from "@tanstack/react-query";
 import { getStoreSetting } from "@/components/Slider/api/storeSettingApi";
 import Image from "next/image";
-import logo from '@/assets/img/logo.webp'
+import logo from "@/assets/img/logo.webp";
+import { FiHeart } from "react-icons/fi";
 
 const Navbar = () => {
   const pathname = usePathname();
@@ -30,19 +31,19 @@ const Navbar = () => {
   const router = useRouter();
   const lastScrollY = useRef(0);
   const navbarRef = useRef<HTMLDivElement>(null);
-  
+
   const { data: storeSettings } = useQuery({
     queryKey: ["settings"],
     queryFn: getStoreSetting,
-  }); 
+  });
 
   // Scroll handler for hide/show navbar
   const handleScroll = useCallback(() => {
     if (isHomePage) return;
-    
+
     const currentScrollY = window.scrollY;
     const navbarHeight = navbarRef.current?.offsetHeight || 0;
-    
+
     if (currentScrollY > lastScrollY.current && currentScrollY > navbarHeight) {
       // Scrolling down
       if (isNavbarVisible) {
@@ -54,16 +55,16 @@ const Navbar = () => {
         setIsNavbarVisible(true);
       }
     }
-    
+
     lastScrollY.current = currentScrollY;
   }, [isHomePage, isNavbarVisible]);
 
   useEffect(() => {
     setIsClient(true);
-    
+
     if (!isHomePage) {
-      window.addEventListener('scroll', handleScroll, { passive: true });
-      return () => window.removeEventListener('scroll', handleScroll);
+      window.addEventListener("scroll", handleScroll, { passive: true });
+      return () => window.removeEventListener("scroll", handleScroll);
     }
   }, [isHomePage, handleScroll]);
 
@@ -81,7 +82,7 @@ const Navbar = () => {
   };
 
   const toggleMobileMenu = useCallback(() => {
-    setIsMobileMenuOpen(prev => !prev);
+    setIsMobileMenuOpen((prev) => !prev);
   }, []);
 
   const handleProfileClick = useCallback(() => {
@@ -91,16 +92,19 @@ const Navbar = () => {
     router.push(isLogIn ? "/profile" : "/login");
   }, [isLogIn, router, toggleMobileMenu]);
 
-  const handleNavigation = useCallback((path: string) => {
-    if (window.innerWidth < 768) {
-      if(path === "/cart") {
-            router.push(path);
-            return;
+  const handleNavigation = useCallback(
+    (path: string) => {
+      if (window.innerWidth < 768) {
+        if (path === "/cart") {
+          router.push(path);
+          return;
+        }
+        toggleMobileMenu();
       }
-      toggleMobileMenu();
-    }
-    router.push(path);
-  }, [router, toggleMobileMenu]);
+      router.push(path);
+    },
+    [router, toggleMobileMenu]
+  );
 
   const navLinks = [
     { path: "/", label: "HOME" },
@@ -111,12 +115,12 @@ const Navbar = () => {
   return (
     <>
       {/* Fixed position navbar that handles the hide/show animation */}
-      <div 
+      <div
         ref={navbarRef}
         className={`
           fixed top-0 left-0 right-0 z-50 
           transition-transform duration-300 ease-in-out
-          ${isHomePage ? 'translate-y-0' : isNavbarVisible ? 'translate-y-0' : '-translate-y-full'}
+          ${isHomePage ? "translate-y-0" : isNavbarVisible ? "translate-y-0" : "-translate-y-full"}
         `}
       >
         {/* Actual navbar content */}
@@ -132,16 +136,16 @@ const Navbar = () => {
             </button>
 
             {/* Logo */}
-            <Link 
-              href="/" 
+            <Link
+              href="/"
               className="flex items-center mx-auto lg:mx-0 lg:mr-10 h-full"
               onClick={() => isMobileMenuOpen && toggleMobileMenu()}
             >
               <div className="relative h-full">
-                <Image 
-                  src={storeSettings?.logo ?? logo.src} 
+                <Image
+                  src={storeSettings?.logo ?? logo.src}
                   className="object-contain object-center -my-6"
-                  width={100}  
+                  width={100}
                   height={100}
                   alt="Store logo"
                   priority
@@ -165,17 +169,22 @@ const Navbar = () => {
             {/* Desktop Icons */}
             <div className="hidden lg:flex items-center space-x-5 ml-auto h-full">
               <SearchIcon className="text-lg cursor-pointer hover:text-gray-600" />
-              
+
               <ProfileAvatarIcon
                 onClick={handleProfileClick}
                 className="text-lg cursor-pointer hover:text-gray-600"
               />
 
-              <div className="relative h-full flex items-center">
-                <HeartIcon
-                  onClick={() => handleNavigation("/wish-list")}
-                  className="cursor-pointer hover:text-gray-600"
-                />
+              <div
+                className="relative h-full flex items-center cursor-pointer"
+                onClick={() => handleNavigation("/wish-list")}
+              >
+            
+                {isClient && wishlistCount > 0 ? (
+                  <FiHeart size={20} fill="red" stroke="red" />
+                ) : (
+                  <FiHeart size={20} />
+                )}
                 {isClient && wishlistCount > 0 && (
                   <span className="absolute lg:top-[24px] -right-[7px] w-4 h-4 bg-yellow-600 text-white text-xs font-medium rounded-full flex items-center justify-center">
                     {wishlistCount}
@@ -183,7 +192,10 @@ const Navbar = () => {
                 )}
               </div>
 
-              <div className="relative cursor-pointer h-full flex items-center" onClick={() => handleNavigation("/cart")}>
+              <div
+                className="relative cursor-pointer h-full flex items-center"
+                onClick={() => handleNavigation("/cart")}
+              >
                 <CartIcon className="text-lg hover:text-gray-600" />
                 {isClient && cartCount > 0 && (
                   <span className="absolute lg:top-[24px]  -right-2 w-4 h-4 bg-yellow-600 text-white text-xs font-medium rounded-full flex items-center justify-center">
@@ -194,7 +206,10 @@ const Navbar = () => {
             </div>
 
             {/* Mobile Cart Icon */}
-            <div className="lg:hidden relative cursor-pointer" onClick={() => handleNavigation("/cart")}>
+            <div
+              className="lg:hidden relative cursor-pointer"
+              onClick={() => handleNavigation("/cart")}
+            >
               <CartIcon className="text-lg hover:text-gray-600" />
               {isClient && cartCount > 0 && (
                 <span className="absolute top-[11px]  -right-2 w-4 h-4 bg-yellow-600 text-white text-xs font-medium rounded-full flex items-center justify-center">

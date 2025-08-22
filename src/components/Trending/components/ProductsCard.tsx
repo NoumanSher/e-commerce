@@ -38,11 +38,11 @@ const ProductsCard = () => {
       {isLoading || isFetching ? (
         <Loader />
       ) : (
-        <div className="flex flex-wrap gap-y-6">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 sm:gap-4">
           {productsData?.data.slice(0, 8).map((item) => (
             <div
               key={item._id}
-              className="w-[50%] md:w-[33.333%] lg:w-[25%]"
+              className=""
             >
               <MainCard item={item} />
             </div>

@@ -8,15 +8,15 @@ interface WishCardListProps {
 const WishCardList = ({ products }: WishCardListProps) => {
   return (
     
-      <div className="flex flex-wrap xl:max-w-[1440px] mx-auto xl:mt-14">
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 sm:gap-4 xl:max-w-[1440px] py-5 px-4 lg:px-6  mx-auto xl:my-14">
         {products.length > 0 ? (
           products?.map((item) => (
-            <div key={item._id} className="w-[50%] md:!w-[33.333%] lg:!w-[25%]">
+            <div key={item._id} className="">
               <MainCard item={item} />
             </div>
           ))
         ) : (
-          <div className="flex justify-center items-center w-full mt-5 sm:mt-0">
+          <div className="col-span-full flex justify-center items-center w-full mt-5 sm:mt-0">
           <div className="flex flex-col items-center justify-center text-gray-500">
             <svg
               className="w-16 h-16 mb-4 text-gray-300"

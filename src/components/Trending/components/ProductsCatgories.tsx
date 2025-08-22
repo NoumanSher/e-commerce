@@ -40,7 +40,7 @@ const ProductsCategories = () => {
                 >
                   {item.name}
                   <span
-                    className={`absolute left-0 bottom-0 h-[2.5px] bg-[#222222] transition-all duration-500 ease-in-out origin-bottom-left ${
+                    className={`absolute left-0 bottom-0 sm:h-[2.5px] bg-[#222222] transition-all duration-500 ease-in-out origin-bottom-left ${
                       selectedCategory === item._id
                         ? "w-full scale-x-100"
                         : "w-0 group-hover:w-full group-hover:scale-x-100 scale-x-0"

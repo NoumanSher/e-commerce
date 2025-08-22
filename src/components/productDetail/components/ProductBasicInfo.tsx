@@ -1,5 +1,6 @@
 import React from "react";
 import ReactHtmlParser from "html-react-parser";
+import { formatPrice } from "@/lib/utils";
 interface ProductInfoProps {
   title: string;
   price: number;
@@ -22,7 +23,7 @@ const ProductBasicInfo: React.FC<ProductInfoProps> = ({
       </div>
       <div className="flex justify-between items-center mb-3">
         <div className="flex gap-x-4">
-          <p className="text-lg font-semibold">Rs {price.toFixed(0)}</p>
+          <p className="text-lg font-semibold">Rs {formatPrice(price)}</p>
           {discount && (
             <p className="text-lg font-semibold">
               <span className="text-red-500">Discount</span> {discount}% OFF

@@ -125,9 +125,9 @@ debugger
 
       <TabsContent value="relatedProducts">
         {filteredRelatedProducts.length > 0 ? (
-          <div className="flex flex-wrap gap-y-6">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 sm:gap-4">
             {filteredRelatedProducts.map((item) => (
-              <div key={item._id} className="w-[50%] md:w-[33.333%] lg:w-[25%]">
+              <div key={item._id} className="">
                 <MainCard item={item} />
               </div>
             ))}
@@ -149,11 +149,11 @@ debugger
             Error loading recommended products
           </div>
         ) : filteredRecommendedProducts.length > 0 ? (
-          <div className="flex flex-wrap gap-y-6">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 sm:gap-4">
             {filteredRecommendedProducts.map((item) => (
               <div
                 key={item._id}
-                className="w-[50%] md:w-[33.333%] lg:w-[25%] px-2"
+                className=""
               >
                 <MainCard item={item} />
               </div>

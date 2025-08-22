@@ -5,10 +5,7 @@ interface SEO {
     slug: string;
   }
   
-  interface Category {
-    _id: string;
-    name: string;
-  }
+
   
   interface Image {
     src: string;

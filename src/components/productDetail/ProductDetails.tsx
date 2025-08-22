@@ -184,12 +184,12 @@ const ProductInfo: React.FC<ProductDetailsProps> = ({ product }) => {
     setSelectedQuantity(quantity);
   };
   return (
-    <div className="lg:px-8 pt-2 lg:w-[40%] flex flex-col   w-full">
+    <div className="lg:pl-8 pt-2 lg:w-[40%] flex flex-col   w-full">
       {/* <Breadcrumb /> */}
       <ProductBasicInfo
         title={productName}
         stockAvailability={availableStock}
-        price={Number(productPrice)}
+        price={productPrice}
         description={description}
         discount={discount}
       />
@@ -204,7 +204,7 @@ const ProductInfo: React.FC<ProductDetailsProps> = ({ product }) => {
         />
       )}
 
-      <div className="flex md:items-center justify-between md:justify-normal mt-4 gap-x-4 mb-5">
+      <div className="flex md:items-center justify-between md:justify-normal  gap-x-4 mb-4">
         <QuantitySelector
           className="h-14"
           quantity={
@@ -225,7 +225,7 @@ const ProductInfo: React.FC<ProductDetailsProps> = ({ product }) => {
         </Button>
       </div>
 
-      <div className="flex gap-x-7 items-center mb-5">
+      <div className="flex gap-x-7 items-center mb-3">
         <WishlistButton product={product} />
         <SocialMediaShareWithNoSSR
           url={`https://www.pakshipper.com/product-detail/${_id}`}

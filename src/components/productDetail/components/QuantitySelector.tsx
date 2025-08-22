@@ -62,7 +62,7 @@ const QuantitySelector: React.FC<QuantitySelectorProps> = ({
       <span className="font-semibold text-black">{currentQuantity}</span>
       <button
         onClick={handleIncrement}
-        className="rounded text-gray-700 hover:text-rose-800 transition-colors duration-200"
+        className="rounded text-gray-700 hover:text-green-800 transition-colors duration-200"
         disabled={stock !== undefined && currentQuantity >= stock} // Disable increment button when quantity reaches stock limit
         style={{
           cursor:

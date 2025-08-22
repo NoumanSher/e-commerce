@@ -34,10 +34,9 @@ export function ReviewForm({
   const [description, setDescription] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState("");
-    const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
+  const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
 
   const handleSubmit = async (e: React.FormEvent) => {
-
     e.preventDefault();
 
     if (!userId) {
@@ -55,13 +54,11 @@ export function ReviewForm({
       return;
     }
 
-
-
     setIsSubmitting(true);
     setError("");
 
     try {
-       let uploadedUrls: string[] = [];
+      let uploadedUrls: string[] = [];
       if (selectedFiles.length > 0) {
         uploadedUrls = await UploadImages(selectedFiles);
       }
@@ -111,11 +108,9 @@ export function ReviewForm({
     );
   }
 
-
-
   return (
     <div>
-      {!isReviewed && (
+      {!isReviewed && canReview && (
         <Card>
           <CardHeader>
             <CardTitle>Write a Review</CardTitle>
@@ -152,7 +147,7 @@ export function ReviewForm({
                 </p>
               </div>
 
-             <ReviewImagesUploader  onFilesChange={setSelectedFiles}/>
+              <ReviewImagesUploader onFilesChange={setSelectedFiles} />
 
               {error && (
                 <div className="text-sm text-destructive bg-destructive/10 p-3 rounded-md">
@@ -163,7 +158,10 @@ export function ReviewForm({
               <Button
                 type="submit"
                 disabled={
-                  isSubmitting || rating === 0 || !canReview || description.trim().length < 10
+                  isSubmitting ||
+                  rating === 0 ||
+                  !canReview ||
+                  description.trim().length < 10
                 }
                 className="w-full"
               >

@@ -29,9 +29,9 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ productId }) => {
   });
 
   useEffect(() => {
-    if (data?.data?.parentCategoryID) {
-    
-      updateSelectedCategory(data?.data.parentCategoryID);
+    if (data?.parentCategoryID) {
+    debugger
+      updateSelectedCategory(data?.parentCategoryID);
     }
   }, [data, updateSelectedCategory]);
 
@@ -49,8 +49,8 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ productId }) => {
       {/* Above-the-fold content */}
       {/* <Suspense fallback={<ProductDetailSkeleton />}> */}
         <div className="flex flex-col lg:flex-row">
-          <ProductImageGallery productName={data.data.productName} images={data.data.images ?? []} />
-          <ProductInfo product={data.data} />
+          <ProductImageGallery productName={data.productName} images={data.images ?? []} />
+          <ProductInfo product={data} />
         </div>
       {/* </Suspense> */}
 

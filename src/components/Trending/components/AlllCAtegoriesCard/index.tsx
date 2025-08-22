@@ -161,7 +161,7 @@ const AllCAtegoriesCardSection = () => {
         </div>
       </div>
 
-      <div className="flex flex-wrap xl:max-w-[1440px] mx-auto xl:mt-14 relative">
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 sm:gap-4 xl:max-w-[1440px] mx-auto xl:mt-14 relative">
         {(productsLoading || isFetching || loadingMore) && (
           <div className="fixed inset-0 bg-black bg-opacity-90 flex justify-center items-center z-10">
             <div className="text-white text-xl">Loading Products...</div>
@@ -169,7 +169,7 @@ const AllCAtegoriesCardSection = () => {
         )}
 
         {products.map((item) => (
-          <div key={item._id} className="w-[50%] md:!w-[33.333%] lg:!w-[25%] lg:mt-0 mt-5">
+          <div key={item._id} className=" my-5">
             <MainCard item={item} />
           </div>
         ))}
