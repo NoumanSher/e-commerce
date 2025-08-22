@@ -5,7 +5,7 @@ import Image from "next/image";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import ImageLightbox from "../ImageLightbox";
 import { Fullscreen } from "lucide-react";
-
+import { AnimatePresence, motion } from "framer-motion";
 interface ImageGalleryProps {
   images: { src: string; alt: string }[];
   productName: string;
@@ -17,7 +17,7 @@ const OptimizedImageGallery = memo<ImageGalleryProps>(
     const [isOpen, setIsOpen] = useState(false);
     const [isClient, setIsClient] = useState(false);
     const [isImageLoaded, setIsImageLoaded] = useState(false);
-
+const [direction, setDirection] = useState<"next" | "prev">("next");
     // Use refs instead of state to avoid unnecessary re-renders
     const imagesLoadedRef = useRef<Set<number>>(new Set());
     const preloadLinksRef = useRef<Set<HTMLLinkElement>>(new Set());
@@ -232,21 +232,35 @@ const OptimizedImageGallery = memo<ImageGalleryProps>(
         <div className="flex-1 lg:order-2 order-1 group relative">
           <div className="relative aspect-square w-full overflow-hidden rounded-lg bg-gray-100">
             {!isImageLoaded && (
-              <div className="absolute inset-0 flex items-center justify-center bg-gray-200 animate-pulse">
+              <div className="absolute inset-0 flex items-center justify-center bg-gray-200  animate-pulse">
                 <span className="text-gray-500 text-sm">Loading...</span>
               </div>
             )}
-            <Image
-              src={images[currentIndex].src}
-              alt={`${productName} - Image ${currentIndex + 1}`}
-              fill
-              sizes="(max-width: 768px) 100vw, 60vw"
-              className={`object-contain transition-opacity duration-300 ${isImageLoaded ? "opacity-100" : "opacity-0"}`}
-              priority={currentIndex <= 5}
-              loading="eager"
-              quality={90} // Slightly reduced quality for better performance
-              onLoad={() => setIsImageLoaded(true)}
-            />
+            <AnimatePresence mode="wait" initial={false} custom={direction}>
+    <motion.div
+      key={currentIndex}
+      custom={direction}
+      initial={{ x: direction === "next" ? 100 : -100, opacity: 0 }}
+      animate={{ x: 0, opacity: 1 }}
+      exit={{ x: direction === "next" ? -100 : 100, opacity: 0 }}
+      transition={{ duration: 0.4, ease: "easeInOut" }}
+      className="absolute inset-0 flex items-center justify-center"
+    >
+      <Image
+        src={images[currentIndex].src}
+        alt={`${productName} - Image ${currentIndex + 1}`}
+        fill
+        sizes="(max-width: 768px) 100vw, 60vw"
+        className={`object-contain transition-opacity duration-300 ${
+          isImageLoaded ? "opacity-100" : "opacity-0"
+        }`}
+        priority={currentIndex <= 5}
+        loading={currentIndex <= 5 ? "eager" : "lazy"}
+        quality={90}
+        onLoad={() => setIsImageLoaded(true)}
+      />
+    </motion.div>
+  </AnimatePresence>
           </div>
 
           {/* Navigation Buttons - Only render on client */}
