@@ -31,7 +31,7 @@ export function ProductReviews({
 
   const fetchReviews = useCallback(
     async (page: number = 1, sort = "asc") => {
-      debugger
+      
       try {
         setLoading(true);
         setError(null);
@@ -79,7 +79,7 @@ export function ProductReviews({
   };
 
   // const handleHelpfulUpdate = (reviewId: string) => {
-  //   debugger
+  //   
   //   if (!reviewsData) return;
 
   //   const updatedReviews = reviewsData.reviews.map((review) =>
@@ -102,7 +102,7 @@ export function ProductReviews({
   }
 
   if (error && !reviewsData) {
-    debugger;
+    
     return (
       <Alert variant="destructive">
         <AlertCircle className="h-4 w-4" />

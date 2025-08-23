@@ -65,7 +65,7 @@ export const fetchProducts = async (
     const { data } = await axios.get(
       `${BASE_URL}/products/get-all-products?${params.toString()}`
     );
-debugger
+
     return data;
   } catch (error) {
     const err = error as AxiosError;

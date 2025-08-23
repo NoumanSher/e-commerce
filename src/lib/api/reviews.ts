@@ -29,7 +29,7 @@ if (sortBY === "recent") {
   sortBY = "helpfulCount";
   sort = "asc";
 }
-    debugger;
+    
     try {
       const response = await fetch(
         `${BASE_URL}/reviews/product/${productId}?page=${page}&sortOrder=${sort}&sortBY=${sortBY}&userId=${userId}`,
@@ -43,7 +43,7 @@ if (sortBY === "recent") {
       console.log(response);
 
       if (!response.ok) {
-        debugger;
+        
         throw new Error(`Failed to fetch reviews: ${response.statusText}`);
       }
 
@@ -55,7 +55,7 @@ if (sortBY === "recent") {
   }
 
   static async createReview(payload: CreateReviewPayload): Promise<any> {
-    debugger
+    
     const response = await fetch(`${BASE_URL}/reviews`, {
       method: "POST",
       headers: {
@@ -68,7 +68,7 @@ if (sortBY === "recent") {
     const data = await response.json(); // Always parse JSON first
 
     if (!response.ok) {
-      debugger;
+      
       // Use the error message from server if available
       throw new Error(
         data.message || `Failed to create review: ${response.statusText}`
@@ -83,7 +83,7 @@ if (sortBY === "recent") {
     userId: string,
     token: string
   ): Promise<MarkHelpfulResponse> {
-    debugger;
+    
 
     try {
       const response = await fetch(`${BASE_URL}/reviews/review/helpful`, {

@@ -79,7 +79,7 @@ export function ReviewForm({
       // Notify parent component
       onReviewSubmitted?.();
     } catch (error) {
-      debugger;
+      
       setError(
         error instanceof Error ? error.message : "Failed to submit review"
       );

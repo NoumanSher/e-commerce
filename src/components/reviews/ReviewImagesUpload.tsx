@@ -14,7 +14,7 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({ onFilesChange }) => {
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
-    debugger;
+    
     const selectedFiles = event.target.files
       ? Array.from(event.target.files)
       : [];

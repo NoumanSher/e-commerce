@@ -30,7 +30,7 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ productId }) => {
 
   useEffect(() => {
     if (data?.parentCategoryID) {
-    debugger
+    
       updateSelectedCategory(data?.parentCategoryID);
     }
   }, [data, updateSelectedCategory]);

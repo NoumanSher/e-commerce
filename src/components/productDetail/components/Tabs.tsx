@@ -45,7 +45,7 @@ export default function RelatedProducts({ productId }: RelatedProductsProps) {
   // Set recommended category ID based on current category
   useEffect(() => {
     if (!category) return;
-debugger
+
     let newRecommendedCategoryId = "";
     if (category.slug === "all-categories") {
       newRecommendedCategoryId = "687e2abfec2eff18b9b2d1e3";
@@ -56,7 +56,7 @@ debugger
     }
 
     if (newRecommendedCategoryId) {
-      debugger
+      
       setRecommendedCategoryId(newRecommendedCategoryId);
     }
   }, [category]);
