@@ -7,7 +7,7 @@ import { AnimatePresence, motion } from "framer-motion";
 // import ImageLightbox from "../ImageLightbox";
 import dynamic from "next/dynamic";
 const ImageLightbox = dynamic(() => import("../ImageLightbox"), {
-  loading: () => <div>magnifier</div>,
+  loading: () => <div></div>,
 });
 interface ImageGalleryProps {
   images: { src: string; alt: string }[];
@@ -96,7 +96,7 @@ const MainImage = memo<{
     fill
     // sizes="(max-width: 768px) 100vw, 60vw"
     sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 60vw"
-    className={`object-contain transition-opacity duration-300 ${
+    className={`object-contain transition-opacity duration-300 h-full w-full ${
       isLoaded ? "opacity-100 " : "opacity-0"
     }`}
     fetchPriority={index === 0 ? "high" : "auto"}

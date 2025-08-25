@@ -151,15 +151,16 @@ export default function ImageLightbox({
 
         {/* UI CONTROLS (fade in/out) */}
         <AnimatePresence>
-          {showControls && (
-            <>
-              <button
+            <button
                 aria-label="Close"
                 className="absolute top-4 right-4 p-2 text-white hover:text-gray-300 z-50"
                 onClick={onClose}
               >
                 <X size={28} />
               </button>
+          {showControls && (
+            <>
+            
 
               {images.length > 1 && (
                 <>
