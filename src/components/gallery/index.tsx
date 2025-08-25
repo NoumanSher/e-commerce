@@ -1,13 +1,6 @@
 "use client";
 
-import {
-  memo,
-  useCallback,
-  useEffect,
-  useState,
-  useMemo,
-  useRef,
-} from "react";
+import { memo, useCallback, useEffect, useState, useMemo, useRef } from "react";
 import Image from "next/image";
 import { ChevronLeft, ChevronRight, Fullscreen } from "lucide-react";
 import { AnimatePresence, motion } from "framer-motion";
@@ -18,6 +11,27 @@ interface ImageGalleryProps {
   productName: string;
 }
 
+// Simple inline blur (light gray 1×1 pixel)
+const defaultBlur =
+  "data:image/svg+xml;base64," +
+  btoa(
+    `<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32">
+      <defs>
+        <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+          <stop stop-color="#ff9a9e" offset="0%">
+            <animate attributeName="stop-color" values="#ff9a9e;#fad0c4;#ff9a9e" dur="2s" repeatCount="indefinite" />
+          </stop>
+          <stop stop-color="#fad0c4" offset="100%">
+            <animate attributeName="stop-color" values="#fad0c4;#ff9a9e;#fad0c4" dur="2s" repeatCount="indefinite" />
+          </stop>
+        </linearGradient>
+      </defs>
+      <rect width="32" height="32" fill="url(#g)">
+        <animate attributeName="opacity" values="0.6;1;0.6" dur="1.5s" repeatCount="indefinite" />
+      </rect>
+    </svg>`
+  );
+
 /* ---------------- Thumbnail ---------------- */
 const ThumbnailImage = memo<{
   image: { src: string; alt: string };
@@ -27,30 +41,37 @@ const ThumbnailImage = memo<{
   onClick: (index: number) => void;
   onPreload: (index: number) => void;
   onLoad: (index: number) => void;
-}>(({ image, index, currentIndex, productName, onClick, onPreload, onLoad }) => {
-  const isActive = index === currentIndex;
+}>(
+  ({ image, index, currentIndex, productName, onClick, onPreload, onLoad }) => {
+    const isActive = index === currentIndex;
 
-  return (
-    <div className="flex-shrink-0 w-20 h-20 lg:w-24 lg:h-24">
-      <Image
-        src={image.src}
-        alt={`${productName} thumbnail ${index + 1}`}
-        width={96}
-        height={96}
-        sizes="(max-width: 768px) 80px, 96px"
-        className={`cursor-pointer w-full h-full object-cover rounded-lg transition-all duration-200 ${
-          isActive
-            ? "ring-2 ring-blue-500 opacity-100"
-            : "opacity-70 hover:opacity-90"
-        }`}
-        onClick={() => onClick(index)}
-        onMouseEnter={() => onPreload(index)}
-        loading="lazy"
-        onLoad={() => onLoad(index)}
-      />
-    </div>
-  );
-});
+    return (
+      <div
+        className="flex-shrink-0 w-20 h-20 lg:w-24 lg:h-24 thumbnail"
+        data-index={index}
+      >
+        <Image
+          src={image.src}
+          alt={`${productName} thumbnail ${index + 1}`}
+          width={96}
+          height={96}
+          sizes="(max-width: 768px) 80px, 96px"
+          className={`cursor-pointer w-full h-full object-cover rounded-lg transition-all duration-200 ${
+            isActive
+              ? "ring-2 ring-blue-500 opacity-100"
+              : "opacity-70 hover:opacity-90"
+          }`}
+          onClick={() => onClick(index)}
+          onMouseEnter={() => onPreload(index)}
+          loading="lazy"
+          onLoad={() => onLoad(index)}
+          placeholder="blur"
+          blurDataURL={defaultBlur}
+        />
+      </div>
+    );
+  }
+);
 ThumbnailImage.displayName = "ThumbnailImage";
 
 /* ---------------- Main Image ---------------- */
@@ -69,10 +90,12 @@ const MainImage = memo<{
     className={`object-contain transition-opacity duration-300 ${
       isLoaded ? "opacity-100 " : "opacity-0"
     }`}
-    priority={index === 0}
+    fetchPriority={index === 0 ? "high" : "auto"}
     loading={index === 0 ? "eager" : "lazy"}
     quality={90}
     onLoad={() => onLoad(index)}
+    placeholder="blur"
+    blurDataURL={defaultBlur}
   />
 ));
 MainImage.displayName = "MainImage";
@@ -130,15 +153,16 @@ const OptimizedImageGallery = memo<ImageGalleryProps>(
     const [isOpen, setIsOpen] = useState(false);
     const [direction, setDirection] = useState<"next" | "prev">("next");
 
-    // Track loaded images without mutating state
-    const loadedImagesRef = useRef<Set<number>>(new Set());
-    const [, forceUpdate] = useState(0);
+    // Track loaded images properly
+    const [loaded, setLoaded] = useState<boolean[]>(() =>
+      Array(images.length).fill(false)
+    );
 
     const preloadedRef = useRef(new Set<number>());
 
-    const isCurrentImageLoaded = loadedImagesRef.current.has(currentIndex);
+    const isCurrentImageLoaded = loaded[currentIndex];
 
-    // Preload function (safe polyfill)
+    // Preload helper
     const preloadImage = useCallback(
       (index: number) => {
         if (!images[index] || preloadedRef.current.has(index)) return;
@@ -151,19 +175,22 @@ const OptimizedImageGallery = memo<ImageGalleryProps>(
     );
 
     const handleImageLoad = useCallback((index: number) => {
-      if (!loadedImagesRef.current.has(index)) {
-        loadedImagesRef.current.add(index);
-        forceUpdate((x) => x + 1);
-      }
+      setLoaded((prev) => {
+        if (prev[index]) return prev;
+        const next = [...prev];
+        next[index] = true;
+        return next;
+      });
     }, []);
 
-    // Preload adjacent images
+    // Preload current ±2 images
     useEffect(() => {
       if (!images.length) return;
 
       const indices = [
         currentIndex,
         (currentIndex + 1) % images.length,
+        (currentIndex + 2) % images.length,
         (currentIndex - 1 + images.length) % images.length,
       ];
 
@@ -190,10 +217,8 @@ const OptimizedImageGallery = memo<ImageGalleryProps>(
       (index: number) => {
         if (index === currentIndex) return;
 
-        const forward =
-          (index - currentIndex + images.length) % images.length;
-        const backward =
-          (currentIndex - index + images.length) % images.length;
+        const forward = (index - currentIndex + images.length) % images.length;
+        const backward = (currentIndex - index + images.length) % images.length;
 
         setDirection(forward <= backward ? "next" : "prev");
         setCurrentIndex(index);
@@ -216,7 +241,14 @@ const OptimizedImageGallery = memo<ImageGalleryProps>(
             onLoad={handleImageLoad}
           />
         )),
-      [images, currentIndex, productName, handleThumbnailClick, preloadImage, handleImageLoad]
+      [
+        images,
+        currentIndex,
+        productName,
+        handleThumbnailClick,
+        preloadImage,
+        handleImageLoad,
+      ]
     );
 
     // Empty state
