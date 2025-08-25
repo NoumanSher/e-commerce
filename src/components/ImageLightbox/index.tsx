@@ -29,6 +29,8 @@ export default function ImageLightbox({
   const [imagesLoaded, setImagesLoaded] = useState<Set<number>>(new Set());
   const [loading, setLoading] = useState(true);
 
+  const [showControls, setShowControls] = useState(false); // 👈 added
+
   const preloadLinksRef = useRef<Set<HTMLLinkElement>>(new Set());
   const isMountedRef = useRef(true);
 
@@ -40,7 +42,8 @@ export default function ImageLightbox({
 
   const preloadImage = useCallback(
     (index: number) => {
-      if (!images[index] || imagesLoaded.has(index) || !isMountedRef.current) return;
+      if (!images[index] || imagesLoaded.has(index) || !isMountedRef.current)
+        return;
       const link = document.createElement("link");
       link.rel = "preload";
       link.as = "image";
@@ -109,8 +112,11 @@ export default function ImageLightbox({
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
         {...swipeHandlers}
+        onMouseEnter={() => setShowControls(true)} // 👈 show on hover (desktop)
+        onMouseLeave={() => setShowControls(false)} // 👈 hide when leave
+        onClick={() => setShowControls((prev) => !prev)} // 👈 toggle on tap (mobile)
       >
-        {/* IMAGE LAYER (kept beneath buttons) */}
+        {/* IMAGE LAYER */}
         <motion.div
           key={currentIndex}
           initial={{ opacity: 0, x: 50 }}
@@ -119,7 +125,6 @@ export default function ImageLightbox({
           transition={{ duration: 0.3 }}
           className="relative w-full h-full flex items-center justify-center px-8 py-8 z-0 pointer-events-none"
         >
-          {/* Loader - never blocks clicks */}
           {loading && (
             <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
               <div className="w-10 h-10 border-4 border-white/30 border-t-white rounded-full animate-spin" />
@@ -130,11 +135,12 @@ export default function ImageLightbox({
             src={getUrl(images[currentIndex]) || ""}
             alt={`Image ${currentIndex + 1}`}
             fill
-            sizes="100vw"
+            sizes="(max-width: 768px) 100vw, 90vw" // optimize size
             className="object-contain pointer-events-none"
+            fetchPriority="high"
             draggable={false}
             priority
-            quality={95}
+            quality={100}
             onLoad={() => {
               setLoading(false);
               setImagesLoaded((prev) => new Set(prev).add(currentIndex));
@@ -143,38 +149,44 @@ export default function ImageLightbox({
           />
         </motion.div>
 
-        {/* UI CONTROLS (render after image so they’re on top) */}
-        <button
-          aria-label="Close"
-          className="absolute top-4 right-4 p-2 text-white hover:text-gray-300 z-50"
-          onClick={onClose}
-        >
-          <X size={28} />
-        </button>
+        {/* UI CONTROLS (fade in/out) */}
+        <AnimatePresence>
+          {showControls && (
+            <>
+              <button
+                aria-label="Close"
+                className="absolute top-4 right-4 p-2 text-white hover:text-gray-300 z-50"
+                onClick={onClose}
+              >
+                <X size={28} />
+              </button>
 
-        {images.length > 1 && (
-          <>
-            <div className="absolute top-4 left-1/2 -translate-x-1/2 bg-black/50 text-white px-4 py-2 rounded-lg text-sm z-50">
-              {currentIndex + 1} / {images.length}
-            </div>
+              {images.length > 1 && (
+                <>
+                  <div className="absolute top-4 left-1/2 -translate-x-1/2 bg-black/50 text-white px-4 py-2 rounded-lg text-sm z-50">
+                    {currentIndex + 1} / {images.length}
+                  </div>
 
-            <button
-              aria-label="Previous image"
-              className="absolute left-4 top-1/2 -translate-y-1/2 p-3 text-white hover:text-gray-300 bg-black/30 rounded-full z-50"
-              onClick={prevImage}
-            >
-              <ChevronLeft size={24} />
-            </button>
+                  <button
+                    aria-label="Previous image"
+                    className="absolute left-4 top-1/2 -translate-y-1/2 p-3 text-white hover:text-gray-300 bg-black/30 rounded-full z-50"
+                    onClick={prevImage}
+                  >
+                    <ChevronLeft size={24} />
+                  </button>
 
-            <button
-              aria-label="Next image"
-              className="absolute right-4 top-1/2 -translate-y-1/2 p-3 text-white hover:text-gray-300 bg-black/30 rounded-full z-50"
-              onClick={nextImage}
-            >
-              <ChevronRight size={24} />
-            </button>
-          </>
-        )}
+                  <button
+                    aria-label="Next image"
+                    className="absolute right-4 top-1/2 -translate-y-1/2 p-3 text-white hover:text-gray-300 bg-black/30 rounded-full z-50"
+                    onClick={nextImage}
+                  >
+                    <ChevronRight size={24} />
+                  </button>
+                </>
+              )}
+            </>
+          )}
+        </AnimatePresence>
       </motion.div>
     </AnimatePresence>
   );

@@ -4,8 +4,11 @@ import { memo, useCallback, useEffect, useState, useMemo, useRef } from "react";
 import Image from "next/image";
 import { ChevronLeft, ChevronRight, Fullscreen } from "lucide-react";
 import { AnimatePresence, motion } from "framer-motion";
-import ImageLightbox from "../ImageLightbox";
-
+// import ImageLightbox from "../ImageLightbox";
+import dynamic from "next/dynamic";
+const ImageLightbox = dynamic(() => import("../ImageLightbox"), {
+  loading: () => <div>magnifier</div>,
+});
 interface ImageGalleryProps {
   images: { src: string; alt: string }[];
   productName: string;
@@ -14,7 +17,7 @@ interface ImageGalleryProps {
 // Simple inline blur (light gray 1×1 pixel)
 const defaultBlur =
   "data:image/svg+xml;base64," +
-btoa(
+  btoa(
     `<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
       <defs>
         <linearGradient id="shimmer" x1="0%" y1="0%" x2="100%" y2="0%">
