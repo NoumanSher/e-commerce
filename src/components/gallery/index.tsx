@@ -14,21 +14,26 @@ interface ImageGalleryProps {
 // Simple inline blur (light gray 1×1 pixel)
 const defaultBlur =
   "data:image/svg+xml;base64," +
-  btoa(
-    `<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32">
+btoa(
+    `<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
       <defs>
-        <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
-          <stop stop-color="#ff9a9e" offset="0%">
-            <animate attributeName="stop-color" values="#ff9a9e;#fad0c4;#ff9a9e" dur="2s" repeatCount="indefinite" />
-          </stop>
-          <stop stop-color="#fad0c4" offset="100%">
-            <animate attributeName="stop-color" values="#fad0c4;#ff9a9e;#fad0c4" dur="2s" repeatCount="indefinite" />
-          </stop>
+        <linearGradient id="shimmer" x1="0%" y1="0%" x2="100%" y2="0%">
+          <stop offset="0%" stop-color="#f0f0f0" stop-opacity="1" />
+          <stop offset="20%" stop-color="#e0e0e0" stop-opacity="1" />
+          <stop offset="40%" stop-color="#f8f8f8" stop-opacity="1" />
+          <stop offset="60%" stop-color="#e0e0e0" stop-opacity="1" />
+          <stop offset="100%" stop-color="#f0f0f0" stop-opacity="1" />
+          <animateTransform
+            attributeName="gradientTransform"
+            type="translate"
+            values="-32 0;32 0;-32 0"
+            dur="1.5s"
+            repeatCount="indefinite"
+          />
         </linearGradient>
       </defs>
-      <rect width="32" height="32" fill="url(#g)">
-        <animate attributeName="opacity" values="0.6;1;0.6" dur="1.5s" repeatCount="indefinite" />
-      </rect>
+      <rect width="32" height="32" fill="#f0f0f0" />
+      <rect width="32" height="32" fill="url(#shimmer)" opacity="0.7" />
     </svg>`
   );
 
@@ -86,11 +91,13 @@ const MainImage = memo<{
     src={image.src}
     alt={image.alt || `${productName} - Image ${index + 1}`}
     fill
-    sizes="(max-width: 768px) 100vw, 60vw"
+    // sizes="(max-width: 768px) 100vw, 60vw"
+    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 60vw"
     className={`object-contain transition-opacity duration-300 ${
       isLoaded ? "opacity-100 " : "opacity-0"
     }`}
     fetchPriority={index === 0 ? "high" : "auto"}
+    priority={index === 0}
     loading={index === 0 ? "eager" : "lazy"}
     quality={90}
     onLoad={() => onLoad(index)}
@@ -280,7 +287,7 @@ const OptimizedImageGallery = memo<ImageGalleryProps>(
 
         {/* Main image */}
         <div className="flex-1 lg:order-2 order-1 group relative">
-          <div className="relative aspect-[4/5] sm:aspect-square w-full overflow-hidden rounded-lg bg-gray-100">
+          <div className="relative aspect-[4/5] sm:aspect-square w-full overflow-hidden rounded-lg">
             {!isCurrentImageLoaded && (
               <div className="absolute inset-0 flex items-center justify-center bg-gray-200 animate-pulse z-10">
                 <span className="text-gray-500 text-sm">Loading...</span>
