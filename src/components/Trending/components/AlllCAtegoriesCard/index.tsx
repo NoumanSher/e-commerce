@@ -34,21 +34,21 @@ export default function CategoryNavigation() {
   const [childCategory, setChildCategory] = useState<any[]>([]);
 
   const loaderRef = useRef<HTMLDivElement | null>(null);
-
+const containerRef = useRef<HTMLDivElement | null>(null);
   const [selectedChildCategory, setSelectedChildCategory] = useState<
     string | null
   >(null);
 
   useEffect(() => {
-  if (selectedChildCategory && allCategories?.categories) {
-    const parent = allCategories.categories.find((cat: any) =>
-      cat.children.some((child: any) => child._id === selectedChildCategory)
-    );
-    if (parent) {
-      setExpanded(parent._id); // expand the right parent automatically
+    if (selectedChildCategory && allCategories?.categories) {
+      const parent = allCategories.categories.find((cat: any) =>
+        cat.children.some((child: any) => child._id === selectedChildCategory)
+      );
+      if (parent) {
+        setExpanded(parent._id); // expand the right parent automatically
+      }
     }
-  }
-}, [selectedChildCategory, allCategories?.categories]);
+  }, [selectedChildCategory, allCategories?.categories]);
 
   // Update child categories when parent category changes
   useEffect(() => {
@@ -132,16 +132,32 @@ export default function CategoryNavigation() {
     },
     [router, updateSelectedCategory]
   );
+const scrollToCategory = useCallback((childId: string) => {
+  if (!containerRef.current) return;
 
-const handleChildCategoryClick = useCallback(
-  (categoryId: string, parentId?: string) => {
-    setSelectedChildCategory(categoryId);
-    updateSelectedCategory('')
-    setExpanded(parentId ?  parentId : '' ); // expand parent automatically
-    router.push(`/all-products?childCategoryID=${categoryId}`);
-  },
-  [router, updateSelectedCategory]
-);
+  const categoryElement = containerRef.current.querySelector<HTMLButtonElement>(
+    `button[data-id='${childId}']`
+  );
+debugger
+  if (categoryElement) {
+    categoryElement.scrollIntoView({
+      behavior: "smooth",
+      block: "nearest",
+      inline: "center",
+    });
+  }
+}, []);
+
+  const handleChildCategoryClick = useCallback(
+    (categoryId: string, parentId?: string) => {
+      setSelectedChildCategory(categoryId);
+      updateSelectedCategory("");
+      setExpanded(parentId ? parentId : ""); // expand parent automatically
+      router.push(`/all-products?childCategoryID=${categoryId}`);
+      if (categoryId) scrollToCategory(categoryId);
+    },
+    [router, scrollToCategory, updateSelectedCategory]
+  );
 
   if (allCategoriesError) return <div>Error loading categories</div>;
   return (
@@ -152,7 +168,7 @@ const handleChildCategoryClick = useCallback(
         {categoriesData.toReversed().map((cat) => (
           <div key={cat._id}>
             <button
-              className={`flex justify-between w-full py-2 font-medium ${selectedCategory === cat._id ? "text-blue-600" : "" }`}
+              className={`flex justify-between w-full py-2 font-medium ${selectedCategory === cat._id ? "text-blue-600" : ""}`}
               onClick={() => {
                 setExpanded(expanded === cat._id ? null : cat._id);
                 handleParentCategoryClick(cat._id);
@@ -206,12 +222,17 @@ const handleChildCategoryClick = useCallback(
         </div>
 
         {/* Mobile Child Category Chips */}
-        <div className="md:hidden  flex gap-2 scrollbarHide overflow-x-auto  pb-2">
+        <div
+          ref={containerRef}
+          className="md:hidden  flex gap-2 scrollbarHide overflow-x-auto  pb-2"
+        >
           {categoriesData
-            .flatMap((c) => c.children).toReversed()
+            .flatMap((c) => c.children)
+            .toReversed()
             .map((child) => (
               <button
                 key={child?._id}
+                data-id={child?._id}
                 className={`px-3 py-1  rounded-full border text-sm whitespace-nowrap transition-colors ${
                   selectedChildCategory === child?._id
                     ? "bg-blue-600 text-white border-blue-600"
@@ -274,9 +295,9 @@ const handleChildCategoryClick = useCallback(
             {categoriesData.toReversed().map((cat) => (
               <div key={cat._id}>
                 <button
-                  className={`flex justify-between w-full py-2 font-medium ${selectedCategory === cat._id ? "text-blue-600" : "" }`}
+                  className={`flex justify-between w-full py-2 font-medium ${selectedCategory === cat._id ? "text-blue-600" : ""}`}
                   onClick={() => {
-                    setExpanded(expanded === cat._id  ? null : cat._id);
+                    setExpanded(expanded === cat._id ? null : cat._id);
                     handleParentCategoryClick(cat._id);
                   }}
                 >
@@ -288,25 +309,29 @@ const handleChildCategoryClick = useCallback(
                   />
                 </button>
                 <AnimatePresence>
-                  {expanded === cat._id   && (
+                  {expanded === cat._id && (
                     <motion.div
                       initial={{ height: 0, opacity: 0 }}
                       animate={{ height: "auto", opacity: 1 }}
                       exit={{ height: 0, opacity: 0 }}
                       className="pl-4 overflow-hidden"
                     >
-                      {cat.children?.map((child) => (
+                      {cat.children?.map((child, index) => (
                         <div
                           key={child._id}
                           className={`py-1 cursor-pointer text-sm  ${
-                            (selectedChildCategory || childCategoryID) === child._id
+                            (selectedChildCategory || childCategoryID) ===
+                            child._id
                               ? "text-blue-600 font-semibold"
                               : ""
                           }`}
                           onClick={() => {
                             // setActiveChild(child._id);
                             setMobileOpen(false);
-                            handleChildCategoryClick(child._id,selectedCategory || parentCategoryId!);
+                            handleChildCategoryClick(
+                              child._id,
+                              selectedCategory || parentCategoryId!
+                            );
                           }}
                         >
                           {child.name}

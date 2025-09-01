@@ -55,8 +55,8 @@ const ThumbnailImage = memo<{
 
     return (
       <div
-        className="flex-shrink-0 w-20 h-20 lg:w-24 lg:h-24 thumbnail"
-        data-index={index}
+        className="flex-shrink-0 w-20 h-20 lg:w-24 lg:h-24"
+        data-id={String(index)}
       >
         <Image
           src={image.src}
@@ -162,6 +162,7 @@ const OptimizedImageGallery = memo<ImageGalleryProps>(
     const [currentIndex, setCurrentIndex] = useState(0);
     const [isOpen, setIsOpen] = useState(false);
     const [direction, setDirection] = useState<"next" | "prev">("next");
+    const containerRef = useRef<HTMLDivElement | null>(null);
 
     // Track loaded images properly
     const [loaded, setLoaded] = useState<boolean[]>(() =>
@@ -171,7 +172,20 @@ const OptimizedImageGallery = memo<ImageGalleryProps>(
     const preloadedRef = useRef(new Set<number>());
 
     const isCurrentImageLoaded = loaded[currentIndex];
+    const scrollToCurrentImage = useCallback((childId: string) => {
+      if (!containerRef.current) return;
+      const imageElement = containerRef.current.querySelector<HTMLDivElement>(
+        `div[data-id='${childId}']`
+      );
 
+      if (imageElement) {
+        imageElement.scrollIntoView({
+          behavior: "smooth",
+          block: "nearest",
+          inline: "center",
+        });
+      }
+    }, []);
     // Preload helper
     const preloadImage = useCallback(
       (index: number) => {
@@ -215,13 +229,21 @@ const OptimizedImageGallery = memo<ImageGalleryProps>(
     // Navigation
     const handleNext = useCallback(() => {
       setDirection("next");
-      setCurrentIndex((prev) => (prev + 1) % images.length);
-    }, [images.length]);
+      setCurrentIndex((prev) => {
+        const nextIndex = (prev + 1) % images.length;
+        scrollToCurrentImage(String(nextIndex)); // ✅ yahan new index se scroll karo
+        return nextIndex;
+      });
+    }, [images.length, scrollToCurrentImage]);
 
     const handlePrev = useCallback(() => {
       setDirection("prev");
-      setCurrentIndex((prev) => (prev - 1 + images.length) % images.length);
-    }, [images.length]);
+      setCurrentIndex((prev) => {
+        const prevIndex = (prev - 1 + images.length) % images.length;
+        scrollToCurrentImage(String(prevIndex)); // ✅ yahan bhi new index se scroll karo
+        return prevIndex;
+      });
+    }, [images.length, scrollToCurrentImage]);
 
     const handleThumbnailClick = useCallback(
       (index: number) => {
@@ -284,7 +306,10 @@ const OptimizedImageGallery = memo<ImageGalleryProps>(
         </button>
 
         {/* Thumbnails */}
-        <div className="flex scrollbarHide lg:flex-col gap-2 overflow-x-auto lg:overflow-visible lg:order-1 order-2 px-1 py-2 lg:py-0 lg:px-0">
+        <div
+          ref={containerRef}
+          className="flex scrollbarHide lg:flex-col gap-2 overflow-x-auto lg:overflow-visible lg:order-1 order-2 px-1 py-2 lg:py-0 lg:px-0"
+        >
           {thumbnailList}
         </div>
 
