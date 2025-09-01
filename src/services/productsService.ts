@@ -38,7 +38,7 @@ interface ParentCategoriesResponse {
 export interface ProductsResponse {
   message: string;
   data: Product[];
-  pagination?: Pagination;
+  pagination: Pagination;
 }
 export interface RelatedProductsResponse
   extends Omit<ProductsResponse, "pagination"> {}

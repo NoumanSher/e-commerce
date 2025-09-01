@@ -1,54 +1,17 @@
 "use client";
-import React, { memo, useEffect, useState } from "react";
-import MainCard from "../../../Card/index";
-import { useQuery } from "@tanstack/react-query";
+import { Menu, ChevronDown } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 import { fetchProducts, fetchAllCategories } from "@/services/productsService";
+import React, { useEffect, useRef, useState, useCallback } from "react";
+import MainCard from "../../../Card";
+import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
 import { Product } from "@/components/productDetail/productDetailDto";
+
 import { useStore } from "@/Context/storeContext";
 import { useRouter, useSearchParams } from "next/navigation";
 
-const AllCAtegoriesCardSection = () => {
-  const searchParams = useSearchParams();
-  const router = useRouter();
-  const childCategoryID = searchParams.get("childCategoryID");
-  const parentCategoryId = searchParams.get("parentCategoryID");
-  const { selectedCategory, updateSelectedCategory } = useStore();
-  const [page, setPage] = useState(1);
-  const [products, setProducts] = useState<Product[]>([]);
-  const [loadingMore, setLoadingMore] = useState(false);
-  const [childCategory, setChildCategory] = useState<any>([]);
-  const [selectedChildCategory, setSelectedChildCategory] = useState<
-    string | null
-  >(null);
-
-  // Initialize selectedChildCategory from URL params
-  useEffect(() => {
-    if (childCategoryID) {
-      setSelectedChildCategory(childCategoryID);
-    }
-  }, [childCategoryID]);
-
-  const {
-    data: productsData,
-    isLoading: productsLoading,
-    error: productsError,
-    isFetching,
-    refetch,
-  } = useQuery({
-    queryKey: ["products", selectedCategory, selectedChildCategory, page],
-    queryFn: () =>
-      fetchProducts(
-        selectedCategory || (parentCategoryId as string),
-        selectedChildCategory || (childCategoryID as string),
-        page,
-        10
-      ),
-    enabled:
-      !!selectedCategory || !!parentCategoryId || !!selectedChildCategory,
-    staleTime: 1000 * 60 * 5, // 5 min (data is fresh)
-    gcTime: 1000 * 60 * 30, // 30 min in cache
-  });
-
+export default function CategoryNavigation() {
+  // Fetch all categories
   const {
     data: allCategories,
     isLoading: allCategoriesLoading,
@@ -56,26 +19,36 @@ const AllCAtegoriesCardSection = () => {
   } = useQuery({
     queryKey: ["allCategories"],
     queryFn: fetchAllCategories,
-    staleTime: 1000 * 60 * 5, // 5 min (data is fresh)
-    gcTime: 1000 * 60 * 30, // 30 min in cache
+    staleTime: 1000 * 60 * 5,
+    gcTime: 1000 * 60 * 30,
   });
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const [expanded, setExpanded] = useState<string | null>(null);
+  // const [activeChild, setActiveChild] = useState<string | null>(null);
+  const categoriesData = allCategories?.categories || [];
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const childCategoryID = searchParams.get("childCategoryID");
+  const parentCategoryId = searchParams.get("parentCategoryID");
+  const { selectedCategory, updateSelectedCategory } = useStore();
+  const [childCategory, setChildCategory] = useState<any[]>([]);
 
-  // Update product list when new data arrives
+  const loaderRef = useRef<HTMLDivElement | null>(null);
+
+  const [selectedChildCategory, setSelectedChildCategory] = useState<
+    string | null
+  >(null);
+
   useEffect(() => {
-    if (productsData?.data) {
-      if (page === 1) {
-        setProducts(productsData.data);
-      } else {
-        setProducts((prev) => [...prev, ...productsData.data]);
-      }
+  if (selectedChildCategory && allCategories?.categories) {
+    const parent = allCategories.categories.find((cat: any) =>
+      cat.children.some((child: any) => child._id === selectedChildCategory)
+    );
+    if (parent) {
+      setExpanded(parent._id); // expand the right parent automatically
     }
-  }, [productsData, page]);
-
-  // Reset pagination on category change
-  useEffect(() => {
-    setPage(1);
-    refetch();
-  }, [selectedCategory, selectedChildCategory, refetch]);
+  }
+}, [selectedChildCategory, allCategories?.categories]);
 
   // Update child categories when parent category changes
   useEffect(() => {
@@ -93,101 +66,260 @@ const AllCAtegoriesCardSection = () => {
       }
     }
   }, [allCategories?.categories, parentCategoryId, selectedCategory]);
+  useEffect(() => {
+    if (childCategoryID) {
+      setSelectedChildCategory(childCategoryID);
+    }
+  }, [childCategoryID]);
+  // Infinite query for products
+  const {
+    data,
+    error,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+    isLoading,
+  } = useInfiniteQuery({
+    queryKey: [
+      "products",
+      { parent: selectedCategory, child: selectedChildCategory },
+    ],
+    queryFn: ({ pageParam = 1 }) =>
+      fetchProducts(
+        selectedCategory ?? undefined,
+        selectedChildCategory ?? undefined,
+        pageParam as number,
+        10
+      ),
+    initialPageParam: 1,
+    getNextPageParam: (lastPage) =>
+      lastPage?.pagination?.currentPage! < lastPage?.pagination?.totalPages!
+        ? lastPage.pagination.currentPage + 1
+        : undefined,
+    enabled: Boolean(selectedCategory || selectedChildCategory),
+    staleTime: 1000 * 60 * 5,
+    gcTime: 1000 * 60 * 30,
+  });
 
-  const handleLoadMore = () => {
-    setLoadingMore(true);
-    setPage((prevPage) => prevPage + 1);
-  };
+  // Intersection Observer for infinite scroll
+  useEffect(() => {
+    if (!loaderRef.current) return;
 
-  const handleParentCategoryClick = (categoryId: string) => {
-    updateSelectedCategory(categoryId);
-    router.push(`/all-products?parentCategoryID=${categoryId}`);
-  };
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const first = entries[0];
+        if (first.isIntersecting && hasNextPage && !isFetchingNextPage) {
+          fetchNextPage();
+        }
+      },
+      { threshold: 1 }
+    );
 
-  const handleChildCategoryClick = (categoryId: string) => {
+    const current = loaderRef.current;
+    observer.observe(current);
+
+    return () => {
+      if (current) observer.unobserve(current);
+    };
+  }, [fetchNextPage, hasNextPage, isFetchingNextPage]);
+
+  const products: Product[] = data?.pages.flatMap((page) => page.data) ?? [];
+  const handleParentCategoryClick = useCallback(
+    (categoryId: string) => {
+      updateSelectedCategory(categoryId);
+      setSelectedChildCategory(null); // reset child when parent changes
+      router.push(`/all-products?parentCategoryID=${categoryId}`);
+    },
+    [router, updateSelectedCategory]
+  );
+
+const handleChildCategoryClick = useCallback(
+  (categoryId: string, parentId?: string) => {
     setSelectedChildCategory(categoryId);
+    updateSelectedCategory('')
+    setExpanded(parentId ?  parentId : '' ); // expand parent automatically
     router.push(`/all-products?childCategoryID=${categoryId}`);
-  };
+  },
+  [router, updateSelectedCategory]
+);
 
-  if (productsError) {
-    return <div>Error loading products</div>;
-  }
-
+  if (allCategoriesError) return <div>Error loading categories</div>;
   return (
-    <div className="lg:mx-20 mx-4">
-      <div className=" border-2 border-gray-300 p-2 mt-5">
-        <div className="bg-gray-300 p-4">
-          <h1
-            className="text-3xl md:text-6xl font-bold text-start my-4 lg:my-8 text-gray-800 
-           font-serif tracking-wide transition-all duration-300 
-            hover:text-gray-600 
-           hover:drop-shadow-lg"
-          >
-            SHOP
-          </h1>
-          <div className=" flex gap-2">
-            {allCategories?.categories.toReversed().map((category) => (
-              <div
-                key={category._id}
-                onClick={() => handleParentCategoryClick(category._id)}
-                className={`cursor-pointer ${
-                  (selectedCategory || parentCategoryId) === category._id
-                    ? "font-bold"
-                    : ""
+    <div className="flex w-full">
+      {/* Desktop Sidebar */}
+      <aside className="hidden md:block w-64 border-r p-4">
+        <h2 className="text-lg font-semibold mb-4">Categories</h2>
+        {categoriesData.toReversed().map((cat) => (
+          <div key={cat._id}>
+            <button
+              className={`flex justify-between w-full py-2 font-medium ${selectedCategory === cat._id ? "text-blue-600" : "" }`}
+              onClick={() => {
+                setExpanded(expanded === cat._id ? null : cat._id);
+                handleParentCategoryClick(cat._id);
+              }}
+            >
+              {cat.name}
+              <ChevronDown
+                className={`w-4 h-4 transition-transform ${
+                  expanded === cat._id ? "rotate-180" : ""
                 }`}
-              >
-                {category.name}
-              </div>
-            ))}
-          </div>
-
-          {childCategory.length > 0 && (
-            <div className=" flex gap-2">
-              {childCategory.map((category: any) => (
-                <div
-                  key={category._id}
-                  onClick={() => handleChildCategoryClick(category._id)}
-                  className={`cursor-pointer ${
-                    (selectedChildCategory || childCategoryID) === category._id
-                      ? "font-bold underline"
-                      : ""
-                  }`}
+              />
+            </button>
+            <AnimatePresence>
+              {expanded === cat._id && (
+                <motion.div
+                  initial={{ height: 0, opacity: 0 }}
+                  animate={{ height: "auto", opacity: 1 }}
+                  exit={{ height: 0, opacity: 0 }}
+                  className="pl-4 overflow-hidden"
                 >
-                  {category.name}
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
-      </div>
-
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 sm:gap-4 xl:max-w-[1440px] mx-auto xl:mt-14 relative">
-        {(productsLoading || isFetching || loadingMore) && (
-          <div className="fixed inset-0 bg-black bg-opacity-90 flex justify-center items-center z-10">
-            <div className="text-white text-xl">Loading Products...</div>
-          </div>
-        )}
-
-        {products.map((item) => (
-          <div key={item._id} className=" my-5">
-            <MainCard item={item} />
+                  {cat.children?.map((child) => (
+                    <div
+                      key={child._id}
+                      className={`py-1 cursor-pointer text-sm hover:text-blue-500 ${
+                        selectedChildCategory === child._id
+                          ? "text-blue-600 font-semibold"
+                          : ""
+                      }`}
+                      onClick={() => {
+                        handleChildCategoryClick(child._id);
+                      }}
+                    >
+                      {child.name}
+                    </div>
+                  ))}
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
         ))}
-      </div>
+      </aside>
 
-      {(productsData?.pagination?.totalProducts ?? 0) > products.length && (
-        <div className="flex justify-center items-center mb-5">
-          <button
-            onClick={handleLoadMore}
-            disabled={isFetching}
-            className="flex justify-center items-center bg-blue-500 text-white px-4 py-2 rounded mt-4 disabled:opacity-50"
-          >
-            {isFetching ? "Loading..." : "Load More"}
+      {/* Main Content Area */}
+      <main className="p-4 w-full bg-white rounded-lg sm:ml-4">
+        {/* Mobile Top Bar */}
+        <div className="md:hidden flex items-center justify-between mb-4">
+          <button onClick={() => setMobileOpen(true)}>
+            <Menu className="w-6 h-6" />
           </button>
+          <span className="text-lg font-semibold">Products</span>
         </div>
-      )}
+
+        {/* Mobile Child Category Chips */}
+        <div className="md:hidden  flex gap-2 scrollbarHide overflow-x-auto  pb-2">
+          {categoriesData
+            .flatMap((c) => c.children).toReversed()
+            .map((child) => (
+              <button
+                key={child?._id}
+                className={`px-3 py-1  rounded-full border text-sm whitespace-nowrap transition-colors ${
+                  selectedChildCategory === child?._id
+                    ? "bg-blue-600 text-white border-blue-600"
+                    : "bg-white border-gray-300 text-gray-700"
+                }`}
+                onClick={() => {
+                  // setActiveChild(child?._id as string);
+                  handleChildCategoryClick(child?._id as string);
+                }}
+              >
+                {child?.name}
+              </button>
+            ))}
+        </div>
+
+        {/* Product Grid Placeholder */}
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 sm:gap-4 xl:max-w-[1440px] mx-auto xl:mt-14">
+          {isLoading ? (
+            <div className="col-span-full flex justify-center items-center h-40">
+              <span className="text-gray-600">Loading Products...</span>
+            </div>
+          ) : (
+            products.map((item) => (
+              <div key={item._id} className="mt-3 sm:mt-0">
+                <MainCard item={item} />
+              </div>
+            ))
+          )}
+          <div
+            ref={loaderRef}
+            className="col-span-full flex justify-center items-center h-40"
+          >
+            {isFetchingNextPage && (
+              <span className="text-gray-600">Loading more...</span>
+            )}
+            {!hasNextPage && products.length > 0 && (
+              <span className="text-gray-400">No more products</span>
+            )}
+          </div>
+        </div>
+      </main>
+
+      {/* Mobile Drawer */}
+      <AnimatePresence>
+        {mobileOpen && (
+          <motion.div
+            initial={{ x: "-100%" }}
+            animate={{ x: 0 }}
+            exit={{ x: "-100%" }}
+            transition={{ type: "tween" }}
+            className="fixed inset-0 z-50 bg-white w-64 shadow-lg p-4 md:hidden"
+          >
+            <button
+              className="mb-4 text-sm text-gray-500"
+              onClick={() => setMobileOpen(false)}
+            >
+              Close
+            </button>
+            <h2 className="text-lg font-semibold mb-4">Categories</h2>
+            {categoriesData.toReversed().map((cat) => (
+              <div key={cat._id}>
+                <button
+                  className={`flex justify-between w-full py-2 font-medium ${selectedCategory === cat._id ? "text-blue-600" : "" }`}
+                  onClick={() => {
+                    setExpanded(expanded === cat._id  ? null : cat._id);
+                    handleParentCategoryClick(cat._id);
+                  }}
+                >
+                  {cat.name}
+                  <ChevronDown
+                    className={`w-4 h-4 transition-transform ${
+                      expanded === cat._id ? "rotate-180" : ""
+                    }`}
+                  />
+                </button>
+                <AnimatePresence>
+                  {expanded === cat._id   && (
+                    <motion.div
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{ height: "auto", opacity: 1 }}
+                      exit={{ height: 0, opacity: 0 }}
+                      className="pl-4 overflow-hidden"
+                    >
+                      {cat.children?.map((child) => (
+                        <div
+                          key={child._id}
+                          className={`py-1 cursor-pointer text-sm  ${
+                            (selectedChildCategory || childCategoryID) === child._id
+                              ? "text-blue-600 font-semibold"
+                              : ""
+                          }`}
+                          onClick={() => {
+                            // setActiveChild(child._id);
+                            setMobileOpen(false);
+                            handleChildCategoryClick(child._id,selectedCategory || parentCategoryId!);
+                          }}
+                        >
+                          {child.name}
+                        </div>
+                      ))}
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
+            ))}
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
-};
-
-export default memo(AllCAtegoriesCardSection);
+}

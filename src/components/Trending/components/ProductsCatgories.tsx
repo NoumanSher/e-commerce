@@ -13,9 +13,9 @@ const ProductsCategories = () => {
   useEffect(() => {
     
     if (categoriesData?.categories && categoriesData.categories.length > 0) {
-      updateSelectedCategory(categoriesData.categories[categoriesData.categories.length - 1]._id);
+      updateSelectedCategory(selectedCategory || categoriesData.categories[categoriesData.categories.length - 1]._id);
     }
-  }, [categoriesData, updateSelectedCategory]);
+  }, [categoriesData, selectedCategory, updateSelectedCategory]);
   if (categoriesError) return <div>Error loading categories</div>;
 
   return (

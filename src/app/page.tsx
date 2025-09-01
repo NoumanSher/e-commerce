@@ -13,25 +13,20 @@ import Slider from "@/components/Slider/Slider";
 import StoreError from "./StoreError";
 import { StoreInfo } from "@/components/Slider/dto/storeSettingDto";
 // app/landing/page.tsx
-
 import { getLandingMetadata } from "@/app/utils/metadata/landingMetadata";
-
 
 // Dynamic imports with loading states
 const Trending = dynamic(() => import("@/components/Trending/trending"), {
-  suspense: true,
   loading: () => <div>Loading Trending...</div>,
 });
 
 const FallbackAutoPlay = dynamic(() => import("@/components/auto-play-video"), {
-  suspense: true,
   loading: () => <div>Loading video...</div>,
 });
 
 const ShoppingCartModal = dynamic(
   () => import("@/components/shoppingCartModal/client/shoppingCartModal"),
   {
-    suspense: true,
     ssr: false, // Disable SSR for modal since it's client-side only
   }
 );
@@ -101,7 +96,5 @@ export default async function LandingPage() {
     </>
   );
 }
-
-
 
 export const generateMetadata = getLandingMetadata;
