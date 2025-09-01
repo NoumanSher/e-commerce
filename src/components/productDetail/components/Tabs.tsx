@@ -52,11 +52,10 @@ export default function RelatedProducts({ productId }: RelatedProductsProps) {
     } else if (category.slug === "undergarments") {
       newRecommendedCategoryId = "687e2abfec2eff18b9b2d1e3";
     } else if (category.slug === "nighties") {
-      newRecommendedCategoryId = '687e104aa865a8d496318c29';
+      newRecommendedCategoryId = "687e104aa865a8d496318c29";
     }
 
     if (newRecommendedCategoryId) {
-      
       setRecommendedCategoryId(newRecommendedCategoryId);
     }
   }, [category]);
@@ -100,30 +99,24 @@ export default function RelatedProducts({ productId }: RelatedProductsProps) {
 
   const filteredRecommendedProducts =
     recommendedProducts?.data?.filter((item) => item._id !== productId) || [];
+  const tabTriggerStyle =
+    "px-0 bg-transparent text-base sm:text-lg font-medium text-gray-600 data-[state=active]:border-b-2 data-[state=active]:border-black data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:text-black rounded-none";
+    const data = [{title: "Related Products"}, {title: "Recommended"}, {title: "Reviews"}];
   return (
-    <Tabs defaultValue="relatedProducts" className="mt-5">
-      <TabsList className="p-0 shadow-none space-x-4 bg-transparent mb-5">
+    <Tabs defaultValue="related products" className="mt-5">
+      <TabsList className="flex  justify-start scrollbarHide overflow-x-auto shadow-none space-x-2 bg-transparent mb-5">
+        {data.map((item) => (
         <TabsTrigger
-          value="relatedProducts"
-          className="px-0 text-start text-lg font-medium data-[state=active]:bg-transparent data-[state=active]:shadow-none text-gray-600 data-[state=active]:border-b-2 data-[state=active]:border-black data-[state=active]:text-black rounded-none"
+          key={item.title}
+          value={item.title.toLowerCase()}
+          className={tabTriggerStyle}
         >
-          Related Products
+          {item.title}
         </TabsTrigger>
-        <TabsTrigger
-          value="recommended"
-          className="px-0 bg-transparent text-lg font-medium text-gray-600 data-[state=active]:border-b-2 data-[state=active]:border-black data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:text-black rounded-none"
-        >
-          Recommended
-        </TabsTrigger>
-        <TabsTrigger
-          value="reviews"
-          className="px-0 bg-transparent text-lg font-medium text-gray-600 data-[state=active]:border-b-2 data-[state=active]:border-black data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:text-black rounded-none"
-        >
-          Reviews
-        </TabsTrigger>
+      ))}
       </TabsList>
 
-      <TabsContent value="relatedProducts">
+      <TabsContent value="related products">
         {filteredRelatedProducts.length > 0 ? (
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 sm:gap-4">
             {filteredRelatedProducts.map((item) => (
@@ -151,10 +144,7 @@ export default function RelatedProducts({ productId }: RelatedProductsProps) {
         ) : filteredRecommendedProducts.length > 0 ? (
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 sm:gap-4">
             {filteredRecommendedProducts.map((item) => (
-              <div
-                key={item._id}
-                className=""
-              >
+              <div key={item._id} className="">
                 <MainCard item={item} />
               </div>
             ))}
