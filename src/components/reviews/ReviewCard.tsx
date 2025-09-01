@@ -5,7 +5,7 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { ThumbsUp, User, ShieldCheck, Divide } from "lucide-react";
+import { ThumbsUp, ShieldCheck } from "lucide-react";
 import { StarRating } from "./StarRating";
 import { Review } from "@/types";
 import { ReviewsAPI } from "@/lib/api/reviews";
@@ -39,8 +39,6 @@ export function ReviewCard({
     setIsMarkingHelpful(true);
     try {
       await ReviewsAPI.markHelpful(review._id, userId, token);
-      // const newCount = helpfulCount + 1;
-      // setHelpfulCount(newCount);
       setHasMarkedHelpful(true);
       onHelpfulUpdate?.(review._id);
     } catch (error) {
@@ -64,95 +62,113 @@ export function ReviewCard({
 
   return (
     <Card className="w-full">
-      <CardContent className="p-6">
-        <div className="flex items-start gap-4">
-          <Avatar className="w-10 h-10">
-            <AvatarFallback className="bg-primary/10 text-primary font-medium">
-              {getUserInitials(review.userId.username)}
-            </AvatarFallback>
-          </Avatar>
+      <CardContent className="p-4 sm:p-6">
+        {/* Mobile-first layout */}
+        <div className="space-y-3">
+          {/* Header - Avatar and User Info */}
+          <div className="flex items-start gap-3">
+            <Avatar className="w-8 h-8 sm:w-10 sm:h-10 flex-shrink-0">
+              <AvatarFallback className="bg-primary/10 text-primary font-medium text-xs sm:text-sm">
+                {getUserInitials(review.userId.username)}
+              </AvatarFallback>
+            </Avatar>
 
-          <div className="flex-1 space-y-3">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <h4 className="font-medium text-foreground">
-                  {review.userId.username}
-                </h4>
-                {review.isVerifiedPurchase && (
-                  <Badge variant="secondary" className="text-xs">
-                    <ShieldCheck className="w-3 h-3 mr-1" />
-                    Verified Purchase
-                  </Badge>
-                )}
+            <div className="flex-1 min-w-0 space-y-2">
+              {/* User info and date - stack on mobile */}
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1 sm:gap-3">
+                <div className="flex items-center gap-2 flex-wrap">
+                  <h4 className="font-medium text-foreground text-sm sm:text-base truncate">
+                    {review.userId.username}
+                  </h4>
+                  {review.isVerifiedPurchase && (
+                    <Badge variant="secondary" className="text-xs flex-shrink-0">
+                      <ShieldCheck className="w-2.5 h-2.5 sm:w-3 sm:h-3 mr-1" />
+                      <span className="hidden xs:inline">Verified Purchase</span>
+                      <span className="xs:hidden">Verified</span>
+                    </Badge>
+                  )}
+                </div>
+                <time className="text-xs sm:text-sm text-muted-foreground">
+                  {formatDate(review.createdAt)}
+                </time>
               </div>
-              <time className="text-sm text-muted-foreground">
-                {formatDate(review.createdAt)}
-              </time>
-            </div>
 
-            <div className="flex items-center gap-2">
-              <StarRating rating={review.rating} size="sm" />
-              <span className="text-sm font-medium">{review.rating}/5</span>
+              {/* Rating */}
+              <div className="flex items-center gap-2">
+                <StarRating rating={review.rating} size="sm" />
+                <span className="text-xs sm:text-sm font-medium">
+                  {review.rating}/5
+                </span>
+              </div>
             </div>
+          </div>
 
-            <p className="text-foreground leading-relaxed">
+          {/* Review Description */}
+          <div className="ml-0 sm:ml-13">
+            <p className="text-foreground leading-relaxed text-sm sm:text-base">
               {review.description}
             </p>
-
-          <>
-      <div className="flex flex-wrap gap-2 mt-2">
-        {review.images.map((url, index) => (
-          <div
-            key={index}
-            onClick={() => {
-              setStartIndex(index);
-              setIsOpen(true);
-            }}
-            className="cursor-pointer"
-          >
-            <Image
-              height={96}
-              width={96}
-              src={url}
-              alt="Review image"
-              className="rounded-md hover:opacity-80 transition aspect-square object-cover"
-            />
           </div>
-        ))}
-      </div>
 
-      {isOpen && (
-        <ImageLightbox
-          images={review.images}
-          initialIndex={startIndex}
-          onClose={() => setIsOpen(false)}
-        />
-      )}
-    </>
+          {/* Images - Responsive grid */}
+          {review.images && review.images.length > 0 && (
+            <div className="ml-0 sm:ml-13">
+              <div className="grid grid-cols-3 md:grid-cols-6 xl:grid-cols-10 gap-2">
+                {review.images.map((url, index) => (
+                  <div
+                    key={index}
+                    onClick={() => {
+                      setStartIndex(index);
+                      setIsOpen(true);
+                    }}
+                    className="cursor-pointer group"
+                  >
+                    <Image
+                      height={80}
+                      width={80}
+                      src={url}
+                      alt={`Review image ${index + 1}`}
+                      className="rounded-md hover:opacity-80  aspect-square object-cover w-full h-full group-hover:scale-105 transform transition-transform duration-200"
+                    />
+                  </div>
+                ))}
+              </div>
 
-            <div className="flex items-center justify-between pt-2">
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={handleMarkHelpful}
-                disabled={
-                  hasMarkedHelpful || isMarkingHelpful || isAlreadyMarkedHelpful
-                }
-                className={cn(
-                  "text-muted-foreground hover:text-foreground",
-                  hasMarkedHelpful && "text-primary"
-                )}
-              >
-                <ThumbsUp className="w-4 h-4 mr-2" />
-                Helpful ({helpfulCount})
-              </Button>
-
-              {/* {review.status === 'pending' && (
-                <Badge variant="outline" className="text-xs">
-                  Pending Approval
-                </Badge>
-              )} */}
+              {isOpen && (
+                <ImageLightbox
+                  images={review.images}
+                  initialIndex={startIndex}
+                  onClose={() => setIsOpen(false)}
+                />
+              )}
             </div>
+          )}
+
+          {/* Footer - Helpful button */}
+          <div className="flex items-center justify-between pt-2 ml-0 sm:ml-13">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={handleMarkHelpful}
+              disabled={
+                hasMarkedHelpful || isMarkingHelpful || isAlreadyMarkedHelpful
+              }
+              className={cn(
+                "text-muted-foreground hover:text-foreground text-xs sm:text-sm h-8 px-2 sm:px-3",
+                hasMarkedHelpful && "text-primary"
+              )}
+            >
+              <ThumbsUp className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
+              <span className="hidden xs:inline">Helpful</span>
+              <span className="ml-1">({helpfulCount})</span>
+            </Button>
+
+            {/* Uncomment if needed */}
+            {/* {review.status === 'pending' && (
+              <Badge variant="outline" className="text-xs">
+                Pending Approval
+              </Badge>
+            )} */}
           </div>
         </div>
       </CardContent>

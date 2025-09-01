@@ -19,7 +19,7 @@ export function ReviewsFilter({ currentSort, onSortChange }: ReviewsFilterProps)
 
   return (
     <div className="flex items-center gap-2">
-      <span className="text-sm font-medium">Sort by:</span>
+      <span className="text-sm font-medium hidden sm:inline-block">Sort by:</span>
       <Select value={currentSort} onValueChange={onSortChange}>
         <SelectTrigger className="w-40">
           <SelectValue />
