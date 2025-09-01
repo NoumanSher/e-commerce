@@ -93,7 +93,7 @@ export function ReviewForm({
     const callbackUrl = encodeURIComponent(`/product-detail/${productId}`);
     router.push(`/login?callbackUrl=${callbackUrl}`);
   };
-  if (!isAuthenticated) {
+  if (!isAuthenticated && canReview) {
     return (
       <Card>
         <CardContent className="p-6 text-center">
