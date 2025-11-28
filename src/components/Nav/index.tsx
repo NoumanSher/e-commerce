@@ -17,12 +17,14 @@ import { getStoreSetting } from "@/components/Slider/api/storeSettingApi";
 import Image from "next/image";
 import logo from "@/assets/img/logo.webp";
 import { FiHeart } from "react-icons/fi";
+import { set } from "react-hook-form";
 
 const Navbar = () => {
   const pathname = usePathname();
   const isHomePage = pathname === "/";
+
   const { wishlistCount } = useWishlist();
-  const { isLogIn } = useStore();
+  const { authToken, isAuthModalOpen, setIsAuthModalOpen } = useStore();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [searchValue, setSearchValue] = useState("");
   const [isClient, setIsClient] = useState(false);
@@ -89,8 +91,12 @@ const Navbar = () => {
     if (window.innerWidth < 768) {
       toggleMobileMenu();
     }
-    router.push(isLogIn ? "/profile" : "/login");
-  }, [isLogIn, router, toggleMobileMenu]);
+    if (authToken) {
+      router.push("/profile");
+    } else {
+      setIsAuthModalOpen(true);
+    }
+  }, [authToken, router, setIsAuthModalOpen, toggleMobileMenu]);
 
   const handleNavigation = useCallback(
     (path: string) => {
@@ -179,7 +185,6 @@ const Navbar = () => {
                 className="relative h-full flex items-center cursor-pointer"
                 onClick={() => handleNavigation("/wish-list")}
               >
-            
                 {isClient && wishlistCount > 0 ? (
                   <FiHeart size={20} fill="red" stroke="red" />
                 ) : (

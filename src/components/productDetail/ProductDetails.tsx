@@ -129,6 +129,8 @@ const ProductInfo: React.FC<ProductDetailsProps> = ({ product }) => {
       const isSizeMissing = !selectedSize;
 
       if (isColorMissing || isSizeMissing) {
+        const el = document.getElementById('select-varient');
+        el?.scrollIntoView({ behavior: 'smooth', block: 'center' });
         setValidation((prev) => ({
           ...prev,
           colorRequired: isColorMissing,

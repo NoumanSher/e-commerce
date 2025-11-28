@@ -47,7 +47,7 @@ const SelectColorAndSize: React.FC<SelectVarientProps> = React.memo(
     );
 
     return (
-      <div className="flex mb-4 gap-3">
+      <div id='select-varient' className="flex mb-4 gap-3">
         <div className="flex-1">
           <Select onValueChange={handleChangeColor}>
             <SelectTrigger className="h-14 rounded-none hover:shadow-md">

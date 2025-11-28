@@ -10,26 +10,32 @@ import {
   useMemo,
   useCallback,
 } from "react";
+import { storageApi, STORAGE_KEYS } from "@/lib/storageApi";
 import { Product } from "@/components/productDetail/productDetailDto";
-import { ProductDetailData, CartItem } from "@/types"; // Import interface
+import { ProductDetailData, CartItem } from "@/types";
 
 interface StoreContextProps {
   isCartOpen: boolean;
+  isAuthModalOpen: boolean;
   orderNumber: string;
+  activeTab: string;
+  setActiveTab: (value: string) => void;
   userId: string;
   userName: string;
   selectedCategory: string | null;
   updateSelectedCategory: (categoryId: string) => void;
   updateProductDetailtData: (object: ProductDetailData) => void;
   productDetail: ProductDetailData | null;
-  isLogIn: string;
+  authToken: string; // Renamed from isLogIn for clarity
+  isHydrated: boolean;
   wishlist: Product[];
   cartItems: CartItem[];
   setIsCartOpen: (value: boolean) => void;
+  setIsAuthModalOpen: (value: boolean) => void;
   setOrderNumber: (value: string) => void;
   setUserId: (value: string) => void;
   setUserName: (value: string) => void;
-  setIsLogIn: (value: string) => void;
+  setAuthToken: (value: string) => void; // Renamed from setIsLogIn
   setWishlist: Dispatch<SetStateAction<Product[]>>;
   setCartItems: Dispatch<SetStateAction<CartItem[]>>;
 }
@@ -37,170 +43,107 @@ interface StoreContextProps {
 const StoreTypeContext = createContext<StoreContextProps | undefined>(
   undefined
 );
-const Product_Detail_KEY = "productDeatails";
 
-const getCheckoutDataFromStorage = (): ProductDetailData | null => {
-  if (typeof window !== "undefined") {
-    const storedData = localStorage.getItem(Product_Detail_KEY);
-    return storedData ? JSON.parse(storedData) : null;
-  }
-  return null;
-};
-
-const saveCheckoutDataToStorage = (data: ProductDetailData) => {
-  if (typeof window !== "undefined") {
-    try {
-      localStorage.setItem(Product_Detail_KEY, JSON.stringify(data));
-    } catch {
-      console.warn("Failed to save checkout data to localStorage.");
-    }
-  }
-};
-const CART_STORAGE_KEY = "shoppingCart";
-
-const getCartFromStorage = (): CartItem[] => {
-  if (typeof window !== "undefined") {
-    const storedCart = localStorage.getItem(CART_STORAGE_KEY);
-    return storedCart ? JSON.parse(storedCart) : [];
-  }
-  return [];
-};
-
-const saveCartToStorage = (cart: CartItem[]) => {
-  if (typeof window !== "undefined") {
-    try {
-      localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(cart));
-    } catch {
-      console.warn("Failed to save cart data to localStorage.");
-    }
-  }
-};
-
-const saveTokenToStorage = (token: string) => {
-  if (typeof window !== "undefined") {
-    try {
-      localStorage.setItem("token", token);
-    } catch {
-      console.warn("Failed to save token to localStorage.");
-    }
-  }
-};
-const saveUserIdInStorage = (userId: string) => {
-  if (typeof window !== "undefined") {
-    try {
-      localStorage.setItem("userId", userId);
-    } catch {
-      console.warn("Failed to save userId in localStorage.");
-    }
-  }
-};
-const saveUserNameInStorage = (userName: string) => {
-  if (typeof window !== "undefined") {
-    try {
-      localStorage.setItem("userName", userName);
-    } catch {
-      console.warn("Failed to save userName in localStorage.");
-    }
-  }
-};
-const getInitialWishlist = (): Product[] => {
-  if (typeof window !== "undefined") {
-    const savedWishlist = localStorage.getItem("wishlist");
-    return savedWishlist ? JSON.parse(savedWishlist) : [];
-  }
-  return [];
-};
-const getIsLogIn = (): string => {
-  if (typeof window !== "undefined") {
-    const isLogIn = localStorage.getItem("token");
-    return isLogIn ? isLogIn : "";
-  }
-  return "";
-};
-const getUserId = (): string => {
-  if (typeof window !== "undefined") {
-    const userId = localStorage.getItem("userId");
-    return userId ? userId : "";
-  }
-  return "";
-};
-const getUserName = (): string => {
-  if (typeof window !== "undefined") {
-    const userName = localStorage.getItem("userName");
-    return userName ? userName : "";
-  }
-  return "";
-};
+/**
+ * Initialize state from storage with SSR-safe fallbacks.
+ */
+const getInitialState = () => ({
+  productDetail: storageApi.getJSON<ProductDetailData | null>(
+    STORAGE_KEYS.productDetails,
+    null
+  ),
+  authToken: storageApi.get(STORAGE_KEYS.token) || "",
+  userId: storageApi.get(STORAGE_KEYS.userId) || "",
+  userName: storageApi.get(STORAGE_KEYS.userName) || "",
+  selectedCategory: storageApi.get(STORAGE_KEYS.selectedCategory) || null,
+  wishlist: storageApi.getJSON<Product[]>(STORAGE_KEYS.wishlist, []),
+  cartItems: storageApi.getJSON<CartItem[]>(STORAGE_KEYS.cart, []),
+});
 
 export const StoreProvider = ({ children }: { children: ReactNode }) => {
+  // Use safe defaults to avoid server/client markup mismatch during hydration.
   const [isCartOpen, setIsCartOpen] = useState(false);
+  const [activeTab, setActiveTab] = useState("login");
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [orderNumber, setOrderNumber] = useState("");
-  const [userName, setUserName] = useState(getUserName());
-  const [isLogIn, setIsLogIn] = useState(getIsLogIn());
-  const [userId, setUserId] = useState(getUserId());
+  const [userName, setUserName] = useState("");
+  const [authToken, setAuthToken_State] = useState("");
+  const [userId, setUserId] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [productDetail, setProductDetail] = useState<ProductDetailData | null>(
-    getCheckoutDataFromStorage()
+    null
   );
+  const [wishlist, setWishlist] = useState<Product[]>([]);
+  const [cartItems, setCartItems] = useState<CartItem[]>([]);
+  const [isHydrated, setIsHydrated] = useState(false);
 
-  useEffect(() => {
-    if (productDetail) {
-      saveCheckoutDataToStorage(productDetail);
-    }
-  }, [productDetail]);
-
-  const updateProductDetailtData = (newData: ProductDetailData) => {
+  const updateProductDetailtData = useCallback((newData: ProductDetailData) => {
     setProductDetail(newData);
-  };
-  // Load the selected category from localStorage on initial render
-  useEffect(() => {
-    const savedCategory = localStorage.getItem("selectedCategory");
-    if (savedCategory) {
-      setSelectedCategory(savedCategory);
-    }
   }, []);
 
-  // Function to update the selected category and store it in localStorage
   const updateSelectedCategory = useCallback((categoryId: string) => {
     setSelectedCategory(categoryId);
-    localStorage.setItem("selectedCategory", categoryId); // Save to localStorage
+    storageApi.set(STORAGE_KEYS.selectedCategory, categoryId);
   }, []);
-  const [wishlist, setWishlist] = useState<Product[]>(getInitialWishlist);
-  const [cartItems, setCartItems] = useState<CartItem[]>(getCartFromStorage);
+
+  // Load persisted state only on the client AFTER initial render to avoid
+  // hydration mismatch between server-rendered HTML and client initial DOM.
+  useEffect(() => {
+    const initialState = getInitialState();
+    setUserName(initialState.userName);
+    setAuthToken_State(initialState.authToken);
+    setUserId(initialState.userId);
+    setSelectedCategory(initialState.selectedCategory);
+    setProductDetail(initialState.productDetail);
+    setWishlist(initialState.wishlist);
+    setCartItems(initialState.cartItems);
+    setIsHydrated(true);
+  }, []);
+
+  // Wrapper to sync authToken with apiClient
+  const setAuthToken = useCallback((token: string) => {
+    setAuthToken_State(token);
+    if (token) {
+      storageApi.set(STORAGE_KEYS.token, token);
+      try {
+        // Import at top to avoid circular deps
+        import("@/lib/apiClient").then((mod) => mod.setAuthToken(token));
+      } catch {
+        // ignore
+      }
+    } else {
+      storageApi.remove(STORAGE_KEYS.token);
+      try {
+        import("@/lib/apiClient").then((mod) => mod.clearAuthToken());
+      } catch {
+        // ignore
+      }
+    }
+  }, []);
+
+  // Consolidated effect: sync all state changes to storage
+  useEffect(() => {
+    storageApi.setJSON(STORAGE_KEYS.productDetails, productDetail);
+  }, [productDetail]);
 
   useEffect(() => {
-    saveCartToStorage(cartItems);
-  }, [cartItems]);
-  useEffect(() => {
-    if (isLogIn) {
-      saveTokenToStorage(isLogIn); // Save token if logged in
-    } else {
-      localStorage.removeItem("token"); // Clear token if logged out
-    }
-  }, [isLogIn]);
-  useEffect(() => {
     if (userId) {
-      saveUserIdInStorage(userId); // Save userId if logged in
-    } else {
-      localStorage.removeItem("userId"); // Clear userId if logged out
+      storageApi.set(STORAGE_KEYS.userId, userId);
     }
   }, [userId]);
+
   useEffect(() => {
     if (userName) {
-      saveUserNameInStorage(userName); // Save userName if logged in
-    } else {
-      localStorage.removeItem("userName"); // Clear userName if logged out
+      storageApi.set(STORAGE_KEYS.userName, userName);
     }
   }, [userName]);
 
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      localStorage.setItem("wishlist", JSON.stringify(wishlist));
-    }
-  }, [wishlist]);
-
   const contextValue = useMemo(
     () => ({
+      setActiveTab,
+      activeTab,
+      isAuthModalOpen,
+      setIsAuthModalOpen,
       isCartOpen,
       selectedCategory,
       updateSelectedCategory,
@@ -209,8 +152,9 @@ export const StoreProvider = ({ children }: { children: ReactNode }) => {
       setWishlist,
       cartItems,
       setCartItems,
-      setIsLogIn,
-      isLogIn,
+      setAuthToken,
+      authToken,
+      isHydrated,
       updateProductDetailtData,
       productDetail,
       orderNumber,
@@ -218,9 +162,25 @@ export const StoreProvider = ({ children }: { children: ReactNode }) => {
       userId,
       setUserId,
       userName,
-      setUserName
+      setUserName,
     }),
-    [isCartOpen, selectedCategory, updateSelectedCategory, wishlist, cartItems, isLogIn, productDetail, orderNumber, userId, userName]
+    [
+      activeTab,
+      isAuthModalOpen,
+      isCartOpen,
+      selectedCategory,
+      updateSelectedCategory,
+      wishlist,
+      cartItems,
+      setAuthToken,
+      authToken,
+      isHydrated,
+      updateProductDetailtData,
+      productDetail,
+      orderNumber,
+      userId,
+      userName,
+    ]
   );
 
   return (

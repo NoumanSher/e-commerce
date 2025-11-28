@@ -1,6 +1,5 @@
-import axios from "axios";
-import { BASE_URL } from "@/constants";
-export interface RegisterPayload {
+import { post } from '@/lib/apiClient'
+export interface RegisterPayload { 
   email: string;
   username: string;
   mobilePhone: string;
@@ -23,7 +22,6 @@ export interface RegisterResponse {
   }
   
 export const registerUser = async (payload: RegisterPayload):Promise<RegisterResponse> => {
-    
-  const {data} = await axios.post(`${BASE_URL}/auth/register-user`, payload);
-  return data;
+  const data = await post<RegisterResponse>('/auth/register-user', payload)
+  return data
 };

@@ -15,12 +15,12 @@ import { Button } from "@/components/ui/button";
 const Sidebar: React.FC = () => {
   const pathname = usePathname();
   const router = useRouter();
-  const { setIsLogIn, setUserId } = useStore();
+  const { setAuthToken, setUserId } = useStore();
 
   const [open, setOpen] = useState(false);
 
   const handleLogout = () => {
-    setIsLogIn("");
+    setAuthToken("");
     setUserId("");
     setOpen(false);
     router.push("/");

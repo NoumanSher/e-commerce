@@ -5,26 +5,25 @@ import { toast } from "react-toastify";
 import { useStore } from "@/Context/storeContext";
 interface CustomError extends Error {
   response?: {
-    data?: {
-      message?: string;
-    };
+    message?: string;
   };
 }
 
 export const useLogIn = () => {
-  const { setIsLogIn ,setUserId,setUserName} = useStore();
+  const { setAuthToken, setUserId, setUserName } = useStore();
   return useMutation<LogInResponse, CustomError, LogInPayload>({
     mutationFn: logInUser,
     onSuccess: (data) => {
       
-      setIsLogIn(data.token);
+      setAuthToken(data.token);
       setUserId(data.data._id);
       setUserName(data.data.username);
       toast.success(data.message);
     },
     onError: (error) => {
-      toast.error(`${error.response?.data?.message}`);
-      console.error("Registration failed:", error.response?.data?.message);
+      
+      toast.error(`${error.response?.message}`);
+      console.error("Registration failed:", error.response?.message);
     },
   });
 };

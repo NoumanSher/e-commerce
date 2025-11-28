@@ -1,5 +1,4 @@
-import axios, { AxiosError } from "axios";
-import { BASE_URL } from "@/constants";
+import { get } from "@/lib/apiClient";
 import { Product } from "@/components/productDetail/productDetailDto";
 
 export interface Pagination {
@@ -60,39 +59,21 @@ export const fetchProducts = async (
   if (categoryId) params.append("parentCategoryID", categoryId);
   if (page) params.append("page", page.toString());
   if (limit) params.append("limit", limit.toString());
-
+  const url = `/products/get-all-products?${params.toString()}`
   try {
-    const { data } = await axios.get(
-      `${BASE_URL}/products/get-all-products?${params.toString()}`
-    );
-
-    return data;
+    const data = await get<ProductsResponse>(url)
+    return data
   } catch (error) {
-    const err = error as AxiosError;
-    console.log(err);
-    throw {
-      message: err.message,
-      statusCode: err.response?.status,
-      response: err.response?.data,
-    } satisfies ApiError;
+    // apiClient already normalizes Axios errors to ApiError shape
+    throw error
   }
 };
 export const fetchAllCategories = async (): Promise<ParentCategoriesResponse> => {
-
-
+  const url = `/categories/all`
   try {
-    const { data } = await axios.get(
-      `${BASE_URL}/categories/all`
-    );
-
-    return data;
+    const data = await get<ParentCategoriesResponse>(url)
+    return data
   } catch (error) {
-    const err = error as AxiosError;
-    console.log(err);
-    throw {
-      message: err.message,
-      statusCode: err.response?.status,
-      response: err.response?.data,
-    } satisfies ApiError;
+    throw error
   }
 };

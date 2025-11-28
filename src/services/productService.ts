@@ -1,4 +1,4 @@
-import axios from 'axios';
+import { get } from '@/lib/apiClient'
 
 export interface Product {
   // Define product properties here
@@ -18,7 +18,10 @@ export interface ProductsResponse {
   data: Category[];
 }
 
-export const fetchProductsByCategory = async (parentCategoryID: string): Promise<ProductsResponse> => {
-  const response = await axios.get<ProductsResponse>(`https://e-commerce-backend-seven-xi.vercel.app/api/products/get-all-products?parentCategoryID=${parentCategoryID}`);
-  return response.data;
-};
+export const fetchProductsByCategory = async (
+  parentCategoryID: string
+): Promise<ProductsResponse> => {
+  const url = '/products/get-all-products'
+  const data = await get<ProductsResponse>(url, { parentCategoryID })
+  return data
+}

@@ -4,14 +4,18 @@ import * as Yup from "yup";
 import { useRegister } from "./query";
 import { RegisterPayload } from "./service";
 import AuthForm from "../AuthForm";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
+import { useStore } from "@/Context/storeContext";
 const RegisterSchema = Yup.object().shape({
   email: Yup.string()
     .email("Invalid email address")
     .required("Email address is required"),
   username: Yup.string().required("Username is required"),
   mobilePhone: Yup.string()
-    .matches(/^(?:\+923\d{9}|03\d{9})$/, "Enter valid phone number +923XXXXXXXXX  or 03XXXXXXXXX")
+    .matches(
+      /^(?:\+923\d{9}|03\d{9})$/,
+      "Enter valid phone number +923XXXXXXXXX  or 03XXXXXXXXX"
+    )
     .required("Phone number is required"),
   password: Yup.string()
     .required("Password is required")
@@ -24,13 +28,16 @@ const RegisterSchema = Yup.object().shape({
 
 export default function Register() {
   const router = useRouter();
-  const searchParams = useSearchParams(); // Access query parameters
+  const { setIsAuthModalOpen } = useStore();
+
   const { mutate, isPending, isSuccess } = useRegister();
-  const callbackUrl = searchParams.get("callbackUrl"); // Get 'callbackUrl' param
-  const Url = callbackUrl || "/";
+
   useEffect(() => {
-    if (isSuccess) router.push("/login?callbackUrl=" + Url);
-  }, [Url, isSuccess, router]);
+    if (isSuccess) {
+      router.push("/");
+      setIsAuthModalOpen(false);
+    }
+  }, [isSuccess, router, setIsAuthModalOpen]);
 
   const handleSubmit = (values: RegisterPayload) => {
     let phone = values.mobilePhone.trim();
@@ -44,8 +51,6 @@ export default function Register() {
     if (/^92\d{10}$/.test(phone)) {
       phone = "+" + phone;
     }
-
-    
 
     values.mobilePhone = phone; // normalized value
     mutate(values);

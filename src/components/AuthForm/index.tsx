@@ -1,7 +1,8 @@
 // import { logIn , logOut} from "@/app/actions/auth";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
+import { useStore } from "@/Context/storeContext";
 
 interface FormField {
   name: string;
@@ -42,19 +43,18 @@ const AuthForm: React.FC<AuthFormProps> = ({
   onSubmit,
   buttonText,
   fields,
-  isLoading
+  isLoading,
 }) => {
   const router = useRouter();
-// console.log(AuthData())
-  const searchParams = useSearchParams(); // Access query parameters
-  const callbackUrl = searchParams.get("callbackUrl"); // Get 'callbackUrl' param
-   const Url = callbackUrl || "/";
+  // console.log(AuthData())
+  const { setActiveTab } = useStore();
+
   return (
-    <div className="flex items-center justify-center min-h-[90vh]">
-      <div className="p-8 w-full max-w-xl">
-        <h2 className="text-lg font-medium mb-6 text-gray-900">
+    <div className="flex items-center justify-center">
+      <div className=" w-full max-w-xl">
+        {/* <h2 className="text-lg font-medium mb-6 text-gray-900">
           {formType.toUpperCase()}
-        </h2>
+        </h2> */}
         <Formik
           initialValues={initialValues}
           validationSchema={validationSchema}
@@ -92,13 +92,6 @@ const AuthForm: React.FC<AuthFormProps> = ({
                 </button>
               </div>
 
-              {formType === "register" && (
-                <p className="text-sm text-center text-gray-500 mb-4">
-                  A password will be sent to your email address.
-                </p>
-              )}
-                 
-
               <div className="text-center text-sm">
                 <p className="text-gray-900">
                   {formType === "login"
@@ -109,13 +102,11 @@ const AuthForm: React.FC<AuthFormProps> = ({
                     className="font-medium underline text-black hover:text-red-500"
                   >
                     {formType === "login" ? (
-                      <span onClick={() => router.push("/register?callbackUrl=" + Url)}>
+                      <span onClick={() => setActiveTab("register")}>
                         Create an account
                       </span>
                     ) : (
-                      <span onClick={() => router.push("/login?callbackUrl=" + Url)}>
-                        Login
-                      </span>
+                      <span onClick={() => setActiveTab("login")}>Login</span>
                     )}
                   </a>
                 </p>
@@ -123,7 +114,7 @@ const AuthForm: React.FC<AuthFormProps> = ({
             </Form>
           )}
         </Formik>
-         {/* <button onClick={() => logIn()}>google</button><br />
+        {/* <button onClick={() => logIn()}>google</button><br />
                   <button onClick={() => logOut()}>logout</button> */}
       </div>
     </div>
@@ -131,4 +122,3 @@ const AuthForm: React.FC<AuthFormProps> = ({
 };
 
 export default AuthForm;
-

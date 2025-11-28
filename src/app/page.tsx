@@ -5,6 +5,7 @@ import {
   dehydrate,
   HydrationBoundary,
 } from "@tanstack/react-query";
+import { AuthModal } from "@/components/AuthModal";
 import { getStoreSetting } from "@/components/Slider/api/storeSettingApi";
 // import { Metadata } from "next";
 import { FaWhatsapp } from "react-icons/fa";
@@ -69,6 +70,7 @@ export default async function LandingPage() {
   }
   return (
     <>
+      <AuthModal />
       <ShoppingCartModal />
 
       <HydrationBoundary state={dehydrate(queryClient)}>

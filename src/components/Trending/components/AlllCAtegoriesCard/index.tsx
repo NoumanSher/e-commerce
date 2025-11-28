@@ -9,19 +9,14 @@ import { Product } from "@/components/productDetail/productDetailDto";
 
 import { useStore } from "@/Context/storeContext";
 import { useRouter, useSearchParams } from "next/navigation";
-
+import { useCategoriesQuery } from "@/hooks/useProductsQuery";
 export default function CategoryNavigation() {
   // Fetch all categories
   const {
     data: allCategories,
     isLoading: allCategoriesLoading,
     error: allCategoriesError,
-  } = useQuery({
-    queryKey: ["allCategories"],
-    queryFn: fetchAllCategories,
-    staleTime: 1000 * 60 * 5,
-    gcTime: 1000 * 60 * 30,
-  });
+  } = useCategoriesQuery();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [expanded, setExpanded] = useState<string | null>(null);
   // const [activeChild, setActiveChild] = useState<string | null>(null);
@@ -138,7 +133,7 @@ const scrollToCategory = useCallback((childId: string) => {
   const categoryElement = containerRef.current.querySelector<HTMLButtonElement>(
     `button[data-id='${childId}']`
   );
-debugger
+
   if (categoryElement) {
     categoryElement.scrollIntoView({
       behavior: "smooth",
