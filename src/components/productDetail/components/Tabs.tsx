@@ -12,7 +12,7 @@ interface RelatedProductsProps {
 
 export default function RelatedProducts({ productId }: RelatedProductsProps) {
   const queryClient = useQueryClient();
-  const { selectedCategory, userId, isLogIn } = useStore();
+  const { selectedCategory, userId, authToken } = useStore();
 
   const [category, setCategory] = useState<any>(null);
   const [recommendedCategoryId, setRecommendedCategoryId] = useState("");
@@ -159,7 +159,7 @@ export default function RelatedProducts({ productId }: RelatedProductsProps) {
         <ProductReviews
           productId={productId}
           userId={userId}
-          isAuthenticated={Boolean(isLogIn ? true : false)}
+          isAuthenticated={Boolean(authToken ? true : false)}
         />
       </TabsContent>
     </Tabs>

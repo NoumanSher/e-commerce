@@ -25,6 +25,7 @@ export const queryKeys = {
   // Categories
   categories: {
     all: () => ["categories"],
+    allPC: () => ["all-parent-categories"],
     lists: () => [...queryKeys.categories.all(), "list"],
     list: (filters?: Record<string, any>) => [
       ...queryKeys.categories.lists(),
