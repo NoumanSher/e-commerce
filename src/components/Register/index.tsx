@@ -23,21 +23,29 @@ const RegisterSchema = Yup.object().shape({
   confirmPassword: Yup.string()
     .oneOf([Yup.ref("password")], "Passwords must match")
     .required("Confirm Password is required")
-    .min(6, "Password must be at least 6 characters"),
+    .min(6, "Password must be at least 6 characters"), 
 });
-
-export default function Register() {
+type RegisterFormProps = {
+  from?: string;
+};
+export default function Register({ from }: RegisterFormProps) {
   const router = useRouter();
   const { setIsAuthModalOpen } = useStore();
 
   const { mutate, isPending, isSuccess } = useRegister();
 
-  useEffect(() => {
-    if (isSuccess) {
-      router.push("/");
-      setIsAuthModalOpen(false);
-    }
-  }, [isSuccess, router, setIsAuthModalOpen]);
+    useEffect(() => {
+      const el =  document.getElementById('pobtn');
+      if (isSuccess) {
+        if(from === 'checkout' || from === 'order-summary' ){
+          setIsAuthModalOpen(false);
+          el?.click()
+          return;
+        }
+        setIsAuthModalOpen(false);
+        router.push("/");
+      }
+    }, [from, isSuccess, router, setIsAuthModalOpen]);
 
   const handleSubmit = (values: RegisterPayload) => {
     let phone = values.mobilePhone.trim();

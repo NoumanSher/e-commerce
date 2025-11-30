@@ -19,6 +19,7 @@ export interface RegisterResponse {
       updatedAt: string;
       __v: number;
     };
+    token:string
   }
   
 export const registerUser = async (payload: RegisterPayload):Promise<RegisterResponse> => {

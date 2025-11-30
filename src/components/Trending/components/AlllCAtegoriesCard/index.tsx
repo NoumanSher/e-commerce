@@ -1,10 +1,10 @@
 "use client";
 import { Menu, ChevronDown } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import { fetchProducts, fetchAllCategories } from "@/services/productsService";
+import { fetchProducts } from "@/services/productsService";
 import React, { useEffect, useRef, useState, useCallback } from "react";
 import MainCard from "../../../Card";
-import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
+import { useInfiniteQuery } from "@tanstack/react-query";
 import { Product } from "@/components/productDetail/productDetailDto";
 
 import { useStore } from "@/Context/storeContext";

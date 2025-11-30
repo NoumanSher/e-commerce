@@ -2,7 +2,7 @@
 import React, { useEffect } from "react";
 import AuthForm from "@/components/AuthForm";
 import * as Yup from "yup";
-import { LogInPayload } from "./service";
+import { LogInPayload } from "./service"; 
 import { useLogIn } from "./query";
 import { useRouter } from "next/navigation";
 import { useStore } from "@/Context/storeContext";

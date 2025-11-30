@@ -35,7 +35,7 @@ export function AuthModal({ from }: AuthModalProps) {
 
           {/* Register Tab */}
           <TabsContent value="register">
-            <RegisterForm />
+            <RegisterForm from={from} />
           </TabsContent>
         </Tabs>
       </DialogContent>

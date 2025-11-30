@@ -1,5 +1,5 @@
 import axios, { AxiosError, AxiosInstance } from 'axios' 
-import { BASE_URL } from '@/constants'
+import { BASE_URL_LIVE } from '@/appConst/appConst'
 
 export interface ApiError {
   message: string
@@ -9,7 +9,7 @@ export interface ApiError {
 
 function createApiClient(): AxiosInstance {
   const client = axios.create({
-    baseURL: BASE_URL,
+    baseURL: BASE_URL_LIVE,
     headers: {
       'Content-Type': 'application/json',
     },

@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { BASE_URL } from "@/constants";
+import { BASE_URL_LIVE } from "@/appConst/appConst";
 interface Address {
   _id: string;
   firstName: string;
@@ -27,7 +27,7 @@ export default function PreviousAddressComponent({ userId, onSelect }: Props) {
     const fetchAddress = async () => {
       try {
         const response = await axios.get(
-          `${BASE_URL}/order/userAdress/${userId}`
+          `${BASE_URL_LIVE}/order/userAdress/${userId}`
         );
         if (response.data.address) {
           setAddress(response.data.address);
