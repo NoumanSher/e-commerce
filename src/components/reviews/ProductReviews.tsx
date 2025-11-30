@@ -22,7 +22,7 @@ export function ProductReviews({
   userId,
   isAuthenticated = false,
 }: ProductReviewsProps) {
-  const { isLogIn } = useStore();
+  const { authToken } = useStore();
   const [reviewsData, setReviewsData] = useState<ReviewsResponse | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -152,7 +152,7 @@ export function ProductReviews({
                 key={review._id}
                 review={review}
                 userId={userId as string}
-                token={isLogIn}
+                token={authToken}
                 // onHelpfulUpdate={handleHelpfulUpdate}
               />
             ))}
