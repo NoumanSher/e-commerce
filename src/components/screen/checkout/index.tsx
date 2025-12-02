@@ -116,6 +116,10 @@ export default function Checkout({ checkValidation }: CheckoutProps) {
       }
 
       const payload = createOrderPayload(values);
+      if(!payload.items.length){
+        toast.error("Your cart is empty");
+        return;
+      }
       mutate(payload);
     },
     [authToken, createOrderPayload, mutate, setIsAuthModalOpen]

@@ -3,6 +3,7 @@ import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import { useRouter } from "next/navigation";
 import { useStore } from "@/Context/storeContext";
+import { FaGoogle, FaLinkedin } from "react-icons/fa";
 
 interface FormField {
   name: string;
@@ -92,6 +93,34 @@ const AuthForm: React.FC<AuthFormProps> = ({
                 </button>
               </div>
 
+              <div className="relative mb-6">
+                <div className="absolute inset-0 flex items-center">
+                  <div className="w-full border-t border-gray-300"></div>
+                </div>
+                <div className="relative flex justify-center text-sm">
+                  <span className="px-2 bg-white text-gray-500">
+                    Or continue with
+                  </span>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4 mb-6">
+                <button
+                  type="button"
+                  className="w-full inline-flex justify-center items-center py-2 px-4 border border-gray-300 shadow-sm bg-white text-sm font-medium text-gray-500 hover:bg-gray-50"
+                >
+                  <FaGoogle className="h-5 w-5 text-red-500 mr-2" />
+                  Google
+                </button>
+                <button
+                  type="button"
+                  className="w-full inline-flex justify-center items-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium text-white bg-[#0077b5] hover:bg-[#006097]"
+                >
+                  <FaLinkedin className="h-5 w-5 mr-2" />
+                  LinkedIn
+                </button>
+              </div>
+
               <div className="text-center text-sm">
                 <p className="text-gray-900">
                   {formType === "login"
@@ -114,8 +143,7 @@ const AuthForm: React.FC<AuthFormProps> = ({
             </Form>
           )}
         </Formik>
-        {/* <button onClick={() => logIn()}>google</button><br />
-                  <button onClick={() => logOut()}>logout</button> */}
+
       </div>
     </div>
   );

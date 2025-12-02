@@ -3,9 +3,12 @@
 
 import React from 'react';
 import { useRouter } from 'next/navigation';
-import { IoArrowBack } from "react-icons/io5";
 import { RiArrowGoBackLine } from "react-icons/ri";
+import { useSearchParams } from 'next/navigation';
 const Header: React.FC<{ orderDate: string }> = ({ orderDate }) => {
+  const searchParams = useSearchParams();
+  const from = searchParams.get('from');
+  const isFromOrderConfirmation = from === 'order-confirmation';
   const router = useRouter();
 
   return (
@@ -14,7 +17,7 @@ const Header: React.FC<{ orderDate: string }> = ({ orderDate }) => {
         <h2 className="lg:text-xl text-base font-semibold text-primary">Order Details</h2>
         <p>{orderDate}</p>
       </div>
-      <button onClick={() => router.back()} className="text-black">
+      <button onClick={() =>  isFromOrderConfirmation ? router.push('/') : router.back()} className="text-black">
        <RiArrowGoBackLine title='Go back' size={30} />
       </button>
     </div>

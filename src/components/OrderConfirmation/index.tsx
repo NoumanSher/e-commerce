@@ -106,7 +106,7 @@ const OrderConfirmation = () => {
         <button
           className="bg-black flex-1  flex justify-center items-center mt-4 h-14 text-white py-2 px-4"
           onClick={() => {
-            router.push(`/profile/order-details?orderId=${data?.data.orderNo}`);
+            router.push(`/profile/order-details?orderId=${data?.data.orderNo}&from=order-confirmation`);
           }}
         >
           Track Order
