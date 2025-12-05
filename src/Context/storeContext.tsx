@@ -13,6 +13,7 @@ import {
 import { storageApi, STORAGE_KEYS } from "@/lib/storageApi";
 import { Product } from "@/components/productDetail/productDetailDto";
 import { ProductDetailData, CartItem } from "@/types";
+import { clearAuthToken } from "@/lib/apiClient";
 
 interface StoreContextProps {
   isCartOpen: boolean;
@@ -105,19 +106,12 @@ export const StoreProvider = ({ children }: { children: ReactNode }) => {
     setAuthToken_State(token);
     if (token) {
       storageApi.set(STORAGE_KEYS.token, token);
-      try {
-        // Import at top to avoid circular deps
-        import("@/lib/apiClient").then((mod) => mod.setAuthToken(token));
-      } catch {
-        // ignore
-      }
+
     } else {
       storageApi.remove(STORAGE_KEYS.token);
-      try {
-        import("@/lib/apiClient").then((mod) => mod.clearAuthToken());
-      } catch {
-        // ignore
-      }
+      setUserId("");
+      setUserName("");
+      clearAuthToken();
     }
   }, []);
 
@@ -129,12 +123,16 @@ export const StoreProvider = ({ children }: { children: ReactNode }) => {
   useEffect(() => {
     if (userId) {
       storageApi.set(STORAGE_KEYS.userId, userId);
+    } else {
+      storageApi.remove(STORAGE_KEYS.userId);
     }
   }, [userId]);
 
   useEffect(() => {
     if (userName) {
       storageApi.set(STORAGE_KEYS.userName, userName);
+    } else {
+      storageApi.remove(STORAGE_KEYS.userName);
     }
   }, [userName]);
 

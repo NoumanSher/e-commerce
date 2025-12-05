@@ -2,7 +2,6 @@
 import React from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
-import { useRouter } from "next/navigation";
 import { useStore } from "@/Context/storeContext";
 import { FaGoogle, FaLinkedin } from "react-icons/fa";
 import { useSocialAuth } from "@/hooks/useSocialAuth";
