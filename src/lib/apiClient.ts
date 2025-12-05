@@ -1,4 +1,4 @@
-import axios, { AxiosError, AxiosInstance } from 'axios' 
+import axios, { AxiosError, AxiosInstance } from 'axios'
 import { BASE_URL_LIVE } from '@/appConst/appConst'
 
 export interface ApiError {
@@ -58,7 +58,7 @@ export async function get<T = any>(url: string, params?: Record<string, any>): P
 }
 
 export async function post<T = any>(url: string, body?: any): Promise<T> {
-  
+
   const { data } = await apiClient.post<T>(url, body)
   return data
 }

@@ -1,9 +1,11 @@
 // import { logIn , logOut} from "@/app/actions/auth";
+import React from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import { useRouter } from "next/navigation";
 import { useStore } from "@/Context/storeContext";
 import { FaGoogle, FaLinkedin } from "react-icons/fa";
+import { useSocialAuth } from "@/hooks/useSocialAuth";
 
 interface FormField {
   name: string;
@@ -46,9 +48,9 @@ const AuthForm: React.FC<AuthFormProps> = ({
   fields,
   isLoading,
 }) => {
-  const router = useRouter();
-  // console.log(AuthData())
+
   const { setActiveTab } = useStore();
+  const { handleGoogleLogin, handleLinkedInLogin } = useSocialAuth();
 
   return (
     <div className="flex items-center justify-center">
@@ -107,6 +109,7 @@ const AuthForm: React.FC<AuthFormProps> = ({
               <div className="grid grid-cols-2 gap-4 mb-6">
                 <button
                   type="button"
+                  onClick={handleGoogleLogin}
                   className="w-full inline-flex justify-center items-center py-2 px-4 border border-gray-300 shadow-sm bg-white text-sm font-medium text-gray-500 hover:bg-gray-50"
                 >
                   <FaGoogle className="h-5 w-5 text-red-500 mr-2" />
@@ -114,6 +117,7 @@ const AuthForm: React.FC<AuthFormProps> = ({
                 </button>
                 <button
                   type="button"
+                  onClick={handleLinkedInLogin}
                   className="w-full inline-flex justify-center items-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium text-white bg-[#0077b5] hover:bg-[#006097]"
                 >
                   <FaLinkedin className="h-5 w-5 mr-2" />
