@@ -1,24 +1,25 @@
 import { useQuery } from "@tanstack/react-query";
 import { relatedProductsByCategoryId } from "./productDetailApi";
 import { getProductData } from "@/lib/api/getProductData";
+import { queryKeys } from "@/lib/queryKeys";
+import { STALE_TIMES, CACHE_TIMES } from "@/lib/queryClient";
+
 export const useGetProductDetailById = (productId: string) => {
   return useQuery({
-    queryKey: ["product", productId],
+    queryKey: queryKeys.products.detail(productId),
     queryFn: () => getProductData(productId),
-    staleTime: 1000 * 60 * 2, // 2 minutes fresh (product details don't change often)
-    gcTime: 1000 * 60 * 60, // 1 hour in cache (users often revisit product pages)
-    refetchOnMount: "always", // Explicitly ensure fresh data when component mounts
+    staleTime: STALE_TIMES.medium, // 2 minutes fresh
+    gcTime: CACHE_TIMES.long, // 1 hour in cache
     enabled: !!productId,
   });
 };
 
 export const useGetRelatedProductsByCategoryId = (categoryId: string) => {
   return useQuery({
-    queryKey: ["relatedProducts", categoryId],
+    queryKey: queryKeys.products.relatedByCategory(categoryId),
     queryFn: () => relatedProductsByCategoryId(categoryId),
-    staleTime: 1000 * 60 * 10, // 10 minutes fresh (category products change less frequently)
-    gcTime: 1000 * 60 * 60 * 2, // 2 hours in cache (category pages are common entry points)
-    refetchOnMount: "always", // Consistent with product detail behavior
+    staleTime: STALE_TIMES.long, // 10 minutes fresh
+    gcTime: CACHE_TIMES.veryLong, // 2 hours in cache
     enabled: !!categoryId,
   });
 };

@@ -1,4 +1,4 @@
-import { BASE_URL } from "@/constants";
+import { BASE_URL_LIVE } from "@/appConst/appConst";
 async function uploadReviewImages(files: File[]) {
   const formData = new FormData();
 
@@ -8,7 +8,7 @@ async function uploadReviewImages(files: File[]) {
   });
 
   try {
-    const res = await fetch(`${BASE_URL}/image/upload-multiple`, {
+    const res = await fetch(`${BASE_URL_LIVE}/image/upload-multiple`, {
       method: "POST",
       body: formData,
     });

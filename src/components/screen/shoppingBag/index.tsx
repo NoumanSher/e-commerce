@@ -1,6 +1,6 @@
 import Tabel from "@/components/ui/tabel";
 import CartTotal from "@/components/CartTotal";
-
+ 
 
 interface ShoppingBagProps {
   checkValidation: any

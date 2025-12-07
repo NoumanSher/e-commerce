@@ -3,7 +3,7 @@ import {
   CreateReviewPayload,
   MarkHelpfulResponse,
 } from "@/types";
-import { BASE_URL } from "@/constants";
+import { BASE_URL_LIVE } from "@/appConst/appConst";
 
 export class ReviewsAPI {
   static async getProductReviews(
@@ -32,7 +32,7 @@ if (sortBY === "recent") {
     
     try {
       const response = await fetch(
-        `${BASE_URL}/reviews/product/${productId}?page=${page}&sortOrder=${sort}&sortBY=${sortBY}&userId=${userId}`,
+        `${BASE_URL_LIVE}/reviews/product/${productId}?page=${page}&sortOrder=${sort}&sortBY=${sortBY}&userId=${userId}`,
         {
           method: "GET",
           headers: {
@@ -56,7 +56,7 @@ if (sortBY === "recent") {
 
   static async createReview(payload: CreateReviewPayload): Promise<any> {
     
-    const response = await fetch(`${BASE_URL}/reviews`, {
+    const response = await fetch(`${BASE_URL_LIVE}/reviews`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -86,7 +86,7 @@ if (sortBY === "recent") {
     
 
     try {
-      const response = await fetch(`${BASE_URL}/reviews/review/helpful`, {
+      const response = await fetch(`${BASE_URL_LIVE}/reviews/review/helpful`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

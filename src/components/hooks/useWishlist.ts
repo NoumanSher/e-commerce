@@ -2,18 +2,15 @@
 
 import { useEffect, useCallback } from "react";
 import { useStore } from "@/Context/storeContext";
+import { storageApi, STORAGE_KEYS } from "@/lib/storageApi";
 import { Product } from "../productDetail/productDetailDto";
 
 export const useWishlist = () => {
-  const { wishlist, setWishlist } = useStore();
-
-  // Sync wishlist with localStorage only when it changes
+  const { wishlist, setWishlist, isHydrated } = useStore();
   useEffect(() => {
-    const storedWishlist = JSON.stringify(wishlist);
-    if (localStorage.getItem("wishlist") !== storedWishlist) {
-      localStorage.setItem("wishlist", storedWishlist);
-    }
-  }, [wishlist]);
+    if (!isHydrated) return;
+    storageApi.setJSON(STORAGE_KEYS.wishlist, wishlist);
+  }, [wishlist, isHydrated]);
 
   // Memoize helper functions to improve performance
   const isInWishlist = useCallback(

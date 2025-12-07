@@ -12,7 +12,7 @@ import { useCart } from "@/components/hooks/useCart";
 import { toast } from "react-toastify";
 import PreviousAddressComponent from "@/components/previousAddress/PreviousAddressComponent";
 import { useInvalidateProductQueries } from "@/hooks/useInvalidateProductQueries";
-
+import { AuthModal } from "@/components/AuthModal";
 const CheckoutSchema = Yup.object().shape({
   firstName: Yup.string().required("First Name is required"),
   lastName: Yup.string().required("Last Name is required"),
@@ -32,8 +32,10 @@ export default function Checkout({ checkValidation }: CheckoutProps) {
   // Hooks at top level
   const searchParams = useSearchParams();
   const section = searchParams.get("section");
+
   const router = useRouter();
-  const { productDetail, cartItems, userId, isLogIn } = useStore();
+  const { productDetail, cartItems, userId, authToken, setIsAuthModalOpen } =
+    useStore();
   const { mutate, isSuccess, isPending, data } = useOrderCreate();
   const { subTotal } = useCart();
 
@@ -105,88 +107,94 @@ export default function Checkout({ checkValidation }: CheckoutProps) {
   // Handle submit with useCallback
   const handleSubmit = useCallback(
     (values: any) => {
-      if (!isLogIn) {
+      if (!authToken) {
         toast.error("Please login to place order");
-        const callbackUrl = encodeURIComponent("/cart?section=checkout");
-        setTimeout(
-          () => router.push(`/login?callbackUrl=${callbackUrl}`),
-          3000
-        );
+        setIsAuthModalOpen(true);
+        // const callbackUrl = encodeURIComponent("/cart?section=checkout");
+
         return;
       }
 
       const payload = createOrderPayload(values);
+      if(!payload.items.length){
+        toast.error("Your cart is empty");
+        return;
+      }
       mutate(payload);
     },
-    [isLogIn, router, createOrderPayload, mutate]
+    [authToken, createOrderPayload, mutate, setIsAuthModalOpen]
   );
 
   return (
-    <Formik
-      initialValues={{
-        firstName: "",
-        lastName: "",
-        streetAddress: "",
-        city: "",
-        zipCode: "",
-        phone: "",
-        email: "",
-        paymentMethod: "cash",
-      }}
-      validationSchema={CheckoutSchema}
-      onSubmit={handleSubmit}
-    >
-      {({ handleSubmit, ...formik }) => (
-        <>
-          <Form
-            onSubmit={handleSubmit}
-            className=" flex lg:flex-row flex-col gap-x-4 "
-          >
-            <div className="lg:w-[70%] w-full">
-              <PreviousAddressComponent
-                userId={userId}
-                onSelect={(prevAddress) => {
-                  formik.setValues({
-                    ...formik.values,
-                    ...(prevAddress
-                      ? {
-                          firstName: prevAddress.firstName,
-                          lastName: prevAddress.lastName,
-                          streetAddress: prevAddress.streetAddress,
-                          city: prevAddress.city,
-                          zipCode: prevAddress.zipCode,
-                          phone: prevAddress.phone,
-                          email: prevAddress.email,
-                        }
-                      : {
-                          firstName: "",
-                          lastName: "",
-                          streetAddress: "",
-                          city: "",
-                          zipCode: "",
-                          phone: "",
-                          email: "",
-                        }),
-                  });
-                }}
-              />
-              <BillingDetailsComponent />
-            </div>
-            <div className="lg:w-[30%] w-full">
-              <OrderSummaryComponent />
-              <PaymentMethodComponent />
+    <>
+      <Formik
+        initialValues={{
+          firstName: "",
+          lastName: "",
+          streetAddress: "",
+          city: "",
+          zipCode: "",
+          phone: "",
+          email: "",
+          paymentMethod: "cash",
+        }}
+        validationSchema={CheckoutSchema}
+        onSubmit={handleSubmit}
+      >
+        {({ handleSubmit, ...formik }) => (
+          <>
+            <Form
+              onSubmit={handleSubmit}
+              className=" flex lg:flex-row flex-col gap-x-4 "
+            >
+              <div className="lg:w-[70%] w-full">
+                <PreviousAddressComponent
+                  userId={userId}
+                  onSelect={(prevAddress) => {
+                    formik.setValues({
+                      ...formik.values,
+                      ...(prevAddress
+                        ? {
+                            firstName: prevAddress.firstName,
+                            lastName: prevAddress.lastName,
+                            streetAddress: prevAddress.streetAddress,
+                            city: prevAddress.city,
+                            zipCode: prevAddress.zipCode,
+                            phone: prevAddress.phone,
+                            email: prevAddress.email,
+                          }
+                        : {
+                            firstName: "",
+                            lastName: "",
+                            streetAddress: "",
+                            city: "",
+                            zipCode: "",
+                            phone: "",
+                            email: "",
+                          }),
+                    });
+                  }}
+                />
+                <BillingDetailsComponent />
+              </div>
+              <div className="lg:w-[30%] w-full">
+                <OrderSummaryComponent />
+                <PaymentMethodComponent />
 
-              <button
-                type="submit"
-                className="sticky bottom-0 w-full bg-black text-white py-3 mt-4 lg:h-14 h-10 flex items-center justify-center"
-              >
-                {isPending ? "loading..." : "Place Order"}
-              </button>
-            </div>
-          </Form>
-        </>
-      )}
-    </Formik>
+                <button
+                  id="pobtn"
+                  type="submit"
+                  className="sticky bottom-0 w-full bg-black text-white py-3 mt-4 lg:h-14 h-10 flex items-center justify-center"
+                >
+                  {isPending ? "loading..." : "Place Order"}
+                </button>
+              </div>
+            </Form>
+          </>
+        )}
+      </Formik>
+      <AuthModal from="checkout" />
+    </>
   );
 }
 // This code is a React component for a checkout screen that uses Formik for form handling and Yup for validation.

@@ -44,7 +44,7 @@ const CartScreen = () => {
 
   // Set the initial active tab based on the 'section' query
   useEffect(() => {
-    if (section === "checkout") {
+    if (section === "checkout" || section === "fscm") {
       setActiveTab(2); // Activate second tab
       setValidations((prevState) => ({
         ...prevState,

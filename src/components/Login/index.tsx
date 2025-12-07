@@ -2,21 +2,32 @@
 import React, { useEffect } from "react";
 import AuthForm from "@/components/AuthForm";
 import * as Yup from "yup";
-import { LogInPayload } from "./service";
+import { LogInPayload } from "./service"; 
 import { useLogIn } from "./query";
-import { useSearchParams } from "next/navigation";
 import { useRouter } from "next/navigation";
+import { useStore } from "@/Context/storeContext";
 
-export default function LoginForm() {
-    const router = useRouter();
+type LoginFormProps = {
+  from?: string;
+};
 
-  const searchParams = useSearchParams(); // Access query parameters
-  const callbackUrl = searchParams.get("callbackUrl"); // Get 'callbackUrl' param
+export default function LoginForm({ from }: LoginFormProps) {
+  const router = useRouter();
+  const { setIsAuthModalOpen } = useStore();
+
   const { mutate, isPending, isSuccess } = useLogIn();
-  const Url = callbackUrl || "/";
   useEffect(() => {
-    if (isSuccess) router.push(Url);
-  }, [Url, isSuccess, router]);
+    const el =  document.getElementById('pobtn');
+    if (isSuccess) {
+      if(from === 'checkout' || from === 'order-summary' ){
+        setIsAuthModalOpen(false);
+        el?.click()
+        return;
+      }
+      setIsAuthModalOpen(false);
+      router.push("/");
+    }
+  }, [from, isSuccess, router, setIsAuthModalOpen]);
 
   const LoginSchema = Yup.object().shape({
     email: Yup.string()

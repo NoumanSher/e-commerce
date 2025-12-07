@@ -15,13 +15,12 @@ import { Button } from "@/components/ui/button";
 const Sidebar: React.FC = () => {
   const pathname = usePathname();
   const router = useRouter();
-  const { setIsLogIn, setUserId } = useStore();
+  const { setAuthToken } = useStore();
 
   const [open, setOpen] = useState(false);
 
   const handleLogout = () => {
-    setIsLogIn("");
-    setUserId("");
+    setAuthToken("");
     setOpen(false);
     router.push("/");
   };
@@ -54,9 +53,8 @@ const Sidebar: React.FC = () => {
                 ) : (
                   <Link
                     href={item.href}
-                    className={`${
-                      isActive ? "text-black font-semibold" : "text-gray-500"
-                    } whitespace-nowrap hover:text-black text-sm lg:text-base`}
+                    className={`${isActive ? "text-black font-semibold" : "text-gray-500"
+                      } whitespace-nowrap hover:text-black text-sm lg:text-base`}
                   >
                     {item.label}
                   </Link>
@@ -76,7 +74,7 @@ const Sidebar: React.FC = () => {
           <p className="text-sm text-gray-600">
             Are you sure you want to log out of your account?
           </p>
-        
+
           <DialogFooter className="flex gap-2 ">
             <Button variant="outline" onClick={() => setOpen(false)} className="w-full sm:w-auto">
               Cancel

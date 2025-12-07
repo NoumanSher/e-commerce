@@ -1,5 +1,4 @@
-import axios from "axios";
-import { BASE_URL } from "@/constants";
+import { get } from '@/lib/apiClient'
 
 export interface Category {
   _id: string;
@@ -17,7 +16,7 @@ export interface CategoriesResponse {
 }
 
 export const fetchCategories = async (): Promise<CategoriesResponse> => { 
-    
-  const { data } = await axios.get(`${BASE_URL}/categories/all-parent`);
-  return data;
+  const url = '/categories/all-parent'
+  const data = await get<CategoriesResponse>(url)
+  return data
 };

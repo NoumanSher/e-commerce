@@ -1,26 +1,26 @@
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "react-toastify";
 import { OrderCreate } from "../api/orderCreateApi";
-interface ErrorLogin {
-  response: {
-    data: {
-      message: string;
-    };
-  };
+import { queryKeys } from "@/lib/queryKeys";
+
+interface ApiError {
+  message: string;
+  statusCode?: number;
+  response?: any;
 }
+
 export const useOrderCreate = () => {
+  const qc = useQueryClient();
   return useMutation({
     mutationFn: OrderCreate,
     onSuccess: (data) => {
-      
-      toast.success("Order Create Successfully!");
+      toast.success("Order created successfully!");
+      // invalidate orders list so user's orders refresh
+      qc.invalidateQueries({ queryKey: queryKeys.orders.all() });
     },
-    onError: (error: ErrorLogin) => {
-      
-      if (error) {
-        toast.error(error?.response.data.message);
-      }
-   
+    onError: (error: ApiError) => {
+      const message = error?.response?.message || error?.message || "Failed to create order";
+      toast.error(message);
     },
   });
 };

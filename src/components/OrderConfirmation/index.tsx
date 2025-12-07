@@ -3,10 +3,12 @@ import Link from "next/link";
 import React from "react";
 import { useGetOrderDetailByorderNumber } from "./query/orderConfirmationQuery";
 import { useStore } from "@/Context/storeContext";
+import { useRouter } from "next/navigation";
+import OrderConfirmationSkeleton from "../OrderSkeleton";
 const OrderConfirmation = () => {
   const { orderNumber } = useStore();
   const { data, isLoading } = useGetOrderDetailByorderNumber(orderNumber);
-
+  const router = useRouter();
   const subTotal = data?.data.items.reduce(
     (acc, item) => acc + item.lineTotal,
     0
@@ -15,10 +17,10 @@ const OrderConfirmation = () => {
   const totalCost = (subTotal ?? 0) + (data?.data.deliveryFee ?? 0);
 
   if (isLoading) {
-    return <div>loading</div>;
+    return <OrderConfirmationSkeleton />;
   }
   return (
-    <div className="flex flex-col items-center lg:p-8 p-4">
+    <div className="flex flex-col items-center lg:p-8">
       {/* Success Icon and Message */}
       <div className="flex flex-col items-center mb-8">
         <div className="bg-yellow-600 rounded-full w-16 h-16 flex items-center justify-center mb-4">
@@ -70,16 +72,19 @@ const OrderConfirmation = () => {
           <span>PRODUCT</span>
           <span>TOTAL</span>
         </div>
-          <div>
-            {data?.data.items.map((item, index) => (
-              <div key={index} className={`flex justify-between ${data?.data.items.length > 1 ? 'border-b pb-2' : ''} `}>
-                <div>
-                  {item.product} x {item.quantity}
-                </div>
-                <div>{item.lineTotal}</div>
+        <div>
+          {data?.data.items.map((item, index) => (
+            <div
+              key={index}
+              className={`flex justify-between ${data?.data.items.length > 1 ? "border-b pb-2" : ""} `}
+            >
+              <div>
+                {item.product} x {item.quantity}
               </div>
-            ))}
-          </div>
+              <div>{item.lineTotal}</div>
+            </div>
+          ))}
+        </div>
         <div className="flex justify-between font-semibold border-t border-gray-300 pt-4 mt-4">
           <span>SUBTOTAL:</span>
           <span>{subTotal}</span>
@@ -97,12 +102,22 @@ const OrderConfirmation = () => {
           <span>{totalCost}</span>
         </div>
       </div>
-      <Link
-        href={"/"}
-        className="bg-black w-full lg:w-[48rem] flex justify-center items-center mt-4 h-14 text-white py-2 px-4 "
-      >
-        Return to shop
-      </Link>
+      <div className="flex space-x-2 w-full max-w-3xl">
+        <button
+          className="bg-black flex-1  flex justify-center items-center mt-4 h-14 text-white py-2 px-4"
+          onClick={() => {
+            router.push(`/profile/order-details?orderId=${data?.data.orderNo}&from=order-confirmation`);
+          }}
+        >
+          Track Order
+        </button>
+        <Link
+          href={"/"}
+          className="bg-black flex-1 flex justify-center items-center mt-4 h-14 text-white py-2 px-4 "
+        >
+          Return to shop
+        </Link>
+      </div>
     </div>
   );
 };
