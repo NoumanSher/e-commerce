@@ -117,24 +117,27 @@ export const StoreProvider = ({ children }: { children: ReactNode }) => {
 
   // Consolidated effect: sync all state changes to storage
   useEffect(() => {
+    if (!isHydrated) return;
     storageApi.setJSON(STORAGE_KEYS.productDetails, productDetail);
-  }, [productDetail]);
+  }, [productDetail, isHydrated]);
 
   useEffect(() => {
+    if (!isHydrated) return;
     if (userId) {
       storageApi.set(STORAGE_KEYS.userId, userId);
     } else {
       storageApi.remove(STORAGE_KEYS.userId);
     }
-  }, [userId]);
+  }, [userId, isHydrated]);
 
   useEffect(() => {
+    if (!isHydrated) return;
     if (userName) {
       storageApi.set(STORAGE_KEYS.userName, userName);
     } else {
       storageApi.remove(STORAGE_KEYS.userName);
     }
-  }, [userName]);
+  }, [userName, isHydrated]);
 
   const contextValue = useMemo(
     () => ({
