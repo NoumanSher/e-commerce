@@ -174,7 +174,7 @@ const Navbar = () => {
 
             {/* Desktop Icons */}
             <div className="hidden lg:flex items-center space-x-5 ml-auto h-full">
-              <SearchIcon className="text-lg cursor-pointer hover:text-gray-600" />
+              {/* <SearchIcon className="text-lg cursor-pointer hover:text-gray-600" /> */}
 
               <ProfileAvatarIcon
                 onClick={handleProfileClick}
@@ -231,7 +231,7 @@ const Navbar = () => {
         <div className="lg:hidden fixed inset-0 bg-white z-40 mt-16 overflow-y-auto">
           <div className="container mx-auto px-4 py-4">
             {/* Mobile Search */}
-            <div className="relative mb-4">
+            {/* <div className="relative mb-4">
               <input
                 type="text"
                 placeholder="Search Products"
@@ -246,7 +246,7 @@ const Navbar = () => {
                   <SearchIcon />
                 )}
               </span>
-            </div>
+            </div> */}
 
             {/* Mobile Nav Links */}
             <ul className="space-y-3">

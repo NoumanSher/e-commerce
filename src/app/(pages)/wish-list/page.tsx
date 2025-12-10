@@ -3,6 +3,8 @@
 import React, { Suspense, lazy } from "react";
 import { useWishlist } from "@/components/hooks/useWishlist";
 import Loader from "@/components/Loader";
+import { AuthModal } from "@/components/AuthModal";
+
 const WishCardList = lazy(
   () => import("./WishCardList")
 );
@@ -15,6 +17,7 @@ export default function WishListPage() {
       <Suspense fallback={<Loader />}>
         <WishCardList products={wishlist} />
       </Suspense>
+      <AuthModal />
     </>
   );
 }

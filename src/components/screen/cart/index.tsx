@@ -4,6 +4,7 @@ import { useSearchParams } from "next/navigation";
 import ShoppingBag from "../shoppingBag";
 import Checkout from "../checkout";
 import OrderConfirmation from "../../OrderConfirmation";
+import { AuthModal } from "@/components/AuthModal";
 interface Tab {
   label: string;
   step: number;
@@ -95,28 +96,24 @@ const CartScreen = () => {
         {tabs.map((tab) => (
           <div
             key={tab.step}
-            className={`flex-1 text-start py-4 cursor-pointer ${
-              isTabClickable(tab.step)
+            className={`flex-1 text-start py-4 cursor-pointer ${isTabClickable(tab.step)
                 ? "text-black"
                 : "text-gray-400 cursor-not-allowed"
-            } ${
-              activeTab === tab.step
+              } ${activeTab === tab.step
                 ? "border-b-4 border-black font-semibold"
                 : ""
-            }`}
+              }`}
             onClick={() => handleTabClick(tab.step)}
           >
             <h2
-              className={`${
-                activeTab === tab.step ? "text-black" : "text-gray-400 "
-              } text-xl`}
+              className={`${activeTab === tab.step ? "text-black" : "text-gray-400 "
+                } text-xl`}
             >
               {tab.label}
             </h2>
             <p
-              className={`${
-                activeTab === tab.step ? "text-black" : "text-gray-400"
-              } text-sm`}
+              className={`${activeTab === tab.step ? "text-black" : "text-gray-400"
+                } text-sm`}
             >
               {tab.description}
             </p>
@@ -133,6 +130,7 @@ const CartScreen = () => {
         )}
         {activeTab === 3 && <OrderConfirmation />}
       </div>
+      <AuthModal />
     </div>
   );
 };

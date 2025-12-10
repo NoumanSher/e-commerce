@@ -1,8 +1,9 @@
 // components/auth-modal.tsx
 "use client";
 
-import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogDescription, DialogTitle } from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+
 import LoginForm from "@/components/Login";
 import RegisterForm from "@/components/Register";
 
@@ -18,10 +19,14 @@ export function AuthModal({ from }: AuthModalProps) {
   return (
     <Dialog open={isAuthModalOpen} onOpenChange={setIsAuthModalOpen}>
       <DialogContent className="sm:max-w-[425px]">
+        <DialogTitle className="text-center hidden">welcome to pakshipper store</DialogTitle>
+        <DialogDescription className="text-lg font-semibold">
+          Login or register to continue.
+        </DialogDescription>
         <Tabs
           value={activeTab}
           onValueChange={setActiveTab}
-          className="w-full mt-4"
+          className="w-full"
         >
           <TabsList className="grid w-full grid-cols-2">
             <TabsTrigger value="login">Login</TabsTrigger>
