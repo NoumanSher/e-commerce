@@ -7,7 +7,7 @@ import {
   dehydrate,
   HydrationBoundary,
 } from "@tanstack/react-query";
-import {  ShoppingCart } from "lucide-react";
+import { ShoppingCart } from "lucide-react";
 import CardHover from "../cardHover";
 import { Product } from "@/components/productDetail/productDetailDto";
 import useIsMobileOrTablet from "@/hooks/useIsHoveredOrMobile";
@@ -22,14 +22,7 @@ interface MainCardProps {
   item: Product;
 }
 
-// Fetch product data
-async function getProductDataById(productId: string) {
-  const response = await fetch(
-    `https://e-commerce-backend-seven-xi.vercel.app/api/products/get-product/${productId}`,
-    { cache: "no-store" }
-  );
-  return response.json();
-}
+
 
 const MainCard = ({ item }: MainCardProps) => {
   const queryClient = useQueryClient();
@@ -164,9 +157,8 @@ const MainCard = ({ item }: MainCardProps) => {
 
           {item.salePrice && (
             <div
-              className={`bg-black absolute top-0 mx-[8px] mt-[8px] sm:py-[7px] sm:px-[10px] py-[6px] px-[6px] ${
-                item.isNew ? "top-[36px]" : ""
-              } `}
+              className={`bg-black absolute top-0 mx-[8px] mt-[8px] sm:py-[7px] sm:px-[10px] py-[6px] px-[6px] ${item.isNew ? "top-[36px]" : ""
+                } `}
             >
               <h1 className="uppercase text-white text-[12px] leading-[1.25em] font-normal ">
                 sale
@@ -192,7 +184,7 @@ const MainCard = ({ item }: MainCardProps) => {
           <p className="text-sm text-gray-700 line-clamp-1">
             {item.productName}
           </p>
-          <p className="font-semibold text-lg">Rs {formatPrice(item.salePrice) }</p>
+          <p className="font-semibold text-lg">Rs {formatPrice(item.salePrice)}</p>
 
           {/* Colors */}
           {/* <div className="flex items-center gap-2">

@@ -1,5 +1,5 @@
 import type { MetadataRoute } from 'next';
-
+import { BASE_URL_LIVE } from '@/appConst/appConst';
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = 'https://pakshipper.com';
   const urls: MetadataRoute.Sitemap = [];
@@ -16,7 +16,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   });
 
   // ✅ 2. Fetch categories
-  const categoriesRes = await fetch('https://e-commerce-backend-seven-xi.vercel.app/api/categories/all-parent');
+  const categoriesRes = await fetch(`${BASE_URL_LIVE}/categories/all-parent`);
   const categoryData = await categoriesRes.json();
   const categories = categoryData.categories;
 
@@ -29,7 +29,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     });
 
     // ✅ 3. Fetch products in this category
-    const productsRes = await fetch(`https://e-commerce-backend-seven-xi.vercel.app/api/products/get-all-products?parentCategoryID=${category._id}`);
+    const productsRes = await fetch(`${BASE_URL_LIVE}/products/get-all-products?parentCategoryID=${category._id}`);
     const productData = await productsRes.json();
 
     for (const product of productData.data) {
