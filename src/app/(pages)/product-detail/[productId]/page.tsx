@@ -35,7 +35,7 @@ export default async function Page({
       <Head>
         <link
           rel="preconnect"
-          href="https://e-commerce-backend-seven-xi.vercel.app"
+          href="https://pakshipper-backend.vercel.app"
         />
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />

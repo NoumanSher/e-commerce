@@ -10,7 +10,7 @@ const ImageLightbox = dynamic(() => import("../ImageLightbox"), {
   loading: () => <div></div>,
 });
 interface ImageGalleryProps {
-  images: { src: string; alt: string }[];
+  images: { src: string; alt: string; blurDataURL: string }[];
   productName: string;
 }
 
@@ -42,7 +42,7 @@ const defaultBlur =
 
 /* ---------------- Thumbnail ---------------- */
 const ThumbnailImage = memo<{
-  image: { src: string; alt: string };
+  image: { src: string; alt: string, blurDataURL: string };
   index: number;
   currentIndex: number;
   productName: string;
@@ -64,17 +64,16 @@ const ThumbnailImage = memo<{
           width={96}
           height={96}
           sizes="(max-width: 768px) 80px, 96px"
-          className={`cursor-pointer w-full h-full object-cover rounded-lg transition-all duration-200 ${
-            isActive
-              ? "ring-2 ring-blue-500 opacity-100"
-              : "opacity-70 hover:opacity-90"
-          }`}
+          className={`cursor-pointer w-full h-full object-cover rounded-lg transition-all duration-200 ${isActive
+            ? "ring-2 ring-blue-500 opacity-100"
+            : "opacity-70 hover:opacity-90"
+            }`}
           onClick={() => onClick(index)}
           onMouseEnter={() => onPreload(index)}
           loading="lazy"
           onLoad={() => onLoad(index)}
           placeholder="blur"
-          blurDataURL={defaultBlur}
+          blurDataURL={image.blurDataURL || defaultBlur}
         />
       </div>
     );
@@ -84,7 +83,7 @@ ThumbnailImage.displayName = "ThumbnailImage";
 
 /* ---------------- Main Image ---------------- */
 const MainImage = memo<{
-  image: { src: string; alt: string };
+  image: { src: string; alt: string, blurDataURL: string };
   index: number;
   productName: string;
   isLoaded: boolean;
@@ -96,16 +95,15 @@ const MainImage = memo<{
     fill
     // sizes="(max-width: 768px) 100vw, 60vw"
     sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 60vw"
-    className={`object-contain transition-opacity duration-300 h-full w-full ${
-      isLoaded ? "opacity-100 " : "opacity-0"
-    }`}
+    className={`object-contain transition-opacity duration-300 h-full w-full ${isLoaded ? "opacity-100 " : "opacity-0"
+      }`}
     fetchPriority={index === 0 ? "high" : "auto"}
     priority={index === 0}
     loading={index === 0 ? "eager" : "lazy"}
     quality={90}
     onLoad={() => onLoad(index)}
     placeholder="blur"
-    blurDataURL={defaultBlur}
+    blurDataURL={image.blurDataURL || defaultBlur}
   />
 ));
 MainImage.displayName = "MainImage";
@@ -145,9 +143,8 @@ const PaginationDots = memo<{
       <button
         key={index}
         onClick={() => onClick(index)}
-        className={`w-3 h-3 rounded-full transition-all duration-200 ${
-          index === currentIndex ? "bg-white" : "bg-white/50"
-        }`}
+        className={`w-3 h-3 rounded-full transition-all duration-200 ${index === currentIndex ? "bg-white" : "bg-white/50"
+          }`}
         aria-label={`Go to image ${index + 1}`}
         aria-current={index === currentIndex ? "true" : "false"}
       />

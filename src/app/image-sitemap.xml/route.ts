@@ -1,10 +1,10 @@
 import { NextResponse } from "next/server";
-
+import { BASE_URL_LIVE } from "@/appConst/appConst";
 export async function GET() {
   // const baseUrl = "http://localhost:3000";
   const baseUrl = "https://pakshipper.com";
   const response = await fetch(
-    "https://e-commerce-backend-seven-xi.vercel.app/api/products/get-all-products"
+    `${BASE_URL_LIVE}/products/get-all-products`
   );
   const data = await response.json();
 
