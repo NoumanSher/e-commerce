@@ -4,19 +4,19 @@ import { getProductData } from "@/lib/api/getProductData";
 import { getStoreSetting } from "@/components/Slider/api/storeSettingApi";
 
 interface GenerateMetadataProps {
-  params: { productId: string };
+  params: { slug: string };
 }
 
 export async function getMetadata({
   params,
 }: GenerateMetadataProps): Promise<Metadata> {
   const [product, storeSettings] = await Promise.all([
-    getProductData(params.productId),
+    getProductData(params.slug),
     getStoreSetting(),
   ]);
 
   const urlBase = "https://pakshipper.com/product-detail";
-  const productUrl = `${urlBase}/${product._id}`;
+  const productUrl = `${urlBase}/${product.seo.slug}`;
   const title = product.seo?.metaTitle ?? product.productName;
   const description = product.seo?.metaDescription ?? product.description;
 
@@ -31,16 +31,16 @@ export async function getMetadata({
     // Only include icons if we actually have a string logoUrl
     ...(logoUrl
       ? {
-          icons: {
-            icon: [
-              {
-                url: logoUrl,
-                type: "image/png",
-                sizes: "32x32",
-              },
-            ],
-          },
-        }
+        icons: {
+          icon: [
+            {
+              url: logoUrl,
+              type: "image/png",
+              sizes: "32x32",
+            },
+          ],
+        },
+      }
       : {}),
     alternates: { canonical: productUrl },
 
@@ -63,6 +63,6 @@ export async function getMetadata({
       images: product.images.map((img) => img.src),
     },
 
-   
+
   };
 }

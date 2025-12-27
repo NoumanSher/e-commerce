@@ -17,15 +17,15 @@ const ProductDetailClient = dynamic(
 
 interface generateMetadataProps {
   params: {
-    productId: string;
+    slug: string;
   };
 }
 
 export default async function Page({
-  params: { productId },
+  params: { slug },
 }: generateMetadataProps) {
   // Server fetch (cached with revalidate)
-  const product = await getProductData(productId);
+  const product = await getProductData(slug);
   if (!product) {
     // this renders the Next.js 404 page and prevents the error
     return notFound();
@@ -50,7 +50,7 @@ export default async function Page({
 
       {/* Only load the heavy React part on the client */}
       <Suspense fallback={<ProductDetailSkeleton />}>
-        <ProductDetailClient productId={productId} />
+        <ProductDetailClient slug={slug} />
       </Suspense>
     </>
   );

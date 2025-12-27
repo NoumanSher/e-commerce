@@ -20,7 +20,7 @@ export function generateProductSchema(product: any) {
         product.stock > 0
           ? "https://schema.org/InStock"
           : "https://schema.org/OutOfStock",
-      url: `https://pakshipper.com/product-detail/${product._id}`,
+      url: `https://pakshipper.com/product-detail/${product.seo.slug}`,
     },
   };
 }
