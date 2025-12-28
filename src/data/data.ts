@@ -101,7 +101,7 @@ export const FooterLinksData: FooterLinksProps[] = [
 ];
 
 export const footerData: FooterItem[] = [
-{
+  {
     title: "Company",
     items: [
       { name: "About Us", url: "/about-us" }
@@ -112,11 +112,11 @@ export const footerData: FooterItem[] = [
     items: [
       {
         name: "Shop All",
-        url: "/all-products?parent-category-id=67f250a92f78a67e01f2b28e"
+        url: "/all-products?parentCategorySlug=all-categories"
       },
       {
         name: "Beauty & Health",
-        url: "/all-products?childCategoryID=683db0fa82b8595f32e61408"
+        url: "/all-products?childCategorySlug=beauty-health"
       }
     ]
   },

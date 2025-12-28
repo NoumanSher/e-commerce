@@ -34,6 +34,8 @@ export interface Product {
   _id: string;
   productName: string;
   parentCategoryID: string;
+  parentCategorySlug: string;
+  childCategorySlug: string;
   childCategoryID: string;
   description: string;
   isVariant: boolean;

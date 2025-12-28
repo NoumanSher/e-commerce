@@ -4,13 +4,13 @@ import { getProductData } from "@/lib/api/getProductData";
 import { queryKeys } from "@/lib/queryKeys";
 import { STALE_TIMES, CACHE_TIMES } from "@/lib/queryClient";
 
-export const useGetProductDetailById = (productId: string) => {
+export const useGetProductDetailBySlug = (slug: string) => {
   return useQuery({
-    queryKey: queryKeys.products.detail(productId),
-    queryFn: () => getProductData(productId),
+    queryKey: queryKeys.products.detail(slug),
+    queryFn: () => getProductData(slug),
     staleTime: STALE_TIMES.medium, // 2 minutes fresh
     gcTime: CACHE_TIMES.long, // 1 hour in cache
-    enabled: !!productId,
+    enabled: !!slug,
   });
 };
 

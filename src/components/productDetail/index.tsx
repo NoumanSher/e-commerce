@@ -1,7 +1,7 @@
 "use client";
 
 import { lazy, Suspense, useEffect, useState } from "react";
-import { useGetProductDetailById } from "./productDetailQuery";
+import { useGetProductDetailBySlug } from "./productDetailQuery";
 import ProductDetailSkeleton from "./components/ProductDetailSkeleton";
 import { useInView } from "react-intersection-observer";
 
@@ -15,23 +15,23 @@ import { useStore } from "@/Context/storeContext";
 const Tabs = lazy(() => import("./components/Tabs"));
 
 interface ProductDetailProps {
-  productId: string;
+  slug: string;
 }
 
-const ProductDetail: React.FC<ProductDetailProps> = ({ productId }) => {
-  const { data, isLoading } = useGetProductDetailById(productId);
+const ProductDetail: React.FC<ProductDetailProps> = ({ slug }) => {
+  const { data, isLoading } = useGetProductDetailBySlug(slug);
   const [showBelowFold, setShowBelowFold] = useState(false);
-    const {  updateSelectedCategory } = useStore();
-  
+  const { updateSelectedCategory } = useStore();
+
   const { ref: belowFoldRef, inView } = useInView({
     threshold: 0.2,
     triggerOnce: true,
   });
 
   useEffect(() => {
-    if (data?.parentCategoryID) {
-    
-      updateSelectedCategory(data?.parentCategoryID);
+    if (data?.parentCategorySlug) {
+
+      updateSelectedCategory(data?.parentCategorySlug);
     }
   }, [data, updateSelectedCategory]);
 
@@ -48,10 +48,10 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ productId }) => {
     <div className="lg:p-8 p-4 container mx-auto">
       {/* Above-the-fold content */}
       {/* <Suspense fallback={<ProductDetailSkeleton />}> */}
-        <div className="flex flex-col lg:flex-row">
-          <ProductImageGallery productName={data.productName} images={data.images ?? []} />
-          <ProductInfo product={data} />
-        </div>
+      <div className="flex flex-col lg:flex-row">
+        <ProductImageGallery productName={data.productName} images={data.images ?? []} />
+        <ProductInfo product={data} />
+      </div>
       {/* </Suspense> */}
 
       {/* Below-the-fold trigger */}
@@ -62,7 +62,7 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ productId }) => {
         <Suspense
           fallback={<div className="h-40">Loading related products...</div>}
         >
-          <Tabs productId={productId} />
+          <Tabs productSlug={slug} productId={data._id} />
         </Suspense>
       )}
     </div>

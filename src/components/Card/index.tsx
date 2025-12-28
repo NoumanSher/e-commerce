@@ -43,10 +43,10 @@ const MainCard = ({ item }: MainCardProps) => {
   const isHovered = !isMobileOrTablet && hoveredCard === item._id; // ✅ hover only desktop
 
   // Prefetch product data on hover
-  const prefetchProduct = (productId: string) => {
+  const prefetchProduct = (slug: string) => {
     queryClient.prefetchQuery({
-      queryKey: ["product", productId],
-      queryFn: () => getProductData(productId),
+      queryKey: ["product", slug],
+      queryFn: () => getProductData(slug),
       staleTime: 1000 * 60 * 5,
       gcTime: 1000 * 60 * 30,
     });
@@ -80,7 +80,7 @@ const MainCard = ({ item }: MainCardProps) => {
 
     if (isVariant) {
       // Redirect to product details page if the product has variants
-      router.push(`/product-detail/${item._id}`);
+      router.push(`/product-detail/${item.seo.slug}`);
     } else {
       // Add product to cart
       let product = item;
@@ -97,14 +97,14 @@ const MainCard = ({ item }: MainCardProps) => {
         className="group relative  overflow-hidden cursor-pointer 
                    bg-white/10 backdrop-blur-md border border-white/20 shadow-md 
                    hover:shadow-xl transition-all duration-300"
-        onClick={() => router.push(`/product-detail/${item._id}`)}
-        onMouseEnter={() => prefetchProduct(item._id)}
-        onTouchStart={() => prefetchProduct(item._id)}
+        onClick={() => router.push(`/product-detail/${item.seo.slug}`)}
+        onMouseEnter={() => prefetchProduct(item.seo.slug)}
+        onTouchStart={() => prefetchProduct(item.seo.slug)}
       >
         {/* Image Section */}
         <div
           className="relative aspect-[3/4] w-full"
-          onMouseEnter={() => handleMouseEnter(item._id)}
+          onMouseEnter={() => handleMouseEnter(item.seo.slug)}
           onMouseLeave={handleMouseLeave}
         >
           {!isImageLoaded && (

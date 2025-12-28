@@ -13,11 +13,11 @@ import { RelatedProductsResponse } from "@/services/productsService";
 const relatedProductsByCategoryId = async (
   categoryId: string
 ): Promise<RelatedProductsResponse> => {
-  
+
   const res = await axios.get<RelatedProductsResponse>(
-    `${BASE_URL_LIVE}/products/get-products-by-category-priority?parentCategoryID=${categoryId}`
+    `${BASE_URL_LIVE}/products/get-products-by-category-priority?parentCategorySlug=${categoryId}`
   );
   return res.data;
 };
 
-export {  relatedProductsByCategoryId };
+export { relatedProductsByCategoryId };
