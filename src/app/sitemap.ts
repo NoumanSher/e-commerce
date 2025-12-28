@@ -1,6 +1,8 @@
 import type { MetadataRoute } from 'next';
 import { BASE_URL_LIVE } from '@/appConst/appConst';
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+  // const baseUrl = "http://localhost:3000";
+
   const baseUrl = 'https://pakshipper.com';
   const urls: MetadataRoute.Sitemap = [];
 
@@ -22,14 +24,14 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   for (const category of categories) {
     urls.push({
-      url: `${baseUrl}/all-products?parentCategoryID=${category._id}`,
+      url: `${baseUrl}/all-products?parentCategorySlug=${category.slug}`,
       lastModified: new Date(),
       changeFrequency: 'weekly',
       priority: 0.8,
     });
 
     // ✅ 3. Fetch products in this category
-    const productsRes = await fetch(`${BASE_URL_LIVE}/products/get-all-products?parentCategoryID=${category._id}`);
+    const productsRes = await fetch(`${BASE_URL_LIVE}/products/get-all-products?parentCategorySlug=${category.slug}`);
     const productData = await productsRes.json();
 
     for (const product of productData.data) {

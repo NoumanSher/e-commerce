@@ -29,9 +29,9 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ slug }) => {
   });
 
   useEffect(() => {
-    if (data?.parentCategoryID) {
+    if (data?.parentCategorySlug) {
 
-      updateSelectedCategory(data?.parentCategoryID);
+      updateSelectedCategory(data?.parentCategorySlug);
     }
   }, [data, updateSelectedCategory]);
 
@@ -62,7 +62,7 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ slug }) => {
         <Suspense
           fallback={<div className="h-40">Loading related products...</div>}
         >
-          <Tabs productId={slug} />
+          <Tabs productSlug={slug} productId={data._id} />
         </Suspense>
       )}
     </div>

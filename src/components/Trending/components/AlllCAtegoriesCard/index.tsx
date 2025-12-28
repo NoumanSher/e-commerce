@@ -23,13 +23,13 @@ export default function CategoryNavigation() {
   const categoriesData = allCategories?.categories || [];
   const searchParams = useSearchParams();
   const router = useRouter();
-  const childCategoryID = searchParams.get("childCategoryID");
-  const parentCategoryId = searchParams.get("parentCategoryID");
+  const childCategoryID = searchParams.get("childCategorySlug");
+  const parentCategorySlug = searchParams.get("parentCategorySlug");
   const { selectedCategory, updateSelectedCategory } = useStore();
   const [childCategory, setChildCategory] = useState<any[]>([]);
 
   const loaderRef = useRef<HTMLDivElement | null>(null);
-const containerRef = useRef<HTMLDivElement | null>(null);
+  const containerRef = useRef<HTMLDivElement | null>(null);
   const [selectedChildCategory, setSelectedChildCategory] = useState<
     string | null
   >(null);
@@ -37,7 +37,7 @@ const containerRef = useRef<HTMLDivElement | null>(null);
   useEffect(() => {
     if (selectedChildCategory && allCategories?.categories) {
       const parent = allCategories.categories.find((cat: any) =>
-        cat.children.some((child: any) => child._id === selectedChildCategory)
+        cat.children.some((child: any) => child.slug === selectedChildCategory)
       );
       if (parent) {
         setExpanded(parent._id); // expand the right parent automatically
@@ -47,20 +47,20 @@ const containerRef = useRef<HTMLDivElement | null>(null);
 
   // Update child categories when parent category changes
   useEffect(() => {
-    if (parentCategoryId || selectedCategory) {
-      const categoryId = selectedCategory || parentCategoryId;
+    if (parentCategorySlug || selectedCategory) {
+      const categorySlug = selectedCategory || parentCategorySlug;
       const foundCategory = allCategories?.categories.find(
-        (cat) => cat._id === categoryId
+        (cat) => cat.slug === categorySlug
       );
       const children = foundCategory?.children || [];
       setChildCategory(children);
 
       // Reset selected child category when parent changes
-      if (selectedCategory && selectedCategory !== parentCategoryId) {
+      if (selectedCategory && selectedCategory !== parentCategorySlug) {
         setSelectedChildCategory(null);
       }
     }
-  }, [allCategories?.categories, parentCategoryId, selectedCategory]);
+  }, [allCategories?.categories, parentCategorySlug, selectedCategory]);
   useEffect(() => {
     if (childCategoryID) {
       setSelectedChildCategory(childCategoryID);
@@ -120,36 +120,36 @@ const containerRef = useRef<HTMLDivElement | null>(null);
 
   const products: Product[] = data?.pages.flatMap((page) => page.data) ?? [];
   const handleParentCategoryClick = useCallback(
-    (categoryId: string) => {
-      updateSelectedCategory(categoryId);
+    (categorySlug: string) => {
+      updateSelectedCategory(categorySlug);
       setSelectedChildCategory(null); // reset child when parent changes
-      router.push(`/all-products?parentCategoryID=${categoryId}`);
+      router.push(`/all-products?parentCategorySlug=${categorySlug}`);
     },
     [router, updateSelectedCategory]
   );
-const scrollToCategory = useCallback((childId: string) => {
-  if (!containerRef.current) return;
+  const scrollToCategory = useCallback((childSlug: string) => {
+    if (!containerRef.current) return;
 
-  const categoryElement = containerRef.current.querySelector<HTMLButtonElement>(
-    `button[data-id='${childId}']`
-  );
+    const categoryElement = containerRef.current.querySelector<HTMLButtonElement>(
+      `button[data-id='${childSlug}']`
+    );
 
-  if (categoryElement) {
-    categoryElement.scrollIntoView({
-      behavior: "smooth",
-      block: "nearest",
-      inline: "center",
-    });
-  }
-}, []);
+    if (categoryElement) {
+      categoryElement.scrollIntoView({
+        behavior: "smooth",
+        block: "nearest",
+        inline: "center",
+      });
+    }
+  }, []);
 
   const handleChildCategoryClick = useCallback(
-    (categoryId: string, parentId?: string) => {
-      setSelectedChildCategory(categoryId);
+    (childCategorySlug: string, parentId?: string) => {
+      setSelectedChildCategory(childCategorySlug);
       updateSelectedCategory("");
       setExpanded(parentId ? parentId : ""); // expand parent automatically
-      router.push(`/all-products?childCategoryID=${categoryId}`);
-      if (categoryId) scrollToCategory(categoryId);
+      router.push(`/all-products?childCategorySlug=${childCategorySlug}`);
+      if (childCategorySlug) scrollToCategory(childCategorySlug);
     },
     [router, scrollToCategory, updateSelectedCategory]
   );
@@ -163,17 +163,16 @@ const scrollToCategory = useCallback((childId: string) => {
         {categoriesData.toReversed().map((cat) => (
           <div key={cat._id}>
             <button
-              className={`flex justify-between w-full py-2 font-medium ${selectedCategory === cat._id ? "text-blue-600" : ""}`}
+              className={`flex justify-between w-full py-2 font-medium ${selectedCategory === cat.slug ? "text-blue-600" : ""}`}
               onClick={() => {
                 setExpanded(expanded === cat._id ? null : cat._id);
-                handleParentCategoryClick(cat._id);
+                handleParentCategoryClick(cat.slug);
               }}
             >
               {cat.name}
               <ChevronDown
-                className={`w-4 h-4 transition-transform ${
-                  expanded === cat._id ? "rotate-180" : ""
-                }`}
+                className={`w-4 h-4 transition-transform ${expanded === cat._id ? "rotate-180" : ""
+                  }`}
               />
             </button>
             <AnimatePresence>
@@ -187,13 +186,12 @@ const scrollToCategory = useCallback((childId: string) => {
                   {cat.children?.map((child) => (
                     <div
                       key={child._id}
-                      className={`py-1 cursor-pointer text-sm hover:text-blue-500 ${
-                        selectedChildCategory === child._id
-                          ? "text-blue-600 font-semibold"
-                          : ""
-                      }`}
+                      className={`py-1 cursor-pointer text-sm hover:text-blue-500 ${selectedChildCategory === child.slug
+                        ? "text-blue-600 font-semibold"
+                        : ""
+                        }`}
                       onClick={() => {
-                        handleChildCategoryClick(child._id);
+                        handleChildCategoryClick(child.slug);
                       }}
                     >
                       {child.name}
@@ -227,15 +225,14 @@ const scrollToCategory = useCallback((childId: string) => {
             .map((child) => (
               <button
                 key={child?._id}
-                data-id={child?._id}
-                className={`px-3 py-1  rounded-full border text-sm whitespace-nowrap transition-colors ${
-                  selectedChildCategory === child?._id
-                    ? "bg-blue-600 text-white border-blue-600"
-                    : "bg-white border-gray-300 text-gray-700"
-                }`}
+                data-id={child?.slug}
+                className={`px-3 py-1  rounded-full border text-sm whitespace-nowrap transition-colors ${selectedChildCategory === child?._id
+                  ? "bg-blue-600 text-white border-blue-600"
+                  : "bg-white border-gray-300 text-gray-700"
+                  }`}
                 onClick={() => {
                   // setActiveChild(child?._id as string);
-                  handleChildCategoryClick(child?._id as string);
+                  handleChildCategoryClick(child?.slug as string);
                 }}
               >
                 {child?.name}
@@ -293,14 +290,13 @@ const scrollToCategory = useCallback((childId: string) => {
                   className={`flex justify-between w-full py-2 font-medium ${selectedCategory === cat._id ? "text-blue-600" : ""}`}
                   onClick={() => {
                     setExpanded(expanded === cat._id ? null : cat._id);
-                    handleParentCategoryClick(cat._id);
+                    handleParentCategoryClick(cat.slug);
                   }}
                 >
                   {cat.name}
                   <ChevronDown
-                    className={`w-4 h-4 transition-transform ${
-                      expanded === cat._id ? "rotate-180" : ""
-                    }`}
+                    className={`w-4 h-4 transition-transform ${expanded === cat._id ? "rotate-180" : ""
+                      }`}
                   />
                 </button>
                 <AnimatePresence>
@@ -314,18 +310,17 @@ const scrollToCategory = useCallback((childId: string) => {
                       {cat.children?.map((child, index) => (
                         <div
                           key={child._id}
-                          className={`py-1 cursor-pointer text-sm  ${
-                            (selectedChildCategory || childCategoryID) ===
-                            child._id
-                              ? "text-blue-600 font-semibold"
-                              : ""
-                          }`}
+                          className={`py-1 cursor-pointer text-sm  ${(selectedChildCategory || childCategoryID) ===
+                            child.slug
+                            ? "text-blue-600 font-semibold"
+                            : ""
+                            }`}
                           onClick={() => {
                             // setActiveChild(child._id);
                             setMobileOpen(false);
                             handleChildCategoryClick(
-                              child._id,
-                              selectedCategory || parentCategoryId!
+                              child.slug,
+                              selectedCategory || parentCategorySlug!
                             );
                           }}
                         >

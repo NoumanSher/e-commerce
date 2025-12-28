@@ -11,9 +11,9 @@ const ProductsCategories = () => {
   } = useCategories();
   const { updateSelectedCategory, selectedCategory } = useStore();
   useEffect(() => {
-    
+
     if (categoriesData?.categories && categoriesData.categories.length > 0) {
-      updateSelectedCategory(selectedCategory || categoriesData.categories[categoriesData.categories.length - 1]._id);
+      updateSelectedCategory(selectedCategory || categoriesData.categories[categoriesData.categories.length - 1].slug);
     }
   }, [categoriesData, selectedCategory, updateSelectedCategory]);
   if (categoriesError) return <div>Error loading categories</div>;
@@ -33,18 +33,16 @@ const ProductsCategories = () => {
             {categoriesData?.categories?.slice(0, 4).reverse().map((item) => (
               <li key={item._id}>
                 <span
-                  onClick={() => updateSelectedCategory(item._id)}
-                  className={`relative mx-[25px] text-[#767676] hover:text-black cursor-pointer mt-[11px] pb-[9px] ${
-                    selectedCategory === item._id ? "text-black font-bold" : ""
-                  } leading-[1.375em] text-[14px] xl:text-[16px] font-medium uppercase group`}
+                  onClick={() => updateSelectedCategory(item.slug)}
+                  className={`relative mx-[25px] text-[#767676] hover:text-black cursor-pointer mt-[11px] pb-[9px] ${selectedCategory === item.slug ? "text-black font-bold" : ""
+                    } leading-[1.375em] text-[14px] xl:text-[16px] font-medium uppercase group`}
                 >
                   {item.name}
                   <span
-                    className={`absolute left-0 bottom-0 sm:h-[2.5px] bg-[#222222] transition-all duration-500 ease-in-out origin-bottom-left ${
-                      selectedCategory === item._id
-                        ? "w-full scale-x-100"
-                        : "w-0 group-hover:w-full group-hover:scale-x-100 scale-x-0"
-                    }`}
+                    className={`absolute left-0 bottom-0 sm:h-[2.5px] bg-[#222222] transition-all duration-500 ease-in-out origin-bottom-left ${selectedCategory === item.slug
+                      ? "w-full scale-x-100"
+                      : "w-0 group-hover:w-full group-hover:scale-x-100 scale-x-0"
+                      }`}
                   ></span>{" "}
                 </span>
               </li>

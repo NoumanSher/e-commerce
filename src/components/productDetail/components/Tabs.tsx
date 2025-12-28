@@ -7,10 +7,11 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useState, useEffect } from "react";
 import { fetchCategories } from "@/services/categoryService";
 interface RelatedProductsProps {
+  productSlug: string;
   productId: string;
 }
 
-export default function RelatedProducts({ productId }: RelatedProductsProps) {
+export default function RelatedProducts({ productSlug, productId }: RelatedProductsProps) {
   const queryClient = useQueryClient();
   const { selectedCategory, userId, authToken } = useStore();
 
@@ -34,7 +35,7 @@ export default function RelatedProducts({ productId }: RelatedProductsProps) {
       }
 
       const matchedCategory = categoryData?.categories?.find(
-        (item: any) => item._id === selectedCategory
+        (item: any) => item.slug === selectedCategory
       );
       setCategory(matchedCategory);
     };
@@ -48,11 +49,11 @@ export default function RelatedProducts({ productId }: RelatedProductsProps) {
 
     let newRecommendedCategoryId = "";
     if (category.slug === "all-categories") {
-      newRecommendedCategoryId = "687e2abfec2eff18b9b2d1e3";
+      newRecommendedCategoryId = "nighties";
     } else if (category.slug === "undergarments") {
-      newRecommendedCategoryId = "687e2abfec2eff18b9b2d1e3";
+      newRecommendedCategoryId = "nighties";
     } else if (category.slug === "nighties") {
-      newRecommendedCategoryId = "687e104aa865a8d496318c29";
+      newRecommendedCategoryId = "undergarments";
     }
 
     if (newRecommendedCategoryId) {
@@ -95,25 +96,25 @@ export default function RelatedProducts({ productId }: RelatedProductsProps) {
   }
 
   const filteredRelatedProducts =
-    relatedProducts?.data?.filter((item) => item._id !== productId) || [];
+    relatedProducts?.data?.filter((item) => item.seo.slug !== productSlug) || [];
 
   const filteredRecommendedProducts =
-    recommendedProducts?.data?.filter((item) => item._id !== productId) || [];
+    recommendedProducts?.data?.filter((item) => item.seo.slug !== productSlug) || [];
   const tabTriggerStyle =
     "px-0 bg-transparent text-base sm:text-lg font-medium text-gray-600 data-[state=active]:border-b-2 data-[state=active]:border-black data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:text-black rounded-none";
-    const data = [{title: "Related Products"}, {title: "Recommended"}, {title: "Reviews"}];
+  const data = [{ title: "Related Products" }, { title: "Recommended" }, { title: "Reviews" }];
   return (
     <Tabs defaultValue="related products" className="mt-5">
       <TabsList className="flex  justify-start scrollbarHide overflow-x-auto shadow-none space-x-2 bg-transparent mb-5">
         {data.map((item) => (
-        <TabsTrigger
-          key={item.title}
-          value={item.title.toLowerCase()}
-          className={tabTriggerStyle}
-        >
-          {item.title}
-        </TabsTrigger>
-      ))}
+          <TabsTrigger
+            key={item.title}
+            value={item.title.toLowerCase()}
+            className={tabTriggerStyle}
+          >
+            {item.title}
+          </TabsTrigger>
+        ))}
       </TabsList>
 
       <TabsContent value="related products">

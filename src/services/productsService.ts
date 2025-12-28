@@ -40,7 +40,7 @@ export interface ProductsResponse {
   pagination: Pagination;
 }
 export interface RelatedProductsResponse
-  extends Omit<ProductsResponse, "pagination"> {}
+  extends Omit<ProductsResponse, "pagination"> { }
 
 export interface ApiError {
   message: string;
@@ -49,14 +49,14 @@ export interface ApiError {
 }
 
 export const fetchProducts = async (
-  categoryId?: string,
-  childCategoryID?: string,
+  categorySlug?: string,
+  childCategorySlug?: string,
   page: number = 1,
   limit: number = 8
 ): Promise<ProductsResponse> => {
   const params = new URLSearchParams();
-  if (childCategoryID) params.append("childCategoryID", childCategoryID);
-  if (categoryId) params.append("parentCategoryID", categoryId);
+  if (childCategorySlug) params.append("childCategorySlug", childCategorySlug);
+  if (categorySlug) params.append("parentCategorySlug", categorySlug);
   if (page) params.append("page", page.toString());
   if (limit) params.append("limit", limit.toString());
   const url = `/products/get-all-products?${params.toString()}`

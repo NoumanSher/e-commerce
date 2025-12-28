@@ -24,7 +24,7 @@ export async function GET() {
 
   for (const product of data.data) {
     xml += `<url>
-      <loc>${escapeXml(`${baseUrl}/product-detail/${product._id}`)}</loc>`;
+      <loc>${escapeXml(`${baseUrl}/product-detail/${product.seo.slug}`)}</loc>`;
     for (const img of product.images) {
       xml += `
         <image:image>
