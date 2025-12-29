@@ -40,7 +40,7 @@ export default function CategoryNavigation() {
         cat.children.some((child: any) => child.slug === selectedChildCategory)
       );
       if (parent) {
-        setExpanded(parent._id); // expand the right parent automatically
+        setExpanded(parent.slug); // expand the right parent automatically
       }
     }
   }, [selectedChildCategory, allCategories?.categories]);
@@ -165,18 +165,18 @@ export default function CategoryNavigation() {
             <button
               className={`flex justify-between w-full py-2 font-medium ${selectedCategory === cat.slug ? "text-blue-600" : ""}`}
               onClick={() => {
-                setExpanded(expanded === cat._id ? null : cat._id);
+                setExpanded(expanded === cat.slug ? null : cat.slug);
                 handleParentCategoryClick(cat.slug);
               }}
             >
               {cat.name}
               <ChevronDown
-                className={`w-4 h-4 transition-transform ${expanded === cat._id ? "rotate-180" : ""
+                className={`w-4 h-4 transition-transform ${expanded === cat.slug ? "rotate-180" : ""
                   }`}
               />
             </button>
             <AnimatePresence>
-              {expanded === cat._id && (
+              {expanded === cat.slug && (
                 <motion.div
                   initial={{ height: 0, opacity: 0 }}
                   animate={{ height: "auto", opacity: 1 }}
@@ -208,10 +208,10 @@ export default function CategoryNavigation() {
       <main className="p-4 w-full bg-white rounded-lg sm:ml-4">
         {/* Mobile Top Bar */}
         <div className="md:hidden flex items-center justify-between mb-4">
-          <button onClick={() => setMobileOpen(true)}>
-            <Menu className="w-6 h-6" />
+          <button className="text-lg font-semibold" onClick={() => setMobileOpen(true)}>
+            Explore Categories
           </button>
-          <span className="text-lg font-semibold">Products</span>
+          {/* <span className="text-lg font-semibold">Products</span> */}
         </div>
 
         {/* Mobile Child Category Chips */}
@@ -226,7 +226,7 @@ export default function CategoryNavigation() {
               <button
                 key={child?._id}
                 data-id={child?.slug}
-                className={`px-3 py-1  rounded-full border text-sm whitespace-nowrap transition-colors ${selectedChildCategory === child?._id
+                className={`px-3 py-1  rounded-full border text-sm whitespace-nowrap transition-colors ${selectedChildCategory === child?.slug
                   ? "bg-blue-600 text-white border-blue-600"
                   : "bg-white border-gray-300 text-gray-700"
                   }`}
@@ -287,20 +287,20 @@ export default function CategoryNavigation() {
             {categoriesData.toReversed().map((cat) => (
               <div key={cat._id}>
                 <button
-                  className={`flex justify-between w-full py-2 font-medium ${selectedCategory === cat._id ? "text-blue-600" : ""}`}
+                  className={`flex justify-between w-full py-2 font-medium ${selectedCategory === cat.slug ? "text-blue-600" : ""}`}
                   onClick={() => {
-                    setExpanded(expanded === cat._id ? null : cat._id);
+                    setExpanded(expanded === cat.slug ? null : cat.slug);
                     handleParentCategoryClick(cat.slug);
                   }}
                 >
                   {cat.name}
                   <ChevronDown
-                    className={`w-4 h-4 transition-transform ${expanded === cat._id ? "rotate-180" : ""
+                    className={`w-4 h-4 transition-transform ${expanded === cat.slug ? "rotate-180" : ""
                       }`}
                   />
                 </button>
                 <AnimatePresence>
-                  {expanded === cat._id && (
+                  {expanded === cat.slug && (
                     <motion.div
                       initial={{ height: 0, opacity: 0 }}
                       animate={{ height: "auto", opacity: 1 }}
