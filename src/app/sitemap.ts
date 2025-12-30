@@ -31,7 +31,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     });
 
     // ✅ 3. Fetch products in this category
-    const productsRes = await fetch(`${BASE_URL_LIVE}/products/get-all-products?parentCategorySlug=${category.slug}`);
+    const productsRes = await fetch(`${BASE_URL_LIVE}/products/get-all-products?parentCategorySlug=${category.slug}&mode=seo`);
     const productData = await productsRes.json();
 
     for (const product of productData.data) {

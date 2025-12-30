@@ -40,7 +40,7 @@ const MainCard = ({ item }: MainCardProps) => {
       setIsTrue(isInWishlist(item?._id));
     }
   }, [isInWishlist, item?._id]);
-  const isHovered = !isMobileOrTablet && hoveredCard === item._id; // ✅ hover only desktop
+  const isHovered = !isMobileOrTablet && hoveredCard === item.seo.slug; // ✅ hover only desktop
 
   // Prefetch product data on hover
   const prefetchProduct = (slug: string) => {
@@ -52,8 +52,8 @@ const MainCard = ({ item }: MainCardProps) => {
     });
   };
 
-  const handleMouseEnter = useCallback((id: string) => {
-    setHoveredCard(id);
+  const handleMouseEnter = useCallback((slug: string) => {
+    setHoveredCard(slug);
   }, []);
 
   const handleMouseLeave = useCallback(() => {

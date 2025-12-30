@@ -112,11 +112,11 @@ export const footerData: FooterItem[] = [
     items: [
       {
         name: "Shop All",
-        url: "/all-products?parentCategorySlug=all-categories"
+        url: "/all-products?parentCategorySlug=all-categories&mode=client"
       },
       {
         name: "Beauty & Health",
-        url: "/all-products?childCategorySlug=beauty-health"
+        url: "/all-products?childCategorySlug=beauty-health&mode=client"
       }
     ]
   },

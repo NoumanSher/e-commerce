@@ -35,7 +35,7 @@ const CardHover = ({ isHovered, product }: ICardHover) => {
 
     if (isVariant) {
       // Redirect to product details page if the product has variants
-      router.push(`/product-detail/${product._id}`);
+      router.push(`/product-detail/${product.seo.slug}`);
     } else {
       // Add product to cart
       addToCart({ product, quantity: 1 });
@@ -59,11 +59,10 @@ const CardHover = ({ isHovered, product }: ICardHover) => {
   return (
     <div>
       <div
-        className={`absolute bottom-[10px] mb-2 flex justify-center w-full gap-2 transition-all duration-300 ease-in-out transform ${
-          isHovered
+        className={`absolute bottom-[10px] mb-2 flex justify-center w-full gap-2 transition-all duration-300 ease-in-out transform ${isHovered
             ? "opacity-100 visible translate-y-[-10px]"
             : "opacity-0 invisible translate-y-5"
-        }`}
+          }`}
       >
         <div
           onClick={(e) => handleAddToCart(e, product?.isVariant as boolean)}

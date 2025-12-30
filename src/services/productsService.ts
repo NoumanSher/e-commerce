@@ -59,6 +59,7 @@ export const fetchProducts = async (
   if (categorySlug) params.append("parentCategorySlug", categorySlug);
   if (page) params.append("page", page.toString());
   if (limit) params.append("limit", limit.toString());
+  params.append("mode", "client")
   const url = `/products/get-all-products?${params.toString()}`
   try {
     const data = await get<ProductsResponse>(url)

@@ -123,7 +123,7 @@ export default function CategoryNavigation() {
     (categorySlug: string) => {
       updateSelectedCategory(categorySlug);
       setSelectedChildCategory(null); // reset child when parent changes
-      router.push(`/all-products?parentCategorySlug=${categorySlug}`);
+      router.push(`/all-products?parentCategorySlug=${categorySlug}&mode=client`);
     },
     [router, updateSelectedCategory]
   );
@@ -148,7 +148,7 @@ export default function CategoryNavigation() {
       setSelectedChildCategory(childCategorySlug);
       updateSelectedCategory("");
       setExpanded(parentId ? parentId : ""); // expand parent automatically
-      router.push(`/all-products?childCategorySlug=${childCategorySlug}`);
+      router.push(`/all-products?childCategorySlug=${childCategorySlug}&mode=client`);
       if (childCategorySlug) scrollToCategory(childCategorySlug);
     },
     [router, scrollToCategory, updateSelectedCategory]
