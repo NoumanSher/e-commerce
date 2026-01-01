@@ -39,6 +39,7 @@ const ProductInfo: React.FC<ProductDetailsProps> = ({ product }) => {
     parentCategoryName,
     childCategoryName,
     discount,
+    seo
   } = product;
 
   const [selectedColor, setSelectedColor] = useState("");
@@ -230,7 +231,7 @@ const ProductInfo: React.FC<ProductDetailsProps> = ({ product }) => {
       <div className="flex gap-x-7 items-center mb-3">
         <WishlistButton product={product} />
         <SocialMediaShareWithNoSSR
-          url={`https://www.pakshipper.com/product-detail/${_id}`}
+          url={`https://www.pakshipper.com/product-detail/${seo.slug}`}
         />
       </div>
 
@@ -257,7 +258,7 @@ const ProductInfo: React.FC<ProductDetailsProps> = ({ product }) => {
           sku: sku,
           size: selectedSize,
           color: selectedColor,
-          url: `https://e-commerce-pink-iota.vercel.app/product-detail/${_id}`,
+          url: `https://www.pakshipper.com/product-detail/${seo.slug}`,
         }}
       />
     </div>
