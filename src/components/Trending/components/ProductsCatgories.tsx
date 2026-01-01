@@ -13,7 +13,7 @@ const ProductsCategories = () => {
   useEffect(() => {
 
     if (categoriesData?.categories && categoriesData.categories.length > 0) {
-      updateSelectedCategory(selectedCategory || categoriesData.categories[categoriesData.categories.length - 1].slug);
+      updateSelectedCategory(selectedCategory || categoriesData.categories[0].slug);
     }
   }, [categoriesData, selectedCategory, updateSelectedCategory]);
   if (categoriesError) return <div>Error loading categories</div>;
@@ -30,7 +30,7 @@ const ProductsCategories = () => {
           <div className="flex justify-center">Loading Categories...</div>
         ) : (
           <ul className="flex flex-wrap justify-center mb-[1rem] mt-2">
-            {categoriesData?.categories?.slice(0, 4).reverse().map((item) => (
+            {categoriesData?.categories?.slice(0, 4).map((item) => (
               <li key={item._id}>
                 <span
                   onClick={() => updateSelectedCategory(item.slug)}

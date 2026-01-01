@@ -184,7 +184,7 @@ const MainCard = ({ item }: MainCardProps) => {
           <p className="text-sm text-gray-700 line-clamp-1">
             {item.productName}
           </p>
-          <p className="font-semibold text-lg">Rs {formatPrice(item.salePrice)}</p>
+          <p className="font-semibold text-lg">PKR {formatPrice(item.salePrice)}</p>
 
           {/* Colors */}
           {/* <div className="flex items-center gap-2">
