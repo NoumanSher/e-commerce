@@ -32,7 +32,7 @@ export function generateProductSchema(product: any) {
       ratingValue: product.ratingStats.averageRating,
       reviewCount: product.ratingStats.totalReviews,
       bestRating: 5,
-      worstRating: 1,
+      // worstRating: 1,
     };
   }
 
@@ -50,7 +50,7 @@ export function generateProductSchema(product: any) {
         "@type": "Rating",
         ratingValue: review.rating,
         bestRating: 5,
-        worstRating: 1,
+        // worstRating: 1,
       },
     }));
 
