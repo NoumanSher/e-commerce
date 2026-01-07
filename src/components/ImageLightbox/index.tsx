@@ -1,14 +1,13 @@
 "use client";
 
-import { useState, useEffect, useCallback, useRef } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { useState, useEffect, useCallback } from "react";
 import Image from "next/image";
 import { X, ChevronLeft, ChevronRight } from "lucide-react";
-import { useSwipeable } from "react-swipeable";
 
 interface ImageObject {
   src: string;
   alt?: string;
+  blurDataURL?: string;
 }
 type ImageType = string | ImageObject;
 
@@ -26,42 +25,15 @@ export default function ImageLightbox({
   imageKey,
 }: ImageLightboxProps) {
   const [currentIndex, setCurrentIndex] = useState(initialIndex);
-  const [imagesLoaded, setImagesLoaded] = useState<Set<number>>(new Set());
   const [loading, setLoading] = useState(true);
-
-  const [showControls, setShowControls] = useState(false); // 👈 added
-
-  const preloadLinksRef = useRef<Set<HTMLLinkElement>>(new Set());
-  const isMountedRef = useRef(true);
+  const [touchStart, setTouchStart] = useState({ x: 0, y: 0 });
+  const [touchEnd, setTouchEnd] = useState({ x: 0, y: 0 });
 
   const getUrl = useCallback(
     (item: ImageType) =>
       typeof item === "string" ? item : (item[imageKey || "src"] as string),
     [imageKey]
   );
-
-  const preloadImage = useCallback(
-    (index: number) => {
-      if (!images[index] || imagesLoaded.has(index) || !isMountedRef.current)
-        return;
-      const link = document.createElement("link");
-      link.rel = "preload";
-      link.as = "image";
-      link.href = getUrl(images[index]);
-      document.head.appendChild(link);
-      preloadLinksRef.current.add(link);
-    },
-    [images, imagesLoaded, getUrl]
-  );
-
-  useEffect(() => {
-    const indices = [
-      currentIndex,
-      (currentIndex + 1) % images.length,
-      (currentIndex - 1 + images.length) % images.length,
-    ];
-    indices.forEach(preloadImage);
-  }, [currentIndex, images.length, preloadImage]);
 
   const prevImage = useCallback(() => {
     setCurrentIndex((p) => (p - 1 + images.length) % images.length);
@@ -73,13 +45,36 @@ export default function ImageLightbox({
     setLoading(true);
   }, [images.length]);
 
-  const swipeHandlers = useSwipeable({
-    onSwipedLeft: nextImage,
-    onSwipedRight: prevImage,
-    preventScrollOnSwipe: true,
-    trackMouse: true,
-  });
+  // Handle touch events
+  const handleTouchStart = (e: React.TouchEvent) => {
+    setTouchStart({ x: e.touches[0].clientX, y: e.touches[0].clientY });
+    setTouchEnd({ x: e.touches[0].clientX, y: e.touches[0].clientY });
+  };
 
+  const handleTouchMove = (e: React.TouchEvent) => {
+    setTouchEnd({ x: e.touches[0].clientX, y: e.touches[0].clientY });
+  };
+
+  const handleTouchEnd = () => {
+    const deltaX = touchStart.x - touchEnd.x;
+    const deltaY = touchStart.y - touchEnd.y;
+    const minSwipeDistance = 50;
+
+    // Vertical swipe (up or down) - close lightbox
+    if (Math.abs(deltaY) > Math.abs(deltaX) && Math.abs(deltaY) > minSwipeDistance) {
+      onClose();
+    }
+    // Horizontal swipe left - next image
+    else if (deltaX > minSwipeDistance) {
+      nextImage();
+    }
+    // Horizontal swipe right - previous image
+    else if (deltaX < -minSwipeDistance) {
+      prevImage();
+    }
+  };
+
+  // Keyboard navigation
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "ArrowLeft") prevImage();
@@ -90,105 +85,78 @@ export default function ImageLightbox({
     return () => document.removeEventListener("keydown", onKey);
   }, [prevImage, nextImage, onClose]);
 
+  // Lock body scroll
   useEffect(() => {
-    isMountedRef.current = true;
     document.body.style.overflow = "hidden";
-    const preloadLinks = preloadLinksRef.current;
     return () => {
-      isMountedRef.current = false;
       document.body.style.overflow = "unset";
-      preloadLinks.forEach((link) => {
-        if (document.head.contains(link)) document.head.removeChild(link);
-      });
-      preloadLinks.clear();
     };
   }, []);
 
   return (
-    <AnimatePresence>
-      <motion.div
-        className="fixed inset-0 bg-black/95 z-[9999] flex items-center justify-center select-none"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
-        {...swipeHandlers}
-        onMouseEnter={() => setShowControls(true)} // 👈 show on hover (desktop)
-        onMouseLeave={() => setShowControls(false)} // 👈 hide when leave
-        onClick={() => setShowControls((prev) => !prev)} // 👈 toggle on tap (mobile)
+    <div
+      className="fixed inset-0 bg-black z-[9999] flex items-center justify-center"
+      onTouchStart={handleTouchStart}
+      onTouchMove={handleTouchMove}
+      onTouchEnd={handleTouchEnd}
+    >
+      {/* Close Button */}
+      <button
+        aria-label="Close"
+        className="absolute top-4 right-4 p-2 text-white hover:bg-white/10 rounded-full z-50 transition-colors"
+        onClick={onClose}
       >
-        {/* IMAGE LAYER */}
-        <motion.div
-          key={currentIndex}
-          initial={{ opacity: 0, x: 50 }}
-          animate={{ opacity: 1, x: 0 }}
-          exit={{ opacity: 0, x: -50 }}
-          transition={{ duration: 0.3 }}
-          className="relative w-full h-full flex items-center justify-center px-8 py-8 z-0 pointer-events-none"
-        >
-          {loading && (
-            <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-              <div className="w-10 h-10 border-4 border-white/30 border-t-white rounded-full animate-spin" />
-            </div>
-          )}
+        <X size={28} />
+      </button>
 
-          <Image
-            src={getUrl(images[currentIndex]) || ""}
-            alt={`Image ${currentIndex + 1}`}
-            fill
-            sizes="(max-width: 768px) 100vw, 90vw" // optimize size
-            className="object-contain pointer-events-none"
-            fetchPriority="high"
-            draggable={false}
-            priority
-            quality={100}
-            onLoad={() => {
-              setLoading(false);
-              setImagesLoaded((prev) => new Set(prev).add(currentIndex));
-            }}
-            onError={() => setLoading(false)}
-          />
-        </motion.div>
+      {/* Image Counter */}
+      {images.length > 1 && (
+        <div className="absolute top-4 left-1/2 -translate-x-1/2 bg-black/70 text-white px-4 py-2 rounded-full text-sm z-50">
+          {currentIndex + 1} / {images.length}
+        </div>
+      )}
 
-        {/* UI CONTROLS (fade in/out) */}
-        <AnimatePresence>
-            <button
-                aria-label="Close"
-                className="absolute top-4 right-4 p-2 text-white hover:text-gray-300 z-50"
-                onClick={onClose}
-              >
-                <X size={28} />
-              </button>
-          {showControls && (
-            <>
-            
+      {/* Loading Spinner */}
+      {loading && (
+        <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-10">
+          <div className="w-12 h-12 border-4 border-white/20 border-t-white rounded-full animate-spin" />
+        </div>
+      )}
 
-              {images.length > 1 && (
-                <>
-                  <div className="absolute top-4 left-1/2 -translate-x-1/2 bg-black/50 text-white px-4 py-2 rounded-lg text-sm z-50">
-                    {currentIndex + 1} / {images.length}
-                  </div>
+      {/* Main Image */}
+      <div className="relative w-full h-full p-4 md:p-8">
+        <Image
+          src={getUrl(images[currentIndex]) || ""}
+          alt={`Image ${currentIndex + 1}`}
+          fill
+          sizes="100vw"
+          className="object-contain"
+          quality={95}
+          onLoad={() => setLoading(false)}
+          onError={() => setLoading(false)}
+        />
+      </div>
 
-                  <button
-                    aria-label="Previous image"
-                    className="absolute left-4 top-1/2 -translate-y-1/2 p-3 text-white hover:text-gray-300 bg-black/30 rounded-full z-50"
-                    onClick={prevImage}
-                  >
-                    <ChevronLeft size={24} />
-                  </button>
+      {/* Navigation Buttons - Desktop Only */}
+      {images.length > 1 && (
+        <>
+          <button
+            aria-label="Previous image"
+            className="hidden md:flex absolute left-4 top-1/2 -translate-y-1/2 p-3 text-white hover:bg-white/10 rounded-full z-50 transition-colors"
+            onClick={prevImage}
+          >
+            <ChevronLeft size={32} />
+          </button>
 
-                  <button
-                    aria-label="Next image"
-                    className="absolute right-4 top-1/2 -translate-y-1/2 p-3 text-white hover:text-gray-300 bg-black/30 rounded-full z-50"
-                    onClick={nextImage}
-                  >
-                    <ChevronRight size={24} />
-                  </button>
-                </>
-              )}
-            </>
-          )}
-        </AnimatePresence>
-      </motion.div>
-    </AnimatePresence>
+          <button
+            aria-label="Next image"
+            className="hidden md:flex absolute right-4 top-1/2 -translate-y-1/2 p-3 text-white hover:bg-white/10 rounded-full z-50 transition-colors"
+            onClick={nextImage}
+          >
+            <ChevronRight size={32} />
+          </button>
+        </>
+      )}
+    </div>
   );
 }
