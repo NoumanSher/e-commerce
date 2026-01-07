@@ -97,8 +97,8 @@ const CartScreen = () => {
           <div
             key={tab.step}
             className={`flex-1 text-start py-4 cursor-pointer ${isTabClickable(tab.step)
-                ? "text-black"
-                : "text-gray-400 cursor-not-allowed"
+              ? "text-black"
+              : "text-gray-400 cursor-not-allowed"
               } ${activeTab === tab.step
                 ? "border-b-4 border-black font-semibold"
                 : ""
@@ -130,7 +130,7 @@ const CartScreen = () => {
         )}
         {activeTab === 3 && <OrderConfirmation />}
       </div>
-      <AuthModal />
+      <AuthModal from="cart" />
     </div>
   );
 };

@@ -12,7 +12,8 @@ import { ReviewsAPI } from "@/lib/api/reviews";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
 import ImageLightbox from "@/components/ImageLightbox";
-
+import { toast } from "react-toastify";
+import { useStore } from "@/Context/storeContext";
 interface ReviewCardProps {
   review: Review;
   userId: string;
@@ -26,23 +27,30 @@ export function ReviewCard({
   userId,
   token,
 }: ReviewCardProps) {
+  const { setIsAuthModalOpen } = useStore();
   const [helpfulCount, setHelpfulCount] = useState(review.helpfulCount);
   const [isMarkingHelpful, setIsMarkingHelpful] = useState(false);
-  const [hasMarkedHelpful, setHasMarkedHelpful] = useState(false);
+  const [isHelpful, setIsHelpful] = useState(review.helpfulBy.includes(userId));
   const [isOpen, setIsOpen] = useState(false);
   const [startIndex, setStartIndex] = useState(0);
-  const isAlreadyMarkedHelpful = review.helpfulBy.includes(userId);
 
   const handleMarkHelpful = async () => {
-    if (hasMarkedHelpful || isMarkingHelpful) return;
+    if (!token) {
+      toast.error("Please login to mark helpful");
+      setIsAuthModalOpen(true);
+      return;
+    }
+    if (isMarkingHelpful) return;
 
     setIsMarkingHelpful(true);
     try {
-      await ReviewsAPI.markHelpful(review._id, userId, token);
-      setHasMarkedHelpful(true);
+      const response = await ReviewsAPI.markHelpful(review._id, userId, token);
+      setHelpfulCount(response.helpfulCount);
+      setIsHelpful(response.helpfulBy.includes(userId));
       onHelpfulUpdate?.(review._id);
     } catch (error) {
-      console.error("Failed to mark review as helpful:", error);
+      console.error("Failed to update helpful status", error);
+      toast.error("Failed to update helpful status");
     } finally {
       setIsMarkingHelpful(false);
     }
@@ -80,7 +88,7 @@ export function ReviewCard({
                   <h4 className="font-medium text-foreground text-sm sm:text-base truncate">
                     {review.userId.username}
                   </h4>
-                  {review.isVerifiedPurchase && (
+                  {!review.isVerifiedPurchase && (
                     <Badge variant="secondary" className="text-xs flex-shrink-0">
                       <ShieldCheck className="w-2.5 h-2.5 sm:w-3 sm:h-3 mr-1" />
                       <span className="hidden xs:inline">Verified Purchase</span>
@@ -150,15 +158,13 @@ export function ReviewCard({
               variant="ghost"
               size="sm"
               onClick={handleMarkHelpful}
-              disabled={
-                hasMarkedHelpful || isMarkingHelpful || isAlreadyMarkedHelpful
-              }
+              disabled={isMarkingHelpful}
               className={cn(
                 "text-muted-foreground hover:text-foreground text-xs sm:text-sm h-8 px-2 sm:px-3",
-                hasMarkedHelpful && "text-primary"
+                isHelpful && "text-primary"
               )}
             >
-              <ThumbsUp className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
+              <ThumbsUp className={cn("w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2", isHelpful && "fill-current")} />
               <span className="hidden xs:inline">Helpful</span>
               <span className="ml-1">({helpfulCount})</span>
             </Button>

@@ -4,7 +4,7 @@ import { lazy, Suspense, useEffect, useState } from "react";
 import { useGetProductDetailBySlug } from "./productDetailQuery";
 import ProductDetailSkeleton from "./components/ProductDetailSkeleton";
 import { useInView } from "react-intersection-observer";
-
+import { AuthModal } from "../AuthModal";
 // Above-the-fold components
 // Critical components loaded immediately
 import ProductImageGallery from "@/components/gallery";
@@ -65,6 +65,7 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ slug }) => {
           <Tabs productSlug={slug} productId={data._id} />
         </Suspense>
       )}
+      <AuthModal from="productDetail" />
     </div>
   );
 };

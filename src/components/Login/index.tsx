@@ -2,7 +2,7 @@
 import React, { useEffect } from "react";
 import AuthForm from "@/components/AuthForm";
 import * as Yup from "yup";
-import { LogInPayload } from "./service"; 
+import { LogInPayload } from "./service";
 import { useLogIn } from "./query";
 import { useRouter } from "next/navigation";
 import { useStore } from "@/Context/storeContext";
@@ -17,11 +17,17 @@ export default function LoginForm({ from }: LoginFormProps) {
 
   const { mutate, isPending, isSuccess } = useLogIn();
   useEffect(() => {
-    const el =  document.getElementById('pobtn');
+    const el = document.getElementById('pobtn');
     if (isSuccess) {
-      if(from === 'checkout' || from === 'order-summary' ){
+      if (from === 'checkout' || from === 'order-summary') {
         setIsAuthModalOpen(false);
         el?.click()
+        return;
+      } else if (from === 'productDetail') {
+        setIsAuthModalOpen(false);
+        return;
+      } else if (from === 'cart') {
+        setIsAuthModalOpen(false);
         return;
       }
       setIsAuthModalOpen(false);

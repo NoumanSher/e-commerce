@@ -23,7 +23,7 @@ const RegisterSchema = Yup.object().shape({
   confirmPassword: Yup.string()
     .oneOf([Yup.ref("password")], "Passwords must match")
     .required("Confirm Password is required")
-    .min(6, "Password must be at least 6 characters"), 
+    .min(6, "Password must be at least 6 characters"),
 });
 type RegisterFormProps = {
   from?: string;
@@ -34,18 +34,24 @@ export default function Register({ from }: RegisterFormProps) {
 
   const { mutate, isPending, isSuccess } = useRegister();
 
-    useEffect(() => {
-      const el =  document.getElementById('pobtn');
-      if (isSuccess) {
-        if(from === 'checkout' || from === 'order-summary' ){
-          setIsAuthModalOpen(false);
-          el?.click()
-          return;
-        }
+  useEffect(() => {
+    const el = document.getElementById('pobtn');
+    if (isSuccess) {
+      if (from === 'checkout' || from === 'order-summary') {
         setIsAuthModalOpen(false);
-        router.push("/");
+        el?.click()
+        return;
+      } else if (from === 'productDetail') {
+        setIsAuthModalOpen(false);
+        return;
+      } else if (from === 'cart') {
+        setIsAuthModalOpen(false);
+        return;
       }
-    }, [from, isSuccess, router, setIsAuthModalOpen]);
+      setIsAuthModalOpen(false);
+      router.push("/");
+    }
+  }, [from, isSuccess, router, setIsAuthModalOpen]);
 
   const handleSubmit = (values: RegisterPayload) => {
     let phone = values.mobilePhone.trim();
