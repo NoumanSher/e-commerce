@@ -91,19 +91,19 @@ export default function ImageGallery({ images, productName }: ImageGalleryProps)
 
   return (
     <>
-      <div className="flex flex-col lg:flex-row gap-3 lg:gap-4 w-full lg:w-[60%]">
+      <div className="flex flex-col lg:flex-row gap-3  lg:gap-4 w-full lg:w-[60%]">
         {/* Thumbnails */}
         <div
           ref={thumbnailContainerRef}
-          className="flex lg:flex-col gap-2 overflow-x-auto lg:overflow-y-auto scrollbarHide lg:max-h-[600px] order-2 lg:order-1"
+          className=" flex lg:flex-col gap-2 overflow-x-scroll lg:overflow-y-auto scrollbarHide lg:max-h-[600px] order-2 lg:order-1"
         >
           {images.map((image, index) => (
             <button
               key={index}
               data-index={index}
               onClick={() => setCurrentIndex(index)}
-              className={`relative flex-shrink-0 w-20 h-20 lg:w-24 lg:h-24 rounded-lg overflow-hidden transition-all duration-200 ${index === currentIndex
-                ? "ring-2 ring-blue-500 opacity-100 scale-105"
+              className={`relative flex-shrink-0 w-20 h-20 lg:w-24 lg:h-24 rounded-lg  transition-all duration-200 ${index === currentIndex
+                ? "opacity-100 scale-105"
                 : "opacity-60 hover:opacity-100 hover:scale-105"
                 }`}
               aria-label={`View image ${index + 1}`}

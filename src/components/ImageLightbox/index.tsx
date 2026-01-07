@@ -7,7 +7,6 @@ import { X, ChevronLeft, ChevronRight } from "lucide-react";
 interface ImageObject {
   src: string;
   alt?: string;
-  blurDataURL?: string;
 }
 type ImageType = string | ImageObject;
 
@@ -28,10 +27,13 @@ export default function ImageLightbox({
   const [loading, setLoading] = useState(true);
   const [touchStart, setTouchStart] = useState({ x: 0, y: 0 });
   const [touchEnd, setTouchEnd] = useState({ x: 0, y: 0 });
+  const [showIndicators, setShowIndicators] = useState(true);
 
   const getUrl = useCallback(
     (item: ImageType) =>
-      typeof item === "string" ? item : (item[imageKey || "src"] as string),
+      typeof item === "string"
+        ? item
+        : (item[imageKey || "src"] as string),
     [imageKey]
   );
 
@@ -45,7 +47,7 @@ export default function ImageLightbox({
     setLoading(true);
   }, [images.length]);
 
-  // Handle touch events
+  // Touch handlers
   const handleTouchStart = (e: React.TouchEvent) => {
     setTouchStart({ x: e.touches[0].clientX, y: e.touches[0].clientY });
     setTouchEnd({ x: e.touches[0].clientX, y: e.touches[0].clientY });
@@ -53,24 +55,24 @@ export default function ImageLightbox({
 
   const handleTouchMove = (e: React.TouchEvent) => {
     setTouchEnd({ x: e.touches[0].clientX, y: e.touches[0].clientY });
+
+    const deltaX = Math.abs(touchStart.x - e.touches[0].clientX);
+    if (deltaX > 10) e.preventDefault();
   };
 
   const handleTouchEnd = () => {
     const deltaX = touchStart.x - touchEnd.x;
     const deltaY = touchStart.y - touchEnd.y;
-    const minSwipeDistance = 50;
 
-    // Vertical swipe (up or down) - close lightbox
-    if (Math.abs(deltaY) > Math.abs(deltaX) && Math.abs(deltaY) > minSwipeDistance) {
-      onClose();
-    }
-    // Horizontal swipe left - next image
-    else if (deltaX > minSwipeDistance) {
-      nextImage();
-    }
-    // Horizontal swipe right - previous image
-    else if (deltaX < -minSwipeDistance) {
-      prevImage();
+    setShowIndicators(false);
+
+    const shortSwipe = 50;
+    const longSwipe = 150;
+
+    if (Math.abs(deltaX) > Math.abs(deltaY)) {
+      if (Math.abs(deltaX) > longSwipe) onClose();
+      else if (deltaX > shortSwipe && images.length > 1) nextImage();
+      else if (deltaX < -shortSwipe && images.length > 1) prevImage();
     }
   };
 
@@ -88,17 +90,25 @@ export default function ImageLightbox({
   // Lock body scroll
   useEffect(() => {
     document.body.style.overflow = "hidden";
+    document.body.style.position = "fixed";
+    document.body.style.width = "100%";
+    document.body.style.touchAction = "none";
+
     return () => {
       document.body.style.overflow = "unset";
+      document.body.style.position = "unset";
+      document.body.style.width = "unset";
+      document.body.style.touchAction = "unset";
     };
   }, []);
 
   return (
     <div
-      className="fixed inset-0 bg-black z-[9999] flex items-center justify-center"
+      className="fixed inset-0 bg-black z-[9999] flex items-center justify-center touch-none"
       onTouchStart={handleTouchStart}
       onTouchMove={handleTouchMove}
       onTouchEnd={handleTouchEnd}
+      style={{ touchAction: "none" }}
     >
       {/* Close Button */}
       <button
@@ -131,13 +141,26 @@ export default function ImageLightbox({
           fill
           sizes="100vw"
           className="object-contain"
-          quality={95}
+          priority
+          quality={90}
           onLoad={() => setLoading(false)}
           onError={() => setLoading(false)}
         />
       </div>
 
-      {/* Navigation Buttons - Desktop Only */}
+      {/* Mobile Swipe Indicators */}
+      {images.length > 1 && showIndicators && (
+        <>
+          <div className="md:hidden absolute left-2 top-1/2 -translate-y-1/2 text-white/50 animate-pulse pointer-events-none z-40">
+            <ChevronLeft size={36} />
+          </div>
+          <div className="md:hidden absolute right-2 top-1/2 -translate-y-1/2 text-white/50 animate-pulse pointer-events-none z-40">
+            <ChevronRight size={36} />
+          </div>
+        </>
+      )}
+
+      {/* Desktop Navigation */}
       {images.length > 1 && (
         <>
           <button

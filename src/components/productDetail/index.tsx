@@ -45,7 +45,7 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ slug }) => {
   }
 
   return (
-    <div className="lg:p-8 p-4 container mx-auto">
+    <div className="lg:p-8 p-2 container mx-auto">
       {/* Above-the-fold content */}
       {/* <Suspense fallback={<ProductDetailSkeleton />}> */}
       <div className="flex flex-col lg:flex-row">
