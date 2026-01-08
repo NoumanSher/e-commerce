@@ -1,33 +1,33 @@
 "use client";
-import React, { use, useEffect } from "react";
-import * as Yup from "yup";
+import React, { useEffect } from "react";
+import * as z from "zod";
 import { useRegister } from "./query";
-import { RegisterPayload } from "./service";
+import { RegisterPayload } from "@/services/authService";
 import AuthForm from "../AuthForm";
 import { useRouter } from "next/navigation";
 import { useStore } from "@/Context/storeContext";
-const RegisterSchema = Yup.object().shape({
-  email: Yup.string()
+
+const registerSchema = z.object({
+  email: z.string()
     .email("Invalid email address")
-    .required("Email address is required"),
-  username: Yup.string().required("Username is required"),
-  mobilePhone: Yup.string()
-    .matches(
-      /^(?:\+923\d{9}|03\d{9})$/,
-      "Enter valid phone number +923XXXXXXXXX  or 03XXXXXXXXX"
-    )
-    .required("Phone number is required"),
-  password: Yup.string()
-    .required("Password is required")
+    .min(1, "Email address is required"),
+  username: z.string().min(1, "Username is required"),
+  mobilePhone: z.string()
+    .regex(/^(?:\+923\d{9}|03\d{9})$/, "Enter valid phone number +923XXXXXXXXX or 03XXXXXXXXX")
+    .min(1, "Phone number is required"),
+  password: z.string()
     .min(6, "Password must be at least 6 characters"),
-  confirmPassword: Yup.string()
-    .oneOf([Yup.ref("password")], "Passwords must match")
-    .required("Confirm Password is required")
+  confirmPassword: z.string()
     .min(6, "Password must be at least 6 characters"),
+}).refine((data) => data.password === data.confirmPassword, {
+  message: "Passwords must match",
+  path: ["confirmPassword"],
 });
+
 type RegisterFormProps = {
   from?: string;
 };
+
 export default function Register({ from }: RegisterFormProps) {
   const router = useRouter();
   const { setIsAuthModalOpen } = useStore();
@@ -37,36 +37,27 @@ export default function Register({ from }: RegisterFormProps) {
   useEffect(() => {
     const el = document.getElementById('pobtn');
     if (isSuccess) {
-      if (from === 'checkout' || from === 'order-summary') {
-        setIsAuthModalOpen(false);
-        el?.click()
-        return;
-      } else if (from === 'productDetail') {
-        setIsAuthModalOpen(false);
-        return;
-      } else if (from === 'cart') {
-        setIsAuthModalOpen(false);
-        return;
-      }
       setIsAuthModalOpen(false);
-      router.push("/");
+      if (from === 'checkout' || from === 'order-summary') {
+        el?.click();
+      } else if (from !== 'productDetail' && from !== 'cart') {
+        router.push("/");
+      }
     }
   }, [from, isSuccess, router, setIsAuthModalOpen]);
 
   const handleSubmit = (values: RegisterPayload) => {
     let phone = values.mobilePhone.trim();
 
-    // If starts with 03 -> convert to +923
     if (/^03\d{9}$/.test(phone)) {
       phone = "+92" + phone.slice(1);
     }
 
-    // If starts with 92 without + -> fix it
     if (/^92\d{10}$/.test(phone)) {
       phone = "+" + phone;
     }
 
-    values.mobilePhone = phone; // normalized value
+    values.mobilePhone = phone;
     mutate(values);
   };
 
@@ -80,7 +71,7 @@ export default function Register({ from }: RegisterFormProps) {
         password: "",
         confirmPassword: "",
       }}
-      validationSchema={RegisterSchema}
+      validationSchema={registerSchema}
       onSubmit={handleSubmit}
       isLoading={isPending}
       buttonText={isPending ? "Registering..." : "REGISTER"}
@@ -91,8 +82,7 @@ export default function Register({ from }: RegisterFormProps) {
           name: "mobilePhone",
           type: "numeric",
           placeholder: "Phone Number",
-          inputMode: "numeric", // Add numeric input mode
-          prefix: "+92", // Add prefix
+          inputMode: "numeric",
         },
         { name: "password", type: "password", placeholder: "Password" },
         {

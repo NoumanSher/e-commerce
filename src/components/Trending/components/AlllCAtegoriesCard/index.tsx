@@ -1,7 +1,7 @@
 "use client";
 import { Menu, ChevronDown } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import { fetchProducts } from "@/services/productsService";
+import { productsService } from "@/services/productsService";
 import React, { useEffect, useRef, useState, useCallback } from "react";
 import MainCard from "../../../Card";
 import { useInfiniteQuery } from "@tanstack/react-query";
@@ -80,11 +80,12 @@ export default function CategoryNavigation() {
       { parent: selectedCategory, child: selectedChildCategory },
     ],
     queryFn: ({ pageParam = 1 }) =>
-      fetchProducts(
+      productsService.fetchProducts(
         selectedCategory ?? undefined,
         selectedChildCategory ?? undefined,
         pageParam as number,
-        10
+        10,
+        'client'
       ),
     initialPageParam: 1,
     getNextPageParam: (lastPage) =>
@@ -123,7 +124,7 @@ export default function CategoryNavigation() {
     (categorySlug: string) => {
       updateSelectedCategory(categorySlug);
       setSelectedChildCategory(null); // reset child when parent changes
-      router.push(`/all-products?parentCategorySlug=${categorySlug}&mode=client`);
+      router.push(`/all-products?parentCategorySlug=${categorySlug}`);
     },
     [router, updateSelectedCategory]
   );
@@ -148,7 +149,7 @@ export default function CategoryNavigation() {
       setSelectedChildCategory(childCategorySlug);
       updateSelectedCategory("");
       setExpanded(parentId ? parentId : ""); // expand parent automatically
-      router.push(`/all-products?childCategorySlug=${childCategorySlug}&mode=client`);
+      router.push(`/all-products?childCategorySlug=${childCategorySlug}`);
       if (childCategorySlug) scrollToCategory(childCategorySlug);
     },
     [router, scrollToCategory, updateSelectedCategory]

@@ -6,7 +6,7 @@ import { FooterLinksData } from "@/data/data";
 import { CiMail } from "react-icons/ci";
 import { MdOutlinePhone } from "react-icons/md";
 import { useQueryClient } from "@tanstack/react-query";
-import { getStoreSetting } from "@/components/Slider/api/storeSettingApi";
+import { settingsService } from "@/services/settingsService";
 
 const FooterInfo = () => {
   const queryClient = useQueryClient();
@@ -22,7 +22,7 @@ const FooterInfo = () => {
         try {
           cacheData = await queryClient.fetchQuery({
             queryKey: ["settings"],
-            queryFn: getStoreSetting,
+            queryFn: () => settingsService.getStoreSetting(),
           });
           setLogo(cacheData.logo);
           setNumber(cacheData.mobile);

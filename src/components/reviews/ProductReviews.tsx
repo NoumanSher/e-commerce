@@ -6,7 +6,7 @@ import { ReviewForm } from "./ReviewForm";
 import { ReviewsStats } from "./ReviewsStats";
 import { ReviewsFilter } from "./ReviewsFilter";
 import { ReviewsPagination } from "./ReviewsPagination";
-import { ReviewsAPI } from "@/lib/api/reviews";
+import { reviewService } from "@/services/reviewService";
 import { ReviewsResponse, SortOption } from "@/types";
 import { Loader2, AlertCircle } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
@@ -31,11 +31,11 @@ export function ProductReviews({
 
   const fetchReviews = useCallback(
     async (page: number = 1, sort = "asc") => {
-      
+
       try {
         setLoading(true);
         setError(null);
-        const data = await ReviewsAPI.getProductReviews(
+        const data = await reviewService.getProductReviews(
           productId,
           page,
           sort,
@@ -102,7 +102,7 @@ export function ProductReviews({
   }
 
   if (error && !reviewsData) {
-    
+
     return (
       <Alert variant="destructive">
         <AlertCircle className="h-4 w-4" />
@@ -153,7 +153,7 @@ export function ProductReviews({
                 review={review}
                 userId={userId as string}
                 token={authToken}
-                // onHelpfulUpdate={handleHelpfulUpdate}
+              // onHelpfulUpdate={handleHelpfulUpdate}
               />
             ))}
           </div>

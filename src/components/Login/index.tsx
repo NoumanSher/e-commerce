@@ -1,8 +1,8 @@
 "use client";
 import React, { useEffect } from "react";
 import AuthForm from "@/components/AuthForm";
-import * as Yup from "yup";
-import { LogInPayload } from "./service";
+import * as z from "zod";
+import { LogInPayload } from "@/services/authService";
 import { useLogIn } from "./query";
 import { useRouter } from "next/navigation";
 import { useStore } from "@/Context/storeContext";
@@ -11,38 +11,32 @@ type LoginFormProps = {
   from?: string;
 };
 
+const loginSchema = z.object({
+  email: z.string()
+    .email("Invalid email address")
+    .min(1, "Username or Email is required"),
+  password: z.string()
+    .min(6, "Password must be at least 6 characters"),
+  rememberMe: z.boolean().optional(),
+});
+
 export default function LoginForm({ from }: LoginFormProps) {
   const router = useRouter();
   const { setIsAuthModalOpen } = useStore();
 
   const { mutate, isPending, isSuccess } = useLogIn();
+
   useEffect(() => {
     const el = document.getElementById('pobtn');
     if (isSuccess) {
-      if (from === 'checkout' || from === 'order-summary') {
-        setIsAuthModalOpen(false);
-        el?.click()
-        return;
-      } else if (from === 'productDetail') {
-        setIsAuthModalOpen(false);
-        return;
-      } else if (from === 'cart') {
-        setIsAuthModalOpen(false);
-        return;
-      }
       setIsAuthModalOpen(false);
-      router.push("/");
+      if (from === 'checkout' || from === 'order-summary') {
+        el?.click()
+      } else if (from !== 'productDetail' && from !== 'cart') {
+        router.push("/");
+      }
     }
   }, [from, isSuccess, router, setIsAuthModalOpen]);
-
-  const LoginSchema = Yup.object().shape({
-    email: Yup.string()
-      .email("Invalid email address")
-      .required("Username or Email is required"),
-    password: Yup.string()
-      .min(6, "Password must be at least 6 characters")
-      .required("Password is required"),
-  });
 
   const handleSubmit = (values: LogInPayload) => {
     mutate(values);
@@ -52,7 +46,7 @@ export default function LoginForm({ from }: LoginFormProps) {
     <AuthForm
       formType="login"
       initialValues={{ email: "", password: "", rememberMe: false }}
-      validationSchema={LoginSchema}
+      validationSchema={loginSchema}
       onSubmit={handleSubmit}
       isLoading={isPending}
       buttonText={isPending ? "LOG IN..." : "LOG IN"}

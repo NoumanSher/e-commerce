@@ -15,8 +15,11 @@ export interface CategoriesResponse {
   categories: Category[];
 }
 
-export const fetchCategories = async (): Promise<CategoriesResponse> => { 
+const fetchCategories = async (): Promise<CategoriesResponse> => {
   const url = '/categories/all-parent'
-  const data = await get<CategoriesResponse>(url)
-  return data
+  return await get<CategoriesResponse>(url)
+};
+
+export const categoryService = {
+  fetchCategories
 };

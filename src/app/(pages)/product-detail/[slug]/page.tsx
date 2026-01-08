@@ -1,7 +1,7 @@
 import React, { Suspense } from "react";
 import dynamic from "next/dynamic";
 import { generateProductSchema } from "./schema";
-import { getProductData } from "@/lib/api/getProductData";
+import { productsService } from "@/services/productsService";
 import ProductDetailSkeleton from "@/components/productDetail/components/ProductDetailSkeleton";
 import { getMetadata } from "./metadata";
 import { notFound } from "next/navigation";
@@ -25,7 +25,7 @@ export default async function Page({
   params: { slug },
 }: generateMetadataProps) {
   // Server fetch (cached with revalidate)
-  const product = await getProductData(slug);
+  const product = await productsService.getProductBySlug(slug);
   if (!product) {
     // this renders the Next.js 404 page and prevents the error
     return notFound();

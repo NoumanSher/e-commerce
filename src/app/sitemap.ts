@@ -1,8 +1,8 @@
 import type { MetadataRoute } from 'next';
-import { BASE_URL_LIVE } from '@/appConst/appConst';
-export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  // const baseUrl = "http://localhost:3000";
+import { productsService } from '@/services/productsService';
+import { categoryService } from '@/services/categoryService';
 
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = 'https://pakshipper.com';
   const urls: MetadataRoute.Sitemap = [];
 
@@ -18,8 +18,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   });
 
   // ✅ 2. Fetch categories
-  const categoriesRes = await fetch(`${BASE_URL_LIVE}/categories/all-parent`);
-  const categoryData = await categoriesRes.json();
+  const categoryData = await categoryService.fetchCategories();
   const categories = categoryData.categories;
 
   for (const category of categories) {
@@ -31,9 +30,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     });
 
     // ✅ 3. Fetch products in this category
-    const productsRes = await fetch(`${BASE_URL_LIVE}/products/get-all-products?parentCategorySlug=${category.slug}&mode=seo`);
-    const productData = await productsRes.json();
-
+    // productsService doesn't have a direct fetch with mode=seo in the current wrapper, 
+    // but fetchProducts handles it. Let's use fetchProducts or add a specific one.
+    // Actually, fetchProducts returns ProductsResponse which has .data
+    const productData = await productsService.fetchProducts(category.slug, undefined, 1, 100, 'seo');
     for (const product of productData.data) {
       urls.push({
         url: `${baseUrl}/product-detail/${product.seo.slug}`,

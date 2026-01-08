@@ -1,21 +1,17 @@
 // utils/metadata/landingMetadata.ts
 
 import { Metadata } from "next";
-import { StoreInfo } from "@/components/Slider/dto/storeSettingDto";
-import { BASE_URL_LIVE } from "@/appConst/appConst";
+import { settingsService } from "@/services/settingsService";
 import logo from '@/assets/img/logo.webp'
+
 export async function getLandingMetadata(): Promise<Metadata> {
   try {
-    const res = await fetch(`${BASE_URL_LIVE}/settings`, {
-      next: { revalidate: 60 },
-    });
+    const storeSettings = await settingsService.getStoreSetting();
 
-    if (!res.ok) throw new Error("Failed to fetch store settings");
-
-    const storeSettings: StoreInfo = await res.json();
+    if (!storeSettings) throw new Error("Failed to fetch store settings");
 
     return {
-      title: storeSettings.title || "Pakshipperr",
+      title: storeSettings.title || "PakshipperStore",
       description:
         storeSettings.description || "Your favorite shopping destination",
       icons: {
@@ -31,9 +27,10 @@ export async function getLandingMetadata(): Promise<Metadata> {
       applicationName: "PakShipperStore",
       generator: "Next.js",
     };
-  } catch {
+  } catch (error) {
+    console.error("Error generating landing metadata:", error);
     return {
-      title: "Pakshipper",
+      title: "PakshipperStore",
       description: "Your favorite shopping destination",
     };
   }

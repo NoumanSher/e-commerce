@@ -13,7 +13,7 @@ import { useWishlist } from "../hooks/useWishlist";
 import { useCart } from "../hooks/useCart";
 import { useStore } from "@/Context/storeContext";
 import { useQuery } from "@tanstack/react-query";
-import { getStoreSetting } from "@/components/Slider/api/storeSettingApi";
+import { settingsService } from "@/services/settingsService";
 import Image from "next/image";
 import logo from "@/assets/img/logo.webp";
 import { FiHeart } from "react-icons/fi";
@@ -36,7 +36,7 @@ const Navbar = () => {
 
   const { data: storeSettings } = useQuery({
     queryKey: ["settings"],
-    queryFn: getStoreSetting,
+    queryFn: () => settingsService.getStoreSetting(),
   });
 
   // Scroll handler for hide/show navbar

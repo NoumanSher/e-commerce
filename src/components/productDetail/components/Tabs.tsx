@@ -5,7 +5,7 @@ import { useGetRelatedProductsByCategoryId } from "@/components/productDetail/pr
 import MainCard from "../../Card/index";
 import { useQueryClient } from "@tanstack/react-query";
 import { useState, useEffect } from "react";
-import { fetchCategories } from "@/services/categoryService";
+import { categoryService } from "@/services/categoryService";
 interface RelatedProductsProps {
   productSlug: string;
   productId: string;
@@ -27,7 +27,7 @@ export default function RelatedProducts({ productSlug, productId }: RelatedProdu
         try {
           categoryData = await queryClient.fetchQuery({
             queryKey: ["categories"],
-            queryFn: fetchCategories,
+            queryFn: () => categoryService.fetchCategories(),
           });
         } catch (error) {
           console.error("Failed to fetch categories:", error);

@@ -6,7 +6,7 @@ import {
   HydrationBoundary,
 } from "@tanstack/react-query";
 import { AuthModal } from "@/components/AuthModal";
-import { getStoreSetting } from "@/components/Slider/api/storeSettingApi";
+import { settingsService } from "@/services/settingsService";
 // import { Metadata } from "next";
 import { FaWhatsapp } from "react-icons/fa";
 import Slider from "@/components/Slider/Slider";
@@ -59,7 +59,7 @@ export default async function LandingPage() {
   try {
     storeSettings = await queryClient.ensureQueryData({
       queryKey: ["settings"],
-      queryFn: getStoreSetting,
+      queryFn: () => settingsService.getStoreSetting(),
     });
 
     // use storeSettings

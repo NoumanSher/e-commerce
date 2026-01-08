@@ -4,7 +4,7 @@
  */
 
 import { useQuery } from '@tanstack/react-query'
-import { fetchProducts, fetchAllCategories } from '@/services/productsService'
+import { productsService } from '@/services/productsService'
 import { queryKeys } from '@/lib/queryKeys'
 import { STALE_TIMES, CACHE_TIMES } from '@/lib/queryClient'
 
@@ -23,16 +23,18 @@ export function useProductsQuery(
     childCategoryID?: string
     page?: number
     limit?: number
+    mode?: string
   }
 ) {
   return useQuery({
     queryKey: queryKeys.products.list(filters),
     queryFn: () =>
-      fetchProducts(
+      productsService.fetchProducts(
         filters?.categoryId,
         filters?.childCategoryID,
         filters?.page ?? 1,
-        filters?.limit ?? 8
+        filters?.limit ?? 8,
+        filters?.mode
       ),
     staleTime: STALE_TIMES.medium, // Products fresh for 2 minutes
     gcTime: CACHE_TIMES.medium, // Keep in cache for 30 minutes
@@ -47,7 +49,7 @@ export function useProductsQuery(
 export function useCategoriesQuery() {
   return useQuery({
     queryKey: queryKeys.categories.all(),
-    queryFn: fetchAllCategories,
+    queryFn: () => productsService.fetchAllCategories(),
     staleTime: STALE_TIMES.infinite, // Never stale
     gcTime: CACHE_TIMES.infinite, // Cache indefinitely
   })

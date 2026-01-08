@@ -8,7 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { ThumbsUp, ShieldCheck } from "lucide-react";
 import { StarRating } from "./StarRating";
 import { Review } from "@/types";
-import { ReviewsAPI } from "@/lib/api/reviews";
+import { reviewService } from "@/services/reviewService";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
 import ImageLightbox from "@/components/ImageLightbox";
@@ -44,7 +44,7 @@ export function ReviewCard({
 
     setIsMarkingHelpful(true);
     try {
-      const response = await ReviewsAPI.markHelpful(review._id, userId, token);
+      const response = await reviewService.markHelpful(review._id, userId);
       setHelpfulCount(response.helpfulCount);
       setIsHelpful(response.helpfulBy.includes(userId));
       onHelpfulUpdate?.(review._id);

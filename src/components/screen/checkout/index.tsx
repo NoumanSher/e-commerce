@@ -1,7 +1,8 @@
 "use client";
 import React, { useCallback, useMemo } from "react";
-import { Formik, Form } from "formik";
-import * as Yup from "yup";
+import { useForm, FormProvider } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import * as z from "zod";
 import BillingDetailsComponent from "@/components/BillingDetails";
 import OrderSummaryComponent from "@/components/OrderSummary";
 import PaymentMethodComponent from "@/components/PaymentMethod";
@@ -13,23 +14,25 @@ import { toast } from "react-toastify";
 import PreviousAddressComponent from "@/components/previousAddress/PreviousAddressComponent";
 import { useInvalidateProductQueries } from "@/hooks/useInvalidateProductQueries";
 import { AuthModal } from "@/components/AuthModal";
-const CheckoutSchema = Yup.object().shape({
-  firstName: Yup.string().required("First Name is required"),
-  lastName: Yup.string().required("Last Name is required"),
-  streetAddress: Yup.string().required("Address is required"),
-  city: Yup.string().required("City is required"),
-  zipCode: Yup.string().required("ZIP code is required"),
-  phone: Yup.string().required("Phone number is required"),
-  email: Yup.string().email("Invalid email").required("Email is required"),
-  paymentMethod: Yup.string().required("Please select a payment method"),
+
+const checkoutSchema = z.object({
+  firstName: z.string().min(1, "First Name is required"),
+  lastName: z.string().min(1, "Last Name is required"),
+  streetAddress: z.string().min(1, "Address is required"),
+  city: z.string().min(1, "City is required"),
+  zipCode: z.string().min(1, "ZIP code is required"),
+  phone: z.string().min(1, "Phone number is required"),
+  email: z.string().email("Invalid email").min(1, "Email is required"),
+  paymentMethod: z.string().min(1, "Please select a payment method"),
 });
+
+type CheckoutFormValues = z.infer<typeof checkoutSchema>;
 
 interface CheckoutProps {
   checkValidation: () => void;
 }
 
 export default function Checkout({ checkValidation }: CheckoutProps) {
-  // Hooks at top level
   const searchParams = useSearchParams();
   const section = searchParams.get("section");
 
@@ -39,7 +42,22 @@ export default function Checkout({ checkValidation }: CheckoutProps) {
   const { mutate, isSuccess, isPending, data } = useOrderCreate();
   const { subTotal } = useCart();
 
-  // Memoized cart items
+  const methods = useForm<CheckoutFormValues>({
+    resolver: zodResolver(checkoutSchema),
+    defaultValues: {
+      firstName: "",
+      lastName: "",
+      streetAddress: "",
+      city: "",
+      zipCode: "",
+      phone: "",
+      email: "",
+      paymentMethod: "cash",
+    },
+  });
+
+  const { handleSubmit, setValue } = methods;
+
   const cartMappedItems = useMemo(
     () =>
       cartItems.map((item) => ({
@@ -52,7 +70,6 @@ export default function Checkout({ checkValidation }: CheckoutProps) {
     [cartItems]
   );
 
-  // Side effect handling
   useInvalidateProductQueries(
     isSuccess,
     section,
@@ -60,9 +77,8 @@ export default function Checkout({ checkValidation }: CheckoutProps) {
     checkValidation
   );
 
-  // Extracted payload creation logic
   const createOrderPayload = useCallback(
-    (values: any) => {
+    (values: CheckoutFormValues) => {
       const { paymentMethod, ...rest } = values;
       const commonData = {
         userId,
@@ -104,19 +120,16 @@ export default function Checkout({ checkValidation }: CheckoutProps) {
     [section, productDetail, cartMappedItems, subTotal, userId]
   );
 
-  // Handle submit with useCallback
-  const handleSubmit = useCallback(
-    (values: any) => {
+  const onFormSubmit = useCallback(
+    (values: CheckoutFormValues) => {
       if (!authToken) {
         toast.error("Please login to place order");
         setIsAuthModalOpen(true);
-        // const callbackUrl = encodeURIComponent("/cart?section=checkout");
-
         return;
       }
 
       const payload = createOrderPayload(values);
-      if(!payload.items.length){
+      if (!payload.items.length) {
         toast.error("Your cart is empty");
         return;
       }
@@ -127,72 +140,51 @@ export default function Checkout({ checkValidation }: CheckoutProps) {
 
   return (
     <>
-      <Formik
-        initialValues={{
-          firstName: "",
-          lastName: "",
-          streetAddress: "",
-          city: "",
-          zipCode: "",
-          phone: "",
-          email: "",
-          paymentMethod: "cash",
-        }}
-        validationSchema={CheckoutSchema}
-        onSubmit={handleSubmit}
-      >
-        {({ handleSubmit, ...formik }) => (
-          <>
-            <Form
-              onSubmit={handleSubmit}
-              className=" flex lg:flex-row flex-col gap-x-4 "
-            >
-              <div className="lg:w-[70%] w-full">
-                <PreviousAddressComponent
-                  userId={userId}
-                  onSelect={(prevAddress) => {
-                    formik.setValues({
-                      ...formik.values,
-                      ...(prevAddress
-                        ? {
-                            firstName: prevAddress.firstName,
-                            lastName: prevAddress.lastName,
-                            streetAddress: prevAddress.streetAddress,
-                            city: prevAddress.city,
-                            zipCode: prevAddress.zipCode,
-                            phone: prevAddress.phone,
-                            email: prevAddress.email,
-                          }
-                        : {
-                            firstName: "",
-                            lastName: "",
-                            streetAddress: "",
-                            city: "",
-                            zipCode: "",
-                            phone: "",
-                            email: "",
-                          }),
-                    });
-                  }}
-                />
-                <BillingDetailsComponent />
-              </div>
-              <div className="lg:w-[30%] w-full">
-                <OrderSummaryComponent />
-                <PaymentMethodComponent />
+      <FormProvider {...methods}>
+        <form
+          onSubmit={handleSubmit(onFormSubmit)}
+          className=" flex lg:flex-row flex-col gap-x-4 "
+        >
+          <div className="lg:w-[70%] w-full">
+            <PreviousAddressComponent
+              userId={userId}
+              onSelect={(prevAddress) => {
+                if (prevAddress) {
+                  setValue("firstName", prevAddress.firstName);
+                  setValue("lastName", prevAddress.lastName);
+                  setValue("streetAddress", prevAddress.streetAddress);
+                  setValue("city", prevAddress.city);
+                  setValue("zipCode", prevAddress.zipCode);
+                  setValue("phone", prevAddress.phone);
+                  setValue("email", prevAddress.email);
+                } else {
+                  setValue("firstName", "");
+                  setValue("lastName", "");
+                  setValue("streetAddress", "");
+                  setValue("city", "");
+                  setValue("zipCode", "");
+                  setValue("phone", "");
+                  setValue("email", "");
+                }
+              }}
+            />
+            <BillingDetailsComponent />
+          </div>
+          <div className="lg:w-[30%] w-full">
+            <OrderSummaryComponent />
+            <PaymentMethodComponent />
 
-                <button
-                  id="pobtn"
-                  type="submit"
-                  className="sticky bottom-0 w-full bg-black text-white py-3 mt-4 lg:h-14 h-10 flex items-center justify-center"
-                >
-                  {isPending ? "loading..." : "Place Order"}
-                </button>
-              </div>
-            </Form>
-          </>
-        )}
-      </Formik>
+            <button
+              id="pobtn"
+              type="submit"
+              className="sticky bottom-0 w-full bg-black text-white py-3 mt-4 lg:h-14 h-10 flex items-center justify-center disabled:opacity-50"
+              disabled={isPending}
+            >
+              {isPending ? "loading..." : "Place Order"}
+            </button>
+          </div>
+        </form>
+      </FormProvider>
       <AuthModal from="checkout" />
     </>
   );

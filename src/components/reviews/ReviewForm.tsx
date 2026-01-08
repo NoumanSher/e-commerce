@@ -6,12 +6,12 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { StarRating } from "./StarRating";
-import { ReviewsAPI } from "@/lib/api/reviews";
+import { reviewService } from "@/services/reviewService";
+import { productsService } from "@/services/productsService";
 import { CreateReviewPayload } from "@/types";
 import { Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import ReviewImagesUploader from "./ReviewImagesUpload";
-import UploadImages from "@/hooks/UploadImages";
 interface ReviewFormProps {
   productId: string;
   userId?: string;
@@ -60,7 +60,7 @@ export function ReviewForm({
     try {
       let uploadedUrls: string[] = [];
       if (selectedFiles.length > 0) {
-        uploadedUrls = await UploadImages(selectedFiles);
+        uploadedUrls = await productsService.uploadImages(selectedFiles);
       }
       const payload: CreateReviewPayload = {
         userId,
@@ -70,7 +70,7 @@ export function ReviewForm({
         images: uploadedUrls,
       };
 
-      await ReviewsAPI.createReview(payload);
+      await reviewService.createReview(payload);
 
       // Reset form
       setRating(0);
@@ -79,7 +79,7 @@ export function ReviewForm({
       // Notify parent component
       onReviewSubmitted?.();
     } catch (error) {
-      
+
       setError(
         error instanceof Error ? error.message : "Failed to submit review"
       );

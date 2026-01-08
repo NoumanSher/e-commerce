@@ -1,7 +1,7 @@
 // app/product-detail/[productId]/metadata.ts
 import { Metadata } from "next";
-import { getProductData } from "@/lib/api/getProductData";
-import { getStoreSetting } from "@/components/Slider/api/storeSettingApi";
+import { productsService } from "@/services/productsService";
+import { settingsService } from "@/services/settingsService";
 
 interface GenerateMetadataProps {
   params: { slug: string };
@@ -11,8 +11,8 @@ export async function getMetadata({
   params,
 }: GenerateMetadataProps): Promise<Metadata> {
   const [product, storeSettings] = await Promise.all([
-    getProductData(params.slug),
-    getStoreSetting(),
+    productsService.getProductBySlug(params.slug),
+    settingsService.getStoreSetting(),
   ]);
 
   const urlBase = "https://pakshipper.com/product-detail";
@@ -50,7 +50,7 @@ export async function getMetadata({
       url: productUrl,
       type: "website",
       siteName: "PakShipperStore",
-      images: product.images.map((img) => ({
+      images: product.images.map((img: { src: string; alt: string }) => ({
         url: img.src,
         alt: img.alt,
       })),
@@ -60,7 +60,7 @@ export async function getMetadata({
       card: "summary_large_image",
       title,
       description,
-      images: product.images.map((img) => img.src),
+      images: product.images.map((img: { src: string; alt: string }) => img.src),
     },
 
 

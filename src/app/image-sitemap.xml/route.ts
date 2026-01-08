@@ -1,14 +1,10 @@
 import { NextResponse } from "next/server";
-import { BASE_URL_LIVE } from "@/appConst/appConst";
-export async function GET() {
-  // const baseUrl = "http://localhost:3000";
-  const baseUrl = "https://pakshipper.com";
-  const response = await fetch(
-    `${BASE_URL_LIVE}/products/get-all-products`
-  );
-  const data = await response.json();
+import { productsService } from "@/services/productsService";
 
-  // Escape special XML characters in text content
+export async function GET() {
+  const baseUrl = "https://pakshipper.com";
+  // Fetching all products (limit 100 for sitemap)
+  const productData = await productsService.fetchProducts(undefined, undefined, 1, 100, 'images');
   const escapeXml = (text: string) => {
     return text
       .replace(/&/g, '&amp;')
@@ -22,7 +18,7 @@ export async function GET() {
   <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
           xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">`;
 
-  for (const product of data.data) {
+  for (const product of productData.data) {
     xml += `<url>
       <loc>${escapeXml(`${baseUrl}/product-detail/${product.seo.slug}`)}</loc>`;
     for (const img of product.images) {

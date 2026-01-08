@@ -1,5 +1,6 @@
 import { get } from "@/lib/apiClient";
 import { Product } from "@/components/productDetail/productDetailDto";
+import { BASE_URL_LIVE } from "@/appConst/appConst";
 
 export interface Pagination {
   totalProducts: number;
@@ -48,33 +49,73 @@ export interface ApiError {
   response?: any;
 }
 
-export const fetchProducts = async (
+const fetchProducts = async (
   categorySlug?: string,
   childCategorySlug?: string,
   page: number = 1,
-  limit: number = 8
+  limit: number = 8,
+  mode: string = "full"
 ): Promise<ProductsResponse> => {
   const params = new URLSearchParams();
   if (childCategorySlug) params.append("childCategorySlug", childCategorySlug);
   if (categorySlug) params.append("parentCategorySlug", categorySlug);
   if (page) params.append("page", page.toString());
   if (limit) params.append("limit", limit.toString());
-  params.append("mode", "client")
-  const url = `/products/get-all-products?${params.toString()}`
-  try {
-    const data = await get<ProductsResponse>(url)
-    return data
-  } catch (error) {
-    // apiClient already normalizes Axios errors to ApiError shape
-    throw error
-  }
+  if (mode) params.append("mode", mode);
+  const url = `/products/get-all-products?${params.toString()}`;
+  debugger
+  return await get<ProductsResponse>(url);
 };
-export const fetchAllCategories = async (): Promise<ParentCategoriesResponse> => {
+
+const fetchProductsByCategory = async (
+  parentCategoryID: string
+): Promise<any> => {
+  const url = '/products/get-all-products'
+  return await get<any>(url, { parentCategoryID })
+}
+
+const relatedProductsByCategoryId = async (
+  categoryId: string
+): Promise<RelatedProductsResponse> => {
+  const url = `/products/get-products-by-category-priority?parentCategorySlug=${categoryId}`
+  return await get<RelatedProductsResponse>(url)
+};
+
+const fetchAllCategories = async (): Promise<ParentCategoriesResponse> => {
   const url = `/categories/all`
-  try {
-    const data = await get<ParentCategoriesResponse>(url)
-    return data
-  } catch (error) {
-    throw error
+  return await get<ParentCategoriesResponse>(url)
+};
+
+const getProductBySlug = async (slug: string): Promise<Product> => {
+  const url = `/products/get-product-by-slug/${slug}`;
+  const response = await get<any>(url);
+  return response.data;
+}
+
+const uploadImages = async (files: File[]): Promise<string[]> => {
+  const formData = new FormData();
+  files.forEach((file) => {
+    formData.append("images", file);
+  });
+
+  const response = await fetch(`${BASE_URL_LIVE}/image/upload-multiple`, {
+    method: "POST",
+    body: formData,
+  });
+
+  if (!response.ok) {
+    throw new Error(`Error uploading images: ${response.statusText}`);
   }
+
+  const data = await response.json();
+  return data.imageUrls;
+}
+
+export const productsService = {
+  fetchProducts,
+  fetchProductsByCategory,
+  relatedProductsByCategoryId,
+  fetchAllCategories,
+  getProductBySlug,
+  uploadImages
 };

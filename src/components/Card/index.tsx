@@ -16,7 +16,7 @@ import { useCart } from "../hooks/useCart";
 import { useStore } from "@/Context/storeContext";
 import { FiHeart } from "react-icons/fi";
 import { formatPrice } from "@/lib/utils";
-import { getProductData } from "@/lib/api/getProductData";
+import { productsService } from "@/services/productsService";
 
 interface MainCardProps {
   item: Product;
@@ -46,7 +46,7 @@ const MainCard = ({ item }: MainCardProps) => {
   const prefetchProduct = (slug: string) => {
     queryClient.prefetchQuery({
       queryKey: ["product", slug],
-      queryFn: () => getProductData(slug),
+      queryFn: () => productsService.getProductBySlug(slug),
       staleTime: 1000 * 60 * 5,
       gcTime: 1000 * 60 * 30,
     });
