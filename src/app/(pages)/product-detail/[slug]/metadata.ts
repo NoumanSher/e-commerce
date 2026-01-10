@@ -52,7 +52,9 @@ export async function getMetadata({
       siteName: "PakShipperStore",
       images: product.images.map((img: { src: string; alt: string }) => ({
         url: img.src,
-        alt: img.alt,
+        alt: product.productName,
+        width: 1200,
+        height: 630,
       })),
     },
 
