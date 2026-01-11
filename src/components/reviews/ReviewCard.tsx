@@ -51,6 +51,8 @@ export function ReviewCard({
     } catch (error) {
       console.error("Failed to update helpful status", error);
       toast.error("Failed to update helpful status");
+      setIsAuthModalOpen(true);
+      return;
     } finally {
       setIsMarkingHelpful(false);
     }

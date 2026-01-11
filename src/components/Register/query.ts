@@ -17,6 +17,8 @@ export const useRegister = () => {
   return useMutation<RegisterResponse, CustomError, RegisterPayload>({
     mutationFn: authService.registerUser,
     onSuccess: (data) => {
+      localStorage.setItem('refreshToken', data.refreshToken);
+
       setAuthToken(data.token);
       setUserId(data.data._id);
       setUserName(data.data.username);

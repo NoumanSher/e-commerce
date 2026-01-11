@@ -14,7 +14,7 @@ export const useLogIn = () => {
   return useMutation<LogInResponse, CustomError, LogInPayload>({
     mutationFn: authService.logInUser,
     onSuccess: (data) => {
-
+      localStorage.setItem('refreshToken', data.refreshToken);
       setAuthToken(data.token);
       setUserId(data.data._id);
       setUserName(data.data.username);

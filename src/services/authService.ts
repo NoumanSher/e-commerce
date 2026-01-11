@@ -18,6 +18,7 @@ export interface LogInResponse {
         updatedAt: string;
         __v: number;
     };
+    refreshToken: string;
     token: string;
 }
 
@@ -43,6 +44,7 @@ export interface RegisterResponse {
         __v: number;
     };
     token: string;
+    refreshToken: string;
 }
 
 export const authService = {
