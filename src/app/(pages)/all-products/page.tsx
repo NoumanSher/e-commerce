@@ -1,12 +1,12 @@
 import React, { Suspense, lazy } from "react";
 
-const AllProductsMain = lazy(() => import("@/components/all-products"));
+const AllCategoriesCardSection = lazy(() => import("@/components/Trending/components/AlllCAtegoriesCard"));
 
 export default function AllProducts() {
   return (
     <>
       <Suspense fallback={<div>Loading All Products</div>}>
-        <AllProductsMain />
+        <AllCategoriesCardSection />
       </Suspense>
     </>
   );

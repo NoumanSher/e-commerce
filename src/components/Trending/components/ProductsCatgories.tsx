@@ -9,13 +9,16 @@ const ProductsCategories = () => {
     isLoading: categoriesLoading,
     error: categoriesError,
   } = useCategories();
-  const { updateSelectedCategory, selectedCategory } = useStore();
-  useEffect(() => {
+  const { updateSelectedCategory, selectedCategory, isHydrated } = useStore();
 
-    if (categoriesData?.categories && categoriesData.categories.length > 0) {
-      updateSelectedCategory(selectedCategory || categoriesData.categories[0].slug);
+  useEffect(() => {
+    // Only set a default category if the store is hydrated 
+    // AND there's no category selected yet
+    // AND we have categories data available
+    if (isHydrated && !selectedCategory && categoriesData?.categories && categoriesData.categories.length > 0) {
+      updateSelectedCategory(categoriesData.categories[0].slug);
     }
-  }, [categoriesData, selectedCategory, updateSelectedCategory]);
+  }, [isHydrated, categoriesData, selectedCategory, updateSelectedCategory]);
   if (categoriesError) return <div>Error loading categories</div>;
 
   return (

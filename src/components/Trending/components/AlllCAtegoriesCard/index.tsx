@@ -1,5 +1,5 @@
 "use client";
-import { Menu, ChevronDown } from "lucide-react";
+import { ChevronDown } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { productsService } from "@/services/productsService";
 import React, { useEffect, useRef, useState, useCallback } from "react";
