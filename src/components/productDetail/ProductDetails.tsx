@@ -27,9 +27,10 @@ interface ProductDetailsProps {
     handleCheckout: () => void;
     availableStock: number;
   }) => void;
+  onReviewClick?: () => void;
 }
 
-const ProductInfo: React.FC<ProductDetailsProps> = ({ product, onGalleryHandlersReady }) => {
+const ProductInfo: React.FC<ProductDetailsProps> = ({ product, onGalleryHandlersReady, onReviewClick }) => {
   const { updateProductDetailtData, userId } = useStore();
   const { addToCart } = useCart();
   const {
@@ -212,10 +213,7 @@ const ProductInfo: React.FC<ProductDetailsProps> = ({ product, onGalleryHandlers
         {/* Mobile: Quick Actions Header */}
         <div className="lg:hidden flex items-center justify-between mb-3 px-2">
           <WishlistButton product={product} />
-          <button onClick={() => {
-            const el = document.getElementById('review');
-            el?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-          }}>review</button>
+          <button className="pb-2 text-sm font-medium text-opacity-80 text-black" onClick={onReviewClick}>Reviews ⭐</button>
           <SocialMediaShareWithNoSSR
             url={`https://www.pakshipper.com/product-detail/${seo.slug}`}
           />

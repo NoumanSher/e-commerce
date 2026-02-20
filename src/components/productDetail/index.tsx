@@ -1,6 +1,6 @@
 "use client";
 
-import { lazy, Suspense, useEffect, useState } from "react";
+import { lazy, Suspense, useCallback, useEffect, useRef, useState } from "react";
 import { useGetProductDetailBySlug } from "./productDetailQuery";
 import ProductDetailSkeleton from "./components/ProductDetailSkeleton";
 import { useInView } from "react-intersection-observer";
@@ -21,6 +21,8 @@ interface ProductDetailProps {
 const ProductDetail: React.FC<ProductDetailProps> = ({ slug }) => {
   const { data, isLoading } = useGetProductDetailBySlug(slug);
   const [showBelowFold, setShowBelowFold] = useState(false);
+  const [activeTab, setActiveTab] = useState("related products");
+  const tabsSectionRef = useRef<HTMLDivElement>(null);
   const { updateSelectedCategory } = useStore();
   const [galleryHandlers, setGalleryHandlers] = useState<{
     handleAddToCart: () => void;
@@ -35,7 +37,6 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ slug }) => {
 
   useEffect(() => {
     if (data?.parentCategorySlug) {
-
       updateSelectedCategory(data?.parentCategorySlug);
     }
   }, [data, updateSelectedCategory]);
@@ -45,6 +46,17 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ slug }) => {
       setShowBelowFold(true);
     }
   }, [inView]);
+
+  const handleReviewClick = useCallback(() => {
+    // 1. Force the below-fold section to render
+    setShowBelowFold(true);
+    // 2. Switch to the reviews tab
+    setActiveTab("reviews");
+    // 3. Scroll to the tabs section after a short delay to allow rendering
+    setTimeout(() => {
+      tabsSectionRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+    }, 100);
+  }, []);
   if (isLoading || !data) {
     return <ProductDetailSkeleton />;
   }
@@ -64,6 +76,7 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ slug }) => {
         <ProductInfo
           product={data}
           onGalleryHandlersReady={setGalleryHandlers}
+          onReviewClick={handleReviewClick}
         />
       </div>
       {/* </Suspense> */}
@@ -72,13 +85,20 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ slug }) => {
       <div ref={belowFoldRef} className="h-1" />
 
       {/* Below-the-fold content */}
-      {showBelowFold && (
-        <Suspense
-          fallback={<div className="h-40 justify-center items-center flex">Loading related products...</div>}
-        >
-          <Tabs productSlug={slug} productId={data._id} />
-        </Suspense>
-      )}
+      <div ref={tabsSectionRef}>
+        {showBelowFold && (
+          <Suspense
+            fallback={<div className="h-40 justify-center items-center flex">Loading related products...</div>}
+          >
+            <Tabs
+              productSlug={slug}
+              productId={data._id}
+              activeTab={activeTab}
+              onTabChange={setActiveTab}
+            />
+          </Suspense>
+        )}
+      </div>
       <AuthModal from="productDetail" />
     </div>
   );

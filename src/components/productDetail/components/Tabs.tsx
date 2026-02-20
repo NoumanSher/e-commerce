@@ -9,9 +9,11 @@ import { categoryService } from "@/services/categoryService";
 interface RelatedProductsProps {
   productSlug: string;
   productId: string;
+  activeTab?: string;
+  onTabChange?: (value: string) => void;
 }
 
-export default function RelatedProducts({ productSlug, productId }: RelatedProductsProps) {
+export default function RelatedProducts({ productSlug, productId, activeTab = "related products", onTabChange }: RelatedProductsProps) {
   const queryClient = useQueryClient();
   const { selectedCategory, userId, authToken } = useStore();
 
@@ -104,7 +106,7 @@ export default function RelatedProducts({ productSlug, productId }: RelatedProdu
     "px-0 bg-transparent text-base sm:text-lg font-medium text-gray-600 data-[state=active]:border-b-2 data-[state=active]:border-black data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:text-black rounded-none";
   const data = [{ title: "Related Products" }, { title: "Recommended" }, { title: "Reviews" }];
   return (
-    <Tabs defaultValue="related products" className="mt-5 px-2 lg:px-8">
+    <Tabs value={activeTab} onValueChange={onTabChange} className="mt-5 px-2 lg:px-8">
       <TabsList className="flex  justify-start scrollbarHide overflow-x-auto shadow-none space-x-2 bg-transparent mb-5">
         {data.map((item) => (
           <TabsTrigger
