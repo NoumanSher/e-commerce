@@ -85,7 +85,7 @@ const SocialMediaShare: React.FC<SocialMediaShareProps> = ({ url = "" }) => {
               className="fixed inset-0 z-10"
               onClick={() => setOpen(false)}
             />
-            <div className="absolute top-full left-0 z-20 mt-1">
+            <div className="absolute top-full -left-24 z-20 mt-1">
               {shareOptions}
             </div>
           </>

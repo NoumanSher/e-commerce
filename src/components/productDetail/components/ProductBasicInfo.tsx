@@ -18,31 +18,33 @@ const ProductBasicInfo: React.FC<ProductInfoProps> = ({
 }) => {
   return (
     <>
-      <div className="flex justify-between items-center mb-3">
-        <h1 className="text-2xl font-medium">{title}</h1>
+      <div className="mb-3 px-3 lg:px-0">
+        <h1 className="text-xl lg:text-2xl font-medium leading-tight">{title}</h1>
       </div>
-      <div className="flex justify-between items-center mb-3">
-        <div className="flex gap-x-4">
-          <p className="text-lg sm:text-xl text-[#111827]  font-semibold">Rs {formatPrice(price)}</p>
+      <div className="flex flex-col lg:flex-row lg:justify-between lg:items-center mb-3 px-3 lg:px-0 gap-2 lg:gap-0">
+        <div className="flex items-baseline gap-2 lg:gap-4">
+          <p className="text-2xl lg:text-xl text-red-600 lg:text-[#111827] font-bold lg:font-semibold">
+            Rs {formatPrice(price)}
+          </p>
           {discount && (
-            <p className="text-lg font-semibold">
+            <p className="text-sm lg:text-lg font-semibold">
               <span className="text-red-500">Discount</span> {discount}% OFF
             </p>
           )}
         </div>
         <div className="flex items-center">
           {stockAvailability === 0 ? (
-            <span className="text-red-500">Out of Stock</span>
+            <span className="text-red-500 text-sm lg:text-base">Out of Stock</span>
           ) : (
-            <span className="text-green-600 text-base">
+            <span className="text-green-600 text-sm lg:text-base">
               In Stock {stockAvailability}
             </span>
           )}
         </div>
       </div>
-      <div className="text-gray-600 mb-4 lg:h-80 lg:overflow-y-auto">
+      <div className="text-gray-600 mb-4 lg:h-80 lg:overflow-y-auto px-3 lg:px-0 text-sm lg:text-base">
         {typeof description === "string" &&
-        /<[a-z][\s\S]*>/i.test(description) ? (
+          /<[a-z][\s\S]*>/i.test(description) ? (
           <>{ReactHtmlParser(description)}</> // Wrap in Fragment
         ) : (
           description

@@ -6,12 +6,12 @@ const WhatsAppButton = ({ product }) => {
     try {
       return encodeURIComponent(
         `Hello! I'm interested in your product:\n\n` +
-          `*${product?.name || "Product"}*\n` +
-          (product?.price ? `💰 Price: ${product.price}\n` : "") +
-          (product?.sku ? `📦 SKU: ${product.sku}\n` : "") +
-          (product?.size ? `📏 Size: ${product.size}\n` : "") +
-          (product?.color ? `🎨 Color: ${product.color}\n` : "") +
-          (product?.url ? `🔗 Product Link: ${product.url}\n` : "")
+        `*${product?.name || "Product"}*\n` +
+        (product?.price ? `💰 Price: ${product.price}\n` : "") +
+        (product?.sku ? `📦 SKU: ${product.sku}\n` : "") +
+        (product?.size ? `📏 Size: ${product.size}\n` : "") +
+        (product?.color ? `🎨 Color: ${product.color}\n` : "") +
+        (product?.url ? `🔗 Product Link: ${product.url}\n` : "")
       );
     } catch (error) {
       console.error("Error generating WhatsApp text:", error);
@@ -28,7 +28,7 @@ const WhatsAppButton = ({ product }) => {
       href={whatsappURL}
       target="_blank"
       rel="noopener noreferrer"
-      className="fixed bottom-6 right-6 z-50 animate-bounce hover:animate-none"
+      className="fixed bottom-12 lg:bottom-0 right-6 z-50 animate-bounce hover:animate-none"
       aria-label="Contact via WhatsApp"
     >
       <div className="bg-[#25D366] hover:bg-[#128C7E] text-white p-4 rounded-full shadow-lg flex items-center gap-2 transition-colors duration-300">

@@ -104,7 +104,7 @@ export default function RelatedProducts({ productSlug, productId }: RelatedProdu
     "px-0 bg-transparent text-base sm:text-lg font-medium text-gray-600 data-[state=active]:border-b-2 data-[state=active]:border-black data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:text-black rounded-none";
   const data = [{ title: "Related Products" }, { title: "Recommended" }, { title: "Reviews" }];
   return (
-    <Tabs defaultValue="related products" className="mt-5">
+    <Tabs defaultValue="related products" className="mt-5 px-2 lg:px-8">
       <TabsList className="flex  justify-start scrollbarHide overflow-x-auto shadow-none space-x-2 bg-transparent mb-5">
         {data.map((item) => (
           <TabsTrigger
@@ -119,7 +119,7 @@ export default function RelatedProducts({ productSlug, productId }: RelatedProdu
 
       <TabsContent value="related products">
         {filteredRelatedProducts.length > 0 ? (
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 sm:gap-4">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4  gap-2 sm:gap-4">
             {filteredRelatedProducts.map((item) => (
               <div key={item._id} className="">
                 <MainCard item={item} />
@@ -156,7 +156,7 @@ export default function RelatedProducts({ productSlug, productId }: RelatedProdu
           </div>
         )}
       </TabsContent>
-      <TabsContent value="reviews">
+      <TabsContent value="reviews" id="review">
         <ProductReviews
           productId={productId}
           userId={userId}

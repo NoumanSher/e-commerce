@@ -22,6 +22,11 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ slug }) => {
   const { data, isLoading } = useGetProductDetailBySlug(slug);
   const [showBelowFold, setShowBelowFold] = useState(false);
   const { updateSelectedCategory } = useStore();
+  const [galleryHandlers, setGalleryHandlers] = useState<{
+    handleAddToCart: () => void;
+    handleCheckout: () => void;
+    availableStock: number;
+  } | null>(null);
 
   const { ref: belowFoldRef, inView } = useInView({
     threshold: 0.2,
@@ -45,12 +50,21 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ slug }) => {
   }
 
   return (
-    <div className="lg:p-8 p-2 container mx-auto">
+    <div className="container mx-auto">
       {/* Above-the-fold content */}
       {/* <Suspense fallback={<ProductDetailSkeleton />}> */}
-      <div className="flex flex-col lg:flex-row">
-        <ProductImageGallery productName={data.productName} images={data.images ?? []} />
-        <ProductInfo product={data} />
+      <div className="flex flex-col lg:flex-row lg:p-8 p-0">
+        <ProductImageGallery
+          productName={data.productName}
+          images={data.images ?? []}
+          onAddToCart={galleryHandlers?.handleAddToCart}
+          onBuyNow={galleryHandlers?.handleCheckout}
+          availableStock={galleryHandlers?.availableStock}
+        />
+        <ProductInfo
+          product={data}
+          onGalleryHandlersReady={setGalleryHandlers}
+        />
       </div>
       {/* </Suspense> */}
 
@@ -60,7 +74,7 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ slug }) => {
       {/* Below-the-fold content */}
       {showBelowFold && (
         <Suspense
-          fallback={<div className="h-40">Loading related products...</div>}
+          fallback={<div className="h-40 justify-center items-center flex">Loading related products...</div>}
         >
           <Tabs productSlug={slug} productId={data._id} />
         </Suspense>

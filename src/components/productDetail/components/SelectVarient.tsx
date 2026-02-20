@@ -31,7 +31,7 @@ const SelectColorAndSize: React.FC<SelectVarientProps> = React.memo(
   }) => {
     const handleChangeColor = useCallback(
       (e: string) => {
-        
+
         setSelectedColor(e ?? "");
         setValidation((prev) => ({ ...prev, colorRequired: false }));
       },
@@ -47,55 +47,55 @@ const SelectColorAndSize: React.FC<SelectVarientProps> = React.memo(
     );
 
     return (
-      <div id='select-varient' className="flex mb-4 gap-3">
+      <div id='select-varient' className="flex mb-4 gap-3 px-3 lg:px-0">
         <div className="flex-1">
           <Select onValueChange={handleChangeColor}>
-            <SelectTrigger className="h-14 rounded-none hover:shadow-md">
+            <SelectTrigger className="h-12 lg:h-14 rounded-lg lg:rounded-none hover:shadow-md">
               <SelectValue
                 placeholder={
-                  <p className="text-base font-normal">Select Color</p>
+                  <p className="text-sm lg:text-base font-normal">Select Color</p>
                 }
               />
             </SelectTrigger>
-            <SelectContent className="rounded-none">
+            <SelectContent className="rounded-lg lg:rounded-none">
               <SelectGroup>
                 <SelectLabel>Color</SelectLabel>
                 {availableColors.map((color, index) => (
                   <SelectItem key={index} value={color}>
-                    <p className="text-base font-normal">{color}</p>
+                    <p className="text-sm lg:text-base font-normal">{color}</p>
                   </SelectItem>
                 ))}
               </SelectGroup>
             </SelectContent>
           </Select>
           {validation.colorRequired && (
-            <span className="text-[14px] leading-5 font-semibold text-[#EF0505]">
+            <span className="text-xs lg:text-[14px] leading-5 font-semibold text-[#EF0505]">
               *Color required
             </span>
           )}
         </div>
         <div className="flex-1">
           <Select onValueChange={handleChangeSize}>
-            <SelectTrigger className="h-14 rounded-none hover:shadow-md">
+            <SelectTrigger className="h-12 lg:h-14 rounded-lg lg:rounded-none hover:shadow-md">
               <SelectValue
                 placeholder={
-                  <p className="text-base font-normal">Select Size</p>
+                  <p className="text-sm lg:text-base font-normal">Select Size</p>
                 }
               />
             </SelectTrigger>
-            <SelectContent className="rounded-none">
+            <SelectContent className="rounded-lg lg:rounded-none">
               <SelectGroup>
                 <SelectLabel>Size</SelectLabel>
                 {availableSizes.map((size, index) => (
                   <SelectItem key={index} value={size}>
-                    <p className="text-base font-normal">{size}</p>
+                    <p className="text-sm lg:text-base font-normal">{size}</p>
                   </SelectItem>
                 ))}
               </SelectGroup>
             </SelectContent>
           </Select>
           {validation.sizeRequired && (
-            <span className="text-[14px] leading-5 font-semibold text-[#EF0505]">
+            <span className="text-xs lg:text-[14px] leading-5 font-semibold text-[#EF0505]">
               *Size required
             </span>
           )}

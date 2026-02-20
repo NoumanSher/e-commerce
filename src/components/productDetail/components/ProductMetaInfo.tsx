@@ -12,7 +12,7 @@ const ProductMetaInfo: React.FC<ProductMetaInfoProps> = ({
   // tags,
 }) => {
   return (
-    <div className="mb-0">
+    <div className="mb-0 px-2 lg:px-0">
       <p className="uppercase text-sm text-gray-500 mb-1">
         sku: <span className="text-black text-xs capitalize">{sku}</span>
       </p>

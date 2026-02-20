@@ -1,5 +1,5 @@
 "use client";
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback, useEffect, useMemo } from "react";
 import { Button } from "@/components/ui/button";
 import QuantitySelector from "@/components/productDetail/components/QuantitySelector";
 import WhatsAppButton from "@/components/productDetail/components/WhatsAppButton";
@@ -9,6 +9,7 @@ import ProductMetaInfo from "./components/ProductMetaInfo";
 import ProductBasicInfo from "./components/ProductBasicInfo";
 import CheckOutBtn from "./components/CheckOutBtn";
 import Tabs from "./components/DialogModal";
+import MobileActionBar from "./components/MobileActionBar";
 import { useRouter } from "next/navigation";
 import dynamic from "next/dynamic";
 import { Product } from "./productDetailDto";
@@ -21,9 +22,14 @@ const SocialMediaShareWithNoSSR = dynamic(
 
 interface ProductDetailsProps {
   product: Product;
+  onGalleryHandlersReady?: (handlers: {
+    handleAddToCart: () => void;
+    handleCheckout: () => void;
+    availableStock: number;
+  }) => void;
 }
 
-const ProductInfo: React.FC<ProductDetailsProps> = ({ product }) => {
+const ProductInfo: React.FC<ProductDetailsProps> = ({ product, onGalleryHandlersReady }) => {
   const { updateProductDetailtData, userId } = useStore();
   const { addToCart } = useCart();
   const {
@@ -90,6 +96,8 @@ const ProductInfo: React.FC<ProductDetailsProps> = ({ product }) => {
       const isSizeMissing = !selectedSize;
 
       if (isColorMissing || isSizeMissing) {
+        const el = document.getElementById('select-varient');
+        el?.scrollIntoView({ behavior: 'smooth', block: 'center' });
         setValidation((prev) => ({
           ...prev,
           colorRequired: isColorMissing,
@@ -186,82 +194,123 @@ const ProductInfo: React.FC<ProductDetailsProps> = ({ product }) => {
     }
     setSelectedQuantity(quantity);
   };
+
+  // Notify parent when handlers are ready
+  useEffect(() => {
+    if (onGalleryHandlersReady) {
+      onGalleryHandlersReady({
+        handleAddToCart,
+        handleCheckout,
+        availableStock,
+      });
+    }
+  }, [onGalleryHandlersReady, handleAddToCart, handleCheckout, availableStock]);
+
   return (
-    <div className="lg:pl-8 pt-2 lg:w-[40%] flex flex-col   w-full">
-      {/* <Breadcrumb /> */}
-      <ProductBasicInfo
-        title={productName}
-        stockAvailability={availableStock}
-        price={productPrice}
-        description={description}
-        discount={discount}
-      />
-      {colors.length > 0 && (
-        <SelectColorAndSize
-          availableColors={colors}
-          availableSizes={sizes}
-          setSelectedColor={setSelectedColor}
-          setSelectedSize={setSelectedSize}
-          validation={validation}
-          setValidation={setValidation}
-        />
-      )}
+    <>
+      <div className="lg:pl-8 pt-2 lg:w-[40%] flex flex-col w-full">
+        {/* Mobile: Quick Actions Header */}
+        <div className="lg:hidden flex items-center justify-between mb-3 px-2">
+          <WishlistButton product={product} />
+          <button onClick={() => {
+            const el = document.getElementById('review');
+            el?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          }}>review</button>
+          <SocialMediaShareWithNoSSR
+            url={`https://www.pakshipper.com/product-detail/${seo.slug}`}
+          />
+        </div>
 
-      <div className="flex md:items-center justify-between md:justify-normal  gap-x-4 mb-4">
-        <QuantitySelector
-          className="h-14"
-          quantity={
-            selectedQuantity > availableStock
-              ? availableStock
-              : selectedQuantity
-          }
-          stock={availableStock}
-          onQuantityChange={handleQuantityChange}
+        <ProductBasicInfo
+          title={productName}
+          stockAvailability={availableStock}
+          price={productPrice}
+          description={description}
+          discount={discount}
         />
-        <Button
-          onClick={handleAddToCart}
-          className="rounded-none shadow-none bg-opacity-95 bg-black border-0 h-14 w-[50%] uppercase py-3 transition-all duration-500 hover:bg-white group hover:border border-black"
-        >
-          <p className="text-[14px] font-semibold leading-[1.72] group-hover:text-black">
-            add to cart
-          </p>
-        </Button>
+
+        {colors.length > 0 && (
+          <SelectColorAndSize
+            availableColors={colors}
+            availableSizes={sizes}
+            setSelectedColor={setSelectedColor}
+            setSelectedSize={setSelectedSize}
+            validation={validation}
+            setValidation={setValidation}
+          />
+        )}
+
+        {/* Desktop: Original Layout */}
+        <div className="hidden lg:flex md:items-center justify-between md:justify-normal gap-x-3 mb-4">
+          <QuantitySelector
+            className="h-14"
+            quantity={
+              selectedQuantity > availableStock
+                ? availableStock
+                : selectedQuantity
+            }
+            stock={availableStock}
+            onQuantityChange={handleQuantityChange}
+          />
+          <Button
+            onClick={handleAddToCart}
+            className="rounded-none shadow-none bg-opacity-95 bg-black border-0 h-14 flex-1 uppercase py-3 transition-all duration-500 hover:bg-white group hover:border border-black"
+          >
+            <p className="text-[14px] font-semibold leading-[1.72] group-hover:text-black">
+              add to cart
+            </p>
+          </Button>
+          {/* Desktop: Sticky Checkout Button */}
+          <div className="hidden lg:block flex-1">
+            <CheckOutBtn
+              availableStock={availableStock}
+              className="flex-1 !w-full"
+              onClick={handleCheckout}
+              selectedQuantity={selectedQuantity}
+            />
+          </div>
+        </div>
+
+        {/* Desktop: Social and Wishlist */}
+        <div className="hidden lg:flex gap-x-7 items-center mb-3">
+          <WishlistButton product={product} />
+
+          <SocialMediaShareWithNoSSR
+            url={`https://www.pakshipper.com/product-detail/${seo.slug}`}
+          />
+        </div>
+
+        <ProductMetaInfo
+          sku={sku}
+          categories={parentCategoryName}
+          tags={childCategoryName}
+        />
+
+        <Tabs />
+
+
+
+        <WhatsAppButton
+          product={{
+            name: productName,
+            price: productPrice,
+            sku: sku,
+            size: selectedSize,
+            color: selectedColor,
+            url: `https://www.pakshipper.com/product-detail/${seo.slug}`,
+          }}
+        />
       </div>
 
-      <div className="flex gap-x-7 items-center mb-3">
-        <WishlistButton product={product} />
-        <SocialMediaShareWithNoSSR
-          url={`https://www.pakshipper.com/product-detail/${seo.slug}`}
-        />
-      </div>
-
-      <ProductMetaInfo
-        sku={sku}
-        categories={parentCategoryName}
-        tags={childCategoryName}
+      {/* Mobile: Sticky Bottom Action Bar */}
+      <MobileActionBar
+        availableStock={availableStock}
+        selectedQuantity={selectedQuantity}
+        onQuantityChange={handleQuantityChange}
+        onAddToCart={handleAddToCart}
+        onCheckout={handleCheckout}
       />
-
-      <Tabs />
-
-      <div className="mt-2 sm:mt-0  sticky bottom-0">
-        <CheckOutBtn
-          availableStock={availableStock}
-          className="!w-[100%]"
-          onClick={handleCheckout}
-          selectedQuantity={selectedQuantity}
-        />
-      </div>
-      <WhatsAppButton
-        product={{
-          name: productName,
-          price: productPrice,
-          sku: sku,
-          size: selectedSize,
-          color: selectedColor,
-          url: `https://www.pakshipper.com/product-detail/${seo.slug}`,
-        }}
-      />
-    </div>
+    </>
   );
 };
 

@@ -12,6 +12,9 @@ const ImageLightbox = dynamic(() => import("../ImageLightbox"), {
 interface ImageGalleryProps {
   images: { src: string; alt: string; blurDataURL: string }[];
   productName: string;
+  onAddToCart?: () => void;
+  onBuyNow?: () => void;
+  availableStock?: number;
 }
 
 // Default blur placeholder
@@ -33,10 +36,21 @@ const defaultBlur =
     </svg>`
   );
 
-export default function ImageGallery({ images, productName }: ImageGalleryProps) {
+export default function ImageGallery({
+  images,
+  productName,
+  onAddToCart,
+  onBuyNow,
+  availableStock = 1,
+}: ImageGalleryProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isLightboxOpen, setIsLightboxOpen] = useState(false);
   const thumbnailContainerRef = useRef<HTMLDivElement>(null);
+  const [touchStart, setTouchStart] = useState<number | null>(null);
+  const [touchEnd, setTouchEnd] = useState<number | null>(null);
+
+  // Minimum swipe distance (in px)
+  const minSwipeDistance = 50;
 
   // Auto-scroll thumbnails to keep current visible
   useEffect(() => {
@@ -78,6 +92,30 @@ export default function ImageGallery({ images, productName }: ImageGalleryProps)
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [handleNext, handlePrev, isLightboxOpen]);
 
+  // Touch event handlers for swipe
+  const onTouchStart = (e: React.TouchEvent) => {
+    setTouchEnd(null);
+    setTouchStart(e.targetTouches[0].clientX);
+  };
+
+  const onTouchMove = (e: React.TouchEvent) => {
+    setTouchEnd(e.targetTouches[0].clientX);
+  };
+
+  const onTouchEnd = () => {
+    if (!touchStart || !touchEnd) return;
+
+    const distance = touchStart - touchEnd;
+    const isLeftSwipe = distance > minSwipeDistance;
+    const isRightSwipe = distance < -minSwipeDistance;
+
+    if (isLeftSwipe) {
+      handleNext();
+    } else if (isRightSwipe) {
+      handlePrev();
+    }
+  };
+
   // Empty state
   if (!images.length) {
     return (
@@ -91,11 +129,11 @@ export default function ImageGallery({ images, productName }: ImageGalleryProps)
 
   return (
     <>
-      <div className="flex flex-col lg:flex-row gap-3  lg:gap-4 w-full lg:w-[60%]">
+      <div className="flex flex-col lg:flex-row gap-0 lg:gap-4 w-full lg:w-[60%]">
         {/* Thumbnails */}
         <div
           ref={thumbnailContainerRef}
-          className=" flex lg:flex-col gap-2 overflow-x-scroll lg:overflow-y-auto scrollbarHide lg:max-h-[600px] order-2 lg:order-1"
+          className="flex lg:flex-col gap-2 overflow-x-auto lg:overflow-y-auto scrollbarHide lg:max-h-[600px] order-2 lg:order-1 px-3 lg:px-0 py-2 lg:py-0 bg-white lg:bg-transparent"
         >
           {images.map((image, index) => (
             <button
@@ -140,7 +178,16 @@ export default function ImageGallery({ images, productName }: ImageGalleryProps)
 
           {/* Main Image */}
           <div
-            className="relative aspect-[4/5] sm:aspect-square lg:max-h-[600px]  w-full bg-gray-100 rounded-xl overflow-hidden group"
+            className="relative aspect-square lg:max-h-[600px] w-full bg-gray-100 rounded-none lg:rounded-xl overflow-hidden group cursor-pointer"
+            onClick={(e) => {
+              // Only open lightbox if clicking on image area, not buttons
+              if (e.target === e.currentTarget || (e.target as HTMLElement).tagName === 'IMG') {
+                setIsLightboxOpen(true);
+              }
+            }}
+            onTouchStart={onTouchStart}
+            onTouchMove={onTouchMove}
+            onTouchEnd={onTouchEnd}
           >
             <div>
               <Image
@@ -224,6 +271,9 @@ export default function ImageGallery({ images, productName }: ImageGalleryProps)
           initialIndex={currentIndex}
           onClose={() => setIsLightboxOpen(false)}
           imageKey="src"
+          onAddToCart={onAddToCart}
+          onBuyNow={onBuyNow}
+          availableStock={availableStock}
         />
       )}
 

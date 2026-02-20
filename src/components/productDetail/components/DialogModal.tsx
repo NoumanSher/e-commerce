@@ -71,7 +71,7 @@ const ProductDetailTabs: React.FC = memo(() => {
             <DialogTrigger asChild>
               <button
                 onClick={() => handleTabClick(tab.content)}
-                className="nav-link pb-[2px] pt-2 focus:outline-none"
+                className="nav-link pb-[2px] pt-2 focus:outline-none px-2 lg:px-0"
               >
                 <p className="text-black text-sm font-medium text-opacity-95">
                   {tab.label}

@@ -15,6 +15,9 @@ interface ImageLightboxProps {
   initialIndex?: number;
   onClose: () => void;
   imageKey?: keyof ImageObject;
+  onAddToCart?: () => void;
+  onBuyNow?: () => void;
+  availableStock?: number;
 }
 
 export default function ImageLightbox({
@@ -22,6 +25,9 @@ export default function ImageLightbox({
   initialIndex = 0,
   onClose,
   imageKey,
+  onAddToCart,
+  onBuyNow,
+  availableStock = 1,
 }: ImageLightboxProps) {
   const [currentIndex, setCurrentIndex] = useState(initialIndex);
   const [loading, setLoading] = useState(true);
@@ -67,12 +73,20 @@ export default function ImageLightbox({
     setShowIndicators(false);
 
     const shortSwipe = 50;
-    const longSwipe = 150;
+    const closeSwipeThreshold = 150;
 
+    // Only close on horizontal swipe (left or right)
     if (Math.abs(deltaX) > Math.abs(deltaY)) {
-      if (Math.abs(deltaX) > longSwipe) onClose();
-      else if (deltaX > shortSwipe && images.length > 1) nextImage();
-      else if (deltaX < -shortSwipe && images.length > 1) prevImage();
+      // Horizontal swipe to close (150px minimum)
+      if (Math.abs(deltaX) > closeSwipeThreshold) {
+        onClose();
+      }
+      // Navigate between images (50px minimum)
+      else if (deltaX > shortSwipe && images.length > 1) {
+        nextImage();
+      } else if (deltaX < -shortSwipe && images.length > 1) {
+        prevImage();
+      }
     }
   };
 
@@ -179,6 +193,38 @@ export default function ImageLightbox({
             <ChevronRight size={32} />
           </button>
         </>
+      )}
+
+      {/* Mobile Action Buttons */}
+      {(onAddToCart || onBuyNow) && (
+        <div className="lg:hidden absolute bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-50">
+          <div className="px-4 py-3 flex gap-3">
+            {onAddToCart && (
+              <button
+                onClick={() => {
+                  onClose(); // Close lightbox first
+                  setTimeout(() => onAddToCart(), 100); // Then execute action
+                }}
+                disabled={availableStock === 0}
+                className="flex-1 h-12 bg-gray-900 hover:bg-gray-800 text-white font-semibold rounded-lg transition-colors disabled:bg-gray-300 disabled:cursor-not-allowed"
+              >
+                Add to Cart
+              </button>
+            )}
+            {onBuyNow && (
+              <button
+                onClick={() => {
+                  onClose(); // Close lightbox first
+                  setTimeout(() => onBuyNow(), 100); // Then execute action
+                }}
+                disabled={availableStock === 0}
+                className="flex-1 h-12 bg-red-600 hover:bg-red-700 text-white font-semibold rounded-lg transition-colors disabled:bg-gray-300 disabled:cursor-not-allowed"
+              >
+                Buy Now
+              </button>
+            )}
+          </div>
+        </div>
       )}
     </div>
   );
