@@ -36,7 +36,7 @@ export function ReviewCard({
 
   const handleMarkHelpful = async () => {
     if (!token) {
-      toast.error("Please login to mark helpful");
+      toast.info("Please login to mark helpful");
       setIsAuthModalOpen(true);
       return;
     }

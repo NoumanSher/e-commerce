@@ -23,12 +23,20 @@ interface ImageLightboxProps {
 export default function ImageLightbox({
   images,
   initialIndex = 0,
-  onClose,
+  onClose: onCloseProp,
   imageKey,
   onAddToCart,
   onBuyNow,
   availableStock = 1,
 }: ImageLightboxProps) {
+  const handleClose = useCallback(() => {
+    if (typeof window !== "undefined" && window.history.state?.lightbox) {
+      window.history.back();
+    } else {
+      onCloseProp();
+    }
+  }, [onCloseProp]);
+
   const [currentIndex, setCurrentIndex] = useState(initialIndex);
   const [loading, setLoading] = useState(true);
   const [touchStart, setTouchStart] = useState({ x: 0, y: 0 });
@@ -79,7 +87,7 @@ export default function ImageLightbox({
     if (Math.abs(deltaX) > Math.abs(deltaY)) {
       // Horizontal swipe to close (150px minimum)
       if (Math.abs(deltaX) > closeSwipeThreshold) {
-        onClose();
+        handleClose();
       }
       // Navigate between images (50px minimum)
       else if (deltaX > shortSwipe && images.length > 1) {
@@ -95,11 +103,29 @@ export default function ImageLightbox({
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "ArrowLeft") prevImage();
       else if (e.key === "ArrowRight") nextImage();
-      else if (e.key === "Escape") onClose();
+      else if (e.key === "Escape") handleClose();
     };
     document.addEventListener("keydown", onKey);
     return () => document.removeEventListener("keydown", onKey);
-  }, [prevImage, nextImage, onClose]);
+  }, [prevImage, nextImage, handleClose]);
+
+  useEffect(() => {
+    // Push a marker state into the browser history if not already there (handles StrictMode double-mount)
+    if (typeof window !== "undefined" && !window.history.state?.lightbox) {
+      window.history.pushState({ lightbox: true }, "");
+    }
+
+    const handlePopstate = () => {
+      // The user pressed the hardware/swipe back button, OR we programmatically called history.back()
+      onCloseProp();
+    };
+
+    window.addEventListener("popstate", handlePopstate);
+
+    return () => {
+      window.removeEventListener("popstate", handlePopstate);
+    };
+  }, [onCloseProp]);
 
   // Lock body scroll
   useEffect(() => {
@@ -128,7 +154,7 @@ export default function ImageLightbox({
       <button
         aria-label="Close"
         className="absolute top-4 right-4 p-2 text-white hover:bg-white/10 rounded-full z-50 transition-colors"
-        onClick={onClose}
+        onClick={handleClose}
       >
         <X size={28} />
       </button>
@@ -202,7 +228,7 @@ export default function ImageLightbox({
             {onAddToCart && (
               <button
                 onClick={() => {
-                  onClose(); // Close lightbox first
+                  handleClose(); // Close lightbox first
                   setTimeout(() => onAddToCart(), 100); // Then execute action
                 }}
                 disabled={availableStock === 0}
@@ -214,7 +240,7 @@ export default function ImageLightbox({
             {onBuyNow && (
               <button
                 onClick={() => {
-                  onClose(); // Close lightbox first
+                  handleClose(); // Close lightbox first
                   setTimeout(() => onBuyNow(), 100); // Then execute action
                 }}
                 disabled={availableStock === 0}

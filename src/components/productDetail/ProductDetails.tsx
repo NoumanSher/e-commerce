@@ -286,8 +286,6 @@ const ProductInfo: React.FC<ProductDetailsProps> = ({ product, onGalleryHandlers
 
         <Tabs />
 
-
-
         <WhatsAppButton
           product={{
             name: productName,
