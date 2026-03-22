@@ -1,8 +1,5 @@
 import React, { Suspense } from "react";
 import dynamic from "next/dynamic";
-
-export const runtime = 'edge';
-
 import { generateProductSchema } from "./schema";
 import { productsService } from "@/services/productsService";
 import ProductDetailSkeleton from "@/components/productDetail/components/ProductDetailSkeleton";
