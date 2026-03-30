@@ -8,7 +8,7 @@ import {
   useGetOrdersByUserId,
   useGetProfileDetailByUserId,
 } from "./profileQuery";
-import { useStore } from "@/Context/storeContext";
+import { useStore } from "@/context/storeContext";
 import Loader from "@/components/Loader";
 import { Address } from "./profileDtos";
 

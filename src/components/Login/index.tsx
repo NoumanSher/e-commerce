@@ -5,7 +5,7 @@ import * as z from "zod";
 import { LogInPayload } from "@/services/authService";
 import { useLogIn } from "./query";
 import { useRouter } from "next/navigation";
-import { useStore } from "@/Context/storeContext";
+import { useStore } from "@/context/storeContext";
 
 type LoginFormProps = {
   from?: string;

@@ -4,7 +4,7 @@ import OrderHistoryTabel from "../components/OrderHistoryTabel";
 import Pagination from "../components/Pagination";
 import { useSearchParams, useRouter } from "next/navigation";
 import { useGetOrdersByUserId } from "../profileQuery";
-import { useStore } from "@/Context/storeContext";
+import { useStore } from "@/context/storeContext";
 import Loader from "@/components/Loader";
 
 const getSafeData = (data: any) => {

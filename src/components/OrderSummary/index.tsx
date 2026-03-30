@@ -1,5 +1,5 @@
 import React from "react";
-import { useStore } from "@/Context/storeContext";
+import { useStore } from "@/context/storeContext";
 import { useSearchParams } from "next/navigation";
 import { useCart } from "../hooks/useCart";
 const OrderSummaryComponent: React.FC = () => {

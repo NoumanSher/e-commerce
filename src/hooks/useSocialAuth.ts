@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { useStore } from "@/Context/storeContext";
+import { useStore } from "@/context/storeContext";
 import apiClient from "@/lib/apiClient";
 import { toast } from "react-toastify";
 import { BASE_URL_LIVE } from "@/appConst/appConst";

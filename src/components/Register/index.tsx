@@ -5,7 +5,7 @@ import { useRegister } from "./query";
 import { RegisterPayload } from "@/services/authService";
 import AuthForm from "../AuthForm";
 import { useRouter } from "next/navigation";
-import { useStore } from "@/Context/storeContext";
+import { useStore } from "@/context/storeContext";
 
 const registerSchema = z.object({
   email: z.string()

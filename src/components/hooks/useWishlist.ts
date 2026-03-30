@@ -1,7 +1,7 @@
 // components/hooks/useWishlist.ts
 
 import { useEffect, useCallback } from "react";
-import { useStore } from "@/Context/storeContext";
+import { useStore } from "@/context/storeContext";
 import { storageApi, STORAGE_KEYS } from "@/lib/storageApi";
 import { Product } from "../productDetail/productDetailDto";
 

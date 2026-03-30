@@ -10,7 +10,7 @@ import { reviewService } from "@/services/reviewService";
 import { ReviewsResponse, SortOption } from "@/types";
 import { Loader2, AlertCircle } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { useStore } from "@/Context/storeContext";
+import { useStore } from "@/context/storeContext";
 interface ProductReviewsProps {
   productId: string;
   userId?: string;

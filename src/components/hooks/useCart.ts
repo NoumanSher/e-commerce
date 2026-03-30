@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo } from "react";
-import { useStore } from "@/Context/storeContext";
+import { useStore } from "@/context/storeContext";
 import { toast } from "react-toastify";
 import { Product } from "@/components/productDetail/productDetailDto";
 import { storageApi, STORAGE_KEYS } from "@/lib/storageApi";

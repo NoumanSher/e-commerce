@@ -2,7 +2,7 @@
 import Link from "next/link";
 import React from "react";
 import { useGetOrderDetailByorderNumber } from "./query/orderConfirmationQuery";
-import { useStore } from "@/Context/storeContext";
+import { useStore } from "@/context/storeContext";
 import { useRouter } from "next/navigation";
 import OrderConfirmationSkeleton from "../OrderSkeleton";
 const OrderConfirmation = () => {

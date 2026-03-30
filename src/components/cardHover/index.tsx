@@ -1,4 +1,4 @@
-import { useStore } from "@/Context/storeContext";
+import { useStore } from "@/context/storeContext";
 import React, { memo, useState, useEffect } from "react";
 import { FiEye } from "react-icons/fi";
 import { MdOutlineShoppingBag } from "react-icons/md";

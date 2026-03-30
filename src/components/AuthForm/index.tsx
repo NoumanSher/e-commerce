@@ -2,7 +2,7 @@ import React from "react";
 import { useForm, FieldValues } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import { useStore } from "@/Context/storeContext";
+import { useStore } from "@/context/storeContext";
 import { FaGoogle, FaLinkedin } from "react-icons/fa";
 import { useSocialAuth } from "@/hooks/useSocialAuth";
 

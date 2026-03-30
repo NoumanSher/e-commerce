@@ -1,7 +1,7 @@
 "use client";
 import React from "react";
 import ShoppingCart from "../../shoppingCartModal";
-import { useStore } from "@/Context/storeContext";
+import { useStore } from "@/context/storeContext";
 
 
 const ShoppingCartModal: React.FC = () => {

@@ -7,7 +7,7 @@ import MainCard from "../../../Card";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { Product } from "@/components/productDetail/productDetailDto";
 
-import { useStore } from "@/Context/storeContext";
+import { useStore } from "@/context/storeContext";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useCategoriesQuery } from "@/hooks/useProductsQuery";
 export default function CategoryNavigation() {

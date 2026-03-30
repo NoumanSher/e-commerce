@@ -2,7 +2,7 @@
 import React, { memo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { productsService } from "@/services/productsService";
-import { useStore } from "@/Context/storeContext";
+import { useStore } from "@/context/storeContext";
 import MainCard from "../../Card/index";
 import type { ApiError } from "@/services/productsService";
 import Loader from "@/components/Loader";

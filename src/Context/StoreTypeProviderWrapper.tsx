@@ -1,5 +1,5 @@
 'use client'
-import { StoreProvider } from '@/Context/storeContext';
+import { StoreProvider } from '@/context/storeContext';
 
 const StoreProviderWrapper = ({ children }:any) => {
   return <StoreProvider>{children}</StoreProvider>;

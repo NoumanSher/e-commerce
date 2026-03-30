@@ -11,7 +11,7 @@ import {
 } from "@/assets/svg/common";
 import { useWishlist } from "../hooks/useWishlist";
 import { useCart } from "../hooks/useCart";
-import { useStore } from "@/Context/storeContext";
+import { useStore } from "@/context/storeContext";
 import { useQuery } from "@tanstack/react-query";
 import { settingsService } from "@/services/settingsService";
 import Image from "next/image";

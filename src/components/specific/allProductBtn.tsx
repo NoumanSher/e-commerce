@@ -1,7 +1,7 @@
 "use client"
 import React from "react";
 import Link from "next/link";
-import { useStore } from "@/Context/storeContext";
+import { useStore } from "@/context/storeContext";
 export default function AllProductBtn() {
   const { selectedCategory } = useStore()
   return (

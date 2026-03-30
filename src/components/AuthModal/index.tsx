@@ -7,7 +7,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import LoginForm from "@/components/Login";
 import RegisterForm from "@/components/Register";
 
-import { useStore } from "@/Context/storeContext";
+import { useStore } from "@/context/storeContext";
 type AuthModalProps = {
   from?: string;
 };

@@ -1,7 +1,7 @@
 // src/hooks/useInvalidateProductQueries.ts
 import { useEffect } from "react";
 import { useQueryClient } from "@tanstack/react-query";
-import { useStore } from "@/Context/storeContext";
+import { useStore } from "@/context/storeContext";
 import { useCart } from "@/components/hooks/useCart";
 
 export const useInvalidateProductQueries = (

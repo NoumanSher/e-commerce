@@ -2,7 +2,7 @@ import { useMutation } from "@tanstack/react-query";
 import { authService, LogInPayload, LogInResponse } from "@/services/authService";
 import { toast } from "react-toastify";
 // import { useRouter } from "next/navigation";
-import { useStore } from "@/Context/storeContext";
+import { useStore } from "@/context/storeContext";
 interface CustomError extends Error {
   response?: {
     message?: string;
