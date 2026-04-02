@@ -9,8 +9,7 @@ import "react-toastify/dist/ReactToastify.css";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import GoogleAnalytics from "@/components/GoogleAnalytics";
 import Provider from "@/context/react-query-provider";
-// import { Analytics } from "@vercel/analytics/next";
-// import { SpeedInsights } from "@vercel/speed-insights/next";
+
 // const jost = Jost({ subsets: ["latin"] }); // Load the Jost font
 
 const jost = Jost({
@@ -32,8 +31,7 @@ export default function RootLayout({
     <html lang="en">
       <body className={`${jost.className} flex flex-col min-h-screen`}>
         <GoogleAnalytics gaId={process.env.GA_MEASUREMENT_ID as string} />
-        {/* <Analytics /> */}
-        {/* <SpeedInsights /> */}
+
         <Provider>
           <StoreTypeProviderWrapper>
             <ToastContainer
