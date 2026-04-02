@@ -1,7 +1,7 @@
 "use client";
 import React, { memo, useEffect } from "react";
 import { useCategories } from "@/hooks/useCategories";
-import { useStore } from "@/Context/storeContext";
+import { useStore } from "@/context/storeContext";
 
 const ProductsCategories = () => {
   const {

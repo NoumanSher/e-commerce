@@ -4,7 +4,7 @@ import { productsService } from "@/services/productsService";
 export async function GET() {
   const baseUrl = "https://pakshipper.com";
   // Fetching all products (limit 100 for sitemap)
-  const productData = await productsService.fetchProducts(undefined, undefined, 1, 100, 'images');
+  const productData = await productsService.fetchProducts({ page: 1, limit: 100, mode: 'images' });
   const escapeXml = (text: string) => {
     return text
       .replace(/&/g, '&amp;')

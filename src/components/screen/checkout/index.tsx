@@ -6,7 +6,7 @@ import * as z from "zod";
 import BillingDetailsComponent from "@/components/BillingDetails";
 import OrderSummaryComponent from "@/components/OrderSummary";
 import PaymentMethodComponent from "@/components/PaymentMethod";
-import { useStore } from "@/Context/storeContext";
+import { useStore } from "@/context/storeContext";
 import { useOrderCreate } from "./query/orderCreateQuery";
 import { useSearchParams, useRouter } from "next/navigation";
 import { useCart } from "@/components/hooks/useCart";

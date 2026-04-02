@@ -1,8 +1,8 @@
 import { useMutation } from "@tanstack/react-query";
-import { authService, LogInPayload, LogInResponse } from "@/services/authService";
+import { authService, LoginPayload, AuthResponse } from "@/services/authService";
 import { toast } from "react-toastify";
 // import { useRouter } from "next/navigation";
-import { useStore } from "@/Context/storeContext";
+import { useStore } from "@/context/storeContext";
 interface CustomError extends Error {
   response?: {
     message?: string;
@@ -11,8 +11,8 @@ interface CustomError extends Error {
 
 export const useLogIn = () => {
   const { setAuthToken, setUserId, setUserName } = useStore();
-  return useMutation<LogInResponse, CustomError, LogInPayload>({
-    mutationFn: authService.logInUser,
+  return useMutation<AuthResponse, CustomError, LoginPayload>({
+    mutationFn: authService.loginUser,
     onSuccess: (data) => {
       localStorage.setItem('refreshToken', data.refreshToken);
       setAuthToken(data.token);

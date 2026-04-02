@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import { useRouter, usePathname } from "next/navigation";
-import { useStore } from "@/Context/storeContext";
+import { useStore } from "@/context/storeContext";
 import {
   Dialog,
   DialogContent,

@@ -1,6 +1,7 @@
-import { get } from "@/lib/apiClient";
-import { Product } from "@/components/productDetail/productDetailDto";
-import { BASE_URL_LIVE } from "@/appConst/appConst";
+import { get, post } from "@/lib/apiClient";
+import type { Product } from "@/components/productDetail/productDetailDto";
+
+// ─── Types ────────────────────────────────────────────────────────────────────
 
 export interface Pagination {
   totalProducts: number;
@@ -8,6 +9,23 @@ export interface Pagination {
   currentPage: number;
   pageSize: number;
 }
+
+export interface ProductsResponse {
+  message: string;
+  data: Product[];
+  pagination: Pagination;
+}
+
+export interface RelatedProductsResponse extends Omit<ProductsResponse, "pagination"> {}
+
+export interface ProductFilters {
+  categorySlug?: string;
+  childCategorySlug?: string;
+  page?: number;
+  limit?: number;
+  mode?: string;
+}
+
 interface Category {
   _id: string;
   name: string;
@@ -16,7 +34,7 @@ interface Category {
   createdAt: string;
   updatedAt: string;
   __v: number;
-  children?: ChildCategory[]; // Optional array of child categories
+  children?: ChildCategory[];
 }
 
 interface ChildCategory {
@@ -24,98 +42,79 @@ interface ChildCategory {
   name: string;
   slug: string;
   description: string;
-  parentCategory: string; // Reference to parent category ID
+  parentCategory: string;
   createdAt: string;
   updatedAt: string;
   __v: number;
 }
 
-interface ParentCategoriesResponse {
+export interface ParentCategoriesResponse {
   message: string;
   categories: Category[];
 }
 
-export interface ProductsResponse {
-  message: string;
-  data: Product[];
-  pagination: Pagination;
-}
-export interface RelatedProductsResponse
-  extends Omit<ProductsResponse, "pagination"> { }
+// ─── Service functions ────────────────────────────────────────────────────────
 
-export interface ApiError {
-  message: string;
-  statusCode?: number;
-  response?: any;
-}
-
-const fetchProducts = async (
-  categorySlug?: string,
-  childCategorySlug?: string,
-  page: number = 1,
-  limit: number = 8,
-  mode: string = "full"
-): Promise<ProductsResponse> => {
+/**
+ * Fetch paginated products with optional category/child-category filters.
+ */
+const fetchProducts = ({
+  categorySlug,
+  childCategorySlug,
+  page = 1,
+  limit = 8,
+  mode = "full",
+}: ProductFilters = {}): Promise<ProductsResponse> => {
   const params = new URLSearchParams();
-  if (childCategorySlug) params.append("childCategorySlug", childCategorySlug);
-  if (categorySlug) params.append("parentCategorySlug", categorySlug);
-  if (page) params.append("page", page.toString());
-  if (limit) params.append("limit", limit.toString());
-  if (mode) params.append("mode", mode);
-  const url = `/products/get-all-products?${params.toString()}`;
-  debugger
-  return await get<ProductsResponse>(url);
+  if (childCategorySlug) params.set("childCategorySlug", childCategorySlug);
+  if (categorySlug) params.set("parentCategorySlug", categorySlug);
+  params.set("page", String(page));
+  params.set("limit", String(limit));
+  params.set("mode", mode);
+  return get<ProductsResponse>(`/products/get-all-products?${params}`);
 };
 
-const fetchProductsByCategory = async (
-  parentCategoryID: string
-): Promise<any> => {
-  const url = '/products/get-all-products'
-  return await get<any>(url, { parentCategoryID })
-}
+/**
+ * Fetch related products by parent category slug.
+ */
+const relatedProductsByCategorySlug = (
+  slug: string
+): Promise<RelatedProductsResponse> =>
+  get<RelatedProductsResponse>(
+    `/products/get-products-by-category-priority?parentCategorySlug=${slug}`
+  );
 
-const relatedProductsByCategoryId = async (
-  categoryId: string
-): Promise<RelatedProductsResponse> => {
-  const url = `/products/get-products-by-category-priority?parentCategorySlug=${categoryId}`
-  return await get<RelatedProductsResponse>(url)
-};
+/**
+ * Fetch all parent categories with their children.
+ */
+const fetchAllCategories = (): Promise<ParentCategoriesResponse> =>
+  get<ParentCategoriesResponse>("/categories/all");
 
-const fetchAllCategories = async (): Promise<ParentCategoriesResponse> => {
-  const url = `/categories/all`
-  return await get<ParentCategoriesResponse>(url)
-};
+/**
+ * Get a single product by its URL slug.
+ */
+const getProductBySlug = (slug: string): Promise<Product> =>
+  get<{ data: Product }>(`/products/get-product-by-slug/${slug}`).then(
+    (r) => r.data
+  );
 
-const getProductBySlug = async (slug: string): Promise<Product> => {
-  const url = `/products/get-product-by-slug/${slug}`;
-  const response = await get<any>(url);
-  return response.data;
-}
-
+/**
+ * Upload multiple images. Uses apiClient so the auth interceptor applies.
+ */
 const uploadImages = async (files: File[]): Promise<string[]> => {
   const formData = new FormData();
-  files.forEach((file) => {
-    formData.append("images", file);
-  });
-
-  const response = await fetch(`${BASE_URL_LIVE}/image/upload-multiple`, {
-    method: "POST",
-    body: formData,
-  });
-
-  if (!response.ok) {
-    throw new Error(`Error uploading images: ${response.statusText}`);
-  }
-
-  const data = await response.json();
-  return data.imageUrls;
-}
+  files.forEach((file) => formData.append("images", file));
+  const response = await post<{ imageUrls: string[] }>(
+    "/image/upload-multiple",
+    formData
+  );
+  return response.imageUrls;
+};
 
 export const productsService = {
   fetchProducts,
-  fetchProductsByCategory,
-  relatedProductsByCategoryId,
+  relatedProductsByCategorySlug,
   fetchAllCategories,
   getProductBySlug,
-  uploadImages
+  uploadImages,
 };

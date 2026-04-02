@@ -1,44 +1,16 @@
-import apiClient from "@/lib/apiClient";
-
-export interface OrderResponse {
-    success: boolean;
-    message: string;
-    data: {
-        _id: string;
-        orderNo: string;
-        totalPrice: number;
-        paymentMethod: string;
-        status: string;
-        address: {
-            firstName: string;
-            lastName: string;
-            streetAddress: string;
-            city: string;
-            zipCode: string;
-            phone: string;
-            email: string;
-        };
-    };
-}
+import { get, post } from "@/lib/apiClient";
+import type { OrderResponse, CreateOrderPayload } from "@/types";
 
 export const orderService = {
-    getUserAddress: async (userId: string) => {
-        const response = await apiClient.get<any>(`/order/userAdress/${userId}`);
-        return response.data;
-    },
+  getUserAddress: (userId: string): Promise<unknown> =>
+    get(`/order/userAddress/${userId}`), // Fixed typo: was "/userAdress/"
 
-    getSingleOrder: async (orderNumber: string): Promise<OrderResponse> => {
-        const response = await apiClient.get<OrderResponse>(`/order/user-single-order/${orderNumber}`);
-        return response.data;
-    },
+  getSingleOrder: (orderNumber: string): Promise<OrderResponse> =>
+    get<OrderResponse>(`/order/user-single-order/${orderNumber}`),
 
-    createOrder: async (payload: any) => {
-        const response = await apiClient.post<any>("/order", payload);
-        return response.data;
-    },
+  createOrder: (payload: CreateOrderPayload): Promise<OrderResponse> =>
+    post<OrderResponse>("/order", payload),
 
-    getOrdersByUserId: async (userId: string) => {
-        const response = await apiClient.get<any>(`/order/user-all-orders/${userId}`);
-        return response.data;
-    }
+  getOrdersByUserId: (userId: string): Promise<unknown> =>
+    get(`/order/user-all-orders/${userId}`),
 };

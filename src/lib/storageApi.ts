@@ -1,12 +1,13 @@
-/** 
+/**
  * Storage utilities with error handling and SSR-safe initialization.
  * Centralizes all localStorage operations.
  */
 
 const STORAGE_KEYS = {
-  productDetails: "productDeatails", // Note: typo from original kept for backward compat
+  productDetails: "productDetails", // Fixed typo (was "productDeatails")
   cart: "shoppingCart",
   token: "token",
+  refreshToken: "refreshToken",
   userId: "userId",
   userName: "userName",
   selectedCategory: "selectedCategory",

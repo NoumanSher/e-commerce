@@ -2,7 +2,7 @@
 
 import { useEffect, useState, Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
-import { useStore } from "@/Context/storeContext";
+import { useStore } from "@/context/storeContext";
 import { AuthModal } from "@/components/AuthModal";
 // Create a separate component effectively to be used within Suspense
 const AuthErrorContent = () => {

@@ -2,9 +2,9 @@
 import React, { memo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { productsService } from "@/services/productsService";
-import { useStore } from "@/Context/storeContext";
+import { useStore } from "@/context/storeContext";
 import MainCard from "../../Card/index";
-import type { ApiError } from "@/services/productsService";
+import type { ApiError } from "@/lib/apiClient";
 import Loader from "@/components/Loader";
 
 const ProductsCard = () => {
@@ -17,7 +17,7 @@ const ProductsCard = () => {
     isFetching,
   } = useQuery({
     queryKey: ["products", selectedCategory],
-    queryFn: () => productsService.fetchProducts(selectedCategory as string, undefined, 1, 8, 'client'),
+    queryFn: () => productsService.fetchProducts({ categorySlug: selectedCategory as string, page: 1, limit: 8, mode: 'client' }),
     enabled: !!selectedCategory,
     staleTime: 1000 * 60 * 5, // 5 min (data is fresh)
     gcTime: 1000 * 60 * 30, // 30 min in cache
@@ -27,7 +27,7 @@ const ProductsCard = () => {
     const err = error as ApiError;
     return (
       <div className="flex justify-center items-center h-96 text-center text-red-600 text-lg">
-        {err.response?.message ?? err.message ?? "Something went wrong."}
+        {err.message ?? "Something went wrong."}
       </div>
     );
   }

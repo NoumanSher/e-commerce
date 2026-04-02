@@ -1,63 +1,51 @@
-import { post, get } from '@/lib/apiClient';
+import { post, get } from "@/lib/apiClient";
 
-export interface LogInPayload {
-    email: string;
-    password: string;
+// ─── Shared user data shape returned by auth endpoints ────────────────────────
+
+interface UserData {
+  _id: string;
+  email: string;
+  username: string;
+  mobilePhone: string;
+  role: string;
+  createdAt: string;
+  updatedAt: string;
 }
 
-export interface LogInResponse {
-    message: string;
-    data: {
-        email: string;
-        username: string;
-        mobilePhone: string;
-        role: string;
-        password: string;
-        _id: string;
-        createdAt: string;
-        updatedAt: string;
-        __v: number;
-    };
-    refreshToken: string;
-    token: string;
+// ─── Request payloads ─────────────────────────────────────────────────────────
+
+export interface LoginPayload {
+  email: string;
+  password: string;
 }
 
 export interface RegisterPayload {
-    email: string;
-    username: string;
-    mobilePhone: string;
-    password: string;
-    confirmPassword: string;
+  email: string;
+  username: string;
+  mobilePhone: string;
+  password: string;
+  confirmPassword: string;
 }
 
-export interface RegisterResponse {
-    message: string;
-    data: {
-        email: string;
-        username: string;
-        mobilePhone: string;
-        role: string;
-        password: string;
-        _id: string;
-        createdAt: string;
-        updatedAt: string;
-        __v: number;
-    };
-    token: string;
-    refreshToken: string;
+// ─── Response types ───────────────────────────────────────────────────────────
+
+/** Shared shape for both login and register responses. */
+export interface AuthResponse {
+  message: string;
+  data: UserData;
+  token: string;
+  refreshToken: string;
 }
+
+// ─── Service ──────────────────────────────────────────────────────────────────
 
 export const authService = {
-    logInUser: async (payload: LogInPayload): Promise<LogInResponse> => {
-        return await post<LogInResponse>('/auth/login-user', payload);
-    },
+  loginUser: (payload: LoginPayload): Promise<AuthResponse> =>
+    post<AuthResponse>("/auth/login-user", payload),
 
-    registerUser: async (payload: RegisterPayload): Promise<RegisterResponse> => {
-        return await post<RegisterResponse>('/auth/register-user', payload);
-    },
+  registerUser: (payload: RegisterPayload): Promise<AuthResponse> =>
+    post<AuthResponse>("/auth/register-user", payload),
 
-    // Added based on potential needs for social auth or session verification
-    verifySession: async (): Promise<any> => {
-        return await get<any>('/auth/verify-session');
-    }
+  verifySession: (): Promise<{ data: UserData }> =>
+    get<{ data: UserData }>("/auth/verify-session"),
 };

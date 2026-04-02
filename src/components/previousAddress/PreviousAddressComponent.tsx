@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { BASE_URL_LIVE } from "@/appConst/appConst";
+import { BASE_URL_LIVE } from "@/config/env";
 interface Address {
   _id: string;
   firstName: string;

@@ -13,7 +13,7 @@ import { Product } from "@/components/productDetail/productDetailDto";
 import useIsMobileOrTablet from "@/hooks/useIsHoveredOrMobile";
 import { useWishlist } from "../hooks/useWishlist";
 import { useCart } from "../hooks/useCart";
-import { useStore } from "@/Context/storeContext";
+import { useStore } from "@/context/storeContext";
 import { FiHeart } from "react-icons/fi";
 import { formatPrice } from "@/lib/utils";
 import { productsService } from "@/services/productsService";

@@ -1,6 +1,6 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ProductReviews } from "@/components/reviews/ProductReviews";
-import { useStore } from "@/Context/storeContext";
+import { useStore } from "@/context/storeContext";
 import { useGetRelatedProductsByCategoryId } from "@/components/productDetail/productDetailQuery";
 import MainCard from "../../Card/index";
 import { useQueryClient } from "@tanstack/react-query";

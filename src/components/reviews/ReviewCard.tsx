@@ -13,7 +13,7 @@ import { cn } from "@/lib/utils";
 import Image from "next/image";
 import ImageLightbox from "@/components/ImageLightbox";
 import { toast } from "react-toastify";
-import { useStore } from "@/Context/storeContext";
+import { useStore } from "@/context/storeContext";
 interface ReviewCardProps {
   review: Review;
   userId: string;

@@ -1,4 +1,4 @@
-import { BASE_URL_LIVE } from "@/appConst/appConst";
+import { BASE_URL_LIVE } from "@/config/env";
 async function uploadReviewImages(files: File[]) {
   const formData = new FormData();
 

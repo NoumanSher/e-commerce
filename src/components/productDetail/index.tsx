@@ -9,7 +9,7 @@ import { AuthModal } from "../AuthModal";
 // Critical components loaded immediately
 import ProductImageGallery from "@/components/gallery";
 import ProductInfo from "@/components/productDetail/ProductDetails";
-import { useStore } from "@/Context/storeContext";
+import { useStore } from "@/context/storeContext";
 
 // Below-the-fold component (loaded after initial render)
 const Tabs = lazy(() => import("./components/Tabs"));

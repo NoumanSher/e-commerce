@@ -8,7 +8,7 @@ import {
   useGetOrdersByUserId,
   useGetProfileDetailByUserId,
 } from "./profileQuery";
-import { useStore } from "@/Context/storeContext";
+import { useStore } from "@/context/storeContext";
 import Loader from "@/components/Loader";
 import { Address } from "./profileDtos";
 
@@ -29,7 +29,7 @@ const ProfilePage = () => {
   }, []);
 
   const OrdersData = useMemo(() => getSafeData(data), [data]);
-  const profileData = profileDataResponse?.address as Address | undefined;
+  const profileData = (profileDataResponse as any)?.address as Address | undefined;
 
   if (!mounted || isLoading) return <Loader />;
 
@@ -80,7 +80,7 @@ const ProfilePage = () => {
       <OrderHistoryTabel
         orders={OrdersData.orders}
         title="Recent Order History"
-        ordersLAutalLength={data?.data?.length || 0}
+        ordersLAutalLength={(data as any)?.data?.length || 0}
         isButtonVisible
       />
     </div>
