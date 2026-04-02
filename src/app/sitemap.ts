@@ -33,7 +33,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     // productsService doesn't have a direct fetch with mode=seo in the current wrapper, 
     // but fetchProducts handles it. Let's use fetchProducts or add a specific one.
     // Actually, fetchProducts returns ProductsResponse which has .data
-    const productData = await productsService.fetchProducts(category.slug, undefined, 1, 100, 'seo');
+    const productData = await productsService.fetchProducts({ categorySlug: category.slug, page: 1, limit: 100, mode: 'seo' });
     for (const product of productData.data) {
       urls.push({
         url: `${baseUrl}/product-detail/${product.seo.slug}`,

@@ -1,73 +1,54 @@
 import React from "react";
 import dynamic from "next/dynamic";
-import {
-  QueryClient,
-  dehydrate,
-  HydrationBoundary,
-} from "@tanstack/react-query";
+import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
 import { AuthModal } from "@/components/AuthModal";
 import { settingsService } from "@/services/settingsService";
-// import { Metadata } from "next";
 import { FaWhatsapp } from "react-icons/fa";
 import Slider from "@/components/Slider/Slider";
-// import { auth } from "@/auth";
 import StoreError from "./StoreError";
 import { StoreInfo } from "@/components/Slider/dto/storeSettingDto";
-// app/landing/page.tsx
 import { getLandingMetadata } from "@/app/utils/metadata/landingMetadata";
+import { createQueryClient } from "@/lib/queryClient";
 
-// Dynamic imports with loading states
+// Dynamic imports — only load when needed to reduce initial bundle size
 const Trending = dynamic(() => import("@/components/Trending/trending"), {
   loading: () => <div>Loading Trending...</div>,
 });
 
-const FallbackAutoPlay = dynamic(() => import("@/components/auto-play-video"), {
-  loading: () => <div>Loading video...</div>,
-});
+const FallbackAutoPlay = dynamic(
+  () => import("@/components/auto-play-video"),
+  { loading: () => <div>Loading video...</div> }
+);
 
 const ShoppingCartModal = dynamic(
   () => import("@/components/shoppingCartModal/client/shoppingCartModal"),
-  {
-    ssr: false, // Disable SSR for modal since it's client-side only
-  }
+  { ssr: false }
 );
 
-// Shared query client configuration
-const createQueryClient = () =>
-  new QueryClient({
-    defaultOptions: {
-      queries: {
-        staleTime: 60 * 1000, // 1 minute cache
-        refetchOnWindowFocus: false,
-        refetchOnMount: false,
-      },
-    },
-  });
-
-// Cache settings for 1 minute (adjust as needed)
+// Cache settings: revalidate this server page every 60 seconds
 export const revalidate = 60;
 
 export default async function LandingPage() {
-  // const sesion = await auth();
-  // console.log(sesion);
-
   const queryClient = createQueryClient();
-  const landingWhatsappURL = `https://wa.me/923176872900`;
 
-  // Try to get from cache first
   let storeSettings: StoreInfo | undefined;
   try {
     storeSettings = await queryClient.ensureQueryData({
       queryKey: ["settings"],
       queryFn: () => settingsService.getStoreSetting(),
     });
-
-    // use storeSettings
-  } catch (error) {
+  } catch {
     return (
       <StoreError message="Unable to load store settings. Please check your connection or try again later." />
     );
   }
+
+  const whatsappPhone =
+    (storeSettings as any)?.whatsappPhone ??
+    process.env.NEXT_PUBLIC_WHATSAPP_PHONE ??
+    "923176872900";
+  const whatsappURL = `https://wa.me/${whatsappPhone}`;
+
   return (
     <>
       <AuthModal />
@@ -84,7 +65,7 @@ export default async function LandingPage() {
       </div>
 
       <a
-        href={landingWhatsappURL}
+        href={whatsappURL}
         target="_blank"
         rel="noopener noreferrer"
         className="fixed bottom-6 right-6 z-40 animate-bounce"

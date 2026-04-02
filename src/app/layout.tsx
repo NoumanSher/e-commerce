@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Jost } from "next/font/google"; 
+import { Jost } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/Nav";
 import Footer from "@/components/Footer/footer";
@@ -40,7 +40,7 @@ export default function RootLayout({
               position="top-right"
             />
             <Navbar />
-           <main className="flex-1">{children}</main>
+            <main className="flex-1">{children}</main>
             <Footer />
             <ReactQueryDevtools initialIsOpen={false} />
           </StoreTypeProviderWrapper>

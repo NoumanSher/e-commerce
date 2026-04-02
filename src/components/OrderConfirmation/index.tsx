@@ -2,23 +2,41 @@
 import Link from "next/link";
 import React from "react";
 import { useGetOrderDetailByorderNumber } from "./query/orderConfirmationQuery";
-import { useStore } from "@/context/storeContext";
+import { useCartContext } from "@/context/CartContext";
 import { useRouter } from "next/navigation";
 import OrderConfirmationSkeleton from "../OrderSkeleton";
+
 const OrderConfirmation = () => {
-  const { orderNumber } = useStore();
+  const { orderNumber } = useCartContext();
   const { data, isLoading } = useGetOrderDetailByorderNumber(orderNumber);
   const router = useRouter();
-  const subTotal = data?.data.items.reduce(
-    (acc, item) => acc + item.lineTotal,
+  
+  // Safe parsing to prevent crashes if items are missing
+  const items = data?.data?.items || [];
+  const subTotal = items.reduce(
+    (acc, item) => acc + (item.lineTotal || 0),
     0
   );
 
-  const totalCost = (subTotal ?? 0) + (data?.data.deliveryFee ?? 0);
+  const deliveryFee = data?.data?.deliveryFee ?? 0;
+  const totalCost = subTotal + deliveryFee;
+
+  const formattedDate = data?.data?.createdAt 
+    ? new Date(data.data.createdAt).toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'long', 
+        day: 'numeric'
+      }) 
+    : "Recently";
+
+  // Use dynamic data if available, fallback to defaults
+  const paymentMethod = data?.data?.paymentMethod || "Cash on delivery";
+  const shippingType = deliveryFee === 0 ? "Free shipping" : `Rs. ${deliveryFee}`;
 
   if (isLoading) {
     return <OrderConfirmationSkeleton />;
   }
+  
   return (
     <div className="flex flex-col items-center lg:p-8">
       {/* Success Icon and Message */}
@@ -49,11 +67,11 @@ const OrderConfirmation = () => {
       <div className="border-dotted border-2 border-gray-400 p-4 w-full max-w-3xl text-sm mb-8">
         <div className="flex justify-between mb-2">
           <span className="font-semibold">Order Number:</span>
-          <span>{data?.data.orderNo}</span>
+          <span>{data?.data?.orderNo || orderNumber}</span>
         </div>
         <div className="flex justify-between mb-2">
           <span className="font-semibold">Date:</span>
-          <span>{data?.data.createdAt}</span>
+          <span>{formattedDate}</span>
         </div>
         <div className="flex justify-between mb-2">
           <span className="font-semibold">Total:</span>
@@ -61,7 +79,7 @@ const OrderConfirmation = () => {
         </div>
         <div className="flex justify-between">
           <span className="font-semibold">Payment Method:</span>
-          <span>Cash on delivery</span>
+          <span>{paymentMethod}</span>
         </div>
       </div>
 
@@ -73,17 +91,19 @@ const OrderConfirmation = () => {
           <span>TOTAL</span>
         </div>
         <div>
-          {data?.data.items.map((item, index) => (
+          {items.map((item, index) => (
             <div
               key={index}
-              className={`flex justify-between ${data?.data.items.length > 1 ? "border-b pb-2" : ""} `}
+              className={`flex justify-between ${items.length > 1 ? "border-b pb-2" : ""} `}
             >
               <div>
-                {item.product} x {item.quantity}
+                {/* Fallback to product if it's a string, or product.productName if it's an object */}
+                {typeof item.product === 'object' ? (item.product as any).productName : item.product} x {item.quantity}
               </div>
               <div>{item.lineTotal}</div>
             </div>
           ))}
+          {items.length === 0 && <div className="text-gray-500 py-2">No items found.</div>}
         </div>
         <div className="flex justify-between font-semibold border-t border-gray-300 pt-4 mt-4">
           <span>SUBTOTAL:</span>
@@ -91,11 +111,11 @@ const OrderConfirmation = () => {
         </div>
         <div className="flex justify-between border-t border-gray-300 pt-2">
           <span>SHIPPING:</span>
-          <span>Free shipping</span>
+          <span>{shippingType}</span>
         </div>
         <div className="flex justify-between border-t border-gray-300 pt-2">
           <span>PAYMENT METHOD:</span>
-          <span>Cash on delivery</span>
+          <span>{paymentMethod}</span>
         </div>
         <div className="flex justify-between font-semibold border-t border-gray-300 pt-2">
           <span>TOTAL:</span>
@@ -106,7 +126,7 @@ const OrderConfirmation = () => {
         <button
           className="bg-black flex-1  flex justify-center items-center mt-4 h-14 text-white py-2 px-4"
           onClick={() => {
-            router.push(`/profile/order-details?orderId=${data?.data.orderNo}&from=order-confirmation`);
+            router.push(`/profile/order-details?orderId=${data?.data?.orderNo || orderNumber}&from=order-confirmation`);
           }}
         >
           Track Order

@@ -2,8 +2,9 @@
 import React, { useEffect } from "react";
 import AuthForm from "@/components/AuthForm";
 import * as z from "zod";
-import { LogInPayload } from "@/services/authService";
-import { useLogIn } from "./query";
+import { LoginPayload } from "@/services/authService";
+import { useAppUIContext } from "@/context/AppUIContext";
+import { useLogin } from "@/hooks/mutations/useAuthMutations";
 import { useRouter } from "next/navigation";
 import { useStore } from "@/context/storeContext";
 
@@ -22,9 +23,17 @@ const loginSchema = z.object({
 
 export default function LoginForm({ from }: LoginFormProps) {
   const router = useRouter();
-  const { setIsAuthModalOpen } = useStore();
+  const { activeTab, setActiveTab } = useAppUIContext();
 
-  const { mutate, isPending, isSuccess } = useLogIn();
+  const {
+    mutate: loginUser,
+    isPending,
+    isError,
+    error,
+    isSuccess,
+  } = useLogin();
+
+  const { setIsAuthModalOpen } = useStore(); // Keep this line as it's not explicitly removed by the instruction's code edit.
 
   useEffect(() => {
     const el = document.getElementById('pobtn');
@@ -38,8 +47,8 @@ export default function LoginForm({ from }: LoginFormProps) {
     }
   }, [from, isSuccess, router, setIsAuthModalOpen]);
 
-  const handleSubmit = (values: LogInPayload) => {
-    mutate(values);
+  const handleSubmit = (values: LoginPayload) => {
+    loginUser(values);
   };
 
   return (

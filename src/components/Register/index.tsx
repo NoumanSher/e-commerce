@@ -1,7 +1,7 @@
 "use client";
 import React, { useEffect } from "react";
 import * as z from "zod";
-import { useRegister } from "./query";
+import { useRegister } from "@/hooks/mutations/useAuthMutations";
 import { RegisterPayload } from "@/services/authService";
 import AuthForm from "../AuthForm";
 import { useRouter } from "next/navigation";

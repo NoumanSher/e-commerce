@@ -1,57 +1,48 @@
-import apiClient from "@/lib/apiClient";
-import {
-    ReviewsResponse,
-    CreateReviewPayload,
-    MarkHelpfulResponse,
+import { get, post } from "@/lib/apiClient";
+import type {
+  ReviewsResponse,
+  CreateReviewPayload,
+  MarkHelpfulResponse,
+  SortOption,
 } from "@/types";
 
+// ─── Sort option mapping ──────────────────────────────────────────────────────
+
+interface SortParams {
+  sortOrder: string;
+  sortBy: string;
+}
+
+/** Maps user-facing sort labels to the API's expected query parameters. */
+const SORT_MAP: Record<SortOption, SortParams> = {
+  recent:  { sortOrder: "asc",  sortBy: "CreatedAt"    },
+  oldest:  { sortOrder: "desc", sortBy: "CreatedAt"    },
+  highest: { sortOrder: "asc",  sortBy: "rating"       },
+  lowest:  { sortOrder: "desc", sortBy: "rating"       },
+  helpful: { sortOrder: "asc",  sortBy: "helpfulCount" },
+};
+
+// ─── Service ──────────────────────────────────────────────────────────────────
+
 export const reviewService = {
-    getProductReviews: async (
-        productId: string,
-        page: number = 1,
-        sort: string = "asc",
-        sortBY: string = "rating",
-        userId: string
-    ): Promise<ReviewsResponse> => {
-        let internalSort = sort;
-        let internalSortBY = sortBY;
+  getProductReviews: (
+    productId: string,
+    page: number = 1,
+    sortOption: SortOption = "highest",
+    userId: string
+  ): Promise<ReviewsResponse> => {
+    const { sortOrder, sortBy } = SORT_MAP[sortOption];
+    return get<ReviewsResponse>(
+      `/reviews/product/${productId}?page=${page}&sortOrder=${sortOrder}&sortBY=${sortBy}&userId=${userId}`
+    );
+  },
 
-        if (sortBY === "recent") {
-            internalSort = "asc";
-            internalSortBY = "CreatedAt";
-        } else if (sortBY === "oldest") {
-            internalSort = "desc";
-            internalSortBY = "CreatedAt";
-        } else if (sortBY === "highest") {
-            internalSortBY = "rating";
-            internalSort = "asc";
-        } else if (sortBY === "lowest") {
-            internalSortBY = "rating";
-            internalSort = "desc";
-        } else if (sortBY === "helpful") {
-            internalSortBY = "helpfulCount";
-            internalSort = "asc";
-        }
+  createReview: (payload: CreateReviewPayload): Promise<{ message: string }> =>
+    post<{ message: string }>("/reviews", payload),
 
-        const response = await apiClient.get<ReviewsResponse>(
-            `/reviews/product/${productId}?page=${page}&sortOrder=${internalSort}&sortBY=${internalSortBY}&userId=${userId}`
-        );
-        return response.data;
-    },
-
-    createReview: async (payload: CreateReviewPayload): Promise<any> => {
-        const response = await apiClient.post<any>("/reviews", payload);
-        return response.data;
-    },
-
-    markHelpful: async (
-        reviewId: string,
-        userId: string
-    ): Promise<MarkHelpfulResponse> => {
-        const response = await apiClient.post<MarkHelpfulResponse>("/reviews/review/helpful", {
-            userId,
-            reviewId,
-        });
-        return response.data;
-    },
+  markHelpful: (
+    reviewId: string,
+    userId: string
+  ): Promise<MarkHelpfulResponse> =>
+    post<MarkHelpfulResponse>("/reviews/review/helpful", { userId, reviewId }),
 };

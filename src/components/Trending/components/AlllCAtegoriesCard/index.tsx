@@ -80,13 +80,13 @@ export default function CategoryNavigation() {
       { parent: selectedCategory, child: selectedChildCategory },
     ],
     queryFn: ({ pageParam = 1 }) =>
-      productsService.fetchProducts(
-        selectedCategory ?? undefined,
-        selectedChildCategory ?? undefined,
-        pageParam as number,
-        10,
-        'client'
-      ),
+      productsService.fetchProducts({
+        categorySlug: selectedCategory ?? undefined,
+        childCategorySlug: selectedChildCategory ?? undefined,
+        page: pageParam as number,
+        limit: 10,
+        mode: 'client'
+      }),
     initialPageParam: 1,
     getNextPageParam: (lastPage) =>
       lastPage?.pagination?.currentPage! < lastPage?.pagination?.totalPages!

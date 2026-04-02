@@ -54,7 +54,7 @@ const OrderHistoryPage: React.FC = () => {
       <OrderHistoryTabel
         title="Order History"
         orders={paginatedOrders}
-        ordersLAutalLength={data?.data.length || 0}
+        ordersLAutalLength={(data as any)?.data?.length || 0}
         isButtonVisible={false}
         pagination={
           <Pagination

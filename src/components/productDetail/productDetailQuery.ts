@@ -16,7 +16,7 @@ export const useGetProductDetailBySlug = (slug: string) => {
 export const useGetRelatedProductsByCategoryId = (categoryId: string) => {
   return useQuery({
     queryKey: queryKeys.products.relatedByCategory(categoryId),
-    queryFn: () => productsService.relatedProductsByCategoryId(categoryId),
+    queryFn: () => productsService.relatedProductsByCategorySlug(categoryId),
     staleTime: STALE_TIMES.long, // 10 minutes fresh
     gcTime: CACHE_TIMES.veryLong, // 2 hours in cache
     enabled: !!categoryId,

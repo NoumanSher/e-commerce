@@ -1,5 +1,5 @@
 import axios from "axios";
-import { BASE_URL_LIVE } from "@/appConst/appConst";
+import { BASE_URL_LIVE } from "@/config/env";
 import { OrderResponse } from "../dto/orderConfirmationDto";
 const orderConfirmation = async (orderNumber: string): Promise<OrderResponse> => {
   const res = await axios.get<OrderResponse>(
