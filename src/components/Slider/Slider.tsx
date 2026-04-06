@@ -63,6 +63,8 @@ function Slider({ storeSettings }: SliderProps) {
                 // height={800}
                 sizes="100vw"
                 className="w-full h-auto block "
+                onClick={() => slide.link && router.push(slide.link)}
+
               />
             </div>
 
