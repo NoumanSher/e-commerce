@@ -23,4 +23,5 @@ interface BannerImage {
   altText: string;
   orderNumber: number;
   _id: string;
+  link: string;
 }
