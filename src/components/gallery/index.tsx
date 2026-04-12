@@ -178,7 +178,8 @@ export default function ImageGallery({
 
           {/* Main Image */}
           <div
-            className="relative aspect-square lg:max-h-[600px] w-full bg-gray-100 rounded-none lg:rounded-xl overflow-hidden group cursor-pointer"
+            style={{ backgroundImage: `url(${currentImage.blurDataURL || defaultBlur})`, backgroundSize: "cover", backgroundPosition: "center" }}
+            className="relative aspect-square lg:max-h-[600px] w-full   rounded-none lg:rounded-xl overflow-hidden group cursor-pointer"
             onClick={(e) => {
               // Only open lightbox if clicking on image area, not buttons
               if (e.target === e.currentTarget || (e.target as HTMLElement).tagName === 'IMG') {

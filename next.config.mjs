@@ -1,6 +1,9 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true, // Disable React Strict Mode
+  experimental: {
+    optimizePackageImports: ['lucide-react', 'react-icons'],
+  },
   images: {
     unoptimized: true,
     remotePatterns: [

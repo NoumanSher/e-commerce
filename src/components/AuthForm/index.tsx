@@ -91,7 +91,7 @@ const AuthForm: React.FC<AuthFormProps> = ({
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-4 mb-6">
+          <div className="grid grid-cols-1 gap-4 mb-6">
             <button
               type="button"
               onClick={handleGoogleLogin}
@@ -100,14 +100,14 @@ const AuthForm: React.FC<AuthFormProps> = ({
               <FaGoogle className="h-5 w-5 text-red-500 mr-2" />
               Google
             </button>
-            <button
+            {/* <button
               type="button"
               onClick={handleLinkedInLogin}
               className="w-full inline-flex justify-center items-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium text-white bg-[#0077b5] hover:bg-[#006097]"
             >
               <FaLinkedin className="h-5 w-5 mr-2" />
               LinkedIn
-            </button>
+            </button> */}
           </div>
 
           <div className="text-center text-sm">

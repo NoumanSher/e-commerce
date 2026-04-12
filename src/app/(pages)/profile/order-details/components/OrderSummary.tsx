@@ -2,32 +2,33 @@
 import React from 'react';
 
 const OrderSummary: React.FC<{ orderId: string; paymentMethod: string; subtotal: string; delivery: string; total: string }> = ({ orderId, paymentMethod, subtotal, delivery, total }) => (
-  <div className=" lg:w-[50%] w-full p-4 bg-card rounded-lg shadow-md">
-    <h2 className="text-lg font-semibold text-primary mb-4">Order Summary</h2>
-        <div className="mb-2 flex justify-between">
-          <span className="text-muted-foreground font-medium">ORDER ID:</span>
-          <span className="font-semibold text-foreground">#{orderId}</span>
-        </div>
-        <div className="mb-2 flex justify-between">
-          <span className="text-muted-foreground font-medium">PAYMENT METHOD:</span>
-          <span className="font-semibold text-foreground">{paymentMethod}</span>
-        </div>
-        <div className="border-t border-border my-4"></div>
-        <div className="mb-2 flex justify-between">
-          <span className="text-muted-foreground font-medium">Subtotal:</span>
-          <span className="font-semibold text-foreground">{subtotal}</span>
-        </div>
-   
-        <div className="mb-2 flex justify-between">
-          <span className="text-muted-foreground font-medium">Delivery:</span>
-          <span className="font-semibold text-foreground">{delivery}</span>
-        </div>
-        <div className="border-t border-border my-4"></div>
-        <div className="mb-2 flex justify-between">
-          <span className="text-muted-foreground font-medium">Total:</span>
-          <span className="font-semibold text-primary">{subtotal}</span>
-        </div>
+  <div className="bg-white border border-gray-200 w-full p-8 rounded-lg shadow-sm flex flex-col justify-center h-full min-h-[250px]">
+    <h2 className="text-lg font-bold text-gray-900 mb-6">Order Summary</h2>
+    <div className="space-y-4">
+      <div className="flex justify-between items-center">
+        <span className="text-xs font-semibold text-gray-400 uppercase tracking-wider">Order ID</span>
+        <span className="font-medium text-gray-900 text-sm">#{orderId}</span>
       </div>
+      <div className="flex justify-between items-center">
+        <span className="text-xs font-semibold text-gray-400 uppercase tracking-wider">Payment Method</span>
+        <span className="font-medium text-gray-900 text-sm">{paymentMethod}</span>
+      </div>
+      <div className="border-t border-gray-100 my-4"></div>
+      <div className="flex justify-between items-center">
+        <span className="text-gray-500 font-medium text-sm">Subtotal:</span>
+        <span className="font-medium text-gray-900 text-sm">Rs {subtotal}</span>
+      </div>
+      <div className="flex justify-between items-center">
+        <span className="text-gray-500 font-medium text-sm">Delivery:</span>
+        <span className="font-medium text-gray-900 text-sm">Rs {delivery}</span>
+      </div>
+      <div className="border-t border-gray-200 my-4"></div>
+      <div className="flex justify-between items-center">
+        <span className="text-base font-bold text-gray-900">Total:</span>
+        <span className="text-base font-bold text-gray-900">Rs {total}</span>
+      </div>
+    </div>
+  </div>
 );
 
 export default OrderSummary;

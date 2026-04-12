@@ -35,39 +35,33 @@ const OrderDetailsPage = () => {
 
   if (isLoading) return <Loader />;
   return (
-    <div className="lg:py-6 py-3">
-      <Header orderDate={profileData?.orders.createdAt} />
+    <div className="w-full py-2 lg:py-6 lg:px-4">
+      <Header orderDate={profileData?.orders?.createdAt} />
 
-      <div className="flex gap-4 flex-col lg:flex-row mt-3">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-6 mt-6 lg:mt-8 mb-8 lg:mb-10">
         <AddressInfo
           name={profileData?.fullName ?? ""}
-          email={profileData?.email}
-          phone={profileData?.phone}
-          address={profileData?.streetAddress}
+          email={profileData?.email ?? ""}
+          phone={profileData?.phone ?? ""}
+          address={profileData?.streetAddress ?? ""}
         />
-        <div className="hidden lg:contents">
-          <OrderSummary
-            orderId={profileData?.orders?.orderNo ?? ""}
-            paymentMethod={profileData?.orders?.paymentMethod ?? ""}
-            subtotal={profileData?.orders?.subTotal ?? ""}
-            delivery={profileData?.orders?.deliveryFee}
-            total={profileData?.orders?.subTotal ?? ""}
-          />
-        </div>
-      </div>
-      {/* <OrderStatusTimeline statuses={order.statuses} /> */}
-      <div className="my-5">
-        <OrderStepper orderStatusHistory={profileData?.orders?.orderStatuses} />
-      </div>
-      <ProductTable products={profileData?.orders?.items} />
-      <div className="lg:hidden mt-4">
         <OrderSummary
           orderId={profileData?.orders?.orderNo ?? ""}
           paymentMethod={profileData?.orders?.paymentMethod ?? ""}
           subtotal={profileData?.orders?.subTotal ?? ""}
-          delivery={profileData?.orders?.deliveryFee}
-          total={profileData?.orders?.subTotal ?? ""}
+          delivery={profileData?.orders?.deliveryFee ?? ""}
+          total={profileData?.orders?.subTotal ?? ""} // Total logic should be fixed but we pass subtotal directly for now.
         />
+      </div>
+
+      <div className="mb-10 p-6 bg-white border border-gray-200 rounded-lg shadow-sm">
+        <h3 className="text-lg font-bold text-gray-900 mb-6">Order Tracking</h3>
+        <OrderStepper orderStatusHistory={profileData?.orders?.orderStatuses} />
+      </div>
+
+      <div className="w-full">
+        <h3 className="text-lg font-bold text-gray-900 mb-4">Order Items</h3>
+        <ProductTable products={profileData?.orders?.items ?? []} />
       </div>
     </div>
   );

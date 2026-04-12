@@ -1,6 +1,6 @@
 'use client'
 import React, { useState } from 'react';
-import Head from 'next/head';
+
 import { FaPaperPlane, FaPhone, FaEnvelope } from 'react-icons/fa';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -17,6 +17,7 @@ const contactFormSchema = z.object({
 });
 
 type ContactFormInputs = z.infer<typeof contactFormSchema>;
+
 
 const ContactUsPage: React.FC = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -57,21 +58,15 @@ const ContactUsPage: React.FC = () => {
 
   return (
     <>
-      <Head>
-        <title>Contact Us | Your E-Commerce Store</title>
-        <meta name="description" content="Get in touch with our team" />
-      </Head>
-
       <div className="min-h-screen bg-gray-50 overflow-x-hidden">
         {/* Hero Section */}
-        <section className="relative bg-gradient-to-r from-blue-600 to-purple-600 text-white pt-16 pb-20 md:py-20">
+        <section className="relative bg-black text-white pt-16 pb-20 md:py-24">
           <div className="container mx-auto px-4 text-center">
-            <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4 md:mb-6">Contact Us</h1>
-            <p className="text-lg sm:text-xl md:text-2xl max-w-3xl mx-auto">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4 md:mb-6 tracking-tight">Contact Us</h1>
+            <p className="text-lg sm:text-xl md:text-2xl max-w-3xl mx-auto font-light text-gray-300">
               We&apos;d love to hear from you
             </p>
           </div>
-          <div className="absolute bottom-0 left-0 right-0 h-12 md:h-16 bg-white transform skew-y-1 origin-top-left"></div>
         </section>
 
         {/* Contact Content */}
@@ -91,7 +86,7 @@ const ContactUsPage: React.FC = () => {
                       id="name"
                       type="text"
                       {...register('name')}
-                      className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
+                      className={`w-full px-4 py-2 border rounded-lg focus:ring-1 focus:ring-black focus:border-black outline-none transition-colors ${
                         errors.name ? 'border-red-500' : 'border-gray-300'
                       }`}
                     />
@@ -108,7 +103,7 @@ const ContactUsPage: React.FC = () => {
                       id="email"
                       type="email"
                       {...register('email')}
-                      className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
+                      className={`w-full px-4 py-2 border rounded-lg focus:ring-1 focus:ring-black focus:border-black outline-none transition-colors ${
                         errors.email ? 'border-red-500' : 'border-gray-300'
                       }`}
                     />
@@ -125,7 +120,7 @@ const ContactUsPage: React.FC = () => {
                       id="subject"
                       type="text"
                       {...register('subject')}
-                      className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
+                      className={`w-full px-4 py-2 border rounded-lg focus:ring-1 focus:ring-black focus:border-black outline-none transition-colors ${
                         errors.subject ? 'border-red-500' : 'border-gray-300'
                       }`}
                     />
@@ -142,7 +137,7 @@ const ContactUsPage: React.FC = () => {
                       id="message"
                       rows={5}
                       {...register('message')}
-                      className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
+                      className={`w-full px-4 py-2 border rounded-lg focus:ring-1 focus:ring-black focus:border-black outline-none transition-colors ${
                         errors.message ? 'border-red-500' : 'border-gray-300'
                       }`}
                     ></textarea>
@@ -154,7 +149,7 @@ const ContactUsPage: React.FC = () => {
                   <button
                     type="submit"
                     disabled={isSubmitting}
-                    className="flex items-center justify-center w-full md:w-auto bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-lg transition duration-300"
+                    className="flex items-center justify-center w-full md:w-auto bg-black hover:bg-gray-800 text-white font-bold py-3 px-8 rounded-lg transition duration-300"
                   >
                     {isSubmitting ? (
                       'Sending...'
@@ -185,29 +180,29 @@ const ContactUsPage: React.FC = () => {
                     </div> */}
 
                     <div className="flex items-start">
-                      <div className="bg-blue-100 p-3 rounded-full mr-4">
-                        <FaPhone className="text-blue-600 text-xl" />
+                      <div className="bg-gray-200 p-3 rounded-full mr-5">
+                        <FaPhone className="text-black text-lg" />
                       </div>
                       <div>
-                        <h3 className="text-lg font-semibold text-gray-800">Phone Number</h3>
+                        <h3 className="text-lg font-bold text-gray-900 mb-1">Phone Number</h3>
                         <p className="text-gray-600">+923176872900</p>
                         {/* <p className="text-gray-600">+1 (987) 654-3210</p> */}
                       </div>
                     </div>
 
                     <div className="flex items-start">
-                      <div className="bg-blue-100 p-3 rounded-full mr-4">
-                        <FaEnvelope className="text-blue-600 text-xl" />
+                      <div className="bg-gray-200 p-3 rounded-full mr-5">
+                        <FaEnvelope className="text-black text-lg" />
                       </div>
                       <div>
-                        <h3 className="text-lg font-semibold text-gray-800">Email Address</h3>
+                        <h3 className="text-lg font-bold text-gray-900 mb-1">Email Address</h3>
                         <p className="text-gray-600">pakshipperstore@gmail.com</p>
                       </div>
                     </div>
                   </div>
 
-                  <div className="mt-8">
-                    <h3 className="text-lg font-semibold text-gray-800 mb-4">Business Hours</h3>
+                  <div className="mt-10 border-t border-gray-200 pt-8">
+                    <h3 className="text-lg font-bold text-gray-900 mb-4">Business Hours</h3>
                     <div className="space-y-2 text-gray-600">
                       <p className="flex justify-between">
                         <span>Monday - Friday</span>

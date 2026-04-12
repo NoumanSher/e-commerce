@@ -16,7 +16,6 @@ function Slider({ storeSettings }: SliderProps) {
   );
 
   const [currentSlide, setCurrentSlide] = useState(0);
-
   const intervalRef = useRef<number | null>(null);
 
   const nextSlide = useCallback(() => {
@@ -29,99 +28,84 @@ function Slider({ storeSettings }: SliderProps) {
 
   useEffect(() => {
     if (!slides.length) return;
-
     intervalRef.current = window.setInterval(nextSlide, 6000);
-
     return () => {
-      if (intervalRef.current !== null) {
-        clearInterval(intervalRef.current);
-      }
+      if (intervalRef.current !== null) clearInterval(intervalRef.current);
     };
   }, [nextSlide, slides.length]);
 
   if (!slides.length) return null;
 
   return (
-    <div className="relative w-full overflow-hidden">
-      {/* Sliding track */}
-      <div
-        className="flex transition-transform duration-700 ease-in-out"
-        style={{ transform: `translateX(-${currentSlide * 100}%)` }}
-      >
-        {slides.map((slide) => (
-          <div key={slide._id} className="w-full flex-shrink-0 relative">
+    <div className="relative w-full overflow-hidden h-[150px] md:h-[90vh] group">
 
-            {/* ── MOBILE: natural height, no crop, no stretch ── */}
-            <div className="block md:hidden h-[200px]">
-              <Image
-                priority
-                loading="eager"
-                src={slide.img}
-                alt={`Slide ${slide._id}`}
-                fill
-                // width={1920}
-                // height={800}
-                sizes="100vw"
-                className="w-full h-auto block "
-                onClick={() => slide.link && router.push(slide.link)}
-
-              />
-            </div>
-
-            {/* ── DESKTOP: fixed viewport height, edge-to-edge width ──
-                object-cover fills the full width without stretching pixels.
-                Slight top/bottom trim only — standard for e-commerce banners. */}
-            <div className="hidden md:block relative  h-[90vh]">
-              <Image
-                priority
-                loading="eager"
-                fill
-                src={slide.img}
-                alt={`Slide ${slide._id}`}
-                sizes="100vw"
-                className={`object-center   aspect-auto ${slide.link ? 'cursor-pointer' : ''}`}
-                onClick={() => slide.link && router.push(slide.link)}
-              />
-            </div>
-
-          </div>
-        ))}
-      </div>
+      {/* Fading slides stacked on top of each other */}
+      {slides.map((slide, i) => (
+        <div
+          key={slide._id}
+          className="absolute inset-0 transition-opacity duration-1000 ease-in-out"
+          style={{
+            opacity: i === currentSlide ? 1 : 0,
+            zIndex: i === currentSlide ? 1 : 0,
+          }}
+        >
+          <Image
+            priority={i === 0}
+            loading={i === 0 ? "eager" : "lazy"}
+            src={slide.img}
+            alt={`Slide ${slide._id}`}
+            fill
+            sizes="100vw"
+            className={`object-cover object-center ${slide.link ? "cursor-pointer" : ""}`}
+            onClick={() => slide.link && router.push(slide.link)}
+          />
+        </div>
+      ))}
 
       {/* Prev / Next buttons */}
-      {/* <div className="absolute bottom-4 left-4 flex space-x-3 z-10">
-        <button
-          className="w-10 h-10 bg-black/60 hover:bg-black text-white rounded-full flex items-center justify-center transition-colors"
-          onClick={prevSlide}
-          aria-label="Previous Slide"
-        >
-          &larr;
-        </button>
-        <button
-          className="w-10 h-10 bg-black/60 hover:bg-black text-white rounded-full flex items-center justify-center transition-colors"
-          onClick={nextSlide}
-          aria-label="Next Slide"
-        >
-          &rarr;
-        </button>
-      </div> */}
+      {slides.length > 1 && (
+        <>
+          <button
+            className="absolute left-3 top-1/2 -translate-y-1/2 z-10 w-10 h-10 md:w-12 md:h-12 bg-white/20 hover:bg-white/40 backdrop-blur-sm text-white rounded-full flex items-center justify-center transition-all duration-200 hover:scale-110 shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+            onClick={prevSlide}
+            aria-label="Previous Slide"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5">
+              <polyline points="15 18 9 12 15 6" />
+            </svg>
+          </button>
+          <button
+            className="absolute right-3 top-1/2 -translate-y-1/2 z-10 w-10 h-10 md:w-12 md:h-12 bg-white/20 hover:bg-white/40 backdrop-blur-sm text-white rounded-full flex items-center justify-center transition-all duration-200 hover:scale-110 shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+            onClick={nextSlide}
+            aria-label="Next Slide"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5">
+              <polyline points="9 18 15 12 9 6" />
+            </svg>
+          </button>
+        </>
+      )}
+
+      {/* Bottom gradient overlay */}
+      <div className="absolute bottom-0 left-0 right-0 h-20 bg-gradient-to-t from-black/30 to-transparent pointer-events-none z-[5]" />
 
       {/* Dot indicators */}
       {slides.length > 1 && (
-        <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2 z-10">
+        <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2 z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
           {slides.map((_, i) => (
             <button
               key={i}
               onClick={() => setCurrentSlide(i)}
               aria-label={`Go to slide ${i + 1}`}
-              className={`w-2.5 h-2.5 rounded-full transition-all ${i === currentSlide
-                ? "bg-white scale-125"
-                : "bg-white/50 hover:bg-white/80"
+              className={`rounded-full transition-all duration-300  ${i === currentSlide
+                ? "bg-white w-6 h-2.5"
+                : "bg-white/50 hover:bg-white/80 w-2.5 h-2.5"
                 }`}
             />
           ))}
         </div>
       )}
+
     </div>
   );
 }

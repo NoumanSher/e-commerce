@@ -20,7 +20,7 @@ const OrderHistoryTabel: React.FC<OrderHistoryProps & { pagination?: React.React
   return (
     <>
       {/* Desktop View */}
-      <div className="p-6 bg-white rounded-lg shadow-md hidden lg:block">
+      <div className="p-0 sm:p-6 sm:bg-white sm:border sm:border-gray-200 rounded-lg sm:shadow-sm hidden lg:block overflow-hidden">
         <Header title={title} showViewAll={showViewAll} />
 
         {orders.length > 0 ? <DesktopTable orders={orders} /> : <NoOrdersRow />}
@@ -29,7 +29,7 @@ const OrderHistoryTabel: React.FC<OrderHistoryProps & { pagination?: React.React
       </div>
 
       {/* Mobile View */}
-      <div className="p-3 bg-white rounded-lg shadow-md mt-6 lg:hidden">
+      <div className="p-0 bg-transparent lg:hidden">
         <Header title={title} showViewAll={showViewAll} />
 
         {orders.length > 0 ? <MobileCards orders={orders} /> : <WhenNoOrders />}
@@ -43,12 +43,12 @@ const OrderHistoryTabel: React.FC<OrderHistoryProps & { pagination?: React.React
 /* ----------------- COMPONENTS ------------------ */
 
 const Header = ({ title, showViewAll }: HeaderProps) => (
-  <div className="flex justify-between items-center border-b pb-3 mb-3">
-    <h2 className="text-lg font-semibold">{title}</h2>
+  <div className="flex justify-between items-center border-b border-gray-200 pb-4 mb-4">
+    <h2 className="text-xl font-bold text-gray-900">{title}</h2>
     {showViewAll && (
       <Link
         href="/profile/order-history"
-        className="text-black underline"
+        className="text-sm font-medium text-black hover:text-gray-600 underline underline-offset-4"
         title="View all orders"
       >
         View All
@@ -58,26 +58,28 @@ const Header = ({ title, showViewAll }: HeaderProps) => (
 );
 
 const DesktopTable = ({ orders }: { orders: OrderHistoryProps["orders"] }) => (
-  <table className="w-full text-left">
+  <table className="w-full text-left border-collapse">
     <thead>
-      <tr className="text-gray-500 border-b">
-        <th className="py-2">Order ID</th>
-        <th className="py-2">Date</th>
-        <th className="py-2">Total</th>
-        <th className="py-2">Status</th>
-        <th className="py-2"></th>
+      <tr className="text-xs uppercase tracking-wider text-gray-500 border-b border-gray-200">
+        <th className="py-3 font-semibold">Order ID</th>
+        <th className="py-3 font-semibold">Date</th>
+        <th className="py-3 font-semibold">Total</th>
+        <th className="py-3 font-semibold">Status</th>
+        <th className="py-3 font-semibold text-right">Action</th>
       </tr>
     </thead>
     <tbody>
       {orders.map((order) => (
-        <tr key={order.orderId} className="border-b text-sm">
-          <td className="py-2">#{order.orderNo}</td>
-          <td className="py-2">{order.createdAt}</td>
-          <td className="py-2">{order.orderDetails.totalPrice}</td>
-          <td className="py-2">
-            {order.orderStatuses[order.orderStatuses.length - 1].status}
+        <tr key={order.orderId} className="border-b border-gray-100 text-sm hover:bg-gray-50 transition-colors">
+          <td className="py-4 font-medium text-gray-900">#{order.orderNo}</td>
+          <td className="py-4 text-gray-600">{order.createdAt}</td>
+          <td className="py-4 font-medium text-gray-900">Rs {order.orderDetails.totalPrice}</td>
+          <td className="py-4">
+            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+              {order.orderStatuses[order.orderStatuses.length - 1].status}
+            </span>
           </td>
-          <td className="py-2 flex justify-end">
+          <td className="py-4 flex justify-end">
             <OrderLink orderNo={order.orderNo} />
           </td>
         </tr>
@@ -103,18 +105,25 @@ const MobileCards = ({ orders }: { orders: OrderHistoryProps["orders"] }) => (
     {orders.map((order) => (
       <div
         key={order.orderId}
-        className="p-4 border rounded-lg bg-gray-50 shadow-sm text-sm"
+        className="p-5 bg-white border border-gray-200 rounded-lg shadow-sm text-sm flex flex-col gap-y-3"
       >
-        <div className="flex justify-between items-center mb-2">
-          <div className="font-semibold">Order ID: {order.orderNo}</div>
+        <div className="flex justify-between items-center border-b border-gray-100 pb-3">
+          <div className="font-bold text-gray-900">#{order.orderNo}</div>
           <OrderLink orderNo={order.orderNo} />
         </div>
-        <div className="text-gray-500">Date: {order.createdAt}</div>
-        <div className="text-gray-500">
-          Total: {order.orderDetails.totalPrice}
+        <div className="flex justify-between items-center text-gray-600">
+          <span className="text-gray-500">Date</span>
+          <span>{order.createdAt}</span>
         </div>
-        <div className="text-gray-500">
-          Status: {order.orderStatuses[order.orderStatuses.length - 1].status}
+        <div className="flex justify-between items-center text-gray-900 font-medium">
+          <span className="text-gray-500 font-normal">Total</span>
+          <span>Rs {order.orderDetails.totalPrice}</span>
+        </div>
+        <div className="flex justify-between items-center">
+          <span className="text-gray-500">Status</span>
+          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+            {order.orderStatuses[order.orderStatuses.length - 1].status}
+          </span>
         </div>
       </div>
     ))}
@@ -122,11 +131,11 @@ const MobileCards = ({ orders }: { orders: OrderHistoryProps["orders"] }) => (
 );
 /* ✅ Reusable Order Link */
 const OrderLink = ({ orderNo }: { orderNo: string }) => (
-  <Link href={`/profile/order-details?orderId=${encodeURIComponent(orderNo)}`}>
+  <Link href={`/profile/order-details?orderId=${encodeURIComponent(orderNo)}`} className="p-2 hover:bg-gray-100 rounded-full transition-colors">
     <HiOutlineDocumentMagnifyingGlass
       title="View full detail"
-      color="black"
-      size={30}
+      className="text-gray-700"
+      size={22}
     />
   </Link>
 );

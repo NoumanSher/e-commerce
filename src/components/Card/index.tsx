@@ -22,7 +22,23 @@ interface MainCardProps {
   item: Product;
 }
 
-
+const defaultBlur =
+  "data:image/svg+xml;base64," +
+  btoa(
+    `<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
+      <defs>
+        <linearGradient id="shimmer" x1="0%" y1="0%" x2="100%" y2="0%">
+          <stop offset="0%" stop-color="#f0f0f0" stop-opacity="1" />
+          <stop offset="20%" stop-color="#e0e0e0" stop-opacity="1" />
+          <stop offset="40%" stop-color="#f8f8f8" stop-opacity="1" />
+          <stop offset="60%" stop-color="#e0e0e0" stop-opacity="1" />
+          <stop offset="100%" stop-color="#f0f0f0" stop-opacity="1" />
+        </linearGradient>
+      </defs>
+      <rect width="32" height="32" fill="#f0f0f0" />
+      <rect width="32" height="32" fill="url(#shimmer)" opacity="0.7" />
+    </svg>`
+  );
 
 const MainCard = ({ item }: MainCardProps) => {
   const queryClient = useQueryClient();
@@ -31,7 +47,7 @@ const MainCard = ({ item }: MainCardProps) => {
   const { setIsCartOpen } = useStore();
 
   const [hoveredCard, setHoveredCard] = useState<string | null>(null);
-  const [isImageLoaded, setIsImageLoaded] = useState(false);
+  // const [isImageLoaded, setIsImageLoaded] = useState(false);
   const isMobileOrTablet = useIsMobileOrTablet();
   const { isInWishlist, removeFromWishlist, addToWishlist } = useWishlist();
   const [isTrue, setIsTrue] = useState(false);
@@ -107,19 +123,21 @@ const MainCard = ({ item }: MainCardProps) => {
           onMouseEnter={() => handleMouseEnter(item.seo.slug)}
           onMouseLeave={handleMouseLeave}
         >
-          {!isImageLoaded && (
+          {/* {!isImageLoaded && (
             <div className="absolute inset-0 flex items-center justify-center bg-gray-200 animate-pulse">
               <span className="text-gray-500 text-sm">Loading...</span>
             </div>
-          )}
+          )} */}
           <Image
             src={item.images[0]?.src}
             alt={item.productName}
             fill
             sizes="(max-width:768px) 50vw, (max-width:1280px) 33vw, 25vw"
-            className={`object-cover transition-transform duration-700 ease-in-out group-hover:scale-105 
-      ${isImageLoaded ? "opacity-100" : "opacity-0"}`}
-            onLoad={() => setIsImageLoaded(true)}
+            className={`object-cover transition-transform duration-700 ease-in-out group-hover:scale-105 `}
+            // onLoad={() => setIsImageLoaded(true)}
+            loading="lazy"
+            placeholder="blur"
+            blurDataURL={item.images[0]?.blurDataURL || defaultBlur}
           />
           {/* <div className="absolute top-2 left-2 right-2 flex justify-between gap-2">
             <div className="flex flex-wrap gap-1">
@@ -129,7 +147,7 @@ const MainCard = ({ item }: MainCardProps) => {
                 </span>
               )}
               {item.isLimited && (
-                <span className="bg-yellow-400 text-black text-[11px] px-2 py-1 rounded">
+                <span className="bg-gray-200 text-black text-[11px] px-2 py-1 rounded">
                   Limited
                 </span>
               )}

@@ -7,19 +7,19 @@ const FooterInfo = lazy(() => import("./FooterInfo"));
 
 const  FooterMain=()=> {
   return (
-    <div  className="bg-[#e4e4e4] mt-auto">
+    <div className="bg-white border-t border-gray-200 mt-auto">
        <div>
         <Suspense fallback={<div>Loading...</div>}>
           <Services />
         </Suspense>
       </div>
-      <div className="px-[15px] md:px-8 lg:px-12 pt-[50px] md:pt-[65px] md:pb-[45px] lg:pt-[50px] lg:pb-[76px] pb-[30px] lg:flex xl:max-w-[1440px] xl:px-0 xl:mx-auto">
-        <div className=" mb-[24px] lg:mb-0 lg:w-[40%] lg:px-3">
+      <div className="px-4 sm:px-6 lg:px-8 py-12 lg:py-16 lg:flex xl:max-w-7xl xl:px-8 xl:mx-auto">
+        <div className="mb-10 lg:mb-0 lg:w-[40%] pr-4">
           <Suspense fallback={<div>Loading...</div>}>
             <FooterInfo />
           </Suspense>
         </div>
-        <div className="mt-10 lg:mt-0 lg:w-full">
+        <div className="lg:w-[60%]">
         <Suspense fallback={<div>Loading...</div>}>
             <FooterTabs />
           </Suspense>

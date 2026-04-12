@@ -9,6 +9,7 @@ import "react-toastify/dist/ReactToastify.css";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import GoogleAnalytics from "@/components/GoogleAnalytics";
 import Provider from "@/context/react-query-provider";
+import OfflineIndicator from "@/components/OfflineIndicator";
 
 // const jost = Jost({ subsets: ["latin"] }); // Load the Jost font
 
@@ -30,6 +31,35 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${jost.className} flex flex-col min-h-screen`}>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "Store",
+              name: "PakShipper",
+              description: "E-commerce shopping destination serving Lahore and all over Pakistan.",
+              url: "https://pakshipper.com",
+              telephone: "+923176872900",
+              address: {
+                "@type": "PostalAddress",
+                addressLocality: "Lahore",
+                addressRegion: "Punjab",
+                postalCode: "54000",
+                addressCountry: "PK"
+              },
+              geo: {
+                "@type": "GeoCoordinates",
+                latitude: 31.5204,
+                longitude: 74.3587
+              },
+              areaServed: {
+                "@type": "Country",
+                name: "Pakistan"
+              }
+            })
+          }}
+        />
         <GoogleAnalytics gaId={process.env.GA_MEASUREMENT_ID as string} />
 
         <Provider>
@@ -42,6 +72,7 @@ export default function RootLayout({
             <Navbar />
             <main className="flex-1">{children}</main>
             <Footer />
+            <OfflineIndicator />
             <ReactQueryDevtools initialIsOpen={false} />
           </StoreTypeProviderWrapper>
         </Provider>

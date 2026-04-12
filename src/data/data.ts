@@ -104,20 +104,27 @@ export const footerData: FooterItem[] = [
   {
     title: "Company",
     items: [
-      { name: "About Us", url: "/about-us" }
+      { name: "About Us", url: "/about-us" },
+      { name: "Privacy Policy", url: "/privacy-policy" },
+      { name: "Terms of Service", url: "/terms-of-service" }
     ]
   },
   {
     title: "Shop",
     items: [
       {
-        name: "Shop All",
-        url: "/all-products?parentCategorySlug=all-categories&mode=client"
+        name: "Formal Wear",
+        url: "/all-products?childCategorySlug=Formal-Wear&mode=client"
       },
       {
-        name: "Beauty & Health",
-        url: "/all-products?childCategorySlug=beauty-health&mode=client"
-      }
+        name: "Lingerie Sets",
+        url: "/all-products?childCategorySlug=Lingerie-sets&mode=client"
+      },
+      {
+        name: "Pajamas & Robes",
+        url: "/all-products?childCategorySlug=Pajamas-Robes&mode=client"
+      },
+
     ]
   },
   {

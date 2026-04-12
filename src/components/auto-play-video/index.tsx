@@ -50,7 +50,7 @@ const VideoPlayer = () => {
         muted={isMuted}
         playsInline
         loop
-        className="w-full h-screen rounded-lg"
+        className="w-full max-h-[560px] object-cover rounded-lg"
         src="/video1.mp4"
         onClick={togglePlay}
       />

@@ -49,36 +49,37 @@ const FooterInfo = () => {
         loading="eager"
         alt="Logo"
       />
-      <div className="flex gap-2 mt-8 items-center cursor-pointer">
-        <CiMail size={20} />
+      <div className="flex gap-3 mt-8 items-center cursor-pointer">
+        <CiMail size={20} className="text-gray-500" />
         <a
-          className="text-[#222222] text-[14px]  font-semibold leading-[1.7173em]"
+          className="text-gray-600 hover:text-black transition-colors text-sm font-medium"
           href="mailto:pakshipperstore@gmail.com"
         >
           {email}
         </a>
       </div>
 
-      <br />
-      <div className="flex gap-3 items-center cursor-pointer">
-        <MdOutlinePhone />
+      <div className="flex gap-3 mt-3 items-center cursor-pointer">
+        <MdOutlinePhone size={20} className="text-gray-500" />
         <a
-          className="text-[#222222] text-[14px]   font-medium leading-[1.7173px]"
+          className="text-gray-600 hover:text-black transition-colors text-sm font-medium"
           href="tel:+923176872900"
         >
           {number}
         </a>
       </div>
 
-      <div className="flex gap-8 xl:gap-5 mt-8 lg:flex-wrap">
+      <div className="flex gap-6 mt-8 mb-6 lg:mb-0">
         {FooterLinksData.map((item, index) => (
           <a
             href={item.path}
             target="_blank"
             key={index}
-            className="cursor-pointer text-3xl"
+            className="text-gray-400 hover:text-black transition-colors"
           >
-            {React.createElement(item.icon)}
+            <div className="w-6 h-6 flex items-center justify-center">
+              {React.createElement(item.icon)}
+            </div>
           </a>
         ))}
       </div>

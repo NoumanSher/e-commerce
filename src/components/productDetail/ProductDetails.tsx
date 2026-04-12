@@ -49,6 +49,18 @@ const ProductInfo: React.FC<ProductDetailsProps> = ({ product, onGalleryHandlers
     seo
   } = product;
 
+  const colors = useMemo(() => {
+    if (!options) return [];
+    const opt = options.find((o) => o.title.toLowerCase() === "color");
+    return opt?.values ?? [];
+  }, [options]);
+
+  const sizes = useMemo(() => {
+    if (!options) return [];
+    const opt = options.find((o) => o.title.toLowerCase() === "size");
+    return opt?.values ?? [];
+  }, [options]);
+
   const [selectedColor, setSelectedColor] = useState("");
   const [selectedSize, setSelectedSize] = useState("");
   const [selectedVarientId, setSelectedVarientId] = useState("");
@@ -73,9 +85,19 @@ const ProductInfo: React.FC<ProductDetailsProps> = ({ product, onGalleryHandlers
   }, [salePrice, stock]);
 
   useEffect(() => {
-    if (selectedColor && selectedSize) {
-      const colorSize = `${selectedColor.trim()} - ${selectedSize}`; // Ensure correct format
-      const selectVariat = variants?.find((item) => item.name === colorSize);
+    let variantName = "";
+    if (colors.length > 0 && sizes.length > 0) {
+      if (selectedColor && selectedSize) {
+        variantName = `${selectedColor.trim()} - ${selectedSize}`;
+      }
+    } else if (colors.length > 0) {
+      if (selectedColor) variantName = selectedColor.trim();
+    } else if (sizes.length > 0) {
+      if (selectedSize) variantName = selectedSize.trim();
+    }
+
+    if (variantName) {
+      const selectVariat = variants?.find((item) => item.name === variantName);
       if (selectVariat?._id) {
         setSelectedVarientId(selectVariat._id);
       }
@@ -85,16 +107,24 @@ const ProductInfo: React.FC<ProductDetailsProps> = ({ product, onGalleryHandlers
           : 0
       );
 
-      SetExtraCost(selectVariat?.additionalSalePrice ?? 0);
-      SetProductPrice(salePrice + extraCost);
+      const newExtraCost = selectVariat?.additionalSalePrice ?? 0;
+      SetExtraCost(newExtraCost);
+      SetProductPrice(salePrice + newExtraCost);
     }
-  }, [selectedColor, selectedSize, salePrice, variants, extraCost]);
+  }, [selectedColor, selectedSize, salePrice, variants, colors.length, sizes.length]);
   const handleAddToCart = useCallback(() => {
     if (isVariant) {
-      const colorSize = `${selectedColor.trim()} - ${selectedSize}`;
-      const selectVariat = variants?.find((item) => item.name === colorSize);
-      const isColorMissing = !selectedColor;
-      const isSizeMissing = !selectedSize;
+      let variantName = "";
+      if (colors.length > 0 && sizes.length > 0) {
+        variantName = `${selectedColor.trim()} - ${selectedSize}`;
+      } else if (colors.length > 0) {
+        variantName = selectedColor.trim();
+      } else if (sizes.length > 0) {
+        variantName = selectedSize.trim();
+      }
+      const selectVariat = variants?.find((item) => item.name === variantName);
+      const isColorMissing = colors.length > 0 && !selectedColor;
+      const isSizeMissing = sizes.length > 0 && !selectedSize;
 
       if (isColorMissing || isSizeMissing) {
         const el = document.getElementById('select-varient');
@@ -135,8 +165,8 @@ const ProductInfo: React.FC<ProductDetailsProps> = ({ product, onGalleryHandlers
   // Handle Checkout logic
   const handleCheckout = useCallback(() => {
     if (isVariant) {
-      const isColorMissing = !selectedColor;
-      const isSizeMissing = !selectedSize;
+      const isColorMissing = colors.length > 0 && !selectedColor;
+      const isSizeMissing = sizes.length > 0 && !selectedSize;
 
       if (isColorMissing || isSizeMissing) {
         const el = document.getElementById('select-varient');
@@ -186,8 +216,7 @@ const ProductInfo: React.FC<ProductDetailsProps> = ({ product, onGalleryHandlers
     userId,
   ]);
 
-  const colors = options ? (options[0]?.values ?? []) : [];
-  const sizes = options ? (options[1]?.values ?? []) : [];
+
   const handleQuantityChange = (quantity: number) => {
     if (quantity < 0) {
       setSelectedQuantity(0);
@@ -210,15 +239,6 @@ const ProductInfo: React.FC<ProductDetailsProps> = ({ product, onGalleryHandlers
   return (
     <>
       <div className="lg:pl-8 pt-2 lg:w-[40%] flex flex-col w-full">
-        {/* Mobile: Quick Actions Header */}
-        <div className="lg:hidden flex items-center justify-between mb-3 px-2">
-          <WishlistButton product={product} />
-          <button className="pb-2 text-sm font-medium text-opacity-80 text-black" onClick={onReviewClick}>Reviews ⭐</button>
-          <SocialMediaShareWithNoSSR
-            url={`https://www.pakshipper.com/product-detail/${seo.slug}`}
-          />
-        </div>
-
         <ProductBasicInfo
           title={productName}
           stockAvailability={availableStock}
@@ -227,7 +247,16 @@ const ProductInfo: React.FC<ProductDetailsProps> = ({ product, onGalleryHandlers
           discount={discount}
         />
 
-        {colors.length > 0 && (
+        {/* Mobile: Quick Actions Header (Moved below Product Info) */}
+        <div className="lg:hidden flex items-center justify-between mb-3 px-2 pt-2 border-t border-gray-100">
+          <WishlistButton product={product} />
+          <button className="pb-2 text-sm font-medium text-opacity-80 text-black" onClick={onReviewClick}>Reviews ⭐</button>
+          <SocialMediaShareWithNoSSR
+            url={`https://www.pakshipper.com/product-detail/${seo.slug}`}
+          />
+        </div>
+
+        {(colors.length > 0 || sizes.length > 0) && (
           <SelectColorAndSize
             availableColors={colors}
             availableSizes={sizes}
@@ -252,9 +281,9 @@ const ProductInfo: React.FC<ProductDetailsProps> = ({ product, onGalleryHandlers
           />
           <Button
             onClick={handleAddToCart}
-            className="rounded-none shadow-none bg-opacity-95 bg-black border-0 h-14 flex-1 uppercase py-3 transition-all duration-500 hover:bg-white group hover:border border-black"
+            className="rounded-none shadow-none bg-white text-black border-2 border-black h-14 flex-1 uppercase py-3 transition-all duration-300 hover:bg-gray-100 group"
           >
-            <p className="text-[14px] font-semibold leading-[1.72] group-hover:text-black">
+            <p className="text-[14px] font-semibold leading-[1.72]">
               add to cart
             </p>
           </Button>

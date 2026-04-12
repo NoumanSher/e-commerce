@@ -23,20 +23,20 @@ const ProductBasicInfo: React.FC<ProductInfoProps> = ({
       </div>
       <div className="flex flex-col lg:flex-row lg:justify-between lg:items-center mb-3 px-3 lg:px-0 gap-2 lg:gap-0">
         <div className="flex items-baseline gap-2 lg:gap-4">
-          <p className="text-2xl lg:text-xl text-red-600 lg:text-[#111827] font-bold lg:font-semibold">
+          <p className="text-2xl lg:text-xl text-gray-900 font-bold lg:font-semibold">
             Rs {formatPrice(price)}
           </p>
-          {discount && (
-            <p className="text-sm lg:text-lg font-semibold">
-              <span className="text-red-500">Discount</span> {discount}% OFF
-            </p>
-          )}
+          {discount ? (
+            <span className="bg-black text-white px-2 py-1 text-xs lg:text-sm font-semibold rounded tracking-wide">
+              -{discount}%
+            </span>
+          ) : null}
         </div>
         <div className="flex items-center">
           {stockAvailability === 0 ? (
-            <span className="text-red-500 text-sm lg:text-base">Out of Stock</span>
+            <span className="text-gray-400 text-sm lg:text-base font-medium">Out of Stock</span>
           ) : (
-            <span className="text-green-600 text-sm lg:text-base">
+            <span className="text-gray-600 text-sm lg:text-base font-medium">
               In Stock {stockAvailability}
             </span>
           )}

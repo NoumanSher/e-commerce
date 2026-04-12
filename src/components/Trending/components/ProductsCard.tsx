@@ -5,7 +5,6 @@ import { productsService } from "@/services/productsService";
 import { useStore } from "@/context/storeContext";
 import MainCard from "../../Card/index";
 import type { ApiError } from "@/lib/apiClient";
-import Loader from "@/components/Loader";
 
 const ProductsCard = () => {
   const { selectedCategory } = useStore();
@@ -35,7 +34,17 @@ const ProductsCard = () => {
   return (
     <div className="xl:max-w-[1440px] mx-auto xl:mt-14">
       {isLoading || isFetching ? (
-        <Loader />
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 sm:gap-4">
+          {[...Array(8)].map((_, i) => (
+            <div key={i} className="bg-white rounded overflow-hidden shadow-sm">
+              <div className="aspect-[3/4] w-full bg-gray-200 animate-pulse" />
+              <div className="p-3 space-y-2">
+                <div className="h-4 bg-gray-200 rounded animate-pulse w-3/4" />
+                <div className="h-5 bg-gray-200 rounded animate-pulse w-1/2" />
+              </div>
+            </div>
+          ))}
+        </div>
       ) : (
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 sm:gap-4">
           {productsData?.data.slice(0, 8).map((item) => (

@@ -2,6 +2,7 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import { useRouter, usePathname } from "next/navigation";
+import { HiOutlineUser, HiOutlineClock, HiOutlineArrowRightOnRectangle } from "react-icons/hi2";
 import { useStore } from "@/context/storeContext";
 import {
   Dialog,
@@ -26,36 +27,37 @@ const Sidebar: React.FC = () => {
   };
 
   const menuItems = [
-    { label: "Overview", href: "/profile", icon: "📊" },
-    { label: "Order History", href: "/profile/order-history", icon: "🕒" },
-    { label: "Log-out", href: "", icon: "🚪", onClick: () => setOpen(true) },
+    { label: "Overview", href: "/profile", icon: <HiOutlineUser size={20} /> },
+    { label: "Order History", href: "/profile/order-history", icon: <HiOutlineClock size={20} /> },
+    { label: "Log-out", href: "", icon: <HiOutlineArrowRightOnRectangle size={20} />, onClick: () => setOpen(true) },
   ];
 
   return (
-    <aside className="w-full lg:w-[20%] lg:bg-gray-50 lg:p-6 px-2 py-3 rounded-s-lg">
-      <h2 className="text-lg font-bold mb-4 lg:mb-6">My Profile</h2>
+    <aside className="w-full lg:w-64 flex-shrink-0 lg:bg-gray-50 lg:p-6 pb-2 lg:pb-6 rounded-s-lg border-b lg:border-b-0 lg:border-r border-gray-200">
+      <h2 className="text-xl font-bold mb-4 lg:mb-8 hidden lg:block text-gray-900">My Profile</h2>
 
       <nav>
         {/* Mobile: horizontal scroll | Desktop: vertical */}
-        <ul className="flex lg:flex-col flex-row gap-2 sm:gap-4 overflow-x-auto scrollbarHide">
+        <ul className="flex flex-row lg:flex-col px-4 lg:px-0 gap-2 overflow-x-auto scrollbarHide">
           {menuItems.map((item) => {
-            const isActive = pathname === item.href;
+            const isActive = pathname === item.href || (item.href !== "/profile" && item.href !== "" && pathname.startsWith(item.href));
+            const activeClasses = isActive ? "bg-black text-white" : "text-gray-600 hover:bg-gray-100 hover:text-black";
             return (
-              <li key={item.label} className="flex items-center">
-                <span className="mr-2 lg:mr-3">{item.icon}</span>
+              <li key={item.label} className="flex-shrink-0 lg:w-full">
                 {item.onClick ? (
                   <button
                     onClick={item.onClick}
-                    className="text-gray-500 whitespace-nowrap hover:text-black font-medium text-sm lg:text-base"
+                    className={`flex items-center w-full px-4 py-2.5 rounded-md transition-colors text-sm font-medium ${activeClasses}`}
                   >
+                    <span className="mr-3">{item.icon}</span>
                     {item.label}
                   </button>
                 ) : (
                   <Link
                     href={item.href}
-                    className={`${isActive ? "text-black font-semibold" : "text-gray-500"
-                      } whitespace-nowrap hover:text-black text-sm lg:text-base`}
+                    className={`flex items-center px-4 py-2.5 rounded-md transition-colors text-sm font-medium ${activeClasses}`}
                   >
+                    <span className="mr-3">{item.icon}</span>
                     {item.label}
                   </Link>
                 )}

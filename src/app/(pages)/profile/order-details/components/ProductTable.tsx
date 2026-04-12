@@ -9,49 +9,49 @@ const ProductTable: React.FC<{
     lineTotal: string;
   }[];
 }> = ({ products }) => (
-  <>
-    <table className="w-full mt-4 text-left hidden lg:inline-table">
+  <div className="w-full bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden">
+    <table className="w-full text-left hidden lg:table border-collapse">
       <thead>
-        <tr className="text-gray-500 bg-customGray border-b">
-          <th className="py-2 pl-4">Product</th>
-          <th className="py-2">Price</th>
-          <th className="py-2">Quantity</th>
-          <th className="py-2">Subtotal</th>
+        <tr className="text-xs uppercase tracking-wider text-gray-500 border-b border-gray-200 bg-gray-50">
+          <th className="py-4 pl-6 font-semibold">Product</th>
+          <th className="py-4 font-semibold">Price</th>
+          <th className="py-4 font-semibold text-center">Quantity</th>
+          <th className="py-4 pr-6 font-semibold text-right">Subtotal</th>
         </tr>
       </thead>
-      <tbody>
-        {products.map((product, index) => (
-          <tr key={index} className="border-b">
-            <td className="py-2 pl-4">{product.product.slice(0,35)}</td>
-            <td className="py-2">{product.price}</td>
-            <td className="py-2">{product.quantity}</td>
-            <td className="py-2">{product.lineTotal}</td>
+      <tbody className="divide-y divide-gray-200 bg-white">
+        {products?.map((product, index) => (
+          <tr key={index} className="hover:bg-gray-50 transition-colors">
+            <td className="py-4 pl-6 text-sm font-medium text-gray-900">{product.product.slice(0,35)}</td>
+            <td className="py-4 text-sm text-gray-600">Rs {product.price}</td>
+            <td className="py-4 text-sm text-gray-600 text-center">{product.quantity}</td>
+            <td className="py-4 pr-6 text-sm font-medium text-gray-900 text-right">Rs {product.lineTotal}</td>
           </tr>
         ))}
       </tbody>
     </table>
 
     {/* mobile view */}
-    <div className="space-y-4 mt-4 lg:hidden">
-      {products.map((product, index) => (
-        <div
-          key={index}
-          className="p-4 border rounded-lg bg-gray-50 shadow-sm text-sm"
-        >
-          <div className="mb-2 font-semibold text-gray-700">{product.product}</div>
-          <div className="text-gray-500">
-            Price: <span className="text-gray-700">{product.price}</span>
+    <div className="lg:hidden flex flex-col divide-y divide-gray-100">
+      {products?.map((product, index) => (
+        <div key={index} className="p-5 bg-white text-sm">
+          <div className="mb-3 font-semibold text-gray-900 text-base">{product.product}</div>
+          <div className="flex justify-between items-center text-gray-600 mb-2">
+            <span className="text-gray-500 text-xs uppercase tracking-wider font-semibold">Price</span>
+            <span className="font-medium text-gray-900">Rs {product.price}</span>
           </div>
-          <div className="text-gray-500">
-            Quantity: <span className="text-gray-700">{product.quantity}</span>
+          <div className="flex justify-between items-center text-gray-600 mb-2">
+            <span className="text-gray-500 text-xs uppercase tracking-wider font-semibold">Quantity</span>
+            <span className="font-medium text-gray-900">{product.quantity}</span>
           </div>
-          <div className="text-gray-500">
-            Subtotal: <span className="text-gray-700">{product.lineTotal}</span>
+          <div className="flex justify-between items-center text-gray-600 pt-3 mt-3 border-t border-gray-50">
+            <span className="text-gray-500 text-xs uppercase tracking-wider font-bold text-gray-700">Subtotal</span>
+            <span className="font-bold text-gray-900">Rs {product.lineTotal}</span>
           </div>
         </div>
       ))}
     </div>
-  </>
+  </div>
 );
 
 export default ProductTable;

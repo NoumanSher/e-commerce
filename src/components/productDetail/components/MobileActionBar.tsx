@@ -38,7 +38,7 @@ const MobileActionBar: React.FC<MobileActionBarProps> = memo(({
                     <Button
                         onClick={onAddToCart}
                         disabled={availableStock === 0}
-                        className="flex-1 h-11 sm:h-12 bg-gray-900 hover:bg-gray-800 text-white font-semibold rounded-lg transition-colors disabled:bg-gray-300 disabled:cursor-not-allowed px-3 sm:px-4"
+                        className="flex-1 h-11 sm:h-12 bg-white border-2 border-gray-900 text-gray-900 hover:bg-gray-100 font-semibold rounded-lg transition-colors disabled:border-gray-300 disabled:text-gray-300 disabled:bg-white disabled:cursor-not-allowed px-3 sm:px-4"
                     >
                         <ShoppingCart className="w-4 h-4 sm:w-5 sm:h-5" />
                     </Button>
@@ -47,7 +47,7 @@ const MobileActionBar: React.FC<MobileActionBarProps> = memo(({
                     <Button
                         onClick={onCheckout}
                         disabled={availableStock === 0}
-                        className="flex-1 h-11 sm:h-12 bg-red-600 hover:bg-red-700 text-white font-semibold rounded-lg transition-colors disabled:bg-gray-300 disabled:cursor-not-allowed text-xs sm:text-sm px-3 sm:px-4"
+                        className="flex-1 h-11 sm:h-12 bg-gray-900 hover:bg-black text-white font-semibold rounded-lg transition-colors disabled:bg-gray-300 disabled:cursor-not-allowed text-xs sm:text-sm px-3 sm:px-4"
                     >
                         Buy Now
                     </Button>

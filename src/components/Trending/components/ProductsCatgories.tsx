@@ -19,35 +19,46 @@ const ProductsCategories = () => {
       updateSelectedCategory(categoriesData.categories[0].slug);
     }
   }, [isHydrated, categoriesData, selectedCategory, updateSelectedCategory]);
-  if (categoriesError) return <div>Error loading categories</div>;
+  if (categoriesError) return (
+    <div className="flex justify-center items-center py-4 text-sm text-red-500 gap-2">
+      <span>⚠</span> <span>Could not load categories. Please refresh.</span>
+    </div>
+  );
 
   return (
     <div>
       <div>
-        <h1 className="text-[26px] xl:text-[32px] !font-normal leading-[1.2em] xl:leading-[1.5em] !mb-1 text-center">
+        <h2 className="text-[26px] xl:text-[32px] font-light leading-[1.2em] xl:leading-[1.5em] mb-1 text-center tracking-wide">
           Trending
-        </h1>
+        </h2>
+        <div className="flex justify-center mb-1">
+          <span className="block w-10 h-[2px] bg-black rounded-full" />
+        </div>
       </div>
       <div className="xl:mt-8">
         {categoriesLoading ? (
-          <div className="flex justify-center">Loading Categories...</div>
+          <div className="flex flex-wrap justify-center gap-3 mb-4 mt-4">
+            {[...Array(4)].map((_, i) => (
+              <div key={i} className="h-9 w-24 bg-gray-200 rounded-full animate-pulse" />
+            ))}
+          </div>
         ) : (
-          <ul className="flex flex-wrap justify-center mb-[1rem] mt-2">
+          <ul className="flex flex-wrap justify-center gap-2 sm:gap-3 mb-4 mt-4">
             {categoriesData?.categories?.slice(0, 4).map((item) => (
               <li key={item._id}>
-                <span
+                <button
                   onClick={() => updateSelectedCategory(item.slug)}
-                  className={`relative mx-[25px] text-[#767676] hover:text-black cursor-pointer mt-[11px] pb-[9px] ${selectedCategory === item.slug ? "text-black font-bold" : ""
-                    } leading-[1.375em] text-[14px] xl:text-[16px] font-medium uppercase group`}
+                  className={`
+                    px-5 py-2 rounded-full text-[13px] sm:text-[14px] font-semibold uppercase tracking-wide
+                    border transition-all duration-200
+                    ${selectedCategory === item.slug
+                      ? "bg-gray-900 text-white border-gray-900 shadow-sm"
+                      : "bg-white text-gray-600 border-gray-300 hover:border-gray-700 hover:text-gray-900"
+                    }
+                  `}
                 >
                   {item.name}
-                  <span
-                    className={`absolute left-0 bottom-0 sm:h-[2.5px] bg-[#222222] transition-all duration-500 ease-in-out origin-bottom-left ${selectedCategory === item.slug
-                      ? "w-full scale-x-100"
-                      : "w-0 group-hover:w-full group-hover:scale-x-100 scale-x-0"
-                      }`}
-                  ></span>{" "}
-                </span>
+                </button>
               </li>
             ))}
           </ul>

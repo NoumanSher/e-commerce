@@ -159,3 +159,14 @@
   -ms-user-select: none; /* IE10+/Edge */
   user-select: none; /* Standard */
 }
+
+/* Shimmer sweep used for the slim category-switch loading indicator */
+@keyframes shimmer {
+  0%   { transform: translateX(-100%); }
+  100% { transform: translateX(200%); }
+}
+
+.animate-shimmer {
+  animation: shimmer 1.2s ease-in-out infinite;
+  width: 50%;
+}

@@ -29,17 +29,15 @@ const OrderStepper: React.FC<OrderStepperProps> = ({ orderStatusHistory }) => {
   const getStatusStyles = useCallback((status: string) => {
     switch (status.toLowerCase()) {
       case "delivered":
-        return { dotColor: "bg-green-500", textColor: "text-green-600" };
+        return { dotColor: "bg-black border-black", textColor: "text-black font-bold" };
       case "shipped":
-        return { dotColor: "bg-blue-500", textColor: "text-blue-600" };
-      case "pending":
-        return { dotColor: "bg-yellow-500", textColor: "text-yellow-600" };
+        return { dotColor: "bg-gray-800 border-gray-800", textColor: "text-gray-900 font-bold" };
       case "cancelled":
-        return { dotColor: "bg-red-500", textColor: "text-red-600" };
+        return { dotColor: "bg-gray-100 border-gray-300", textColor: "text-gray-400 line-through" };
+      case "pending":
       case "processing":
-        return { dotColor: "bg-purple-500", textColor: "text-purple-600" };
       default:
-        return { dotColor: "bg-gray-500", textColor: "text-gray-600" };
+        return { dotColor: "bg-white border-gray-300", textColor: "text-gray-600 font-medium" };
     }
   }, []);
 
@@ -77,14 +75,14 @@ const OrderStepper: React.FC<OrderStepperProps> = ({ orderStatusHistory }) => {
                 {/* Status dot */}
                 <div
                   className={`w-4 h-4 rounded-full flex-shrink-0 ${dotColor} 
-                    mr-4 mt-[3px] relative z-10 border-2 border-white shadow-sm`}
+                    mr-4 mt-[3px] relative z-10 border-2 shadow-sm`}
                   aria-hidden="true"
                 />
                 
                 {/* Status content */}
                 <div className="pb-8">
                   <span
-                    className={`font-semibold text-sm ${textColor} block mb-1`}
+                    className={`text-sm ${textColor} block mb-1`}
                     title={step.statusDesc}
                     aria-label={`Status: ${step.statusDesc}`}
                     role="status"

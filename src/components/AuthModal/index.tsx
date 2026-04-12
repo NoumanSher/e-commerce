@@ -4,8 +4,9 @@
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
-import LoginForm from "@/components/Login";
-import RegisterForm from "@/components/Register";
+import dynamic from "next/dynamic";
+const LoginForm = dynamic(() => import("@/components/Login"), { ssr: false });
+const RegisterForm = dynamic(() => import("@/components/Register"), { ssr: false });
 
 import { useStore } from "@/context/storeContext";
 type AuthModalProps = {
