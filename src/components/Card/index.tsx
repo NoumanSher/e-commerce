@@ -51,6 +51,23 @@ const MainCard = ({ item }: MainCardProps) => {
   const isMobileOrTablet = useIsMobileOrTablet();
   const { isInWishlist, removeFromWishlist, addToWishlist } = useWishlist();
   const [isTrue, setIsTrue] = useState(false);
+
+  const getAspectRatio = (parentCategorySlug: string) => {
+    switch (parentCategorySlug) {
+      case "Jewellery":
+        return "aspect-square";
+      case "Women's Clothing":
+        return "aspect-[3/4]";
+      case "Men's Clothing":
+        return "aspect-[3/4]";
+      case "Kids":
+        return "aspect-[3/4]";
+      case "Beauty & Health":
+        return "aspect-square";
+      default:
+        return "aspect-[3/4]";
+    }
+  };
   useEffect(() => {
     if (item?._id) {
       setIsTrue(isInWishlist(item?._id));
@@ -119,7 +136,7 @@ const MainCard = ({ item }: MainCardProps) => {
       >
         {/* Image Section */}
         <div
-          className="relative aspect-[3/4] w-full"
+          className={`relative  ${getAspectRatio(item.parentCategoryID.name)} w-full`}
           onMouseEnter={() => handleMouseEnter(item.seo.slug)}
           onMouseLeave={handleMouseLeave}
         >

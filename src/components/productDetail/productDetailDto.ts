@@ -33,7 +33,10 @@ export interface Product {
   seo: SEO;
   _id: string;
   productName: string;
-  parentCategoryID: string;
+  parentCategoryID: {
+    name: string;
+    _id: string;
+  };
   parentCategorySlug: string;
   childCategorySlug: string;
   childCategoryID: string;
