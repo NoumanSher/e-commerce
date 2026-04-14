@@ -42,10 +42,10 @@ const ProductBasicInfo: React.FC<ProductInfoProps> = ({
           )}
         </div>
       </div>
-      <div className="text-gray-600 mb-4 lg:h-80 lg:overflow-y-auto px-3 lg:px-0 text-sm lg:text-base">
+      <div className="text-gray-600 mb-4 lg:h-80 lg:overflow-y-auto px-3 lg:px-0 text-sm lg:text-base rich-text">
         {typeof description === "string" &&
           /<[a-z][\s\S]*>/i.test(description) ? (
-          <>{ReactHtmlParser(description)}</> // Wrap in Fragment
+          <>{ReactHtmlParser(description.replace(/&nbsp;/g, " "))}</> // Fix for horizontal scroll and rich text
         ) : (
           description
         )}

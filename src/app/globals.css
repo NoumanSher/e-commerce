@@ -5,7 +5,7 @@
 
 
 .no-scroll {
-  overflow: hidden!important;
+  overflow: hidden !important;
 }
 
 @layer base {
@@ -36,6 +36,7 @@
     --chart-5: 27 87% 67%;
     --radius: 0.5rem;
   }
+
   .dark {
     --background: 240 10% 3.9%;
     --foreground: 0 0% 98%;
@@ -68,6 +69,7 @@
   * {
     @apply border-border;
   }
+
   body {
     @apply bg-background text-foreground;
   }
@@ -76,20 +78,24 @@
 /* Base styles for links */
 .nav-link {
   position: relative;
-  display: inline-block; /* Ensure only text gets the border */
+  display: inline-block;
+  /* Ensure only text gets the border */
   text-decoration: none;
-  color: #767676; /* Default non-active color */
+  color: #767676;
+  /* Default non-active color */
   transition: color 0.3s ease;
 }
 
 /* Hover state */
 .nav-link:hover {
-  color: #222222; /* Color on hover */
+  color: #222222;
+  /* Color on hover */
 }
 
 /* Active state */
 .nav-link.active {
-  color: #222222; /* Color for active link */
+  color: #222222;
+  /* Color for active link */
 }
 
 /* Border-bottom animation */
@@ -97,26 +103,33 @@
   content: '';
   position: absolute;
   left: 0;
-  bottom: 0; /* Align the border at the bottom of the text */
+  bottom: 0;
+  /* Align the border at the bottom of the text */
   width: 0;
-  height: 2px; /* Border thickness */
-  background-color: #222222; /* Border color */
-  transition: width 0.3s ease; /* Smooth transition */
+  height: 2px;
+  /* Border thickness */
+  background-color: #222222;
+  /* Border color */
+  transition: width 0.3s ease;
+  /* Smooth transition */
   transform: scaleX(0);
   transform-origin: bottom left;
 }
 
 .nav-link:hover::after,
 .nav-link.active::after {
-  width: 100%; /* Expand the border to full width on hover or when active */
+  width: 100%;
+  /* Expand the border to full width on hover or when active */
   transform: scaleX(1);
 }
 
 .btn-link1 {
   position: relative;
-  display: inline-block; /* Ensure only text gets the border */
+  display: inline-block;
+  /* Ensure only text gets the border */
   text-decoration: none;
-  color: #222222; /* Default non-active color */
+  color: #222222;
+  /* Default non-active color */
   transition: color 0.3s ease;
 }
 
@@ -125,23 +138,32 @@
   content: '';
   position: absolute;
   left: 0;
-  bottom: 0; /* Align the border at the bottom of the text */
-  width: 80%; /* Initial width */
-  height: 2px; /* Border thickness */
-  background-color: #222222; /* Border color */
-  transition: width 0.5s ease; /* Smooth transition */
-  transform: scaleX(1); /* Show initial border */
+  bottom: 0;
+  /* Align the border at the bottom of the text */
+  width: 80%;
+  /* Initial width */
+  height: 2px;
+  /* Border thickness */
+  background-color: #222222;
+  /* Border color */
+  transition: width 0.5s ease;
+  /* Smooth transition */
+  transform: scaleX(1);
+  /* Show initial border */
   transform-origin: bottom left;
 }
 
 /* Hover state */
 .btn-link1:hover {
-  color: #222222; /* Color on hover */
+  color: #222222;
+  /* Color on hover */
 }
 
 .btn-link1:hover::after {
-  width: 100%; /* Expand the border to full width on hover */
-  transform: scaleX(1); /* Ensure border is fully visible */
+  width: 100%;
+  /* Expand the border to full width on hover */
+  transform: scaleX(1);
+  /* Ensure border is fully visible */
 }
 
 
@@ -149,24 +171,60 @@
   -ms-overflow-style: none;
   scrollbar-width: none;
 }
+
 .scrollbarHide::-webkit-scrollbar {
   display: none;
 }
 
 .unselectable {
-  -webkit-user-select: none; /* Safari */
-  -moz-user-select: none; /* Firefox */
-  -ms-user-select: none; /* IE10+/Edge */
-  user-select: none; /* Standard */
+  -webkit-user-select: none;
+  /* Safari */
+  -moz-user-select: none;
+  /* Firefox */
+  -ms-user-select: none;
+  /* IE10+/Edge */
+  user-select: none;
+  /* Standard */
 }
 
 /* Shimmer sweep used for the slim category-switch loading indicator */
 @keyframes shimmer {
-  0%   { transform: translateX(-100%); }
-  100% { transform: translateX(200%); }
+  0% {
+    transform: translateX(-100%);
+  }
+
+  100% {
+    transform: translateX(200%);
+  }
 }
 
 .animate-shimmer {
   animation: shimmer 1.2s ease-in-out infinite;
   width: 50%;
+}
+
+/* Rich Text Styles for Product Descriptions */
+.rich-text {
+  line-height: 1.6;
+}
+
+.rich-text ul {
+  list-style-type: disc !important;
+  margin-left: 1.5rem !important;
+  margin-bottom: 1rem;
+}
+
+.rich-text ol {
+  list-style-type: decimal !important;
+  margin-left: 1.5rem !important;
+  margin-bottom: 1rem;
+}
+
+.rich-text li {
+  margin-bottom: 0.5rem;
+  display: list-item !important;
+}
+
+.rich-text p {
+  margin-bottom: 1rem;
 }
