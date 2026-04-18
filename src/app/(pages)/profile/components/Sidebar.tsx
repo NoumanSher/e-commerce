@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import Link from "next/link";
 import { useRouter, usePathname } from "next/navigation";
 import { HiOutlineUser, HiOutlineClock, HiOutlineArrowRightOnRectangle } from "react-icons/hi2";
-import { useStore } from "@/context/storeContext";
+import { useAuth } from "@/context/AuthContext";
 import {
   Dialog,
   DialogContent,
@@ -16,7 +16,7 @@ import { Button } from "@/components/ui/button";
 const Sidebar: React.FC = () => {
   const pathname = usePathname();
   const router = useRouter();
-  const { setAuthToken } = useStore();
+  const { setAuthToken } = useAuth();
 
   const [open, setOpen] = useState(false);
 

@@ -8,6 +8,7 @@ import { CartIcon } from "@/assets/svg/common";
 import { useWishlist } from "../hooks/useWishlist";
 import { useCart } from "../hooks/useCart";
 import { useStore } from "@/context/storeContext";
+import { useAuth } from "@/context/AuthContext";
 import { useQuery } from "@tanstack/react-query";
 import { settingsService } from "@/services/settingsService";
 import Image from "next/image";
@@ -24,7 +25,8 @@ const Navbar = () => {
   const isHomePage = pathname === "/";
 
   const { wishlistCount } = useWishlist();
-  const { authToken, setIsAuthModalOpen } = useStore();
+  const { setIsAuthModalOpen } = useStore();
+  const { authToken } = useAuth();
   const { cartCount } = useCart();
   const router = useRouter();
 

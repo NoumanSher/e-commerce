@@ -1,13 +1,52 @@
 "use client"
-import React from "react";
+import React, { useCallback } from "react";
 import Link from "next/link";
 import { useStore } from "@/context/storeContext";
+import { useQueryClient } from "@tanstack/react-query";
+import { queryKeys } from "@/lib/queryKeys";
+import { productsService } from "@/services/productsService";
+import { STALE_TIMES, CACHE_TIMES } from "@/lib/queryClient";
+import { useRouter } from "next/navigation";
+
 export default function AllProductBtn() {
-  const { selectedCategory } = useStore()
+  const { selectedCategory } = useStore();
+  const queryClient = useQueryClient();
+  const router = useRouter();
+
+  const handleMouseEnter = useCallback(() => {
+    // Prefetch categories
+    queryClient.prefetchQuery({
+      queryKey: queryKeys.categories.all(),
+      queryFn: () => productsService.fetchAllCategories(),
+      staleTime: STALE_TIMES.infinite,
+      gcTime: CACHE_TIMES.infinite,
+    });
+    
+    // Prefetch products initial page
+    if (selectedCategory) {
+      queryClient.prefetchInfiniteQuery({
+        queryKey: ["products", { parent: selectedCategory, child: null }],
+        queryFn: ({ pageParam = 1 }) =>
+          productsService.fetchProducts({
+            categorySlug: selectedCategory,
+            page: pageParam as number,
+            limit: 10,
+            mode: 'client'
+          }),
+        initialPageParam: 1,
+      });
+    }
+
+    // Prefetch Next.js bundle
+    router.prefetch(`/all-products?parentCategorySlug=${selectedCategory}&mode=client`);
+  }, [queryClient, router, selectedCategory]);
+
   return (
     <div className="flex justify-center mb-6 md:mb-8 mt-5 xl:mt-9 xl:mb-15 pb-10 lg:pb-15">
       <Link
         href={`/all-products?parentCategorySlug=${selectedCategory}&mode=client`}
+        onMouseEnter={handleMouseEnter}
+        onTouchStart={handleMouseEnter}
         className="
           group relative inline-flex items-center gap-2
           border border-gray-900 text-gray-900

@@ -4,7 +4,7 @@ import OrderHistoryTabel from "../components/OrderHistoryTabel";
 import Pagination from "../components/Pagination";
 import { useSearchParams, useRouter } from "next/navigation";
 import { useGetOrdersByUserId } from "../profileQuery";
-import { useStore } from "@/context/storeContext";
+import { useAuth } from "@/context/AuthContext";
 import Loader from "@/components/Loader";
 
 const getSafeData = (data: any) => {
@@ -14,7 +14,7 @@ const getSafeData = (data: any) => {
 };
 
 const OrderHistoryPage: React.FC = () => {
-  const { userId } = useStore();
+  const { userId } = useAuth();
   const { data, isLoading } = useGetOrdersByUserId(userId);
 
   const ordersData = useMemo(() => getSafeData(data), [data]);

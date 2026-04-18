@@ -3,6 +3,7 @@ import { useEffect } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { useStore } from "@/context/storeContext";
 import { useCart } from "@/components/hooks/useCart";
+import { queryKeys } from "@/lib/queryKeys";
 
 export const useInvalidateProductQueries = (
   isSuccess: boolean,
@@ -18,19 +19,13 @@ export const useInvalidateProductQueries = (
   useEffect(() => {
     if (!isSuccess) return;
 
-    const ids = new Set<string>();
+    // Invalidate ALL product queries (details, lists, related) so stock
+    // is refreshed everywhere without a manual reload.
+    queryClient.invalidateQueries({ queryKey: queryKeys.products.all() });
 
-    if (section === "checkout" && productDetail?.items[0]?.productId) {
-      ids.add(productDetail.items[0].productId);
-    } else {
-      cartItems.forEach((item) => {
-        if (item.product._id) ids.add(item.product._id);
-      });
-    }
-
-    ids.forEach((id) =>
-      queryClient.invalidateQueries({ queryKey: ["product", id] })
-    );
+    // Invalidate user profile queries so the address saved during order
+    // creation is reflected on the profile page immediately.
+    queryClient.invalidateQueries({ queryKey: queryKeys.user.all() });
 
     if (section !== "checkout") {
       if (isSuccess) {
@@ -52,3 +47,4 @@ export const useInvalidateProductQueries = (
     checkValidation,
   ]);
 };
+

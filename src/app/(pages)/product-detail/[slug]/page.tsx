@@ -41,7 +41,7 @@ export default async function Page({
 
       {/* Only load the heavy React part on the client */}
       <Suspense fallback={<ProductDetailSkeleton />}>
-        <ProductDetailClient slug={slug} />
+        <ProductDetailClient slug={slug} initialData={product} />
       </Suspense>
     </>
   );

@@ -8,7 +8,7 @@ import {
   useGetOrdersByUserId,
   useGetProfileDetailByUserId,
 } from "./profileQuery";
-import { useStore } from "@/context/storeContext";
+import { useAuth } from "@/context/AuthContext";
 import Loader from "@/components/Loader";
 import { Address } from "./profileDtos";
 
@@ -17,7 +17,7 @@ const getSafeData = (data: any) => ({
 });
 
 const ProfilePage = () => {
-  const { userId, userName } = useStore();
+  const { userId, userName } = useAuth();
   const { data, isLoading } = useGetOrdersByUserId(userId);
   const { data: profileDataResponse } = useGetProfileDetailByUserId(userId);
 
@@ -29,7 +29,9 @@ const ProfilePage = () => {
   }, []);
 
   const OrdersData = useMemo(() => getSafeData(data), [data]);
-  const profileData = (profileDataResponse as any)?.address as Address | undefined;
+  debugger
+  const profileData = (OrdersData.orders[0] as any)?.address as Address | undefined;
+  debugger
 
   if (!mounted || isLoading) return <Loader />;
 

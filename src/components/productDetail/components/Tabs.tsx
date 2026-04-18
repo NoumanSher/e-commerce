@@ -1,6 +1,7 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ProductReviews } from "@/components/reviews/ProductReviews";
 import { useStore } from "@/context/storeContext";
+import { useAuth } from "@/context/AuthContext";
 import { useGetRelatedProductsByCategoryId } from "@/components/productDetail/productDetailQuery";
 import MainCard from "../../Card/index";
 import { useQueryClient } from "@tanstack/react-query";
@@ -15,7 +16,8 @@ interface RelatedProductsProps {
 
 export default function RelatedProducts({ productSlug, productId, activeTab = "related products", onTabChange }: RelatedProductsProps) {
   const queryClient = useQueryClient();
-  const { selectedCategory, userId, authToken } = useStore();
+  const { selectedCategory } = useStore();
+  const { userId, authToken } = useAuth();
 
   const [category, setCategory] = useState<any>(null);
   const [recommendedCategoryId, setRecommendedCategoryId] = useState("");

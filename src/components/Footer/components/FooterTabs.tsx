@@ -4,10 +4,12 @@ import React, { memo } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useStore } from '@/context/storeContext'
+import { useAuth } from '@/context/AuthContext'
 
 const FooterTabs = () => {
   const router = useRouter();
-  const { authToken, setIsAuthModalOpen, setActiveTab } = useStore();
+  const { setIsAuthModalOpen, setActiveTab } = useStore();
+  const { authToken } = useAuth();
 
   const handleAccountClick = (e: React.MouseEvent) => {
     e.preventDefault();

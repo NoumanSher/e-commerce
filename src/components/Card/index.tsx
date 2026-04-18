@@ -17,6 +17,7 @@ import { useStore } from "@/context/storeContext";
 import { FiHeart } from "react-icons/fi";
 import { formatPrice } from "@/lib/utils";
 import { productsService } from "@/services/productsService";
+import { queryKeys } from "@/lib/queryKeys";
 
 interface MainCardProps {
   item: Product;
@@ -76,14 +77,16 @@ const MainCard = ({ item }: MainCardProps) => {
   const isHovered = !isMobileOrTablet && hoveredCard === item.seo.slug; // ✅ hover only desktop
 
   // Prefetch product data on hover
-  const prefetchProduct = (slug: string) => {
+  const prefetchProduct = useCallback((slug: string) => {
     queryClient.prefetchQuery({
-      queryKey: ["product", slug],
+      queryKey: queryKeys.products.detail(slug),
       queryFn: () => productsService.getProductBySlug(slug),
       staleTime: 1000 * 60 * 5,
       gcTime: 1000 * 60 * 30,
     });
-  };
+    // Also prefetch the Next.js page bundle
+    router.prefetch(`/product-detail/${slug}`);
+  }, [queryClient, router]);
 
   const handleMouseEnter = useCallback((slug: string) => {
     setHoveredCard(slug);

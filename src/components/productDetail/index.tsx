@@ -5,6 +5,7 @@ import { useGetProductDetailBySlug } from "./productDetailQuery";
 import ProductDetailSkeleton from "./components/ProductDetailSkeleton";
 import { useInView } from "react-intersection-observer";
 import { AuthModal } from "../AuthModal";
+import type { Product } from "./productDetailDto";
 // Above-the-fold components
 // Critical components loaded immediately
 import ProductImageGallery from "@/components/gallery";
@@ -16,10 +17,11 @@ const Tabs = lazy(() => import("./components/Tabs"));
 
 interface ProductDetailProps {
   slug: string;
+  initialData?: Product;
 }
 
-const ProductDetail: React.FC<ProductDetailProps> = ({ slug }) => {
-  const { data, isLoading } = useGetProductDetailBySlug(slug);
+const ProductDetail: React.FC<ProductDetailProps> = ({ slug, initialData }) => {
+  const { data, isLoading } = useGetProductDetailBySlug(slug, initialData);
   const [showBelowFold, setShowBelowFold] = useState(false);
   const [activeTab, setActiveTab] = useState("related products");
   const tabsSectionRef = useRef<HTMLDivElement>(null);

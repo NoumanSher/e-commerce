@@ -7,6 +7,7 @@ import BillingDetailsComponent from "@/components/BillingDetails";
 import OrderSummaryComponent from "@/components/OrderSummary";
 import PaymentMethodComponent from "@/components/PaymentMethod";
 import { useStore } from "@/context/storeContext";
+import { useAuth } from "@/context/AuthContext";
 import { useOrderCreate } from "./query/orderCreateQuery";
 import { useSearchParams, useRouter } from "next/navigation";
 import { useCart } from "@/components/hooks/useCart";
@@ -37,8 +38,9 @@ export default function Checkout({ checkValidation }: CheckoutProps) {
   const section = searchParams.get("section");
 
   const router = useRouter();
-  const { productDetail, cartItems, userId, authToken, setIsAuthModalOpen } =
+  const { productDetail, cartItems, setIsAuthModalOpen } =
     useStore();
+  const { userId, authToken } = useAuth();
   const { mutate, isSuccess, isPending, data } = useOrderCreate();
   const { subTotal } = useCart();
 

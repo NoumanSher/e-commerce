@@ -33,8 +33,12 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     if (token) {
       storageApi.set(STORAGE_KEYS.token, token);
     } else {
+      // Clear all user data from localStorage immediately on logout
       storageApi.remove(STORAGE_KEYS.token);
       storageApi.remove(STORAGE_KEYS.refreshToken);
+      storageApi.remove(STORAGE_KEYS.userId);
+      storageApi.remove(STORAGE_KEYS.userName);
+      storageApi.remove(STORAGE_KEYS.productDetails);
       setUserId("");
       setUserName("");
       clearAuthToken();

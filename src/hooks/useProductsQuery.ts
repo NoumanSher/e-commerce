@@ -34,3 +34,39 @@ export function useCategoriesQuery() {
     gcTime: CACHE_TIMES.infinite,
   });
 }
+
+/**
+ * Fetch products with infinite scroll support.
+ * Used for category and shop pages.
+ */
+import { useInfiniteQuery } from "@tanstack/react-query";
+
+export function useInfiniteProductsQuery(
+  parentSlug: string | null,
+  childSlug: string | null,
+  options?: { enabled?: boolean }
+) {
+  return useInfiniteQuery({
+    queryKey: ["products", { parent: parentSlug, child: childSlug }],
+    queryFn: ({ pageParam = 1 }) =>
+      productsService.fetchProducts({
+        categorySlug: parentSlug ?? undefined,
+        childCategorySlug: childSlug ?? undefined,
+        page: pageParam as number,
+        limit: 10,
+        mode: "client",
+      }),
+    initialPageParam: 1,
+    placeholderData: (prev) => prev,
+    getNextPageParam: (lastPage) => {
+      const current = lastPage?.pagination?.currentPage;
+      const total = lastPage?.pagination?.totalPages;
+      return current != null && total != null && current < total
+        ? current + 1
+        : undefined;
+    },
+    enabled: options?.enabled,
+    staleTime: STALE_TIMES.medium,
+    gcTime: CACHE_TIMES.medium,
+  });
+}
