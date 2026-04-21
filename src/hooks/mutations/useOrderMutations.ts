@@ -10,8 +10,9 @@ export const useSubmitOrder = () => {
   return useMutation<OrderResponse, ApiError, CreateOrderPayload>({
     mutationFn: orderService.createOrder,
     onSuccess: (data) => {
-      // Invalidate relevant queries like order history
+      // Invalidate relevant queries like order history and user profile
       queryClient.invalidateQueries({ queryKey: ["orders"] });
+      queryClient.invalidateQueries({ queryKey: ["user"] });
       // We don't toast here usually if the component handles routing visually,
       // but if we want a global success:
     },

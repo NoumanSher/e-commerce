@@ -13,6 +13,7 @@ export const useGetOrdersByUserId = (userId: string) => {
     enabled: Boolean(userId),
     refetchInterval: 60 * 1000,
     refetchOnWindowFocus: true,
+    refetchOnMount: true,
   })
 }
 
@@ -26,6 +27,7 @@ export const useGetProfileDetailByUserId = (userId: string) => {
     enabled: Boolean(userId),
     refetchInterval: 60 * 1000,
     refetchOnWindowFocus: true,
+    refetchOnMount: true,
   })
 }
 
@@ -41,5 +43,6 @@ export const useGetOrderDetailByOrderNumber = (orderNumber: string) => {
     enabled: Boolean(orderNumber),
     refetchInterval: 60 * 1000,
     refetchOnWindowFocus: true,
+    refetchOnMount: true,
   })
 }

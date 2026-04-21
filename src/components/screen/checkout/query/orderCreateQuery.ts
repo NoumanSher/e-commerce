@@ -17,6 +17,7 @@ export const useOrderCreate = () => {
       toast.success("Order created successfully!");
       // invalidate orders list so user's orders refresh
       qc.invalidateQueries({ queryKey: queryKeys.orders.all() });
+      qc.invalidateQueries({ queryKey: queryKeys.user.all() });
     },
     onError: (error: ApiError) => {
       const message = error?.response?.message || error?.message || "Failed to create order";

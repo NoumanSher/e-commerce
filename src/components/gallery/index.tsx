@@ -245,7 +245,7 @@ export default function ImageGallery({
             )}
 
             {/* Pagination Dots */}
-            {images.length > 1 && (
+            {/* {images.length > 1 && (
               <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-1.5 bg-black/40 backdrop-blur-sm px-3 py-2 rounded-full">
                 {images.map((_, index) => (
                   <button
@@ -260,7 +260,7 @@ export default function ImageGallery({
                   />
                 ))}
               </div>
-            )}
+            )} */}
           </div>
         </div>
       </div>

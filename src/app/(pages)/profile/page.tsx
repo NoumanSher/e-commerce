@@ -18,8 +18,8 @@ const getSafeData = (data: any) => ({
 
 const ProfilePage = () => {
   const { userId, userName } = useAuth();
-  const { data, isLoading } = useGetOrdersByUserId(userId);
-  const { data: profileDataResponse } = useGetProfileDetailByUserId(userId);
+  const { data, isLoading: isOrdersLoading } = useGetOrdersByUserId(userId);
+  const { data: profileDataResponse, isLoading: isProfileLoading } = useGetProfileDetailByUserId(userId);
 
   const [mounted, setMounted] = useState(false);
 
@@ -29,11 +29,14 @@ const ProfilePage = () => {
   }, []);
 
   const OrdersData = useMemo(() => getSafeData(data), [data]);
-  debugger
-  const profileData = (OrdersData.orders[0] as any)?.address as Address | undefined;
-  debugger
+  
+  // Use profile query data (AddressResponse) first, then fallback to first order's address
+  const profileAddress = (profileDataResponse as any)?.address as Address | undefined;
+  const profileData = profileAddress || (OrdersData.orders[0] as any)?.address as Address | undefined;
 
-  if (!mounted || isLoading) return <Loader />;
+  const isLoading = isOrdersLoading || (isProfileLoading && !profileAddress);
+
+  if (!mounted || (isLoading && !profileData && OrdersData.orders.length === 0)) return <Loader />;
 
   return (
     <div className="w-full py-2 lg:py-6 lg:px-4">

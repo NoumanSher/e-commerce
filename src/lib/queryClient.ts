@@ -48,8 +48,8 @@ export function createQueryClient(): QueryClient {
         gcTime: CACHE_TIMES.default,
         // Don't refetch on window focus by default
         refetchOnWindowFocus: false,
-        // Don't refetch on mount if data is fresh
-        refetchOnMount: false,
+        // Refetch on mount if data is stale
+        refetchOnMount: true,
         // Retry failed requests 3 times
         retry: 3,
         // Wait 1s before first retry, exponential backoff after

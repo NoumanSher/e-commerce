@@ -54,16 +54,17 @@ const MainCard = ({ item }: MainCardProps) => {
   const [isTrue, setIsTrue] = useState(false);
 
   const getAspectRatio = (parentCategorySlug: string) => {
+    debugger
     switch (parentCategorySlug) {
-      case "Jewellery":
+      case "Earrings":
         return "aspect-square";
-      case "Women's Clothing":
-        return "aspect-[3/4]";
-      case "Men's Clothing":
-        return "aspect-[3/4]";
-      case "Kids":
-        return "aspect-[3/4]";
-      case "Beauty & Health":
+      case "Necklace":
+        return "aspect-square";
+      case "Bracelets":
+        return "aspect-square";
+      case "Rings":
+        return "aspect-square";
+      case "Jewellery":
         return "aspect-square";
       default:
         return "aspect-[3/4]";

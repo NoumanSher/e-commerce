@@ -13,10 +13,17 @@ const ProductsCategories = () => {
 
   useEffect(() => {
     // Only set a default category if the store is hydrated 
-    // AND there's no category selected yet
     // AND we have categories data available
-    if (isHydrated && !selectedCategory && categoriesData?.categories && categoriesData.categories.length > 0) {
-      updateSelectedCategory(categoriesData.categories[0].slug);
+    if (isHydrated && categoriesData?.categories && categoriesData.categories.length > 0) {
+      // Check if current selectedCategory exists in the fetched list
+      const categoryExists = categoriesData.categories.some(
+        (cat) => cat.slug === selectedCategory
+      );
+
+      // If no category is selected, OR the selected category doesn't exist anymore (Sync sync)
+      if (!selectedCategory || !categoryExists) {
+        updateSelectedCategory(categoriesData.categories[0].slug);
+      }
     }
   }, [isHydrated, categoriesData, selectedCategory, updateSelectedCategory]);
   if (categoriesError) return (

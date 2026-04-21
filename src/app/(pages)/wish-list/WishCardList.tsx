@@ -45,7 +45,7 @@ const WishCardList = ({ products }: WishCardListProps) => {
               <p className="text-gray-500 max-w-sm mb-8">
                 Explore our collections and add some items to your wishlist to find them here later!
               </p>
-              <a href="/all-products?parentCategorySlug=all-categories&mode=client" className="inline-block bg-black text-white hover:bg-gray-800 transition-colors font-medium py-3 px-8 rounded-full">
+              <a href="/all-products?parentCategorySlug=jewellery&mode=client" className="inline-block bg-black text-white hover:bg-gray-800 transition-colors font-medium py-3 px-8 rounded-full">
                 Continue Shopping
               </a>
             </div>
