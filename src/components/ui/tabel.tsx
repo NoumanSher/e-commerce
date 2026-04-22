@@ -3,6 +3,7 @@ import { useCart } from "../hooks/useCart";
 import { toast } from "react-toastify";
 import Image from "next/image";
 import { RiDeleteBin6Line } from "react-icons/ri";
+import { calculateDiscountedPrice } from "@/lib/utils";
 
 const ProductTable: React.FC = () => {
   const { removeFromCart, cartItems, updateItemQuantity } = useCart();
@@ -52,7 +53,8 @@ const ProductTable: React.FC = () => {
               );
               const basePrice = item.product.salePrice;
               const extaPrice = selectedVariant?.additionalSalePrice || 0;
-              const finalPrice = basePrice + extaPrice;
+              const discount = item.product.discount || 0;
+              const finalPrice = calculateDiscountedPrice(basePrice + extaPrice, discount);
               return (
                 <tr key={item.product._id} className="border-b border-gray-200">
                   <td className="py-4">
@@ -145,7 +147,8 @@ const ProductTable: React.FC = () => {
             );
             const basePrice = item.product.salePrice;
             const extaPrice = selectedVariant?.additionalSalePrice || 0;
-            const finalPrice = basePrice + extaPrice;
+            const discount = item.product.discount || 0;
+            const finalPrice = calculateDiscountedPrice(basePrice + extaPrice, discount);
             return (
               <div
                 key={item.product._id}

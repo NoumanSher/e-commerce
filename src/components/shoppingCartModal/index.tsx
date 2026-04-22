@@ -5,6 +5,7 @@ import { useCart } from "../hooks/useCart";
 import QuantitySelector from "../productDetail/components/QuantitySelector";
 import Image from "next/image";
 import useSwipeClose from "@/hooks/useSwipeClose";
+import { calculateDiscountedPrice, formatPrice } from "@/lib/utils";
 
 interface ShoppingCartProps {
   isOpen: boolean;
@@ -97,7 +98,8 @@ const ShoppingCart: React.FC<ShoppingCartProps> = ({ isOpen, onClose }) => {
               );
               const basePrice = cartItem.product.salePrice;
               const extaPrice = selectedVariant?.additionalSalePrice || 0;
-              const finalPrice = basePrice + extaPrice;
+              const discount = cartItem.product.discount || 0;
+              const finalPrice = calculateDiscountedPrice(basePrice + extaPrice, discount);
               return (
                 <div key={index}>
                   {/* Product Item */}
@@ -153,7 +155,7 @@ const ShoppingCart: React.FC<ShoppingCartProps> = ({ isOpen, onClose }) => {
                       >
                         &times;
                       </button>
-                      <p className="font-bold">{finalPrice}</p>
+                      <p className="font-bold">Rs {formatPrice(finalPrice)}</p>
                     </div>
                   </div>
 

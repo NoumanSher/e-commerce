@@ -3,6 +3,7 @@ import { useStore } from "@/context/storeContext";
 import { toast } from "react-toastify";
 import { Product } from "@/components/productDetail/productDetailDto";
 import { storageApi, STORAGE_KEYS } from "@/lib/storageApi";
+import { calculateDiscountedPrice } from "@/lib/utils";
 
 interface CartItem {
   // userId: string;
@@ -228,14 +229,19 @@ export const useCart = () => {
 
   const subTotal = useMemo(() => {
     return cartItems.reduce((total, item) => {
-      const basePrice = (Number(item.product.salePrice) || 0) * item.quantity;
+      const salePrice = Number(item.product.salePrice) || 0;
+      const discount = item.product.discount || 0;
 
       const variant = item.variantID
         ? item.product.variants?.find((v) => v._id === item.variantID)
         : null;
       const additionalSalePrice = Number(variant?.additionalSalePrice) || 0;
 
-      return total + basePrice + additionalSalePrice * item.quantity;
+      // Apply discount to the combined price (base + variant extra)
+      const itemPrice = salePrice + additionalSalePrice;
+      const finalPrice = calculateDiscountedPrice(itemPrice, discount);
+
+      return total + finalPrice * item.quantity;
     }, 0);
   }, [cartItems]);
 

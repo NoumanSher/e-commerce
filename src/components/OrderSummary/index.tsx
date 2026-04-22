@@ -57,7 +57,12 @@ const OrderSummaryComponent: React.FC = () => {
                   <span>
                     {item?.product.productName} × {item?.quantity}
                   </span>
-                  <span>{item?.product.salePrice}</span>
+                  <span>
+                    {item?.product.discount > 0 
+                      ? Math.round((item.product.salePrice + (item.product.variants?.find(v => v._id === item.variantID)?.additionalSalePrice || 0)) * (1 - item.product.discount / 100))
+                      : item?.product.salePrice + (item.product.variants?.find(v => v._id === item.variantID)?.additionalSalePrice || 0)
+                    }
+                  </span>
                 </div>
               </React.Fragment>
             );

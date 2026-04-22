@@ -15,6 +15,7 @@ import dynamic from "next/dynamic";
 import { Product } from "./productDetailDto";
 import { useStore } from "@/context/storeContext";
 import { useCart } from "../hooks/useCart";
+import { calculateDiscountedPrice } from "@/lib/utils";
 const SocialMediaShareWithNoSSR = dynamic(
   () => import("./components/SocialMediaShare"),
   { ssr: false, loading: () => <div className="h-10 w-20  animate-pulse rounded-lg bg-gray-300" /> }
@@ -80,9 +81,11 @@ const ProductInfo: React.FC<ProductDetailsProps> = ({ product, onGalleryHandlers
       SetAvailabelStock(stock < 0 ? 0 : stock);
     }
     if (salePrice) {
-      SetProductPrice(salePrice);
+      // Initialize with discounted base price
+      const initialPrice = calculateDiscountedPrice(salePrice, discount || 0);
+      SetProductPrice(initialPrice);
     }
-  }, [salePrice, stock]);
+  }, [salePrice, stock, discount]);
 
   useEffect(() => {
     let variantName = "";
@@ -97,21 +100,27 @@ const ProductInfo: React.FC<ProductDetailsProps> = ({ product, onGalleryHandlers
     }
 
     if (variantName) {
-      const selectVariat = variants?.find((item) => item.name === variantName);
+      const selectVariat = variants?.find(
+        (item) => item.name.toLowerCase().trim() === variantName.toLowerCase().trim()
+      );
       if (selectVariat?._id) {
         setSelectedVarientId(selectVariat._id);
       }
       SetAvailabelStock(
-        selectVariat?.stock !== undefined && selectVariat.stock > 0
-          ? selectVariat.stock
-          : 0
+        selectVariat?.stock !== undefined ? (selectVariat.stock > 0 ? selectVariat.stock : 0) : 0
       );
 
       const newExtraCost = selectVariat?.additionalSalePrice ?? 0;
       SetExtraCost(newExtraCost);
-      SetProductPrice(salePrice + newExtraCost);
+      const basePlusExtra = salePrice + newExtraCost;
+      const finalPrice = calculateDiscountedPrice(basePlusExtra, discount || 0);
+      SetProductPrice(finalPrice);
+    } else if (!isVariant) {
+      // For non-variant products, ensure discount is applied to base price
+      const finalPrice = calculateDiscountedPrice(salePrice, discount || 0);
+      SetProductPrice(finalPrice);
     }
-  }, [selectedColor, selectedSize, salePrice, variants, colors.length, sizes.length]);
+  }, [selectedColor, selectedSize, salePrice, discount, variants, colors.length, sizes.length, isVariant]);
   const handleAddToCart = useCallback(() => {
     if (isVariant) {
       let variantName = "";
@@ -122,7 +131,9 @@ const ProductInfo: React.FC<ProductDetailsProps> = ({ product, onGalleryHandlers
       } else if (sizes.length > 0) {
         variantName = selectedSize.trim();
       }
-      const selectVariat = variants?.find((item) => item.name === variantName);
+      const selectVariat = variants?.find(
+        (item) => item.name.toLowerCase().trim() === variantName.toLowerCase().trim()
+      );
       const isColorMissing = colors.length > 0 && !selectedColor;
       const isSizeMissing = sizes.length > 0 && !selectedSize;
 
@@ -188,7 +199,7 @@ const ProductInfo: React.FC<ProductDetailsProps> = ({ product, onGalleryHandlers
         {
           productId: _id,
           variantId: selectedVarientId,
-          price: productPrice,
+          price: productPrice, // already discounted in state
           quantity: selectedQuantity,
           lineTotal: productPrice * selectedQuantity,
         },
@@ -260,6 +271,9 @@ const ProductInfo: React.FC<ProductDetailsProps> = ({ product, onGalleryHandlers
           <SelectColorAndSize
             availableColors={colors}
             availableSizes={sizes}
+            selectedColor={selectedColor}
+            selectedSize={selectedSize}
+            variants={variants}
             setSelectedColor={setSelectedColor}
             setSelectedSize={setSelectedSize}
             validation={validation}
@@ -269,22 +283,29 @@ const ProductInfo: React.FC<ProductDetailsProps> = ({ product, onGalleryHandlers
 
         {/* Desktop: Original Layout */}
         <div className="hidden lg:flex md:items-center justify-between md:justify-normal gap-x-3 mb-4">
-          <QuantitySelector
-            className="h-14"
-            quantity={
-              selectedQuantity > availableStock
-                ? availableStock
-                : selectedQuantity
-            }
-            stock={availableStock}
-            onQuantityChange={handleQuantityChange}
-          />
+          {availableStock > 0 && (
+            <QuantitySelector
+              className="h-14"
+              quantity={
+                selectedQuantity > availableStock
+                  ? availableStock
+                  : selectedQuantity
+              }
+              stock={availableStock}
+              onQuantityChange={handleQuantityChange}
+            />
+          )}
           <Button
             onClick={handleAddToCart}
-            className="rounded-none shadow-none bg-white text-black border-2 border-black h-14 flex-1 uppercase py-3 transition-all duration-300 hover:bg-gray-100 group"
+            disabled={availableStock === 0}
+            className={`rounded-none shadow-none h-14 flex-1 uppercase py-3 transition-all duration-300 group ${
+              availableStock === 0
+                ? "bg-gray-200 text-gray-400 border-gray-200 cursor-not-allowed"
+                : "bg-white text-black border-2 border-black hover:bg-gray-100"
+            }`}
           >
             <p className="text-[14px] font-semibold leading-[1.72]">
-              add to cart
+              {availableStock === 0 ? "Sold Out" : "add to cart"}
             </p>
           </Button>
           {/* Desktop: Sticky Checkout Button */}

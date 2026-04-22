@@ -3,8 +3,14 @@ import { productsService } from "@/services/productsService";
 
 export async function GET() {
   const baseUrl = "https://pakshipper.com";
-  // Fetching all products (limit 100 for sitemap)
-  const productData = await productsService.fetchProducts({ page: 1, limit: 100, mode: 'images' });
+  let productData = { data: [] as any[] };
+  try {
+    // Fetching all products (limit 100 for sitemap)
+    productData = await productsService.fetchProducts({ page: 1, limit: 100, mode: 'images' });
+  } catch (error) {
+    console.error("Error fetching products for image sitemap during build:", error);
+  }
+
   const escapeXml = (text: string) => {
     return text
       .replace(/&/g, '&amp;')
@@ -18,18 +24,20 @@ export async function GET() {
   <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
           xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">`;
 
-  for (const product of productData.data) {
-    xml += `<url>
-      <loc>${escapeXml(`${baseUrl}/product-detail/${product.seo.slug}`)}</loc>`;
-    for (const img of product.images) {
-      xml += `
-        <image:image>
-          <image:loc>${escapeXml(img.src)}</image:loc>
-          <image:title>${escapeXml(product.productName)}</image:title>
-          <image:caption>${escapeXml(img.alt || '')}</image:caption>
-        </image:image>`;
+  if (productData?.data) {
+    for (const product of productData.data) {
+      xml += `<url>
+        <loc>${escapeXml(`${baseUrl}/product-detail/${product.seo.slug}`)}</loc>`;
+      for (const img of product.images || []) {
+        xml += `
+          <image:image>
+            <image:loc>${escapeXml(img.src)}</image:loc>
+            <image:title>${escapeXml(product.productName)}</image:title>
+            <image:caption>${escapeXml(img.alt || '')}</image:caption>
+          </image:image>`;
+      }
+      xml += `</url>`;
     }
-    xml += `</url>`;
   }
 
   xml += `</urlset>`;

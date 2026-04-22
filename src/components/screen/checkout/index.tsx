@@ -15,6 +15,7 @@ import { toast } from "react-toastify";
 import PreviousAddressComponent from "@/components/previousAddress/PreviousAddressComponent";
 import { useInvalidateProductQueries } from "@/hooks/useInvalidateProductQueries";
 import { AuthModal } from "@/components/AuthModal";
+import { calculateDiscountedPrice } from "@/lib/utils";
 
 const checkoutSchema = z.object({
   firstName: z.string().min(1, "First Name is required"),
@@ -62,13 +63,22 @@ export default function Checkout({ checkValidation }: CheckoutProps) {
 
   const cartMappedItems = useMemo(
     () =>
-      cartItems.map((item) => ({
-        ...(item?.variantID && { variantId: item.variantID }),
-        productId: item.product._id,
-        price: item.product.salePrice,
-        quantity: item.quantity,
-        lineTotal: item.product.salePrice * item.quantity,
-      })),
+      cartItems.map((item) => {
+        const variant = item?.variantID
+          ? item.product.variants?.find((v) => v._id === item.variantID)
+          : null;
+        const additionalSalePrice = variant?.additionalSalePrice || 0;
+        const basePrice = item.product.salePrice + additionalSalePrice;
+        const discountedPrice = calculateDiscountedPrice(basePrice, item.product.discount || 0);
+
+        return {
+          ...(item?.variantID && { variantId: item.variantID }),
+          productId: item.product._id,
+          price: discountedPrice,
+          quantity: item.quantity,
+          lineTotal: discountedPrice * item.quantity,
+        };
+      }),
     [cartItems]
   );
 

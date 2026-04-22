@@ -69,9 +69,12 @@ export function generateProductSchema(product: any) {
     stock > 0 ? "https://schema.org/InStock" : "https://schema.org/OutOfStock";
 
   if (product.isVariant && product.variants?.length) {
-    const prices = product.variants.map(
-      (v: any) => product.salePrice + (v.additionalSalePrice || 0)
-    );
+    const prices = product.variants.map((v: any) => {
+      const basePlusExtra = product.salePrice + (v.additionalSalePrice || 0);
+      return product.discount > 0 
+        ? Math.round(basePlusExtra * (1 - product.discount / 100))
+        : basePlusExtra;
+    });
 
     const totalStock = product.variants.reduce(
       (sum: number, v: any) => sum + (v.stock || 0),
@@ -93,10 +96,14 @@ export function generateProductSchema(product: any) {
       itemCondition: "https://schema.org/NewCondition",
     };
   } else {
+    const finalPrice = product.discount > 0 
+      ? Math.round(product.salePrice * (1 - product.discount / 100))
+      : product.salePrice;
+
     schema.offers = {
       "@type": "Offer",
       priceCurrency: "PKR",
-      price: product.salePrice.toString(),
+      price: finalPrice.toString(),
       availability: availabilityUrl(product.stock || 0),
       itemCondition: "https://schema.org/NewCondition",
       url: schema.url,

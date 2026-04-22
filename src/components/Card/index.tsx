@@ -15,7 +15,7 @@ import { useWishlist } from "../hooks/useWishlist";
 import { useCart } from "../hooks/useCart";
 import { useStore } from "@/context/storeContext";
 import { FiHeart } from "react-icons/fi";
-import { formatPrice } from "@/lib/utils";
+import { formatPrice, calculateDiscountedPrice } from "@/lib/utils";
 import { productsService } from "@/services/productsService";
 import { queryKeys } from "@/lib/queryKeys";
 
@@ -54,7 +54,6 @@ const MainCard = ({ item }: MainCardProps) => {
   const [isTrue, setIsTrue] = useState(false);
 
   const getAspectRatio = (parentCategorySlug: string) => {
-    debugger
     switch (parentCategorySlug) {
       case "Earrings":
         return "aspect-square";
@@ -187,26 +186,26 @@ const MainCard = ({ item }: MainCardProps) => {
             )}
           </div> */}
           {item.isNew && (
-            <div className="bg-white absolute top-0 mx-[8px] mt-[8px] sm:py-[7px] sm:px-[10px] py-[6px] px-[6px] ">
-              <h1 className="uppercase text-black text-[12px] leading-[1.25em] font-normal ">
+            <div className="bg-white absolute top-0 mx-[8px] mt-[8px] sm:py-[7px] sm:px-[10px] py-[4px] px-[8px] ">
+              <h1 className="uppercase text-black text-[11px] sm:text-[12px] leading-[1.25em] font-normal ">
                 New
               </h1>
             </div>
           )}
 
-          {item.salePrice && (
+          {Number(item.discount) > 0 && (
             <div
-              className={`bg-black absolute top-0 mx-[8px] mt-[8px] sm:py-[7px] sm:px-[10px] py-[6px] px-[6px] ${item.isNew ? "top-[36px]" : ""
+              className={`bg-black absolute top-0 mx-[8px] mt-[8px] sm:py-[7px] sm:px-[10px] py-[4px] px-[8px] ${item.isNew ? "top-[30px] sm:top-[36px]" : ""
                 } `}
             >
-              <h1 className="uppercase text-white text-[12px] leading-[1.25em] font-normal ">
+              <h1 className="uppercase text-white text-[11px] sm:text-[12px] leading-[1.25em] font-normal ">
                 sale
               </h1>
             </div>
           )}
-          {item.discount && (
-            <div className="bg-[#c32929] absolute left-auto !right-0 top-0 flex flex-col  mx-[8px] mt-[8px] sm:py-[7px] sm:px-[10px] py-[6px] px-[6px] ">
-              <h1 className="uppercase text-white text-[12px] leading-[1.25em] font-normal ">
+          {Number(item.discount) > 0 && (
+            <div className="bg-[#c32929] absolute left-auto !right-0 top-0 flex flex-col  mx-[8px] mt-[8px] sm:py-[7px] sm:px-[10px] py-[4px] px-[8px] ">
+              <h1 className="uppercase text-white text-[11px] sm:text-[12px] leading-[1.25em] font-normal ">
                 {item.discount + "% off"}
               </h1>
             </div>
@@ -219,11 +218,24 @@ const MainCard = ({ item }: MainCardProps) => {
         </div>
 
         {/* Content Section */}
-        <div className="p-3 flex flex-col gap-2">
-          <p className="text-sm text-gray-700 line-clamp-1">
+        <div className="p-2 sm:p-3 flex flex-col gap-1.5 sm:gap-2">
+          <p className="text-[13px] sm:text-sm text-gray-700 line-clamp-1">
             {item.productName}
           </p>
-          <p className="font-semibold text-lg">PKR {formatPrice(item.salePrice)}</p>
+          <div className="flex items-baseline flex-wrap gap-x-2 gap-y-0.5">
+            {Number(item.discount) > 0 ? (
+              <>
+                <p className="font-semibold text-base sm:text-lg text-red-600 whitespace-nowrap">
+                  PKR {formatPrice(calculateDiscountedPrice(item.salePrice, item.discount))}
+                </p>
+                <p className="text-xs sm:text-sm text-gray-500 line-through whitespace-nowrap">
+                  PKR {formatPrice(item.salePrice)}
+                </p>
+              </>
+            ) : (
+              <p className="font-semibold text-base sm:text-lg whitespace-nowrap">PKR {formatPrice(item.salePrice)}</p>
+            )}
+          </div>
 
           {/* Colors */}
           {/* <div className="flex items-center gap-2">

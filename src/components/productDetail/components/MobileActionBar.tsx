@@ -25,14 +25,16 @@ const MobileActionBar: React.FC<MobileActionBarProps> = memo(({
                 {/* Action Buttons */}
                 <div className="flex gap-2 sm:gap-3">
                     {/* Quantity Selector */}
-                    <div className="">
-                        <QuantitySelector
-                            className="h-11 sm:h-12 text-sm flex-1"
-                            quantity={selectedQuantity > availableStock ? availableStock : selectedQuantity}
-                            stock={availableStock}
-                            onQuantityChange={onQuantityChange}
-                        />
-                    </div>
+                    {availableStock > 0 && (
+                        <div className="">
+                            <QuantitySelector
+                                className="h-11 sm:h-12 text-sm flex-1"
+                                quantity={selectedQuantity > availableStock ? availableStock : selectedQuantity}
+                                stock={availableStock}
+                                onQuantityChange={onQuantityChange}
+                            />
+                        </div>
+                    )}
 
                     {/* Add to Cart Button */}
                     <Button
@@ -49,7 +51,7 @@ const MobileActionBar: React.FC<MobileActionBarProps> = memo(({
                         disabled={availableStock === 0}
                         className="flex-1 h-11 sm:h-12 bg-gray-900 hover:bg-black text-white font-semibold rounded-lg transition-colors disabled:bg-gray-300 disabled:cursor-not-allowed text-xs sm:text-sm px-3 sm:px-4"
                     >
-                        Buy Now
+                        {availableStock === 0 ? "Sold Out" : "Buy Now"}
                     </Button>
                 </div>
             </div>

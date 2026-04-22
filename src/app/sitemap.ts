@@ -17,31 +17,39 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     });
   });
 
-  // ✅ 2. Fetch categories
-  const categoryData = await categoryService.fetchCategories();
-  const categories = categoryData.categories;
+  try {
+    // ✅ 2. Fetch categories
+    const categoryData = await categoryService.fetchCategories();
+    const categories = categoryData.categories || [];
 
-  for (const category of categories) {
-    urls.push({
-      url: `${baseUrl}/all-products?parentCategorySlug=${category.slug}`,
-      lastModified: new Date(),
-      changeFrequency: 'weekly',
-      priority: 0.8,
-    });
-
-    // ✅ 3. Fetch products in this category
-    // productsService doesn't have a direct fetch with mode=seo in the current wrapper, 
-    // but fetchProducts handles it. Let's use fetchProducts or add a specific one.
-    // Actually, fetchProducts returns ProductsResponse which has .data
-    const productData = await productsService.fetchProducts({ categorySlug: category.slug, page: 1, limit: 100, mode: 'seo' });
-    for (const product of productData.data) {
+    for (const category of categories) {
       urls.push({
-        url: `${baseUrl}/product-detail/${product.seo.slug}`,
+        url: `${baseUrl}/all-products?parentCategorySlug=${category.slug}`,
         lastModified: new Date(),
-        changeFrequency: 'monthly',
-        priority: 0.6,
+        changeFrequency: 'weekly',
+        priority: 0.8,
       });
+
+      // ✅ 3. Fetch products in this category
+      try {
+        const productData = await productsService.fetchProducts({ categorySlug: category.slug, page: 1, limit: 100, mode: 'seo' });
+        const products = productData.data || [];
+        for (const product of products) {
+          urls.push({
+            url: `${baseUrl}/product-detail/${product.seo.slug}`,
+            lastModified: new Date(),
+            changeFrequency: 'monthly',
+            priority: 0.6,
+          });
+        }
+      } catch (productError) {
+        console.error(`Error fetching products for category ${category.slug} during sitemap generation:`, productError);
+        // Continue with other categories
+      }
     }
+  } catch (error) {
+    console.error("Error generating dynamic sitemap paths during build:", error);
+    // Return at least the static paths which are already in `urls`
   }
 
   return urls;
