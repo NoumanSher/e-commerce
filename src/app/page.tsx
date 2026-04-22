@@ -1,5 +1,7 @@
 import React from "react";
 import dynamic from "next/dynamic";
+import Image from "next/image";
+import Link from "next/link";
 import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
 import { AuthModal } from "@/components/AuthModal";
 import { settingsService } from "@/services/settingsService";
@@ -9,7 +11,8 @@ import Slider from "@/components/Slider/Slider";
 import { StoreInfo } from "@/components/Slider/dto/storeSettingDto";
 import { getLandingMetadata } from "@/app/utils/metadata/landingMetadata";
 import { createQueryClient } from "@/lib/queryClient";
-import PromoGrid from "@/components/PromoGrid/PromoGrid";
+
+const PromoGrid = dynamic(() => import("@/components/PromoGrid/PromoGrid"));
 
 // Dynamic imports — only load when needed to reduce initial bundle size
 const Trending = dynamic(() => import("@/components/Trending/trending"), {
@@ -37,14 +40,7 @@ const Trending = dynamic(() => import("@/components/Trending/trending"), {
   ),
 });
 
-const FallbackAutoPlay = dynamic(
-  () => import("@/components/auto-play-video"),
-  {
-    loading: () => (
-      <div className="w-full max-w-4xl mx-auto mb-10 aspect-video bg-gray-200 animate-pulse rounded-lg" />
-    ),
-  }
-);
+
 
 const ShoppingCartModal = dynamic(
   () => import("@/components/shoppingCartModal/client/shoppingCartModal"),
@@ -70,7 +66,7 @@ export default async function LandingPage() {
     (storeSettings as any)?.whatsappPhone ??
     process.env.NEXT_PUBLIC_WHATSAPP_PHONE ??
     "923176872900";
-  const whatsappURL = `https://wa.me/${whatsappPhone}`;
+  const whatsappURL = `https://wa.me/${whatsappPhone}?text=${encodeURIComponent("hey, I need help")}`;
 
   return (
     <>
@@ -85,17 +81,37 @@ export default async function LandingPage() {
 
       <PromoGrid promoCards={(storeSettings as any)?.promoCards || []} />
 
-      <div className="bg-[#faf9f8] px-4 md:px-6 py-10">
-        <div className="text-center mb-6">
-          <h2 className="text-[26px] xl:text-[32px] font-light leading-[1.2em] tracking-wide">
-            Watch Our Story
-          </h2>
-          <div className="flex justify-center mt-1">
-            <span className="block w-10 h-[2px] bg-black rounded-full" />
+      {storeSettings?.bannerImg && (
+        <div className="w-full pb-12">
+          <div className="relative w-full overflow-hidden group">
+            {storeSettings.bannerImgLink ? (
+              <Link href={storeSettings.bannerImgLink}>
+                <Image
+                  src={storeSettings.bannerImg}
+                  alt={storeSettings.title || "Promotional Banner"}
+                  width={1920}
+                  height={600}
+                  className="w-full h-auto transition-transform duration-700 ease-in-out group-hover:scale-[1.01]"
+                  sizes="100vw"
+                  loading='lazy'
+                />
+              </Link>
+            ) : (
+              <Image
+                src={storeSettings.bannerImg}
+                alt={storeSettings.title || "Promotional Banner"}
+                width={1920}
+                height={600}
+                className="w-full h-auto transition-transform duration-700 ease-in-out group-hover:scale-[1.01]"
+                sizes="100vw"
+                loading='lazy'
+              />
+            )}
+            {/* Subtle overlay for consistent aesthetic */}
+            <div className="absolute inset-0 bg-black/5 pointer-events-none" />
           </div>
         </div>
-        <FallbackAutoPlay />
-      </div>
+      )}
 
       <FAQ />
 
@@ -103,7 +119,7 @@ export default async function LandingPage() {
         href={whatsappURL}
         target="_blank"
         rel="noopener noreferrer"
-        className="fixed bottom-24 md:bottom-6 right-6 z-40 group"
+        className="fixed bottom-20 md:bottom-4 right-6 z-40 group"
         aria-label="Contact us on WhatsApp"
       >
         {/* Pulse ring */}

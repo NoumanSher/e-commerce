@@ -6,6 +6,7 @@ export interface StoreInfo {
   mobile: string;
   logo: string;
   bannerImg: string;
+  bannerImgLink: string;
   twitterUrl: string;
   facebookUrl: string;
   instagramUrl: string;
