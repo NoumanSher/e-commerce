@@ -9,6 +9,7 @@ import Slider from "@/components/Slider/Slider";
 import { StoreInfo } from "@/components/Slider/dto/storeSettingDto";
 import { getLandingMetadata } from "@/app/utils/metadata/landingMetadata";
 import { createQueryClient } from "@/lib/queryClient";
+import PromoGrid from "@/components/PromoGrid/PromoGrid";
 
 // Dynamic imports — only load when needed to reduce initial bundle size
 const Trending = dynamic(() => import("@/components/Trending/trending"), {
@@ -81,6 +82,8 @@ export default async function LandingPage() {
       </HydrationBoundary>
 
       <Trending />
+
+      <PromoGrid promoCards={(storeSettings as any)?.promoCards || []} />
 
       <div className="bg-[#faf9f8] px-4 md:px-6 py-10">
         <div className="text-center mb-6">

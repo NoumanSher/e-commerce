@@ -99,6 +99,13 @@ const getProductBySlug = (slug: string): Promise<Product> =>
   );
 
 /**
+ * Fetch recommended products.
+ */
+const getRecommendedProducts = (): Promise<RelatedProductsResponse> =>
+  get<RelatedProductsResponse>("/products/get-recommended-products");
+
+
+/**
  * Upload multiple images. Uses apiClient so the auth interceptor applies.
  */
 const uploadImages = async (files: File[]): Promise<string[]> => {
@@ -116,5 +123,6 @@ export const productsService = {
   relatedProductsByCategorySlug,
   fetchAllCategories,
   getProductBySlug,
+  getRecommendedProducts,
   uploadImages,
 };

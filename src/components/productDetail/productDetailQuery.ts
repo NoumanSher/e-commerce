@@ -24,3 +24,12 @@ export const useGetRelatedProductsByCategoryId = (categoryId: string) => {
     enabled: !!categoryId,
   });
 };
+
+export const useGetRecommendedProducts = () => {
+  return useQuery({
+    queryKey: [...queryKeys.products.all(), "recommended"],
+    queryFn: () => productsService.getRecommendedProducts(),
+    staleTime: STALE_TIMES.long,
+    gcTime: CACHE_TIMES.veryLong,
+  });
+};

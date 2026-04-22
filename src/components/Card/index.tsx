@@ -66,7 +66,7 @@ const MainCard = ({ item }: MainCardProps) => {
       case "Jewellery":
         return "aspect-square";
       default:
-        return "aspect-[3/4]";
+        return "aspect-square";
     }
   };
   useEffect(() => {

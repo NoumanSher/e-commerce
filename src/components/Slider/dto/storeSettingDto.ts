@@ -16,6 +16,7 @@ export interface StoreInfo {
   bannerImages: BannerImage[];
   pinterestUrl: string;
   youtubeUrl: string;
+  promoCards: PromoCard[];
 }
 
 interface BannerImage {
@@ -24,4 +25,13 @@ interface BannerImage {
   orderNumber: number;
   _id: string;
   link: string;
+}
+
+export interface PromoCard {
+  img: string;
+  title: string;
+  subtitle?: string;
+  link?: string;
+  orderNumber: number;
+  _id?: string;
 }

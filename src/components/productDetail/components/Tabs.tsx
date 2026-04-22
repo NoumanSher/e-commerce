@@ -2,7 +2,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ProductReviews } from "@/components/reviews/ProductReviews";
 import { useStore } from "@/context/storeContext";
 import { useAuth } from "@/context/AuthContext";
-import { useGetRelatedProductsByCategoryId } from "@/components/productDetail/productDetailQuery";
+import { useGetRelatedProductsByCategoryId, useGetRecommendedProducts } from "@/components/productDetail/productDetailQuery";
 import MainCard from "../../Card/index";
 import { useQueryClient } from "@tanstack/react-query";
 import { useState, useEffect } from "react";
@@ -20,7 +20,6 @@ export default function RelatedProducts({ productSlug, productId, activeTab = "r
   const { userId, authToken } = useAuth();
 
   const [category, setCategory] = useState<any>(null);
-  const [recommendedCategoryId, setRecommendedCategoryId] = useState("");
 
   // Fetch categories from cache or queryClient if not present
   useEffect(() => {
@@ -47,24 +46,6 @@ export default function RelatedProducts({ productSlug, productId, activeTab = "r
     loadCategoryData();
   }, [selectedCategory, queryClient]);
 
-  // Set recommended category ID based on current category
-  useEffect(() => {
-    if (!category) return;
-
-    let newRecommendedCategoryId = "";
-    if (category.slug === "all-categories") {
-      newRecommendedCategoryId = "nighties";
-    } else if (category.slug === "undergarments") {
-      newRecommendedCategoryId = "nighties";
-    } else if (category.slug === "nighties") {
-      newRecommendedCategoryId = "undergarments";
-    }
-
-    if (newRecommendedCategoryId) {
-      setRecommendedCategoryId(newRecommendedCategoryId);
-    }
-  }, [category]);
-
   // Fetch related products
   const {
     data: relatedProducts,
@@ -77,7 +58,7 @@ export default function RelatedProducts({ productSlug, productId, activeTab = "r
     data: recommendedProducts,
     isLoading: isRecommendedLoading,
     error: recommendedError,
-  } = useGetRelatedProductsByCategoryId(recommendedCategoryId);
+  } = useGetRecommendedProducts();
 
   if (!category) {
     return (
