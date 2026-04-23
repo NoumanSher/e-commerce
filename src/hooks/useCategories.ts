@@ -1,13 +1,10 @@
-import { useQuery } from "@tanstack/react-query";
-import { categoryService, CategoriesResponse } from "@/services/categoryService";
-import { queryKeys } from '@/lib/queryKeys'
-import { STALE_TIMES, CACHE_TIMES } from '@/lib/queryClient'
-export const useCategories = () => {
-  return useQuery<CategoriesResponse, Error>({
-    queryKey: queryKeys.categories.allPC(),
-    queryFn: () => categoryService.fetchCategories(),
-    staleTime: STALE_TIMES.infinite, // Never stale
-    gcTime: CACHE_TIMES.infinite, // Cache indefinitely
-  });
-};
-
+/**
+ * useCategories — unified categories hook.
+ * All category data now comes from a single endpoint (/categories/all)
+ * and is cached under a single query key ["categories"].
+ *
+ * Previously this hook called /categories/all-parent with a different key,
+ * causing a split cache. This is now fixed by delegating to useCategoriesQuery.
+ */
+export { useCategoriesQuery as useCategories } from "./useProductsQuery";
+export type { ParentCategoriesResponse as CategoriesResponse } from "@/services/productsService";

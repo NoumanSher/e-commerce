@@ -27,7 +27,7 @@ export const useGetRelatedProductsByCategoryId = (categoryId: string) => {
 
 export const useGetRecommendedProducts = () => {
   return useQuery({
-    queryKey: [...queryKeys.products.all(), "recommended"],
+    queryKey: queryKeys.products.recommended(),
     queryFn: () => productsService.getRecommendedProducts(),
     staleTime: STALE_TIMES.long,
     gcTime: CACHE_TIMES.veryLong,

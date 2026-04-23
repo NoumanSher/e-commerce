@@ -5,7 +5,6 @@ import Link from "next/link";
 import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
 import { AuthModal } from "@/components/AuthModal";
 import { settingsService } from "@/services/settingsService";
-import { categoryService } from "@/services/categoryService";
 import { productsService } from "@/services/productsService";
 import { FaWhatsapp } from "react-icons/fa";
 import Slider from "@/components/Slider/Slider";
@@ -65,18 +64,24 @@ export default async function LandingPage() {
     queryFn: () => settingsService.getStoreSetting(),
   })) as StoreInfo | null;
 
-  // Prefetch categories
+  // Prefetch categories — unified key shared with useCategoriesQuery client-side.
   const categoriesData = await queryClient.fetchQuery({
-    queryKey: queryKeys.categories.allPC(),
-    queryFn: () => categoryService.fetchCategories(),
+    queryKey: queryKeys.categories.all(),
+    queryFn: () => productsService.fetchAllCategories(),
   });
-  
-  // Prefetch products for the first category as a default
+
+  // Prefetch Trending section products for the first category.
   if (categoriesData?.categories?.length > 0) {
     const defaultCategory = categoriesData.categories[0].slug;
     await queryClient.prefetchQuery({
-      queryKey: ["products", defaultCategory],
-      queryFn: () => productsService.fetchProducts({ categorySlug: defaultCategory, page: 1, limit: 8, mode: 'client' }),
+      queryKey: queryKeys.products.trending(defaultCategory),
+      queryFn: () =>
+        productsService.fetchProducts({
+          categorySlug: defaultCategory,
+          page: 1,
+          limit: 8,
+          mode: "client",
+        }),
     });
   }
 

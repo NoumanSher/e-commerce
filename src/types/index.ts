@@ -45,12 +45,19 @@ export interface OrderAddress {
   email: string;
 }
 
+export interface OrderStatusHistory {
+  status: "Pending" | "Processing" | "Shipped" | "Delivered" | "Cancelled" | string;
+  statusDesc: string;
+  updatedAt: string;
+}
+
 export interface OrderResponseData {
   _id: string;
   orderNo: string;
   totalPrice: number;
   paymentMethod: string;
-  status: string;
+  status: "Pending" | "Processing" | "Shipped" | "Delivered" | "Cancelled" | string;
+  orderStatuses?: OrderStatusHistory[];
   address: OrderAddress;
 }
 

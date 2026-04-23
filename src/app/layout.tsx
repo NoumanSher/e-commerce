@@ -13,6 +13,7 @@ import OfflineIndicator from "@/components/OfflineIndicator";
 import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
 import { createQueryClient } from "@/lib/queryClient";
 import { settingsService } from "@/services/settingsService";
+import { productsService } from "@/services/productsService";
 import { queryKeys } from "@/lib/queryKeys";
 
 // const jost = Jost({ subsets: ["latin"] }); // Load the Jost font
@@ -34,10 +35,16 @@ export default async function RootLayout({
 }>) {
   const queryClient = createQueryClient();
 
-  // Prefetch global settings so they are available on the server for Navbar/Footer
+  // Prefetch global settings (used by Navbar, Footer, policy pages)
   await queryClient.prefetchQuery({
     queryKey: queryKeys.store.settings(),
     queryFn: () => settingsService.getStoreSetting(),
+  });
+
+  // Prefetch categories (used by Trending, All Products, Wishlist, Navbar category tabs)
+  await queryClient.prefetchQuery({
+    queryKey: queryKeys.categories.all(),
+    queryFn: () => productsService.fetchAllCategories(),
   });
 
   return (

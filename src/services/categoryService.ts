@@ -1,25 +1,12 @@
-import { get } from '@/lib/apiClient'
+import { productsService } from "./productsService";
 
-export interface Category {
-  _id: string;
-  name: string;
-  slug: string;
-  description: string;
-  createdAt: string;
-  updatedAt: string;
-  __v: number;
-}
-
-export interface CategoriesResponse {
-  message: string;
-  categories: Category[];
-}
-
-const fetchCategories = async (): Promise<CategoriesResponse> => {
-  const url = '/categories/all-parent'
-  return await get<CategoriesResponse>(url)
-};
-
+/**
+ * @deprecated categoryService is deprecated. Use productsService.fetchAllCategories() instead.
+ * This file is kept only as a compatibility shim and will be removed in the future.
+ */
 export const categoryService = {
-  fetchCategories
+  fetchCategories: () => productsService.fetchAllCategories(),
 };
+
+export type { ParentCategoriesResponse as CategoriesResponse, Category } from "./productsService";
+

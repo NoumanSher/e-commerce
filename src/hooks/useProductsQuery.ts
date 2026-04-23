@@ -23,8 +23,9 @@ export function useProductsQuery(filters?: ProductFilters) {
 }
 
 /**
- * Fetch all available categories.
- * Cached indefinitely since categories rarely change.
+ * Fetch all parent categories with their child categories.
+ * Uses a single unified cache key ["categories"] shared across the entire app.
+ * Previously split between allPC() and all() — now merged to fix child-category reload bug.
  */
 export function useCategoriesQuery() {
   return useQuery({

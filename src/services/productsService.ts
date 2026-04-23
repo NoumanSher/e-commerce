@@ -26,18 +26,7 @@ export interface ProductFilters {
   mode?: string;
 }
 
-interface Category {
-  _id: string;
-  name: string;
-  slug: string;
-  description: string;
-  createdAt: string;
-  updatedAt: string;
-  __v: number;
-  children?: ChildCategory[];
-}
-
-interface ChildCategory {
+export interface ChildCategory {
   _id: string;
   name: string;
   slug: string;
@@ -46,6 +35,17 @@ interface ChildCategory {
   createdAt: string;
   updatedAt: string;
   __v: number;
+}
+
+export interface Category {
+  _id: string;
+  name: string;
+  slug: string;
+  description: string;
+  createdAt: string;
+  updatedAt: string;
+  __v: number;
+  children?: ChildCategory[];
 }
 
 export interface ParentCategoriesResponse {

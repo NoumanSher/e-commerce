@@ -1,11 +1,10 @@
-"use client";
-
 import React from "react";
-import { useGetStoreSettings } from "@/components/Slider/query/storeSettingQuery";
+import { settingsService } from "@/services/settingsService";
 
-export default function PrivacyPolicyPage() {
-  const { data: settings, isLoading } = useGetStoreSettings();
+export const revalidate = 60; // Cache for 60 seconds
 
+export default async function PrivacyPolicyPage() {
+  const settings = await settingsService.getStoreSetting();
   const privacyPolicyContent = settings?.privacyPolicy;
 
   return (
@@ -13,16 +12,9 @@ export default function PrivacyPolicyPage() {
       <div className="max-w-4xl w-full bg-white shadow-sm p-8 md:p-12 mt-10">
         <h1 className="text-3xl md:text-4xl font-bold tracking-tight text-gray-900 mb-6">Privacy Policy</h1>
         
-        {isLoading ? (
-          <div className="animate-pulse space-y-4">
-            <div className="h-4 bg-gray-200 rounded w-1/4"></div>
-            <div className="h-4 bg-gray-200 rounded w-full"></div>
-            <div className="h-4 bg-gray-200 rounded w-full"></div>
-            <div className="h-4 bg-gray-200 rounded w-3/4"></div>
-          </div>
-        ) : privacyPolicyContent ? (
+        {privacyPolicyContent ? (
           <div 
-            className="prose prose-lg max-w-none text-gray-700 leading-relaxed"
+            className="prose prose-lg max-w-none text-gray-700 leading-relaxed break-words"
             dangerouslySetInnerHTML={{ __html: privacyPolicyContent }}
           />
         ) : (

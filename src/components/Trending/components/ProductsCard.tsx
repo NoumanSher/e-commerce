@@ -3,6 +3,8 @@ import React, { memo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { productsService } from "@/services/productsService";
 import { useStore } from "@/context/storeContext";
+import { queryKeys } from "@/lib/queryKeys";
+import { STALE_TIMES, CACHE_TIMES } from "@/lib/queryClient";
 import MainCard from "../../Card/index";
 import type { ApiError } from "@/lib/apiClient";
 
@@ -13,13 +15,19 @@ const ProductsCard = () => {
     data: productsData,
     isLoading,
     error,
-    isFetching,
   } = useQuery({
-    queryKey: ["products", selectedCategory],
-    queryFn: () => productsService.fetchProducts({ categorySlug: selectedCategory as string, page: 1, limit: 8, mode: 'client' }),
+    // Standardized key — matches the homepage SSR prefetch in page.tsx so cache is shared.
+    queryKey: queryKeys.products.trending(selectedCategory as string),
+    queryFn: () =>
+      productsService.fetchProducts({
+        categorySlug: selectedCategory as string,
+        page: 1,
+        limit: 8,
+        mode: "client",
+      }),
     enabled: !!selectedCategory,
-    staleTime: 1000 * 60 * 5, // 5 min (data is fresh)
-    gcTime: 1000 * 60 * 30, // 30 min in cache
+    staleTime: STALE_TIMES.medium,
+    gcTime: CACHE_TIMES.medium,
   });
 
   if (error) {
@@ -33,7 +41,8 @@ const ProductsCard = () => {
 
   return (
     <div className="xl:max-w-[1440px] mx-auto xl:mt-14">
-      {isLoading || isFetching ? (
+      {isLoading ? (
+        // Only show skeleton on true first load — NOT on background revalidation (isFetching).
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 sm:gap-4">
           {[...Array(8)].map((_, i) => (
             <div key={i} className="bg-white rounded overflow-hidden shadow-sm">
@@ -48,10 +57,7 @@ const ProductsCard = () => {
       ) : (
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 sm:gap-4">
           {productsData?.data.slice(0, 8).map((item) => (
-            <div
-              key={item._id}
-              className=""
-            >
+            <div key={item._id}>
               <MainCard item={item} />
             </div>
           ))}

@@ -4,9 +4,9 @@ import { useStore } from "@/context/storeContext";
 import { useAuth } from "@/context/AuthContext";
 import { useGetRelatedProductsByCategoryId, useGetRecommendedProducts } from "@/components/productDetail/productDetailQuery";
 import MainCard from "../../Card/index";
-import { useQueryClient } from "@tanstack/react-query";
-import { useState, useEffect } from "react";
-import { categoryService } from "@/services/categoryService";
+import { useCategoriesQuery } from "@/hooks/useProductsQuery";
+import { useMemo } from "react";
+
 interface RelatedProductsProps {
   productSlug: string;
   productId: string;
@@ -15,36 +15,15 @@ interface RelatedProductsProps {
 }
 
 export default function RelatedProducts({ productSlug, productId, activeTab = "related products", onTabChange }: RelatedProductsProps) {
-  const queryClient = useQueryClient();
   const { selectedCategory } = useStore();
   const { userId, authToken } = useAuth();
 
-  const [category, setCategory] = useState<any>(null);
-
-  // Fetch categories from cache or queryClient if not present
-  useEffect(() => {
-    const loadCategoryData = async () => {
-      let categoryData = queryClient.getQueryData(["categories"]) as any;
-
-      if (!categoryData) {
-        try {
-          categoryData = await queryClient.fetchQuery({
-            queryKey: ["categories"],
-            queryFn: () => categoryService.fetchCategories(),
-          });
-        } catch (error) {
-          console.error("Failed to fetch categories:", error);
-        }
-      }
-
-      const matchedCategory = categoryData?.categories?.find(
-        (item: any) => item.slug === selectedCategory
-      );
-      setCategory(matchedCategory);
-    };
-
-    loadCategoryData();
-  }, [selectedCategory, queryClient]);
+  // Read categories directly from the unified cache — no extra fetch needed.
+  const { data: categoriesData } = useCategoriesQuery();
+  const category = useMemo(
+    () => categoriesData?.categories?.find((item) => item.slug === selectedCategory) ?? null,
+    [categoriesData, selectedCategory]
+  );
 
   // Fetch related products
   const {

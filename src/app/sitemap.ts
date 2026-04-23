@@ -1,6 +1,5 @@
 import type { MetadataRoute } from 'next';
 import { productsService } from '@/services/productsService';
-import { categoryService } from '@/services/categoryService';
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = 'https://pakshipper.com';
@@ -19,7 +18,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   try {
     // ✅ 2. Fetch categories
-    const categoryData = await categoryService.fetchCategories();
+    const categoryData = await productsService.fetchAllCategories();
     const categories = categoryData.categories || [];
 
     for (const category of categories) {

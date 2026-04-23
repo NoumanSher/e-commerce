@@ -20,12 +20,20 @@ export const queryKeys = {
       ...queryKeys.products.related(),
       categoryId,
     ],
+    /** Key for the homepage Trending section product grid (paginated, per category slug). */
+    trending: (categorySlug: string) => [
+      ...queryKeys.products.all(),
+      "trending",
+      categorySlug,
+    ],
+    /** Key for globally recommended products. */
+    recommended: () => [...queryKeys.products.all(), "recommended"],
   },
 
-  // Categories
+  // Categories — single unified key for ALL category fetches across the app.
+  // Previously split between ["all-parent-categories"] and ["categories"] — now merged.
   categories: {
     all: () => ["categories"],
-    allPC: () => ["all-parent-categories"],
     lists: () => [...queryKeys.categories.all(), "list"],
     list: (filters?: Record<string, any>) => [
       ...queryKeys.categories.lists(),

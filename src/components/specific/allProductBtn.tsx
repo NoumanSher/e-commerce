@@ -14,7 +14,7 @@ export default function AllProductBtn() {
   const router = useRouter();
 
   const handleMouseEnter = useCallback(() => {
-    // Prefetch categories
+    // Prefetch categories (unified key — same as useCategoriesQuery)
     queryClient.prefetchQuery({
       queryKey: queryKeys.categories.all(),
       queryFn: () => productsService.fetchAllCategories(),

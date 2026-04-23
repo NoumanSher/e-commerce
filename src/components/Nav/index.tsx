@@ -9,8 +9,6 @@ import { useWishlist } from "../hooks/useWishlist";
 import { useCart } from "../hooks/useCart";
 import { useStore } from "@/context/storeContext";
 import { useAuth } from "@/context/AuthContext";
-import { useQuery } from "@tanstack/react-query";
-import { settingsService } from "@/services/settingsService";
 import { useGetStoreSettings } from "../Slider/query/storeSettingQuery";
 import Image from "next/image";
 import logo from "@/assets/img/logo.webp";
