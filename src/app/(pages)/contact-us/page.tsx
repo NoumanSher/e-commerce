@@ -35,6 +35,7 @@ const ContactUsPage: React.FC = () => {
     setIsSubmitting(true);
     
     try {
+      console.log('Submitting contact form:', data);
       const response = await fetch('/api/email-sender', {
         method: 'POST',
         headers: {
@@ -43,18 +44,23 @@ const ContactUsPage: React.FC = () => {
         body: JSON.stringify(data),
       });
 
+      const result = await response.json();
+
       if (response.ok) {
         toast.success('Message sent successfully!');
         reset();
       } else {
-        throw new Error('Failed to send message');
+        console.error('API Error:', result);
+        throw new Error(result.message || 'Failed to send message');
       }
-    } catch (error) {
-      toast.error('Failed to send message. Please try again later.');
+    } catch (error: any) {
+      console.error('Form submission error:', error);
+      toast.error(error.message || 'Failed to send message. Please try again later.');
     } finally {
       setIsSubmitting(false);
     }
   };
+
 
   return (
     <>

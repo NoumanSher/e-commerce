@@ -10,6 +10,10 @@ import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import GoogleAnalytics from "@/components/GoogleAnalytics";
 import Provider from "@/context/react-query-provider";
 import OfflineIndicator from "@/components/OfflineIndicator";
+import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
+import { createQueryClient } from "@/lib/queryClient";
+import { settingsService } from "@/services/settingsService";
+import { queryKeys } from "@/lib/queryKeys";
 
 // const jost = Jost({ subsets: ["latin"] }); // Load the Jost font
 
@@ -23,13 +27,21 @@ export const metadata: Metadata = {
   title: "PakShipperStore - E-commerce",
   description: "Your favorite shopping destination",
 };
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const queryClient = createQueryClient();
+
+  // Prefetch global settings so they are available on the server for Navbar/Footer
+  await queryClient.prefetchQuery({
+    queryKey: queryKeys.store.settings(),
+    queryFn: () => settingsService.getStoreSetting(),
+  });
+
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body className={`${jost.className} flex flex-col min-h-screen`}>
         <script
           type="application/ld+json"
@@ -63,18 +75,20 @@ export default function RootLayout({
         <GoogleAnalytics gaId={process.env.GA_MEASUREMENT_ID as string} />
 
         <Provider>
-          <StoreTypeProviderWrapper>
-            <ToastContainer
-              autoClose={2000}
-              theme="colored"
-              position="top-right"
-            />
-            <Navbar />
-            <main className="flex-1">{children}</main>
-            <Footer />
-            <OfflineIndicator />
-            <ReactQueryDevtools initialIsOpen={false} />
-          </StoreTypeProviderWrapper>
+          <HydrationBoundary state={dehydrate(queryClient)}>
+            <StoreTypeProviderWrapper>
+              <ToastContainer
+                autoClose={2000}
+                theme="colored"
+                position="top-right"
+              />
+              <Navbar />
+              <main className="flex-1">{children}</main>
+              <Footer />
+              <OfflineIndicator />
+              <ReactQueryDevtools initialIsOpen={false} />
+            </StoreTypeProviderWrapper>
+          </HydrationBoundary>
         </Provider>
       </body>
     </html>

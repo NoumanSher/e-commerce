@@ -5,40 +5,14 @@ import Logo from "../../../assets/img/logo.webp";
 import { FooterLinksData } from "@/data/data";
 import { CiMail } from "react-icons/ci";
 import { MdOutlinePhone } from "react-icons/md";
-import { useQueryClient } from "@tanstack/react-query";
-import { settingsService } from "@/services/settingsService";
+import { useGetStoreSettings } from "../../Slider/query/storeSettingQuery";
 
 const FooterInfo = () => {
-  const queryClient = useQueryClient();
-  const [logo, setLogo] = useState("");
-  const [number, setNumber] = useState("");
-  const [email, setEmail] = useState("");
+  const { data: storeSettings } = useGetStoreSettings();
 
-  // Prefetch data
-  useEffect(() => {
-    const loadSettingData = async () => {
-      let cacheData = queryClient.getQueryData(["settings"]) as any;
-      if (!cacheData) {
-        try {
-          cacheData = await queryClient.fetchQuery({
-            queryKey: ["settings"],
-            queryFn: () => settingsService.getStoreSetting(),
-          });
-          setLogo(cacheData.logo);
-          setNumber(cacheData.mobile);
-          setEmail(cacheData.email);
-        } catch (error) {
-          console.error("Failed to fetch logo:", error);
-        }
-      } else {
-        setLogo(cacheData.logo);
-        setNumber(cacheData.mobile);
-        setEmail(cacheData.email);
-      }
-    };
-
-    loadSettingData();
-  }, [queryClient]);
+  const logo = storeSettings?.logo;
+  const number = storeSettings?.mobile;
+  const email = storeSettings?.email;
   return (
     <div>
       <Image

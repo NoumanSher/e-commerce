@@ -9,7 +9,6 @@ import { notFound } from "next/navigation";
 const ProductDetailClient = dynamic(
   () => import("@/components/productDetail"),
   {
-    ssr: false,
     loading: () => <ProductDetailSkeleton />,
   }
 );

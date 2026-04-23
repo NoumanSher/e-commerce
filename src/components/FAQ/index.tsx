@@ -9,7 +9,7 @@ const faqs = [
   },
   {
     question: "What are the shipping charges for Pakistan?",
-    answer: "We offer free delivery for all orders over PKR 5000 throughout Pakistan. For orders below this amount, a flat shipping fee applies.",
+    answer: "We offer free delivery for all orders over PKR 2000 throughout Pakistan. For orders below this amount, a flat shipping fee applies.",
   },
   {
     question: "How can I track my order?",
@@ -17,7 +17,7 @@ const faqs = [
   },
   {
     question: "What is your return policy?",
-    answer: "We offer a 15-day money-back guarantee. If you are not satisfied with your purchase, you can return it within 15 days for a full refund or exchange.",
+    answer: "We provide a 7-day money-back guarantee. If you're not happy with your purchase, you may return it within 7 days for a full refund or exchange.",
   },
   {
     question: "Are your products authentic?",
@@ -61,15 +61,13 @@ const FAQ = () => {
                   {faq.question}
                 </span>
                 <HiChevronDown
-                  className={`w-5 h-5 text-gray-400 transition-transform duration-300 ${
-                    openIndex === index ? "rotate-180 text-black" : ""
-                  }`}
+                  className={`w-5 h-5 text-gray-400 transition-transform duration-300 ${openIndex === index ? "rotate-180 text-black" : ""
+                    }`}
                 />
               </button>
               <div
-                className={`overflow-hidden transition-all duration-300 ${
-                  openIndex === index ? "max-h-40 opacity-100 mt-2" : "max-h-0 opacity-0"
-                }`}
+                className={`overflow-hidden transition-all duration-300 ${openIndex === index ? "max-h-40 opacity-100 mt-2" : "max-h-0 opacity-0"
+                  }`}
               >
                 <p className="text-gray-600 leading-relaxed pb-2">
                   {faq.answer}

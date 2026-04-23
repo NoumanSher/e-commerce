@@ -2,11 +2,22 @@
 import React, { memo } from "react";
 import MainCard from "@/components/Card";
 import { Product } from "@/components/productDetail/productDetailDto";
+import Link from "next/link";
+import { useCategories } from "@/hooks/useCategories";
+import { useStore } from "@/context/storeContext";
 
 interface WishCardListProps {
   products: Product[];
 }
 const WishCardList = ({ products }: WishCardListProps) => {
+  const { data: categoriesData } = useCategories();
+  const { selectedCategory } = useStore();
+
+  const continueShoppingSlug = selectedCategory || categoriesData?.categories?.[0]?.slug;
+  const continueShoppingUrl = continueShoppingSlug 
+    ? `/all-products?parentCategorySlug=${continueShoppingSlug}&mode=client`
+    : "/all-products";
+
   return (
     <div className="w-full xl:max-w-[1440px] px-4 md:px-6 lg:px-8 py-8 md:py-12 mx-auto min-h-[50vh]">
       <div className="mb-8 border-b border-gray-200 pb-4">
@@ -45,9 +56,9 @@ const WishCardList = ({ products }: WishCardListProps) => {
               <p className="text-gray-500 max-w-sm mb-8">
                 Explore our collections and add some items to your wishlist to find them here later!
               </p>
-              <a href="/all-products?parentCategorySlug=jewellery&mode=client" className="inline-block bg-black text-white hover:bg-gray-800 transition-colors font-medium py-3 px-8 rounded-full">
+              <Link href={continueShoppingUrl} className="inline-block bg-black text-white hover:bg-gray-800 transition-colors font-medium py-3 px-8 rounded-full">
                 Continue Shopping
-              </a>
+              </Link>
             </div>
           </div>
         )}

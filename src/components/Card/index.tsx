@@ -2,11 +2,8 @@
 import Image from "next/image";
 import React, { memo, useCallback, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import {
-  useQueryClient,
-  dehydrate,
-  HydrationBoundary,
-} from "@tanstack/react-query";
+import Link from "next/link";
+import { useQueryClient } from "@tanstack/react-query";
 import { ShoppingCart } from "lucide-react";
 import CardHover from "../cardHover";
 import { Product } from "@/components/productDetail/productDetailDto";
@@ -128,15 +125,14 @@ const MainCard = ({ item }: MainCardProps) => {
     }
   };
   return (
-    <HydrationBoundary state={dehydrate(queryClient)}>
-      <div
-        className="group relative  overflow-hidden cursor-pointer 
-                   bg-white/10 backdrop-blur-md border border-white/20 shadow-md 
-                   hover:shadow-xl transition-all duration-300"
-        onClick={() => router.push(`/product-detail/${item.seo.slug}`)}
-        onMouseEnter={() => prefetchProduct(item.seo.slug)}
-        onTouchStart={() => prefetchProduct(item.seo.slug)}
-      >
+    <Link
+      href={`/product-detail/${item.seo.slug}`}
+      className="group relative block overflow-hidden cursor-pointer 
+                 bg-white/10 backdrop-blur-md border border-white/20 shadow-md 
+                 hover:shadow-xl transition-all duration-300"
+      onMouseEnter={() => prefetchProduct(item.seo.slug)}
+      onTouchStart={() => prefetchProduct(item.seo.slug)}
+    >
         {/* Image Section */}
         <div
           className={`relative  ${getAspectRatio(item.parentCategoryID.name)} w-full`}
@@ -283,8 +279,7 @@ const MainCard = ({ item }: MainCardProps) => {
             </div>
           )}
         </div>
-      </div>
-    </HydrationBoundary>
+    </Link>
   );
 };
 

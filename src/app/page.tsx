@@ -5,12 +5,15 @@ import Link from "next/link";
 import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
 import { AuthModal } from "@/components/AuthModal";
 import { settingsService } from "@/services/settingsService";
+import { categoryService } from "@/services/categoryService";
+import { productsService } from "@/services/productsService";
 import { FaWhatsapp } from "react-icons/fa";
 import Slider from "@/components/Slider/Slider";
 
 import { StoreInfo } from "@/components/Slider/dto/storeSettingDto";
 import { getLandingMetadata } from "@/app/utils/metadata/landingMetadata";
 import { createQueryClient } from "@/lib/queryClient";
+import { queryKeys } from "@/lib/queryKeys";
 
 const PromoGrid = dynamic(() => import("@/components/PromoGrid/PromoGrid"));
 
@@ -58,9 +61,24 @@ export default async function LandingPage() {
   const queryClient = createQueryClient();
 
   const storeSettings = (await queryClient.ensureQueryData({
-    queryKey: ["settings"],
+    queryKey: queryKeys.store.settings(),
     queryFn: () => settingsService.getStoreSetting(),
   })) as StoreInfo | null;
+
+  // Prefetch categories
+  const categoriesData = await queryClient.fetchQuery({
+    queryKey: queryKeys.categories.allPC(),
+    queryFn: () => categoryService.fetchCategories(),
+  });
+  
+  // Prefetch products for the first category as a default
+  if (categoriesData?.categories?.length > 0) {
+    const defaultCategory = categoriesData.categories[0].slug;
+    await queryClient.prefetchQuery({
+      queryKey: ["products", defaultCategory],
+      queryFn: () => productsService.fetchProducts({ categorySlug: defaultCategory, page: 1, limit: 8, mode: 'client' }),
+    });
+  }
 
   const whatsappPhone =
     (storeSettings as any)?.whatsappPhone ??
@@ -75,17 +93,27 @@ export default async function LandingPage() {
 
       <HydrationBoundary state={dehydrate(queryClient)}>
         <Slider storeSettings={storeSettings as any} />
-      </HydrationBoundary>
 
-      <Trending />
+        <Trending />
 
-      <PromoGrid promoCards={(storeSettings as any)?.promoCards || []} />
+        <PromoGrid promoCards={(storeSettings as any)?.promoCards || []} />
 
-      {storeSettings?.bannerImg && (
-        <div className="w-full pb-12">
-          <div className="relative w-full overflow-hidden group">
-            {storeSettings.bannerImgLink ? (
-              <Link href={storeSettings.bannerImgLink}>
+        {storeSettings?.bannerImg && (
+          <div className="w-full pb-12">
+            <div className="relative w-full overflow-hidden group">
+              {storeSettings.bannerImgLink ? (
+                <Link href={storeSettings.bannerImgLink}>
+                  <Image
+                    src={storeSettings.bannerImg}
+                    alt={storeSettings.title || "Promotional Banner"}
+                    width={1920}
+                    height={600}
+                    className="w-full h-auto transition-transform duration-700 ease-in-out group-hover:scale-[1.01]"
+                    sizes="100vw"
+                    loading="lazy"
+                  />
+                </Link>
+              ) : (
                 <Image
                   src={storeSettings.bannerImg}
                   alt={storeSettings.title || "Promotional Banner"}
@@ -93,27 +121,17 @@ export default async function LandingPage() {
                   height={600}
                   className="w-full h-auto transition-transform duration-700 ease-in-out group-hover:scale-[1.01]"
                   sizes="100vw"
-                  loading='lazy'
+                  loading="lazy"
                 />
-              </Link>
-            ) : (
-              <Image
-                src={storeSettings.bannerImg}
-                alt={storeSettings.title || "Promotional Banner"}
-                width={1920}
-                height={600}
-                className="w-full h-auto transition-transform duration-700 ease-in-out group-hover:scale-[1.01]"
-                sizes="100vw"
-                loading='lazy'
-              />
-            )}
-            {/* Subtle overlay for consistent aesthetic */}
-            <div className="absolute inset-0 bg-black/5 pointer-events-none" />
+              )}
+              {/* Subtle overlay for consistent aesthetic */}
+              <div className="absolute inset-0 bg-black/5 pointer-events-none" />
+            </div>
           </div>
-        </div>
-      )}
+        )}
 
-      <FAQ />
+        <FAQ />
+      </HydrationBoundary>
 
       <a
         href={whatsappURL}

@@ -11,6 +11,7 @@ import { useStore } from "@/context/storeContext";
 import { useAuth } from "@/context/AuthContext";
 import { useQuery } from "@tanstack/react-query";
 import { settingsService } from "@/services/settingsService";
+import { useGetStoreSettings } from "../Slider/query/storeSettingQuery";
 import Image from "next/image";
 import logo from "@/assets/img/logo.webp";
 
@@ -39,10 +40,7 @@ const Navbar = () => {
   // Use a ref to avoid stale closure in the scroll handler
   const isNavbarVisibleRef = useRef(true);
 
-  const { data: storeSettings } = useQuery({
-    queryKey: ["settings"],
-    queryFn: () => settingsService.getStoreSetting(),
-  });
+  const { data: storeSettings } = useGetStoreSettings();
 
   useEffect(() => {
     setIsClient(true);
@@ -180,17 +178,23 @@ const Navbar = () => {
             {/* Desktop Icons */}
             <div className="hidden lg:flex items-center space-x-5 ml-auto h-full">
               {/* Profile */}
-              <button
-                onClick={handleProfileClick}
+              <Link
+                href={authToken ? "/profile" : "/#"}
+                onClick={(e) => {
+                  if (!authToken) {
+                    e.preventDefault();
+                    setIsAuthModalOpen(true);
+                  }
+                }}
                 aria-label="Profile"
                 className="text-gray-700 hover:text-black transition-colors"
               >
                 <FiUser size={20} />
-              </button>
+              </Link>
 
               {/* Wishlist */}
-              <button
-                onClick={() => handleNavigation("/wish-list")}
+              <Link
+                href="/wish-list"
                 aria-label="Wishlist"
                 className="relative flex items-center text-gray-700 hover:text-black transition-colors"
               >
@@ -204,11 +208,11 @@ const Navbar = () => {
                     {wishlistCount}
                   </span>
                 )}
-              </button>
+              </Link>
 
               {/* Cart */}
-              <button
-                onClick={() => handleNavigation("/cart")}
+              <Link
+                href="/cart"
                 aria-label="Cart"
                 className="relative flex items-center text-gray-700 hover:text-black transition-colors"
               >
@@ -218,13 +222,13 @@ const Navbar = () => {
                     {cartCount}
                   </span>
                 )}
-              </button>
+              </Link>
             </div>
 
             {/* Mobile: Cart Icon (always visible) */}
-            <button
+            <Link
               className="lg:hidden relative text-gray-700 hover:text-black transition-colors"
-              onClick={() => handleNavigation("/cart")}
+              href="/cart"
               aria-label="Cart"
             >
               <CartIcon className="text-lg" />
@@ -233,7 +237,7 @@ const Navbar = () => {
                   {cartCount}
                 </span>
               )}
-            </button>
+            </Link>
           </div>
         </nav>
       </div>
@@ -264,8 +268,16 @@ const Navbar = () => {
           <div className="flex flex-col h-full overflow-y-auto">
             {/* User action */}
             <div className="p-5 border-b border-gray-100">
-              <button
-                onClick={handleProfileClick}
+              <Link
+                href={authToken ? "/profile" : "/#"}
+                onClick={(e) => {
+                  if (!authToken) {
+                    e.preventDefault();
+                    setIsAuthModalOpen(true);
+                  } else {
+                    closeMobileMenu();
+                  }
+                }}
                 className="flex items-center gap-3 w-full text-left group"
               >
                 <span className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center text-gray-600 group-hover:bg-gray-200 group-hover:text-black transition-colors">
@@ -279,7 +291,7 @@ const Navbar = () => {
                     {authToken ? "View your account" : "Login or register"}
                   </p>
                 </div>
-              </button>
+              </Link>
             </div>
 
             {/* Nav Links */}
@@ -290,8 +302,9 @@ const Navbar = () => {
               <ul className="space-y-1">
                 {NAV_LINKS.map(({ path, label, icon: Icon }) => (
                   <li key={path}>
-                    <button
-                      onClick={() => handleNavigation(path)}
+                    <Link
+                      href={path}
+                      onClick={closeMobileMenu}
                       className={`
                         flex items-center gap-3 w-full text-left px-3 py-3 rounded-lg text-sm font-medium
                         transition-colors duration-150
@@ -303,14 +316,15 @@ const Navbar = () => {
                     >
                       <Icon size={18} />
                       {label}
-                    </button>
+                    </Link>
                   </li>
                 ))}
 
                 {/* Wishlist */}
                 <li>
-                  <button
-                    onClick={() => handleNavigation("/wish-list")}
+                  <Link
+                    href="/wish-list"
+                    onClick={closeMobileMenu}
                     className={`
                       flex items-center gap-3 w-full text-left px-3 py-3 rounded-lg text-sm font-medium
                       transition-colors duration-150
@@ -327,7 +341,7 @@ const Navbar = () => {
                         {wishlistCount}
                       </span>
                     )}
-                  </button>
+                  </Link>
                 </li>
               </ul>
             </nav>

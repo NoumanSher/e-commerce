@@ -2,6 +2,7 @@
 import { useState, useEffect, useCallback, useMemo, useRef, memo } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { StoreInfo } from "./dto/storeSettingDto";
 
 interface SliderProps {
@@ -49,16 +50,29 @@ function Slider({ storeSettings }: SliderProps) {
             zIndex: i === currentSlide ? 1 : 0,
           }}
         >
-          <Image
-            priority={i === 0}
-            loading={i === 0 ? "eager" : "lazy"}
-            src={slide.img}
-            alt={`Slide ${slide._id}`}
-            fill
-            sizes="100vw"
-            className={`object-cover object-center ${slide.link ? "cursor-pointer" : ""}`}
-            onClick={() => slide.link && router.push(slide.link)}
-          />
+          {slide.link ? (
+            <Link href={slide.link}>
+              <Image
+                priority={i === 0}
+                loading={i === 0 ? "eager" : "lazy"}
+                src={slide.img}
+                alt={`Slide ${slide._id}`}
+                fill
+                sizes="100vw"
+                className="object-cover object-center cursor-pointer"
+              />
+            </Link>
+          ) : (
+            <Image
+              priority={i === 0}
+              loading={i === 0 ? "eager" : "lazy"}
+              src={slide.img}
+              alt={`Slide ${slide._id}`}
+              fill
+              sizes="100vw"
+              className="object-cover object-center"
+            />
+          )}
         </div>
       ))}
 

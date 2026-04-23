@@ -21,6 +21,7 @@ export const STALE_TIMES = {
   long: 10 * 60 * 1000, // 10 minutes
 
   // Rarely changing data (settings, config)
+  veryLong: 30 * 60 * 1000, // 30 minutes
   infinite: Infinity, // never stale
 }
 
