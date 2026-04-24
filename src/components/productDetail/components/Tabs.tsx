@@ -2,7 +2,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ProductReviews } from "@/components/reviews/ProductReviews";
 import { useStore } from "@/context/storeContext";
 import { useAuth } from "@/context/AuthContext";
-import { useGetRelatedProductsByCategoryId, useGetRecommendedProducts } from "@/components/productDetail/productDetailQuery";
+import { useGetProductRelatedInfo } from "@/components/productDetail/productDetailQuery";
 import MainCard from "../../Card/index";
 import { useCategoriesQuery } from "@/hooks/useProductsQuery";
 import { useMemo } from "react";
@@ -25,19 +25,19 @@ export default function RelatedProducts({ productSlug, productId, activeTab = "r
     [categoriesData, selectedCategory]
   );
 
-  // Fetch related products
+  // Fetch both related and recommended in one call
   const {
-    data: relatedProducts,
-    isLoading: isRelatedLoading,
-    error: relatedError,
-  } = useGetRelatedProductsByCategoryId(selectedCategory as string);
+    data: relatedInfo,
+    isLoading: isLoading,
+    error: error,
+  } = useGetProductRelatedInfo({
+    parentCategorySlug: selectedCategory as string,
+    categoryId: category?._id,
+    productId: productId
+  });
 
-  // Fetch recommended products
-  const {
-    data: recommendedProducts,
-    isLoading: isRecommendedLoading,
-    error: recommendedError,
-  } = useGetRecommendedProducts();
+  const relatedProducts = relatedInfo?.data?.related || [];
+  const recommendedProducts = relatedInfo?.data?.recommended || [];
 
   if (!category) {
     return (
@@ -47,23 +47,23 @@ export default function RelatedProducts({ productSlug, productId, activeTab = "r
     );
   }
 
-  if (isRelatedLoading) {
-    return <div className="text-center py-8">Loading related products...</div>;
+  if (isLoading) {
+    return <div className="text-center py-8">Loading products...</div>;
   }
 
-  if (relatedError) {
+  if (error) {
     return (
       <div className="text-center text-red-500 py-8">
-        Error loading related products
+        Error loading products
       </div>
     );
   }
 
   const filteredRelatedProducts =
-    relatedProducts?.data?.filter((item) => item.seo.slug !== productSlug) || [];
+    relatedProducts?.filter((item) => item.seo.slug !== productSlug) || [];
 
   const filteredRecommendedProducts =
-    recommendedProducts?.data?.filter((item) => item.seo.slug !== productSlug) || [];
+    recommendedProducts?.filter((item) => item.seo.slug !== productSlug) || [];
   const tabTriggerStyle =
     "px-0 bg-transparent text-base sm:text-lg font-medium text-gray-600 data-[state=active]:border-b-2 data-[state=active]:border-black data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:text-black rounded-none";
   const data = [{ title: "Related Products" }, { title: "Recommended" }, { title: "Reviews" }];
@@ -98,15 +98,7 @@ export default function RelatedProducts({ productSlug, productId, activeTab = "r
       </TabsContent>
 
       <TabsContent value="recommended">
-        {isRecommendedLoading ? (
-          <div className="text-center py-8">
-            Loading recommended products...
-          </div>
-        ) : recommendedError ? (
-          <div className="text-center text-red-500 py-8">
-            Error loading recommended products
-          </div>
-        ) : filteredRecommendedProducts.length > 0 ? (
+        {filteredRecommendedProducts.length > 0 ? (
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 sm:gap-4">
             {filteredRecommendedProducts.map((item) => (
               <div key={item._id} className="">

@@ -101,8 +101,38 @@ const getProductBySlug = (slug: string): Promise<Product> =>
 /**
  * Fetch recommended products.
  */
-const getRecommendedProducts = (): Promise<RelatedProductsResponse> =>
-  get<RelatedProductsResponse>("/products/get-recommended-products");
+const getRecommendedProducts = (categoryId?: string): Promise<RelatedProductsResponse> => {
+  const query = categoryId ? `?categoryId=${categoryId}` : '';
+  return get<RelatedProductsResponse>(`/products/get-recommended-products${query}`);
+};
+
+/**
+ * Fetch both related and recommended products in one call.
+ */
+const getProductRelatedInfo = (params: {
+  parentCategorySlug?: string;
+  childCategorySlug?: string;
+  categoryId?: string;
+  productId?: string;
+}): Promise<{
+  data: {
+    related: Product[];
+    recommended: Product[];
+  };
+}> => {
+  const query = new URLSearchParams();
+  if (params.parentCategorySlug) query.set("parentCategorySlug", params.parentCategorySlug);
+  if (params.childCategorySlug) query.set("childCategorySlug", params.childCategorySlug);
+  if (params.categoryId) query.set("categoryId", params.categoryId);
+  if (params.productId) query.set("productId", params.productId);
+  
+  return get<{
+    data: {
+      related: Product[];
+      recommended: Product[];
+    };
+  }>(`/products/get-product-related-info?${query}`);
+};
 
 
 /**
@@ -124,5 +154,6 @@ export const productsService = {
   fetchAllCategories,
   getProductBySlug,
   getRecommendedProducts,
+  getProductRelatedInfo,
   uploadImages,
 };

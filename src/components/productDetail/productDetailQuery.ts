@@ -15,21 +15,26 @@ export const useGetProductDetailBySlug = (slug: string, initialData?: Product) =
   });
 };
 
-export const useGetRelatedProductsByCategoryId = (categoryId: string) => {
-  return useQuery({
-    queryKey: queryKeys.products.relatedByCategory(categoryId),
-    queryFn: () => productsService.relatedProductsByCategorySlug(categoryId),
-    staleTime: STALE_TIMES.long, // 10 minutes fresh
-    gcTime: CACHE_TIMES.veryLong, // 2 hours in cache
-    enabled: !!categoryId,
-  });
-};
 
-export const useGetRecommendedProducts = () => {
+
+
+export const useGetProductRelatedInfo = (params: {
+  parentCategorySlug?: string;
+  childCategorySlug?: string;
+  categoryId?: string;
+  productId?: string;
+}) => {
   return useQuery({
-    queryKey: queryKeys.products.recommended(),
-    queryFn: () => productsService.getRecommendedProducts(),
+    queryKey: [
+      ...queryKeys.products.relatedByCategory(params.parentCategorySlug || ""),
+      "unified",
+      params.childCategorySlug,
+      params.categoryId,
+      params.productId,
+    ].filter(Boolean),
+    queryFn: () => productsService.getProductRelatedInfo(params),
     staleTime: STALE_TIMES.long,
     gcTime: CACHE_TIMES.veryLong,
+    enabled: !!(params.parentCategorySlug || params.categoryId),
   });
 };
