@@ -15,6 +15,7 @@ import { createQueryClient } from "@/lib/queryClient";
 import { settingsService } from "@/services/settingsService";
 import { productsService } from "@/services/productsService";
 import { queryKeys } from "@/lib/queryKeys";
+import { SocketProvider } from "@/context/SocketContext";
 
 // const jost = Jost({ subsets: ["latin"] }); // Load the Jost font
 
@@ -35,17 +36,22 @@ export default async function RootLayout({
 }>) {
   const queryClient = createQueryClient();
 
-  // Prefetch global settings (used by Navbar, Footer, policy pages)
-  await queryClient.prefetchQuery({
-    queryKey: queryKeys.store.settings(),
-    queryFn: () => settingsService.getStoreSetting(),
-  });
-
-  // Prefetch categories (used by Trending, All Products, Wishlist, Navbar category tabs)
-  await queryClient.prefetchQuery({
-    queryKey: queryKeys.categories.all(),
-    queryFn: () => productsService.fetchAllCategories(),
-  });
+  // Prefetch global settings and categories
+  try {
+    await Promise.all([
+      queryClient.prefetchQuery({
+        queryKey: queryKeys.store.settings(),
+        queryFn: () => settingsService.getStoreSetting(),
+      }),
+      queryClient.prefetchQuery({
+        queryKey: queryKeys.categories.all(),
+        queryFn: () => productsService.fetchAllCategories(),
+      }),
+    ]);
+  } catch (error) {
+    console.error("Layout prefetching failed:", error);
+    // Continue rendering - the client will retry the fetches
+  }
 
   return (
     <html lang="en" suppressHydrationWarning>
@@ -84,16 +90,18 @@ export default async function RootLayout({
         <Provider>
           <HydrationBoundary state={dehydrate(queryClient)}>
             <StoreTypeProviderWrapper>
-              <ToastContainer
-                autoClose={2000}
-                theme="colored"
-                position="top-right"
-              />
-              <Navbar />
-              <main className="flex-1">{children}</main>
-              <Footer />
-              <OfflineIndicator />
-              <ReactQueryDevtools initialIsOpen={false} />
+              <SocketProvider>
+                <ToastContainer
+                  autoClose={2000}
+                  theme="colored"
+                  position="top-right"
+                />
+                <Navbar />
+                <main className="flex-1">{children}</main>
+                <Footer />
+                <OfflineIndicator />
+                <ReactQueryDevtools initialIsOpen={false} />
+              </SocketProvider>
             </StoreTypeProviderWrapper>
           </HydrationBoundary>
         </Provider>

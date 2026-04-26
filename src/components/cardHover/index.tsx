@@ -32,6 +32,7 @@ const CardHover = ({ isHovered, product }: ICardHover) => {
       return;
     }
     e.stopPropagation(); // Prevent event bubbling
+    e.preventDefault(); // Prevent link navigation
 
     if (isVariant) {
       // Redirect to product details page if the product has variants
@@ -46,13 +47,15 @@ const CardHover = ({ isHovered, product }: ICardHover) => {
     }
   };
 
-  const handleAddToWishlist = (e: { stopPropagation: () => void }) => {
+  const handleAddToWishlist = (e: { stopPropagation: () => void; preventDefault: () => void }) => {
     e.stopPropagation();
+    e.preventDefault();
     if (product) addToWishlist(product);
   };
 
   const handleRemoveFromWishlist = (e: any) => {
     e.stopPropagation();
+    e.preventDefault();
     if (product) removeFromWishlist(product?._id);
   };
 

@@ -16,6 +16,7 @@ import PreviousAddressComponent from "@/components/previousAddress/PreviousAddre
 import { useInvalidateProductQueries } from "@/hooks/useInvalidateProductQueries";
 import { AuthModal } from "@/components/AuthModal";
 import { calculateDiscountedPrice } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
 
 const checkoutSchema = z.object({
   firstName: z.string().min(1, "First Name is required"),
@@ -186,14 +187,14 @@ export default function Checkout({ checkValidation }: CheckoutProps) {
             <OrderSummaryComponent />
             <PaymentMethodComponent />
 
-            <button
+            <Button
               id="pobtn"
               type="submit"
-              className="sticky bottom-0 w-full bg-black text-white py-3 mt-4 lg:h-14 h-10 flex items-center justify-center disabled:opacity-50"
-              disabled={isPending}
+              loading={isPending}
+              className="sticky bottom-0 w-full bg-black text-white mt-4 lg:h-14 h-10 disabled:opacity-50 rounded-none shadow-none uppercase font-semibold"
             >
-              {isPending ? "loading..." : "Place Order"}
-            </button>
+              Place Order
+            </Button>
           </div>
         </form>
       </FormProvider>

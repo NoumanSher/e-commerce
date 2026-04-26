@@ -95,6 +95,9 @@ export const post = <T = unknown>(url: string, body?: unknown): Promise<T> =>
 export const put = <T = unknown>(url: string, body?: unknown): Promise<T> =>
   apiClient.put<T>(url, body).then((r) => r.data);
 
+export const patch = <T = unknown>(url: string, body?: unknown): Promise<T> =>
+  apiClient.patch<T>(url, body).then((r) => r.data);
+
 export const del = <T = unknown>(url: string): Promise<T> =>
   apiClient.delete<T>(url).then((r) => r.data);
 

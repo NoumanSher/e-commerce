@@ -142,14 +142,14 @@ export default async function LandingPage() {
         href={whatsappURL}
         target="_blank"
         rel="noopener noreferrer"
-        className="fixed bottom-20 md:bottom-4 right-6 z-40 group"
+        className="fixed bottom-2 md:bottom-4 right-6 z-40 group"
         aria-label="Contact us on WhatsApp"
       >
         {/* Pulse ring */}
         <span className="absolute inset-0 rounded-full bg-green-400 opacity-60 animate-ping" aria-hidden="true" />
         <div className="relative bg-green-500 hover:bg-green-600 active:scale-95 text-white pl-4 pr-5 py-3 rounded-full shadow-xl flex items-center gap-2.5 transition-all duration-200 group-hover:shadow-green-300/50 group-hover:shadow-lg">
           <FaWhatsapp size={22} />
-          <span className="text-sm font-semibold tracking-wide">WhatsApp Us</span>
+          {/* <span className="text-sm font-semibold tracking-wide">WhatsApp Us</span> */}
         </div>
       </a>
     </>

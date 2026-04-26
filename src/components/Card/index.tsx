@@ -92,13 +92,15 @@ const MainCard = ({ item }: MainCardProps) => {
   const handleMouseLeave = useCallback(() => {
     setHoveredCard(null);
   }, []);
-  const handleAddToWishlist = (e: { stopPropagation: () => void }) => {
+  const handleAddToWishlist = (e: { stopPropagation: () => void; preventDefault: () => void }) => {
     e.stopPropagation();
+    e.preventDefault();
     if (item) addToWishlist(item);
   };
 
   const handleRemoveFromWishlist = (e: any) => {
     e.stopPropagation();
+    e.preventDefault();
     if (item) removeFromWishlist(item?._id);
   };
 
@@ -110,6 +112,7 @@ const MainCard = ({ item }: MainCardProps) => {
       return;
     }
     e.stopPropagation(); // Prevent event bubbling
+    e.preventDefault(); // Prevent link navigation
 
     if (isVariant) {
       // Redirect to product details page if the product has variants

@@ -70,6 +70,9 @@ const ProductInfo: React.FC<ProductDetailsProps> = ({ product, onGalleryHandlers
   const [selectedQuantity, setSelectedQuantity] = useState(1);
   const [productPrice, SetProductPrice] = useState<number>(0);
 
+  const [isCheckingOut, setIsCheckingOut] = useState(false);
+  const [isAddingToCart, setIsAddingToCart] = useState(false);
+
   const [validation, setValidation] = useState({
     colorRequired: false,
     sizeRequired: false,
@@ -122,6 +125,7 @@ const ProductInfo: React.FC<ProductDetailsProps> = ({ product, onGalleryHandlers
     }
   }, [selectedColor, selectedSize, salePrice, discount, variants, colors.length, sizes.length, isVariant]);
   const handleAddToCart = useCallback(() => {
+    setIsAddingToCart(true);
     if (isVariant) {
       let variantName = "";
       if (colors.length > 0 && sizes.length > 0) {
@@ -145,6 +149,7 @@ const ProductInfo: React.FC<ProductDetailsProps> = ({ product, onGalleryHandlers
           colorRequired: isColorMissing,
           sizeRequired: isSizeMissing,
         }));
+        setIsAddingToCart(false);
         return;
       }
       addToCart({
@@ -162,6 +167,7 @@ const ProductInfo: React.FC<ProductDetailsProps> = ({ product, onGalleryHandlers
           selectedQuantity > availableStock ? availableStock : selectedQuantity,
       });
     }
+    setTimeout(() => setIsAddingToCart(false), 500);
   }, [
     isVariant,
     selectedSize,
@@ -171,10 +177,13 @@ const ProductInfo: React.FC<ProductDetailsProps> = ({ product, onGalleryHandlers
     product,
     selectedQuantity,
     availableStock,
+    colors.length,
+    sizes.length
   ]);
 
   // Handle Checkout logic
   const handleCheckout = useCallback(() => {
+    setIsCheckingOut(true);
     if (isVariant) {
       const isColorMissing = colors.length > 0 && !selectedColor;
       const isSizeMissing = sizes.length > 0 && !selectedSize;
@@ -187,6 +196,7 @@ const ProductInfo: React.FC<ProductDetailsProps> = ({ product, onGalleryHandlers
           colorRequired: isColorMissing,
           sizeRequired: isSizeMissing,
         }));
+        setIsCheckingOut(false);
         return;
       }
     }
@@ -225,6 +235,8 @@ const ProductInfo: React.FC<ProductDetailsProps> = ({ product, onGalleryHandlers
     selectedVarientId,
     updateProductDetailData,
     userId,
+    colors.length,
+    sizes.length
   ]);
 
 
@@ -298,6 +310,7 @@ const ProductInfo: React.FC<ProductDetailsProps> = ({ product, onGalleryHandlers
           <Button
             onClick={handleAddToCart}
             disabled={availableStock === 0}
+            loading={isAddingToCart}
             className={`rounded-none shadow-none h-14 flex-1 uppercase py-3 transition-all duration-300 group ${
               availableStock === 0
                 ? "bg-gray-200 text-gray-400 border-gray-200 cursor-not-allowed"
@@ -315,6 +328,7 @@ const ProductInfo: React.FC<ProductDetailsProps> = ({ product, onGalleryHandlers
               className="flex-1 !w-full"
               onClick={handleCheckout}
               selectedQuantity={selectedQuantity}
+              loading={isCheckingOut}
             />
           </div>
         </div>
@@ -355,6 +369,8 @@ const ProductInfo: React.FC<ProductDetailsProps> = ({ product, onGalleryHandlers
         onQuantityChange={handleQuantityChange}
         onAddToCart={handleAddToCart}
         onCheckout={handleCheckout}
+        isCheckingOut={isCheckingOut}
+        isAddingToCart={isAddingToCart}
       />
     </>
   );

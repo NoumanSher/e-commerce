@@ -12,6 +12,7 @@ import { useAuth } from "@/context/AuthContext";
 import { useGetStoreSettings } from "../Slider/query/storeSettingQuery";
 import Image from "next/image";
 import logo from "@/assets/img/logo.webp";
+import NotificationBell from "./NotificationBell";
 
 const NAV_LINKS = [
   { path: "/", label: "Home", icon: FiHome },
@@ -123,7 +124,7 @@ const Navbar = () => {
         `}
       >
         <nav className="bg-white border-b border-gray-200 shadow-sm">
-          <div className="container mx-auto px-4 py-2 lg:px-16 flex items-center justify-between h-16">
+          <div className="container mx-auto px-4 py-2 lg:px-16 flex items-center justify-between h-16 relative">
 
             {/* Mobile: Hamburger */}
             <button
@@ -138,7 +139,7 @@ const Navbar = () => {
             {/* Logo */}
             <Link
               href="/"
-              className="flex items-center mx-auto lg:mx-0 lg:mr-10 h-full"
+              className="absolute left-1/2 -translate-x-1/2 pt-2 lg:pt-0 lg:static lg:transform-none flex items-center lg:mx-0 lg:mr-10 h-full"
               onClick={closeMobileMenu}
             >
               <div className="relative h-full">
@@ -175,6 +176,9 @@ const Navbar = () => {
 
             {/* Desktop Icons */}
             <div className="hidden lg:flex items-center space-x-5 ml-auto h-full">
+              {/* Notifications */}
+              <NotificationBell />
+
               {/* Profile */}
               <Link
                 href={authToken ? "/profile" : "/#"}
@@ -223,19 +227,22 @@ const Navbar = () => {
               </Link>
             </div>
 
-            {/* Mobile: Cart Icon (always visible) */}
-            <Link
-              className="lg:hidden relative text-gray-700 hover:text-black transition-colors"
-              href="/cart"
-              aria-label="Cart"
-            >
-              <CartIcon className="text-lg" />
-              {isClient && cartCount > 0 && (
-                <span className="absolute -top-2 -right-2 w-4 h-4 bg-black text-white text-[10px] font-semibold rounded-full flex items-center justify-center">
-                  {cartCount}
-                </span>
-              )}
-            </Link>
+            {/* Mobile: Icons (always visible) */}
+            <div className="lg:hidden flex items-center space-x-4">
+              <NotificationBell />
+              <Link
+                className="relative text-gray-700 hover:text-black transition-colors"
+                href="/cart"
+                aria-label="Cart"
+              >
+                <CartIcon className="text-lg" />
+                {isClient && cartCount > 0 && (
+                  <span className="absolute -top-2 -right-2 w-4 h-4 bg-black text-white text-[10px] font-semibold rounded-full flex items-center justify-center">
+                    {cartCount}
+                  </span>
+                )}
+              </Link>
+            </div>
           </div>
         </nav>
       </div>

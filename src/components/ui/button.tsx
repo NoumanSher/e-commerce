@@ -34,21 +34,41 @@ const buttonVariants = cva(
   }
 )
 
+import Loader from "./loader"
+
 export interface ButtonProps
   extends React.ButtonHTMLAttributes<HTMLButtonElement>,
     VariantProps<typeof buttonVariants> {
   asChild?: boolean
+  loading?: boolean
 }
 
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
-  ({ className, variant, size, asChild = false, ...props }, ref) => {
+  ({ className, variant, size, asChild = false, loading = false, disabled, children, ...props }, ref) => {
     const Comp = asChild ? Slot : "button"
     return (
       <Comp
-        className={cn(buttonVariants({ variant, size, className }))}
+        className={cn(
+          buttonVariants({ variant, size, className }), 
+          "relative overflow-hidden transition-all duration-300",
+          loading && "opacity-90 cursor-wait"
+        )}
         ref={ref}
+        disabled={loading || disabled}
         {...props}
-      />
+      >
+        {loading && (
+          <div className="absolute inset-0 z-10 flex items-center justify-center bg-black/5 backdrop-blur-[1px] animate-in fade-in duration-300">
+            <Loader size={size === "lg" || className?.includes("h-14") ? "md" : "sm"} />
+          </div>
+        )}
+        <div className={cn(
+          "flex items-center justify-center gap-2 w-full h-full transition-all duration-300",
+          loading ? "opacity-0 scale-95 blur-sm" : "opacity-100 scale-100 blur-0"
+        )}>
+          {children}
+        </div>
+      </Comp>
     )
   }
 )
