@@ -67,10 +67,9 @@ export default function MobileHeader({
               key={child?._id}
               data-id={child?.slug}
               className={`px-4 py-1.5 rounded-full border text-sm font-medium whitespace-nowrap transition-all duration-150 shrink-0
-                ${
-                  selectedChildCategory === child?.slug
-                    ? "bg-gray-900 text-white border-gray-900 shadow-sm"
-                    : "bg-white border-gray-200 text-gray-600 hover:border-gray-700 hover:text-gray-900"
+                ${selectedChildCategory === child?.slug
+                  ? "bg-gray-900 text-white border-gray-900 shadow-sm"
+                  : "bg-white border-gray-200 text-gray-600 hover:border-gray-700 hover:text-gray-900"
                 }`}
               onClick={() =>
                 handleChildCategoryClick(child?.slug as string, activeParentSlug || undefined)

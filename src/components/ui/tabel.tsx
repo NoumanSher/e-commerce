@@ -66,8 +66,13 @@ const ProductTable: React.FC = () => {
                       className="w-20 h-24 object-cover"
                     />
                   </td>
-                  <td className="py-[6px] pr-2 text-gray-700 lg:w-[150px] xl:w-[300px]  line-clamp-4  ">
-                    {item.product.productName}
+                  <td className="py-[6px] pr-2 text-gray-700 lg:w-[150px] xl:w-[300px]">
+                    <div className="font-medium">{item.product.productName}</div>
+                    {selectedVariant && (
+                      <div className="text-xs text-gray-400 mt-1 uppercase font-medium">
+                        Variant: {selectedVariant.name}
+                      </div>
+                    )}
                   </td>
                   <td className="py-4 text-gray-800 ">
                     {finalPrice.toFixed(0)}
@@ -164,12 +169,14 @@ const ProductTable: React.FC = () => {
                     className="w-20 h-20 object-cover mr-4"
                   />
                   <div className="flex-1">
-                    <p
-                      className="font-semibold text-gray-900 line-clamp-3"
-                      
-                    >
+                    <p className="font-semibold text-gray-900 line-clamp-3">
                       {item.product.productName}
                     </p>
+                    {selectedVariant && (
+                      <p className="text-xs text-gray-400 mt-1 uppercase font-medium">
+                        Variant: {selectedVariant.name}
+                      </p>
+                    )}
                   </div>
                   <button
                     className="text-red-500 ml-4"

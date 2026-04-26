@@ -11,16 +11,23 @@ const OrderSummaryComponent: React.FC = () => {
     <div className="p-4 border rounded mb-4">
       <h2 className="text-xl font-bold mb-4">Your Order</h2>
       <div className="flex justify-between text-gray-700 border-b py-2">
-        <span>Product</span>
+        <span>{cartItems.length > 1 ? "Items" : "Item"}</span>
       </div>
 
       {section === "checkout" ? (
         <>
-          <div className="flex justify-between py-2">
-            <span>
-              {productDetail?.productName} × {productDetail?.items[0].quantity}
-            </span>
-            <span>{productDetail?.items[0].price}</span>
+          <div className="flex flex-col py-2">
+            <div className="flex justify-between">
+              <span className="flex-1 pr-4">
+                {productDetail?.productName} × {productDetail?.items[0].quantity}
+              </span>
+              <span className="shrink-0 font-medium">{productDetail?.items[0].price}</span>
+            </div>
+            {productDetail?.items[0].variantName && (
+              <span className="text-xs text-gray-400 uppercase font-medium">
+                Variant: {productDetail.items[0].variantName}
+              </span>
+            )}
           </div>
           <div className="flex justify-between text-gray-700 border-t border-b py-2 font-semibold">
             <span>Subtotal</span>
@@ -53,16 +60,23 @@ const OrderSummaryComponent: React.FC = () => {
           {cartItems.map((item, index) => {
             return (
               <React.Fragment key={index}>
-                <div className="flex justify-between py-2">
-                  <span>
-                    {item?.product.productName} × {item?.quantity}
-                  </span>
-                  <span>
-                    {item?.product.discount > 0 
-                      ? Math.round((item.product.salePrice + (item.product.variants?.find(v => v._id === item.variantID)?.additionalSalePrice || 0)) * (1 - item.product.discount / 100))
-                      : item?.product.salePrice + (item.product.variants?.find(v => v._id === item.variantID)?.additionalSalePrice || 0)
-                    }
-                  </span>
+                <div className="flex flex-col py-2 border-b border-gray-50 last:border-0">
+                  <div className="flex justify-between">
+                    <span className="flex-1 pr-4">
+                      {item?.product.productName} × {item?.quantity}
+                    </span>
+                    <span className="shrink-0 font-medium">
+                      {item?.product.discount > 0
+                        ? Math.round((item.product.salePrice + (item.product.variants?.find(v => v._id === item.variantID)?.additionalSalePrice || 0)) * (1 - item.product.discount / 100))
+                        : item?.product.salePrice + (item.product.variants?.find(v => v._id === item.variantID)?.additionalSalePrice || 0)
+                      }
+                    </span>
+                  </div>
+                  {item.variantID && (
+                    <span className="text-xs text-gray-400 uppercase font-medium">
+                      Variant: {item.product.variants?.find(v => v._id === item.variantID)?.name}
+                    </span>
+                  )}
                 </div>
               </React.Fragment>
             );

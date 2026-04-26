@@ -115,15 +115,10 @@ const ShoppingCart: React.FC<ShoppingCartProps> = ({ isOpen, onClose }) => {
                       <h3 className="font-semibold line-clamp-1">
                         {cartItem.product.productName}
                       </h3>
-                      {cartItem.product.isVariant && (
-                        <>
-                          <p className="text-sm text-gray-500">
-                            Color: {cartItem.color}
-                          </p>
-                          <p className="text-sm text-gray-500">
-                            Size: {cartItem.size}
-                          </p>
-                        </>
+                      {selectedVariant && (
+                        <p className="text-xs text-gray-400 mt-1 uppercase font-medium tracking-wider">
+                          Variant: {selectedVariant.name}
+                        </p>
                       )}
 
                       <QuantitySelector

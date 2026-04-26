@@ -15,6 +15,7 @@ export interface OrderItem {
   productId: string;
   quantity: number;
   variantId?: string;
+  variantName?: string;
   price: number;
   lineTotal: number;
 }

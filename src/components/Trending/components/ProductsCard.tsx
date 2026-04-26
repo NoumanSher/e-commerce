@@ -55,7 +55,7 @@ const ProductsCard = () => {
           ))}
         </div>
       ) : (
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 sm:gap-4">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-[3px] sm:gap-4">
           {productsData?.data.slice(0, 8).map((item) => (
             <div key={item._id}>
               <MainCard item={item} />

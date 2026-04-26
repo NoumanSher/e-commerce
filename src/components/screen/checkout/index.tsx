@@ -74,6 +74,7 @@ export default function Checkout({ checkValidation }: CheckoutProps) {
 
         return {
           ...(item?.variantID && { variantId: item.variantID }),
+          variantName: variant?.name,
           productId: item.product._id,
           price: discountedPrice,
           quantity: item.quantity,

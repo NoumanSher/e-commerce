@@ -136,29 +136,29 @@ const MainCard = ({ item }: MainCardProps) => {
       onMouseEnter={() => prefetchProduct(item.seo.slug)}
       onTouchStart={() => prefetchProduct(item.seo.slug)}
     >
-        {/* Image Section */}
-        <div
-          className={`relative  ${getAspectRatio(item.parentCategoryID.name)} w-full`}
-          onMouseEnter={() => handleMouseEnter(item.seo.slug)}
-          onMouseLeave={handleMouseLeave}
-        >
-          {/* {!isImageLoaded && (
+      {/* Image Section */}
+      <div
+        className={`relative  ${getAspectRatio(item.parentCategoryID.name)} w-full`}
+        onMouseEnter={() => handleMouseEnter(item.seo.slug)}
+        onMouseLeave={handleMouseLeave}
+      >
+        {/* {!isImageLoaded && (
             <div className="absolute inset-0 flex items-center justify-center bg-gray-200 animate-pulse">
               <span className="text-gray-500 text-sm">Loading...</span>
             </div>
           )} */}
-          <Image
-            src={item.images[0]?.src}
-            alt={item.productName}
-            fill
-            sizes="(max-width:768px) 50vw, (max-width:1280px) 33vw, 25vw"
-            className={`object-cover transition-transform duration-700 ease-in-out group-hover:scale-105 `}
-            // onLoad={() => setIsImageLoaded(true)}
-            loading="lazy"
-            placeholder="blur"
-            blurDataURL={item.images[0]?.blurDataURL || defaultBlur}
-          />
-          {/* <div className="absolute top-2 left-2 right-2 flex justify-between gap-2">
+        <Image
+          src={item.images[0]?.src}
+          alt={item.productName}
+          fill
+          sizes="(max-width:768px) 50vw, (max-width:1280px) 33vw, 25vw"
+          className={`object-cover transition-transform duration-700 ease-in-out group-hover:scale-105 `}
+          // onLoad={() => setIsImageLoaded(true)}
+          loading="lazy"
+          placeholder="blur"
+          blurDataURL={item.images[0]?.blurDataURL || defaultBlur}
+        />
+        {/* <div className="absolute top-2 left-2 right-2 flex justify-between gap-2">
             <div className="flex flex-wrap gap-1">
               {item.isNew && (
                 <span className="bg-white/80 text-black text-[11px] px-2 py-1 rounded">
@@ -184,60 +184,60 @@ const MainCard = ({ item }: MainCardProps) => {
               </div>
             )}
           </div> */}
-          {item.isNew && (
-            <div className="bg-white absolute top-0 mx-[8px] mt-[8px] sm:py-[7px] sm:px-[10px] py-[4px] px-[8px] ">
-              <h1 className="uppercase text-black text-[11px] sm:text-[12px] leading-[1.25em] font-normal ">
-                New
-              </h1>
-            </div>
-          )}
+        {item.isNew && (
+          <div className="bg-white absolute top-0 mx-[8px] mt-[8px] sm:py-[7px] sm:px-[10px] py-[4px] px-[8px] ">
+            <h1 className="uppercase text-black text-[11px] sm:text-[12px] leading-[1.25em] font-normal ">
+              New
+            </h1>
+          </div>
+        )}
 
-          {Number(item.discount) > 0 && (
-            <div
-              className={`bg-black absolute top-0 mx-[8px] mt-[8px] sm:py-[7px] sm:px-[10px] py-[4px] px-[8px] ${item.isNew ? "top-[30px] sm:top-[36px]" : ""
-                } `}
-            >
-              <h1 className="uppercase text-white text-[11px] sm:text-[12px] leading-[1.25em] font-normal ">
-                sale
-              </h1>
-            </div>
-          )}
-          {Number(item.discount) > 0 && (
-            <div className="bg-[#c32929] absolute left-auto !right-0 top-0 flex flex-col  mx-[8px] mt-[8px] sm:py-[7px] sm:px-[10px] py-[4px] px-[8px] ">
-              <h1 className="uppercase text-white text-[11px] sm:text-[12px] leading-[1.25em] font-normal ">
-                {item.discount + "% off"}
-              </h1>
-            </div>
-          )}
+        {Number(item.discount) > 0 && (
+          <div
+            className={`bg-black absolute top-0 mx-[8px] mt-[8px] sm:py-[7px] sm:px-[10px] py-[4px] px-[8px] ${item.isNew ? "top-[30px] sm:top-[36px]" : ""
+              } `}
+          >
+            <h1 className="uppercase text-white text-[11px] sm:text-[12px] leading-[1.25em] font-normal ">
+              sale
+            </h1>
+          </div>
+        )}
+        {Number(item.discount) > 0 && (
+          <div className="bg-[#c32929] absolute left-auto !right-0 top-0 flex flex-col  mx-[8px] mt-[8px] sm:py-[7px] sm:px-[10px] py-[4px] px-[8px] ">
+            <h1 className="uppercase text-white text-[11px] sm:text-[12px] leading-[1.25em] font-normal ">
+              {item.discount + "% off"}
+            </h1>
+          </div>
+        )}
 
-          {/* Hover Actions (Desktop only) */}
-          {!isMobileOrTablet && (
-            <CardHover isHovered={isHovered} product={item} />
+        {/* Hover Actions (Desktop only) */}
+        {!isMobileOrTablet && (
+          <CardHover isHovered={isHovered} product={item} />
+        )}
+      </div>
+
+      {/* Content Section */}
+      <div className="p-2 sm:p-3 flex flex-col gap-1.5 sm:gap-2">
+        <p className="text-[13px] sm:text-sm text-gray-700 line-clamp-1">
+          {item.productName}
+        </p>
+        <div className="flex items-baseline flex-wrap gap-x-2 gap-y-0.5">
+          {Number(item.discount) > 0 ? (
+            <>
+              <p className="font-semibold text-base sm:text-lg text-red-600 whitespace-nowrap">
+                PKR {formatPrice(calculateDiscountedPrice(item.salePrice, item.discount))}
+              </p>
+              <p className="text-xs sm:text-sm text-gray-500 line-through whitespace-nowrap">
+                PKR {formatPrice(item.salePrice)}
+              </p>
+            </>
+          ) : (
+            <p className="font-semibold text-base sm:text-lg whitespace-nowrap">PKR {formatPrice(item.salePrice)}</p>
           )}
         </div>
 
-        {/* Content Section */}
-        <div className="p-2 sm:p-3 flex flex-col gap-1.5 sm:gap-2">
-          <p className="text-[13px] sm:text-sm text-gray-700 line-clamp-1">
-            {item.productName}
-          </p>
-          <div className="flex items-baseline flex-wrap gap-x-2 gap-y-0.5">
-            {Number(item.discount) > 0 ? (
-              <>
-                <p className="font-semibold text-base sm:text-lg text-red-600 whitespace-nowrap">
-                  PKR {formatPrice(calculateDiscountedPrice(item.salePrice, item.discount))}
-                </p>
-                <p className="text-xs sm:text-sm text-gray-500 line-through whitespace-nowrap">
-                  PKR {formatPrice(item.salePrice)}
-                </p>
-              </>
-            ) : (
-              <p className="font-semibold text-base sm:text-lg whitespace-nowrap">PKR {formatPrice(item.salePrice)}</p>
-            )}
-          </div>
-
-          {/* Colors */}
-          {/* <div className="flex items-center gap-2">
+        {/* Colors */}
+        {/* <div className="flex items-center gap-2">
             {item.options?.[1]?.values?.map((color, i) => (
               <button
                 key={i}
@@ -256,32 +256,32 @@ const MainCard = ({ item }: MainCardProps) => {
             ))}
           </div> */}
 
-          {/* Wishlist + Add to Cart (Mobile only) */}
-          {isMobileOrTablet && (
-            <div className="flex items-center justify-between mt-2">
-              <button
-                onClick={
-                  isTrue ? handleRemoveFromWishlist : handleAddToWishlist
-                }
-                className="p-2 rounded-full bg-gray-100 hover:bg-gray-200"
-              >
-                {isTrue ? (
-                  <FiHeart size={20} fill="red" stroke="red" />
-                ) : (
-                  <FiHeart size={20} />
-                )}
-              </button>
-              <button
-                onClick={(e) => handleAddToCart(e, item?.isVariant as boolean)}
-                className="flex-1 ml-2 flex items-center gap-2 bg-black text-white px-3 py-2 rounded-lg 
+        {/* Wishlist + Add to Cart (Mobile only) */}
+        {isMobileOrTablet && (
+          <div className="flex items-center justify-between mt-2">
+            <button
+              onClick={
+                isTrue ? handleRemoveFromWishlist : handleAddToWishlist
+              }
+              className="p-2 rounded-full bg-gray-100 hover:bg-gray-200"
+            >
+              {isTrue ? (
+                <FiHeart size={20} fill="red" stroke="red" />
+              ) : (
+                <FiHeart size={20} />
+              )}
+            </button>
+            <button
+              onClick={(e) => handleAddToCart(e, item?.isVariant as boolean)}
+              className="flex-1 ml-2 flex items-center gap-2 bg-black text-white px-3 py-2 rounded-lg 
                            hover:bg-gray-800 transition-colors justify-center"
-              >
-                <ShoppingCart size={18} />{" "}
-                <span className="hidden md:inline-block">Add to cart</span>
-              </button>
-            </div>
-          )}
-        </div>
+            >
+              <ShoppingCart size={18} />{" "}
+              <span className="hidden md:inline-block">Add to cart</span>
+            </button>
+          </div>
+        )}
+      </div>
     </Link>
   );
 };

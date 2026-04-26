@@ -105,6 +105,11 @@ const OrderConfirmation = () => {
                     <p className="font-semibold text-black group-hover:text-gray-600 transition-colors break-words">
                       {typeof item.product === 'object' ? (item.product as any).productName : item.product}
                     </p>
+                    {item.variant && (
+                      <p className="text-xs text-gray-400 mt-1 uppercase font-medium tracking-wider">
+                        Variant: {item.variant.name}
+                      </p>
+                    )}
                     <p className="text-sm text-gray-500 mt-0.5">Qty: {item.quantity}</p>
                   </div>
                 </div>

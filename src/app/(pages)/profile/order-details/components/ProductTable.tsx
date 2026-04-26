@@ -4,6 +4,9 @@ import React from "react";
 const ProductTable: React.FC<{
   products: {
     product: string;
+    variant?: {
+      name: string;
+    };
     price: string;
     quantity: string;
     lineTotal: string;
@@ -22,7 +25,14 @@ const ProductTable: React.FC<{
       <tbody className="divide-y divide-gray-200 bg-white">
         {products?.map((product, index) => (
           <tr key={index} className="hover:bg-gray-50 transition-colors">
-            <td className="py-4 pl-6 text-sm font-medium text-gray-900">{product.product.slice(0,35)}</td>
+            <td className="py-4 pl-6 text-sm font-medium text-gray-900">
+              <div>{product.product}</div>
+              {product.variant && (
+                <div className="text-xs text-gray-400 mt-1 uppercase font-medium">
+                  Variant: {product.variant.name}
+                </div>
+              )}
+            </td>
             <td className="py-4 text-sm text-gray-600">Rs {product.price}</td>
             <td className="py-4 text-sm text-gray-600 text-center">{product.quantity}</td>
             <td className="py-4 pr-6 text-sm font-medium text-gray-900 text-right">Rs {product.lineTotal}</td>
@@ -35,7 +45,12 @@ const ProductTable: React.FC<{
     <div className="lg:hidden flex flex-col divide-y divide-gray-100">
       {products?.map((product, index) => (
         <div key={index} className="p-5 bg-white text-sm">
-          <div className="mb-3 font-semibold text-gray-900 text-base">{product.product}</div>
+          <div className="mb-1 font-semibold text-gray-900 text-base">{product.product}</div>
+          {product.variant && (
+            <div className="text-xs text-gray-400 mb-3 uppercase font-medium">
+              Variant: {product.variant.name}
+            </div>
+          )}
           <div className="flex justify-between items-center text-gray-600 mb-2">
             <span className="text-gray-500 text-xs uppercase tracking-wider font-semibold">Price</span>
             <span className="font-medium text-gray-900">Rs {product.price}</span>

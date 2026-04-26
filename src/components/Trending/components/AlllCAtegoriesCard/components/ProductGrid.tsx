@@ -60,7 +60,7 @@ export default function ProductGrid({
 
       {/* Product Grid */}
       <div
-        className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 sm:gap-4 xl:max-w-[1440px] mx-auto p-3 sm:p-4 transition-opacity duration-300"
+        className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-[2px] sm:gap-4 xl:max-w-[1440px] mx-auto p-1 sm:p-4 transition-opacity duration-300"
         style={{ opacity: isPlaceholderData ? 0.5 : 1 }}
       >
         {/* True first-load skeleton — only when no data exists at all */}

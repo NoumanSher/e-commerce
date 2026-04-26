@@ -201,6 +201,17 @@ const ProductInfo: React.FC<ProductDetailsProps> = ({ product, onGalleryHandlers
       }
     }
 
+    let variantName = "";
+    if (isVariant) {
+      if (colors.length > 0 && sizes.length > 0) {
+        variantName = `${selectedColor.trim()} - ${selectedSize}`;
+      } else if (colors.length > 0) {
+        variantName = selectedColor.trim();
+      } else if (sizes.length > 0) {
+        variantName = selectedSize.trim();
+      }
+    }
+
     let dataToPass = {
       productName: productName,
       userId: userId,
@@ -209,6 +220,7 @@ const ProductInfo: React.FC<ProductDetailsProps> = ({ product, onGalleryHandlers
         {
           productId: _id,
           variantId: selectedVarientId,
+          variantName: variantName,
           price: productPrice, // already discounted in state
           quantity: selectedQuantity,
           lineTotal: productPrice * selectedQuantity,

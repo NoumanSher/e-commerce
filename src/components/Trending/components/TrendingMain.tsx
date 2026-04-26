@@ -7,13 +7,13 @@ const AllProductBtn = lazy(() => import("../../specific/allProductBtn"));
 const TrendingMain = () => {
   return (
     <>
-      <div className="bg-[#faf9f8] px-4 md:px-6 mx-auto pt-7">
+      <div className="bg-[#faf9f8] px-1 md:px-6 mx-auto pt-4 md:pt-7">
         <div>
-            <ProductsCatgories />
-            <ProductsCard />
-            <Suspense fallback={<div className="h-10 w-40 bg-gray-200 rounded animate-pulse mx-auto mt-4" />}>
-              <AllProductBtn />
-            </Suspense>
+          <ProductsCatgories />
+          <ProductsCard />
+          <Suspense fallback={<div className="h-10 w-40 bg-gray-200 rounded animate-pulse mx-auto mt-4" />}>
+            <AllProductBtn />
+          </Suspense>
         </div>
       </div>
     </>
