@@ -16,6 +16,23 @@ import { settingsService } from "@/services/settingsService";
 import { productsService } from "@/services/productsService";
 import { queryKeys } from "@/lib/queryKeys";
 import { SocketProvider } from "@/context/SocketContext";
+import { unstable_cache } from "next/cache";
+
+// Cache the layout-level prefetches for 5 minutes across all requests.
+// This means clicking the logo won't re-hit the backend on every navigation.
+export const revalidate = 300;
+
+const getCachedStoreSettings = unstable_cache(
+  () => settingsService.getStoreSetting(),
+  ["layout-store-settings"],
+  { revalidate: 300, tags: ["store-settings"] }
+);
+
+const getCachedCategories = unstable_cache(
+  () => productsService.fetchAllCategories(),
+  ["layout-categories"],
+  { revalidate: 300, tags: ["categories"] }
+);
 
 // const jost = Jost({ subsets: ["latin"] }); // Load the Jost font
 
@@ -36,16 +53,18 @@ export default async function RootLayout({
 }>) {
   const queryClient = createQueryClient();
 
-  // Prefetch global settings and categories
+  // Prefetch global settings and categories using cached fetchers.
+  // unstable_cache ensures these API calls are served from the server cache
+  // instead of hitting the backend on every page navigation.
   try {
     await Promise.all([
       queryClient.prefetchQuery({
         queryKey: queryKeys.store.settings(),
-        queryFn: () => settingsService.getStoreSetting(),
+        queryFn: getCachedStoreSettings,
       }),
       queryClient.prefetchQuery({
         queryKey: queryKeys.categories.all(),
-        queryFn: () => productsService.fetchAllCategories(),
+        queryFn: getCachedCategories,
       }),
     ]);
   } catch (error) {

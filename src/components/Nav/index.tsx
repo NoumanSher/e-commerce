@@ -139,6 +139,7 @@ const Navbar = () => {
             {/* Logo */}
             <Link
               href="/"
+              prefetch={true}
               className="absolute left-1/2 -translate-x-1/2 pt-2 lg:pt-0 lg:static lg:transform-none flex items-center lg:mx-0 lg:mr-10 h-full"
               onClick={closeMobileMenu}
             >

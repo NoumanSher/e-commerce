@@ -8,11 +8,25 @@ import { settingsService } from "@/services/settingsService";
 import { productsService } from "@/services/productsService";
 import { FaWhatsapp } from "react-icons/fa";
 import Slider from "@/components/Slider/Slider";
+import { unstable_cache } from "next/cache";
 
 import { StoreInfo } from "@/components/Slider/dto/storeSettingDto";
 import { getLandingMetadata } from "@/app/utils/metadata/landingMetadata";
 import { createQueryClient } from "@/lib/queryClient";
 import { queryKeys } from "@/lib/queryKeys";
+
+// Use the same cached fetchers as layout so both share one server-side response.
+const getCachedStoreSettings = unstable_cache(
+  () => settingsService.getStoreSetting(),
+  ["layout-store-settings"],
+  { revalidate: 300, tags: ["store-settings"] }
+);
+
+const getCachedCategories = unstable_cache(
+  () => productsService.fetchAllCategories(),
+  ["layout-categories"],
+  { revalidate: 300, tags: ["categories"] }
+);
 
 const PromoGrid = dynamic(() => import("@/components/PromoGrid/PromoGrid"));
 
@@ -53,21 +67,21 @@ const FAQ = dynamic(() => import("@/components/FAQ"), {
   ssr: false,
 });
 
-// Cache settings: revalidate this server page every 60 seconds
-export const revalidate = 60;
+// Cache settings: revalidate this server page every 5 minutes (matches layout cache)
+export const revalidate = 300;
 
 export default async function LandingPage() {
   const queryClient = createQueryClient();
 
   const storeSettings = (await queryClient.ensureQueryData({
     queryKey: queryKeys.store.settings(),
-    queryFn: () => settingsService.getStoreSetting(),
+    queryFn: getCachedStoreSettings,
   })) as StoreInfo | null;
 
   // Prefetch categories — unified key shared with useCategoriesQuery client-side.
   const categoriesData = await queryClient.fetchQuery({
     queryKey: queryKeys.categories.all(),
-    queryFn: () => productsService.fetchAllCategories(),
+    queryFn: getCachedCategories,
   });
 
   // Prefetch Trending section products for the first category.

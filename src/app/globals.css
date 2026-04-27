@@ -228,3 +228,12 @@
 .rich-text p {
   margin-bottom: 1rem;
 }
+
+.ql-indent-8 {
+  padding-left: 24em;
+}
+
+.ql-video {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+}
