@@ -8,14 +8,14 @@ import dynamic from "next/dynamic";
 const LoginForm = dynamic(() => import("@/components/Login"), { ssr: false });
 const RegisterForm = dynamic(() => import("@/components/Register"), { ssr: false });
 
-import { useStore } from "@/context/storeContext";
+import { useAppUIContext } from "@/context/AppUIContext";
 type AuthModalProps = {
   from?: string;
 };
 
 export function AuthModal({ from }: AuthModalProps) {
   const { isAuthModalOpen, setIsAuthModalOpen, activeTab, setActiveTab } =
-    useStore();
+    useAppUIContext();
 
   return (
     <Dialog open={isAuthModalOpen} onOpenChange={setIsAuthModalOpen}>

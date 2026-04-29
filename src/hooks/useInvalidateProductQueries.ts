@@ -1,8 +1,7 @@
 // src/hooks/useInvalidateProductQueries.ts
 import { useEffect } from "react";
 import { useQueryClient } from "@tanstack/react-query";
-import { useStore } from "@/context/storeContext";
-import { useCart } from "@/components/hooks/useCart";
+import { useCart } from "@/hooks/useCart";
 import { queryKeys } from "@/lib/queryKeys";
 
 export const useInvalidateProductQueries = (
@@ -11,9 +10,7 @@ export const useInvalidateProductQueries = (
   orderNo: string | undefined,
   checkValidation: () => void
 ) => {
-  const { clearCart } = useCart();
-
-  const { productDetail, cartItems, setOrderNumber } = useStore();
+  const { clearCart, setOrderNumber } = useCart();
   const queryClient = useQueryClient();
 
   useEffect(() => {
@@ -27,18 +24,17 @@ export const useInvalidateProductQueries = (
     // creation is reflected on the profile page immediately.
     queryClient.invalidateQueries({ queryKey: queryKeys.user.all() });
 
+    // Invalidate first order discount to prevent reuse on next immediate order
+    queryClient.invalidateQueries({ queryKey: ["firstOrderDiscount"] });
+
     if (section !== "checkout") {
-      if (isSuccess) {
-        setTimeout(() => clearCart(), 3000);
-      }
+      setTimeout(() => clearCart(), 3000);
     }
 
     if (orderNo) setOrderNumber(orderNo);
     checkValidation();
   }, [
     isSuccess,
-    productDetail,
-    cartItems,
     queryClient,
     section,
     clearCart,
@@ -47,4 +43,3 @@ export const useInvalidateProductQueries = (
     checkValidation,
   ]);
 };
-

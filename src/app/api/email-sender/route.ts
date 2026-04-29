@@ -20,10 +20,10 @@ export async function POST(request: Request) {
 
     // Send email to your team
     const teamEmailResponse = await resend.emails.send({
-      from: `Pakshipper Contact Form <${fromEmail}>`,
+      from: `Pak Shipper Store <${fromEmail}>`,
       to: "pakshipperstore@gmail.com",
       replyTo: email,
-      subject: `New Contact Form Submission: ${subject}`,
+      subject: `${subject}`,
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
           <h2 style="color: #000;">New Contact Form Submission</h2>

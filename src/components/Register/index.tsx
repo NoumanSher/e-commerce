@@ -5,7 +5,7 @@ import { useRegister } from "@/hooks/mutations/useAuthMutations";
 import { RegisterPayload } from "@/services/authService";
 import AuthForm from "../AuthForm";
 import { useRouter } from "next/navigation";
-import { useStore } from "@/context/storeContext";
+import { useAppUIContext } from "@/context/AppUIContext";
 
 const registerSchema = z.object({
   email: z.string()
@@ -30,7 +30,7 @@ type RegisterFormProps = {
 
 export default function Register({ from }: RegisterFormProps) {
   const router = useRouter();
-  const { setIsAuthModalOpen } = useStore();
+  const { setIsAuthModalOpen } = useAppUIContext();
 
   const { mutate, isPending, isSuccess } = useRegister();
 

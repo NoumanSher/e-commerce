@@ -1,5 +1,5 @@
 import { useEffect, useCallback } from "react";
-import { useStore } from "@/context/storeContext";
+import { useAppUIContext } from "@/context/AppUIContext";
 import { useAuth } from "@/context/AuthContext";
 import apiClient from "@/lib/apiClient";
 import { BASE_URL_LIVE } from "@/config/env";
@@ -8,7 +8,7 @@ import { toast } from "react-toastify";
 const POPUP_DIMENSIONS = { width: 500, height: 600 } as const;
 
 export const useSocialAuth = () => {
-  const { setIsAuthModalOpen } = useStore();
+  const { setIsAuthModalOpen } = useAppUIContext();
   const { setAuthToken, setUserId, setUserName } = useAuth();
 
   const openAuthPopup = useCallback((url: string, windowName: string) => {

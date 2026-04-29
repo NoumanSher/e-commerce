@@ -13,7 +13,7 @@ import { cn } from "@/lib/utils";
 import Image from "next/image";
 import ImageLightbox from "@/components/ImageLightbox";
 import { toast } from "react-toastify";
-import { useStore } from "@/context/storeContext";
+import { useAppUIContext } from "@/context/AppUIContext";
 interface ReviewCardProps {
   review: Review;
   userId: string;
@@ -27,7 +27,7 @@ export function ReviewCard({
   userId,
   token,
 }: ReviewCardProps) {
-  const { setIsAuthModalOpen } = useStore();
+  const { setIsAuthModalOpen } = useAppUIContext();
   const [helpfulCount, setHelpfulCount] = useState(review.helpfulCount);
   const [isMarkingHelpful, setIsMarkingHelpful] = useState(false);
   const [isHelpful, setIsHelpful] = useState(review.helpfulBy.includes(userId));

@@ -1,19 +1,18 @@
-import Tabel from "@/components/ui/tabel";
+import Table from "@/components/ui/table";
 import CartTotal from "@/components/CartTotal";
- 
 
 interface ShoppingBagProps {
-  checkValidation: any
+  checkValidation: (discountAmount?: number) => void;
 }
 
-export default function ShoppingBag({checkValidation}:ShoppingBagProps) {
+export default function ShoppingBag({ checkValidation }: ShoppingBagProps) {
   return (
     <div className="flex lg:flex-row flex-col  gap-8 lg:pt-6  p-0 ">
       <div className="lg:w-[70%] w-full">
-        <Tabel  />
+        <Table />
       </div>
       <div className="lg:w-[30%] w-full">
-        <CartTotal checkValidation={checkValidation}/>
+        <CartTotal checkValidation={checkValidation} />
       </div>
     </div>
   );

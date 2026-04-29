@@ -5,9 +5,9 @@ import { FiHeart, FiUser, FiShoppingCart, FiHome, FiInfo, FiPhone } from "react-
 import { useRouter, usePathname } from "next/navigation";
 import Link from "next/link";
 import { CartIcon } from "@/assets/svg/common";
-import { useWishlist } from "../hooks/useWishlist";
-import { useCart } from "../hooks/useCart";
-import { useStore } from "@/context/storeContext";
+import { useWishlist } from "@/hooks/useWishlist";
+import { useCart } from "@/hooks/useCart";
+import { useAppUIContext } from "@/context/AppUIContext";
 import { useAuth } from "@/context/AuthContext";
 import { useGetStoreSettings } from "../Slider/query/storeSettingQuery";
 import Image from "next/image";
@@ -25,7 +25,7 @@ const Navbar = () => {
   const isHomePage = pathname === "/";
 
   const { wishlistCount } = useWishlist();
-  const { setIsAuthModalOpen } = useStore();
+  const { setIsAuthModalOpen } = useAppUIContext();
   const { authToken } = useAuth();
   const { cartCount } = useCart();
   const router = useRouter();

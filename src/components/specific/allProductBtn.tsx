@@ -1,7 +1,7 @@
 "use client"
 import React, { useCallback } from "react";
 import Link from "next/link";
-import { useStore } from "@/context/storeContext";
+import { useAppUIContext } from "@/context/AppUIContext";
 import { useQueryClient } from "@tanstack/react-query";
 import { queryKeys } from "@/lib/queryKeys";
 import { productsService } from "@/services/productsService";
@@ -11,7 +11,7 @@ import { useRouter } from "next/navigation";
 import { Button } from "../ui/button";
 
 export default function AllProductBtn() {
-  const { selectedCategory } = useStore();
+  const { selectedCategory } = useAppUIContext();
   const queryClient = useQueryClient();
   const router = useRouter();
 

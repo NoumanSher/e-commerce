@@ -2,7 +2,7 @@ import { useMutation } from "@tanstack/react-query";
 import { authService, RegisterPayload, AuthResponse } from "@/services/authService";
 import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
-import { useStore } from "@/context/storeContext";
+import { useAuth } from "@/context/AuthContext";
 
 interface CustomError extends Error {
   response?: {
@@ -11,7 +11,7 @@ interface CustomError extends Error {
 }
 
 export const useRegister = () => {
-  const { setAuthToken, setUserId, setUserName } = useStore();
+  const { setAuthToken, setUserId, setUserName } = useAuth();
 
   const router = useRouter();
   return useMutation<AuthResponse, CustomError, RegisterPayload>({

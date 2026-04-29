@@ -4,14 +4,14 @@ import MainCard from "@/components/Card";
 import { Product } from "@/components/productDetail/productDetailDto";
 import Link from "next/link";
 import { useCategories } from "@/hooks/useCategories";
-import { useStore } from "@/context/storeContext";
+import { useAppUIContext } from "@/context/AppUIContext";
 
 interface WishCardListProps {
   products: Product[];
 }
 const WishCardList = ({ products }: WishCardListProps) => {
   const { data: categoriesData } = useCategories();
-  const { selectedCategory } = useStore();
+  const { selectedCategory } = useAppUIContext();
 
   const continueShoppingSlug = selectedCategory || categoriesData?.categories?.[0]?.slug;
   const continueShoppingUrl = continueShoppingSlug 

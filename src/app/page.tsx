@@ -76,7 +76,7 @@ export default async function LandingPage() {
   const storeSettings = (await queryClient.ensureQueryData({
     queryKey: queryKeys.store.settings(),
     queryFn: getCachedStoreSettings,
-  })) as StoreInfo | null;
+  })) as StoreInfo | undefined;
 
   // Prefetch categories — unified key shared with useCategoriesQuery client-side.
   const categoriesData = await queryClient.fetchQuery({
@@ -100,7 +100,7 @@ export default async function LandingPage() {
   }
 
   const whatsappPhone =
-    (storeSettings as any)?.whatsappPhone ??
+    storeSettings?.mobile ??
     process.env.NEXT_PUBLIC_WHATSAPP_PHONE ??
     "923176872900";
   const whatsappURL = `https://wa.me/${whatsappPhone}?text=${encodeURIComponent("hey, I need help")}`;
@@ -111,11 +111,11 @@ export default async function LandingPage() {
       <ShoppingCartModal />
 
       <HydrationBoundary state={dehydrate(queryClient)}>
-        <Slider storeSettings={storeSettings as any} />
+        <Slider storeSettings={storeSettings} />
 
         <Trending />
 
-        <PromoGrid promoCards={(storeSettings as any)?.promoCards || []} />
+        <PromoGrid promoCards={storeSettings?.promoCards || []} />
 
         {storeSettings?.bannerImg && (
           <div className="w-full pb-12">

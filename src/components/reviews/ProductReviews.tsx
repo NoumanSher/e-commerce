@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback } from "react";
 import { reviewService } from "@/services/reviewService";
 import { ReviewsResponse, SortOption } from "@/types";
 import { useAuth } from "@/context/AuthContext";
-import { ProductReviewsView } from "./ProductReviewsView";
+import { ProductReviewsView } from "../Reviews/ProductReviewsView";
 
 interface ProductReviewsProps {
   productId: string;

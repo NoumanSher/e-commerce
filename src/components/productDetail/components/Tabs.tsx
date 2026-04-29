@@ -1,6 +1,6 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { ProductReviews } from "@/components/reviews/ProductReviews";
-import { useStore } from "@/context/storeContext";
+import { ProductReviews } from "@/components/Reviews/ProductReviews";
+import { useAppUIContext } from "@/context/AppUIContext";
 import { useAuth } from "@/context/AuthContext";
 import { useGetProductRelatedInfo } from "@/components/productDetail/productDetailQuery";
 import MainCard from "../../Card/index";
@@ -15,7 +15,7 @@ interface RelatedProductsProps {
 }
 
 export default function RelatedProducts({ productSlug, productId, activeTab = "related products", onTabChange }: RelatedProductsProps) {
-  const { selectedCategory } = useStore();
+  const { selectedCategory } = useAppUIContext();
   const { userId, authToken } = useAuth();
 
   // Read categories directly from the unified cache — no extra fetch needed.

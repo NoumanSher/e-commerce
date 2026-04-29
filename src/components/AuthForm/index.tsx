@@ -2,7 +2,7 @@ import React from "react";
 import { useForm, FieldValues } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import { useStore } from "@/context/storeContext";
+import { useAppUIContext } from "@/context/AppUIContext";
 import { FaGoogle, FaLinkedin } from "react-icons/fa";
 import { useSocialAuth } from "@/hooks/useSocialAuth";
 
@@ -33,7 +33,7 @@ const AuthForm: React.FC<AuthFormProps> = ({
   fields,
   isLoading,
 }) => {
-  const { setActiveTab } = useStore();
+  const { setActiveTab } = useAppUIContext();
   const { handleGoogleLogin, handleLinkedInLogin } = useSocialAuth();
 
   const {

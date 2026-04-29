@@ -1,9 +1,9 @@
-import { useStore } from "@/context/storeContext";
+import { useCartContext } from "@/context/CartContext";
 import React, { memo, useState, useEffect } from "react";
 import { FiEye } from "react-icons/fi";
 import { MdOutlineShoppingBag } from "react-icons/md";
-import { useWishlist } from "../hooks/useWishlist";
-import { useCart } from "../hooks/useCart";
+import { useWishlist } from "@/hooks/useWishlist";
+import { useCart } from "@/hooks/useCart";
 import { useRouter } from "next/navigation";
 import { Product } from "@/components/productDetail/productDetailDto";
 import { FiHeart } from "react-icons/fi";
@@ -13,7 +13,7 @@ interface ICardHover {
   product?: Product;
 }
 const CardHover = ({ isHovered, product }: ICardHover) => {
-  const { setIsCartOpen } = useStore();
+  const { setIsCartOpen } = useCartContext();
   const router = useRouter();
   const { addToCart } = useCart();
   const { isInWishlist, removeFromWishlist, addToWishlist } = useWishlist();

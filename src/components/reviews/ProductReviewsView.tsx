@@ -1,9 +1,9 @@
 import React from "react";
-import { ReviewCard } from "./ReviewCard";
-import { ReviewForm } from "./ReviewForm";
-import { ReviewsStats } from "./ReviewsStats";
-import { ReviewsFilter } from "./ReviewsFilter";
-import { ReviewsPagination } from "./ReviewsPagination";
+import { ReviewCard } from "@/components/Reviews/ReviewCard";
+import { ReviewForm } from "@/components/Reviews/ReviewForm";
+import { ReviewsStats } from "@/components/Reviews/ReviewsStats";
+import { ReviewsFilter } from "@/components/Reviews/ReviewsFilter";
+import { ReviewsPagination } from "@/components/Reviews/ReviewsPagination";
 import { ReviewsResponse, SortOption } from "@/types";
 import { Loader2, AlertCircle } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";

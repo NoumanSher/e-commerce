@@ -1,7 +1,7 @@
 import { useRouter } from "next/navigation";
 import React, { useEffect } from "react";
 import { toast } from "react-toastify";
-import { useCart } from "../hooks/useCart";
+import { useCart } from "@/hooks/useCart";
 import QuantitySelector from "../productDetail/components/QuantitySelector";
 import Image from "next/image";
 import useSwipeClose from "@/hooks/useSwipeClose";
@@ -72,9 +72,8 @@ const ShoppingCart: React.FC<ShoppingCartProps> = ({ isOpen, onClose }) => {
       {/* Shopping Cart Modal */}
       <div
         id="shopping-cart-panel"
-        className={`fixed top-0 right-0 w-full sm:w-[25rem] h-full bg-white shadow-lg z-50 transform transition-transform ${
-          isOpen ? "translate-x-0" : "translate-x-full"
-        } flex flex-col`}
+        className={`fixed top-0 right-0 w-full sm:w-[25rem] h-full bg-white shadow-lg z-50 transform transition-transform ${isOpen ? "translate-x-0" : "translate-x-full"
+          } flex flex-col`}
       >
         {/* Header */}
         <div className="flex justify-between items-center bg-[#faf9f8] p-6 border-b">
@@ -181,7 +180,7 @@ const ShoppingCart: React.FC<ShoppingCartProps> = ({ isOpen, onClose }) => {
             View Cart
           </button>
           <button
-            className="w-full bg-blue-600 text-white py-2 rounded-md"
+            className="w-full bg-black text-white py-2 rounded-md"
             onClick={() => {
               router.push("/cart?section=fscm"), onClose();
             }}

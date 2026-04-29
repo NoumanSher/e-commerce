@@ -3,13 +3,13 @@ import { footerData } from '@/data/data'
 import React, { memo } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import { useStore } from '@/context/storeContext'
+import { useAppUIContext } from '@/context/AppUIContext'
 import { useAuth } from '@/context/AuthContext'
 import { useGetStoreSettings } from '@/components/Slider/query/storeSettingQuery'
 
 const FooterTabs = () => {
   const router = useRouter();
-  const { setIsAuthModalOpen, setActiveTab } = useStore();
+  const { setIsAuthModalOpen, setActiveTab } = useAppUIContext();
   const { authToken } = useAuth();
 
   const handleAccountClick = (e: React.MouseEvent) => {

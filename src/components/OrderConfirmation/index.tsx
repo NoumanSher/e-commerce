@@ -1,12 +1,12 @@
 import Link from "next/link";
 import React, { useEffect } from "react";
 import { useGetOrderDetailByorderNumber } from "./query/orderConfirmationQuery";
-import { useStore } from "@/context/storeContext";
+import { useCartContext } from "@/context/CartContext";
 import { useRouter } from "next/navigation";
 import OrderConfirmationSkeleton from "../OrderSkeleton";
 
 const OrderConfirmation = () => {
-  const { orderNumber } = useStore();
+  const { orderNumber } = useCartContext();
   const { data, isLoading } = useGetOrderDetailByorderNumber(orderNumber);
   const router = useRouter();
   
@@ -16,13 +16,14 @@ const OrderConfirmation = () => {
   
   // Safe parsing to prevent crashes if items are missing
   const items = data?.data?.items || [];
-  const subTotal = items.reduce(
+  const subTotal = data?.data?.orderDetails?.subTotal ?? items.reduce(
     (acc, item) => acc + (item.lineTotal || 0),
     0
   );
 
-  const deliveryFee = data?.data?.deliveryFee ?? 0;
-  const totalCost = subTotal + deliveryFee;
+  const deliveryFee = data?.data?.orderDetails?.deliveryFee ?? data?.data?.deliveryFee ?? 0;
+  const discountAmount = data?.data?.orderDetails?.discountAmount ?? 0;
+  const totalCost = data?.data?.orderDetails?.totalPrice ?? (subTotal + deliveryFee - discountAmount);
 
   const formattedDate = data?.data?.createdAt 
     ? new Date(data.data.createdAt).toLocaleDateString('en-US', {
@@ -131,6 +132,12 @@ const OrderConfirmation = () => {
               <span className="text-gray-500 font-medium">Shipping</span>
               <span className="font-semibold text-black">{shippingType}</span>
             </div>
+            {discountAmount > 0 && (
+              <div className="flex justify-between text-sm py-2 px-2 bg-gray-50">
+                <span className="text-black font-medium">First Order Discount</span>
+                <span className="font-semibold text-black">− Rs. {discountAmount}</span>
+              </div>
+            )}
             <div className="flex justify-between text-base pt-4 mt-4 border-t border-gray-100">
               <span className="text-black font-bold uppercase tracking-wide">Total to pay</span>
               <span className="text-black font-extrabold">Rs. {totalCost}</span>

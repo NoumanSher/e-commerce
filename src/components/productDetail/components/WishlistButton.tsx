@@ -1,4 +1,4 @@
-import { useWishlist } from "@/components/hooks/useWishlist";
+import { useWishlist } from "@/hooks/useWishlist";
 import React from "react";
 import { Product } from "@/components/productDetail/productDetailDto";
 import { FiHeart } from "react-icons/fi";

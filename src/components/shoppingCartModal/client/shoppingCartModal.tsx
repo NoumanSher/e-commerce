@@ -1,11 +1,11 @@
 "use client";
 import React from "react";
 import ShoppingCart from "../../shoppingCartModal";
-import { useStore } from "@/context/storeContext";
+import { useCartContext } from "@/context/CartContext";
 
 
 const ShoppingCartModal: React.FC = () => {
-  const { setIsCartOpen, isCartOpen } = useStore();
+  const { setIsCartOpen, isCartOpen } = useCartContext();
 
 
   return (

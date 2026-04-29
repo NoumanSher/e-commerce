@@ -28,9 +28,14 @@ export interface CartItem {
   variantID?: string;
 }
 
+export enum PaymentMethod {
+  Cash = "cash",
+  Card = "card",
+}
+
 export interface CreateOrderPayload extends ProductDetailData {
   address: OrderAddress;
-  paymentMethod: string;
+  paymentMethod: PaymentMethod;
   userId: string;
 }
 
@@ -66,6 +71,21 @@ export interface OrderResponse {
   success: boolean;
   message: string;
   data: OrderResponseData;
+}
+
+/** Response for GET /order/userAddress/:userId */
+export interface UserAddressResponse {
+  success: boolean;
+  message: string;
+  data: OrderAddress | null;
+}
+
+/** Response for GET /order/user-all-orders/:userId */
+export interface OrdersListResponse {
+  success: boolean;
+  message: string;
+  data: OrderResponseData[];
+  total?: number;
 }
 
 // ─── User ────────────────────────────────────────────────────────────────────

@@ -13,8 +13,9 @@ import MobileActionBar from "./components/MobileActionBar";
 import { useRouter } from "next/navigation";
 import dynamic from "next/dynamic";
 import { Product } from "./productDetailDto";
-import { useStore } from "@/context/storeContext";
-import { useCart } from "../hooks/useCart";
+import { useAppUIContext } from "@/context/AppUIContext";
+import { useAuth } from "@/context/AuthContext";
+import { useCart } from "@/hooks/useCart";
 import { calculateDiscountedPrice } from "@/lib/utils";
 const SocialMediaShareWithNoSSR = dynamic(
   () => import("./components/SocialMediaShare"),
@@ -32,7 +33,8 @@ interface ProductDetailsProps {
 }
 
 const ProductInfo: React.FC<ProductDetailsProps> = ({ product, onGalleryHandlersReady, onReviewClick }) => {
-  const { updateProductDetailData, userId } = useStore();
+  const { updateProductDetailData } = useAppUIContext();
+  const { userId } = useAuth();
   const { addToCart } = useCart();
   const {
     _id,

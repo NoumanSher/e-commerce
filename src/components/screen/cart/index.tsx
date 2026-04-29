@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect, useMemo } from "react";
+import React, { useEffect } from "react";
 import { useSearchParams } from "next/navigation";
 import ShoppingBag from "../shoppingBag";
 import Checkout from "../checkout";
@@ -11,82 +11,116 @@ interface Tab {
   description: string;
 }
 
+type CartStep = 1 | 2 | 3;
+
+interface CartState {
+  activeTab: CartStep;
+  validations: {
+    shoppingBag: boolean;
+    shippingCheckout: boolean;
+    confirmation: boolean;
+  };
+}
+
+type CartAction =
+  | { type: "INITIALIZE"; section: string | null }
+  | { type: "SET_TAB"; step: CartStep }
+  | { type: "COMPLETE_STEP"; step: CartStep };
+
+const cartReducer = (state: CartState, action: CartAction): CartState => {
+  switch (action.type) {
+    case "INITIALIZE":
+      if (action.section === "checkout" || action.section === "fscm") {
+        return {
+          ...state,
+          activeTab: 2,
+          validations: { ...state.validations, shoppingBag: true },
+        };
+      }
+      return { ...state, activeTab: 1 };
+    case "SET_TAB":
+      // Disable navigation if user is on tab 3
+      if (state.activeTab === 3) return state;
+      // Second tab logic: only clickable after the shopping bag is validated
+      if (action.step === 2 && !state.validations.shoppingBag) return state;
+      return { ...state, activeTab: action.step };
+    case "COMPLETE_STEP":
+      if (action.step === 1) {
+        return {
+          ...state,
+          activeTab: 2,
+          validations: { ...state.validations, shoppingBag: true },
+        };
+      }
+      if (action.step === 2) {
+        return {
+          ...state,
+          activeTab: 3,
+          validations: { ...state.validations, shippingCheckout: true },
+        };
+      }
+      if (action.step === 3) {
+        return {
+          ...state,
+          validations: { ...state.validations, confirmation: true },
+        };
+      }
+      return state;
+    default:
+      return state;
+  }
+};
+
 const CartScreen = () => {
-  const searchParams = useSearchParams(); // Access query parameters
-  const section = searchParams.get("section"); // Get 'section' param
+  const searchParams = useSearchParams();
+  const section = searchParams.get("section");
 
-  const tabs: Tab[] = useMemo(
-    () => [
-      {
-        label: "01 SHOPPING BAG",
-        step: 1,
-        description: "Manage Your Items List",
-      },
-      {
-        label: "02 SHIPPING AND CHECKOUT",
-        step: 2,
-        description: "Checkout Your Items List",
-      },
-      {
-        label: "03 CONFIRMATION",
-        step: 3,
-        description: "Review And Submit Your Order",
-      },
-    ],
-    []
-  );
-
-  const [activeTab, setActiveTab] = useState<number>(1);
-  const [validations, setValidations] = useState({
-    shoppingBag: false,
-    shippingCheckout: false,
-    confirmation: false,
+  const [state, dispatch] = React.useReducer(cartReducer, {
+    activeTab: 1,
+    validations: {
+      shoppingBag: false,
+      shippingCheckout: false,
+      confirmation: false,
+    },
   });
 
-  // Set the initial active tab based on the 'section' query
+  const tabs: Tab[] = [
+    {
+      label: "01 SHOPPING BAG",
+      step: 1,
+      description: "Manage Your Items List",
+    },
+    {
+      label: "02 SHIPPING AND CHECKOUT",
+      step: 2,
+      description: "Checkout Your Items List",
+    },
+    {
+      label: "03 CONFIRMATION",
+      step: 3,
+      description: "Review And Submit Your Order",
+    },
+  ];
+
   useEffect(() => {
-    if (section === "checkout" || section === "fscm") {
-      setActiveTab(2); // Activate second tab
-      setValidations((prevState) => ({
-        ...prevState,
-        shoppingBag: true, // Mark the first tab as validated
-      }));
-    } else {
-      setActiveTab(1); // Default to the first tab
-    }
+    dispatch({ type: "INITIALIZE", section });
   }, [section]);
 
   const isTabClickable = (step: number): boolean => {
-    // Disable navigation if user is on tab 3
-    if (activeTab === 3) return false;
-
-    // Disable the first tab if 'checkout' section is passed
-    if (step === 1) {
-      return section !== "checkout"; // First tab is only clickable if not in 'checkout' section
-    }
-
-    // Second tab logic: only clickable after the shopping bag is validated
-    if (step === 2) return validations.shoppingBag;
-
+    if (state.activeTab === 3) return false;
+    if (step === 1) return section !== "checkout";
+    if (step === 2) return state.validations.shoppingBag;
     return false;
   };
 
   const handleTabClick = (step: number) => {
     if (isTabClickable(step)) {
-      setActiveTab(step);
+      dispatch({ type: "SET_TAB", step: step as CartStep });
     }
   };
 
   const completeValidation = (step: number) => {
-    if (step === 1) {
-      setValidations({ ...validations, shoppingBag: true });
-      setActiveTab(2);
-    } else if (step === 2) {
-      setValidations({ ...validations, shippingCheckout: true });
-      setActiveTab(3);
-    } else if (step === 3) {
-      setValidations({ ...validations, confirmation: true });
-    }
+    dispatch({ type: "COMPLETE_STEP", step: step as CartStep });
   };
 
   return (
@@ -99,20 +133,20 @@ const CartScreen = () => {
             className={`flex-1 text-start py-4 cursor-pointer ${isTabClickable(tab.step)
               ? "text-black"
               : "text-gray-400 cursor-not-allowed"
-              } ${activeTab === tab.step
+              } ${state.activeTab === tab.step
                 ? "border-b-4 border-black font-semibold"
                 : ""
               }`}
             onClick={() => handleTabClick(tab.step)}
           >
             <h2
-              className={`${activeTab === tab.step ? "text-black" : "text-gray-400 "
+              className={`${state.activeTab === tab.step ? "text-black" : "text-gray-400 "
                 } text-xl`}
             >
               {tab.label}
             </h2>
             <p
-              className={`${activeTab === tab.step ? "text-black" : "text-gray-400"
+              className={`${state.activeTab === tab.step ? "text-black" : "text-gray-400"
                 } text-sm`}
             >
               {tab.description}
@@ -122,13 +156,13 @@ const CartScreen = () => {
       </div>
 
       <div>
-        {activeTab === 1 && (
-          <ShoppingBag checkValidation={() => completeValidation(1)} />
+        {state.activeTab === 1 && (
+          <ShoppingBag checkValidation={(discount) => completeValidation(1)} />
         )}
-        {activeTab === 2 && (
+        {state.activeTab === 2 && (
           <Checkout checkValidation={() => completeValidation(2)} />
         )}
-        {activeTab === 3 && <OrderConfirmation />}
+        {state.activeTab === 3 && <OrderConfirmation />}
       </div>
       <AuthModal from="cart" />
     </div>

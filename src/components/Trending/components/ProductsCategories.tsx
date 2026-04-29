@@ -1,7 +1,7 @@
 "use client";
 import React, { memo, useEffect } from "react";
 import { useCategories } from "@/hooks/useCategories";
-import { useStore } from "@/context/storeContext";
+import { useAppUIContext } from "@/context/AppUIContext";
 
 const ProductsCategories = () => {
   const {
@@ -9,7 +9,7 @@ const ProductsCategories = () => {
     isLoading: categoriesLoading,
     error: categoriesError,
   } = useCategories();
-  const { updateSelectedCategory, selectedCategory, isHydrated } = useStore();
+  const { updateSelectedCategory, selectedCategory, isHydrated } = useAppUIContext();
 
   useEffect(() => {
     // Only set a default category if the store is hydrated 

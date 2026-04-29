@@ -5,12 +5,12 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useQueryClient } from "@tanstack/react-query";
 import { ShoppingCart } from "lucide-react";
-import CardHover from "../cardHover";
+import CardHover from "../CardHover";
 import { Product } from "@/components/productDetail/productDetailDto";
 import useIsMobileOrTablet from "@/hooks/useIsHoveredOrMobile";
-import { useWishlist } from "../hooks/useWishlist";
-import { useCart } from "../hooks/useCart";
-import { useStore } from "@/context/storeContext";
+import { useWishlist } from "@/hooks/useWishlist";
+import { useCart } from "@/hooks/useCart";
+import { useCartContext } from "@/context/CartContext";
 import { FiHeart } from "react-icons/fi";
 import { formatPrice, calculateDiscountedPrice } from "@/lib/utils";
 import { productsService } from "@/services/productsService";
@@ -42,7 +42,7 @@ const MainCard = ({ item }: MainCardProps) => {
   const queryClient = useQueryClient();
   const router = useRouter();
   const { addToCart } = useCart();
-  const { setIsCartOpen } = useStore();
+  const { setIsCartOpen } = useCartContext();
 
   const [hoveredCard, setHoveredCard] = useState<string | null>(null);
   // const [isImageLoaded, setIsImageLoaded] = useState(false);

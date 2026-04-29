@@ -17,6 +17,12 @@ import { productsService } from "@/services/productsService";
 import { queryKeys } from "@/lib/queryKeys";
 import { SocketProvider } from "@/context/SocketContext";
 import { unstable_cache } from "next/cache";
+import dynamic from "next/dynamic";
+
+const FirstOrderBanner = dynamic(
+  () => import("@/components/FirstOrderBanner"),
+  { ssr: false }
+);
 
 // Cache the layout-level prefetches for 5 minutes across all requests.
 // This means clicking the logo won't re-hit the backend on every navigation.
@@ -118,6 +124,7 @@ export default async function RootLayout({
                 <Navbar />
                 <main className="flex-1">{children}</main>
                 <Footer />
+                <FirstOrderBanner />
                 <OfflineIndicator />
                 <ReactQueryDevtools initialIsOpen={false} />
               </SocketProvider>

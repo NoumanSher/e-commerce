@@ -10,6 +10,7 @@ interface CartContextProps {
   setOrderNumber: (value: string) => void;
   isCartOpen: boolean;
   setIsCartOpen: (value: boolean) => void;
+  isHydrated: boolean;
 }
 
 const CartContext = createContext<CartContextProps | undefined>(undefined);
@@ -20,20 +21,28 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [isHydrated, setIsHydrated] = useState(false);
 
+  // Initialize from storage on mount
   useEffect(() => {
-    setCartItems(storageApi.getJSON<CartItem[]>(STORAGE_KEYS.cart, []));
+    const storedCart = storageApi.getJSON<CartItem[]>(STORAGE_KEYS.cart, []);
+    setCartItems(storedCart);
     setIsHydrated(true);
   }, []);
 
-  // Sync cart items to storage automatically
+  // Sync cart items to storage automatically whenever they change
   useEffect(() => {
     if (!isHydrated) return;
     storageApi.setJSON(STORAGE_KEYS.cart, cartItems);
   }, [cartItems, isHydrated]);
 
   const value = useMemo(() => ({
-    cartItems, setCartItems, orderNumber, setOrderNumber, isCartOpen, setIsCartOpen
-  }), [cartItems, orderNumber, isCartOpen]);
+    cartItems, 
+    setCartItems, 
+    orderNumber, 
+    setOrderNumber, 
+    isCartOpen, 
+    setIsCartOpen,
+    isHydrated
+  }), [cartItems, orderNumber, isCartOpen, isHydrated]);
 
   return <CartContext.Provider value={value}>{children}</CartContext.Provider>;
 };

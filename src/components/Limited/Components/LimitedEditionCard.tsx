@@ -1,7 +1,7 @@
 import Image from "next/image";
 import React, { memo, useCallback, useState } from "react";
 import Imag from "@/assets/img/vidar-nordli-mathisen-IbaTONUx7BI-unsplash.jpg";
-import CardHover from "@/components/cardHover";
+import CardHover from "@/components/CardHover";
 import { LimitedEditionCardProps } from "../types/LimitedEditionCardDto";
 
 const LimitedEditionCard = ({ index }: LimitedEditionCardProps) => {

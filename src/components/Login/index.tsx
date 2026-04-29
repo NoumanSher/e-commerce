@@ -6,7 +6,6 @@ import { LoginPayload } from "@/services/authService";
 import { useAppUIContext } from "@/context/AppUIContext";
 import { useLogin } from "@/hooks/mutations/useAuthMutations";
 import { useRouter } from "next/navigation";
-import { useStore } from "@/context/storeContext";
 
 type LoginFormProps = {
   from?: string;
@@ -23,7 +22,7 @@ const loginSchema = z.object({
 
 export default function LoginForm({ from }: LoginFormProps) {
   const router = useRouter();
-  const { activeTab, setActiveTab } = useAppUIContext();
+  const { activeTab, setActiveTab, setIsAuthModalOpen } = useAppUIContext();
 
   const {
     mutate: loginUser,
@@ -32,8 +31,6 @@ export default function LoginForm({ from }: LoginFormProps) {
     error,
     isSuccess,
   } = useLogin();
-
-  const { setIsAuthModalOpen } = useStore(); // Keep this line as it's not explicitly removed by the instruction's code edit.
 
   useEffect(() => {
     const el = document.getElementById('pobtn');

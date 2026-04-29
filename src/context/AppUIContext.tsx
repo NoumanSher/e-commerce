@@ -12,6 +12,7 @@ interface AppUIContextProps {
   updateSelectedCategory: (categoryId: string) => void;
   productDetail: ProductDetailData | null;
   updateProductDetailData: (data: ProductDetailData) => void;
+  isHydrated: boolean;
 }
 
 const AppUIContext = createContext<AppUIContextProps | undefined>(undefined);
@@ -27,7 +28,7 @@ export const AppUIProvider = ({ children }: { children: ReactNode }) => {
     // Migration for legacy typo just in case
     const legacy = localStorage.getItem("productDeatails");
     if (legacy) {
-      localStorage.setItem("productDetails", legacy);
+      storageApi.set("productDetails", legacy);
       localStorage.removeItem("productDeatails");
     }
     
@@ -54,8 +55,9 @@ export const AppUIProvider = ({ children }: { children: ReactNode }) => {
     isAuthModalOpen, setIsAuthModalOpen,
     activeTab, setActiveTab,
     selectedCategory, updateSelectedCategory,
-    productDetail, updateProductDetailData
-  }), [isAuthModalOpen, activeTab, selectedCategory, productDetail, updateSelectedCategory, updateProductDetailData]);
+    productDetail, updateProductDetailData,
+    isHydrated
+  }), [isAuthModalOpen, activeTab, selectedCategory, productDetail, updateSelectedCategory, updateProductDetailData, isHydrated]);
 
   return <AppUIContext.Provider value={value}>{children}</AppUIContext.Provider>;
 };

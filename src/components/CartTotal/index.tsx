@@ -1,51 +1,96 @@
 import { Button } from "../ui/button";
 import React, { useState } from "react";
-import { useCart } from "../hooks/useCart";
+import { useCart } from "@/hooks/useCart";
+import { useFirstOrderDiscount } from "@/hooks/useFirstOrderDiscount";
+import { useAuth } from "@/context/AuthContext";
+import { FiTag } from "react-icons/fi";
 
 interface ShoppingBagProps {
-  checkValidation: any;
+  checkValidation: (discountAmount?: number) => void;
 }
+
 const CartTotals: React.FC<ShoppingBagProps> = ({ checkValidation }) => {
-  // const [selectedShipping, setSelectedShipping] = useState("free");
-  const { subTotal, totalCost } = useCart();
-  const [isLoading, setIsLoading] = useState(false);
+  const { subTotal } = useCart();
+  const { authToken } = useAuth();
+  const { isEligible, discountAmount, discountPercent, isLoading } =
+    useFirstOrderDiscount();
+  const [isCheckoutLoading, setIsCheckoutLoading] = useState(false);
+
+  const discountedTotal = subTotal - discountAmount;
 
   const handleCheckout = () => {
-    setIsLoading(true);
-    checkValidation();
-    // No need to set back to false as it navigates away
+    setIsCheckoutLoading(true);
+    checkValidation(isEligible ? discountAmount : 0);
   };
 
   return (
-    <div className="border lg:border-gray-200 border-gray-600 lg:p-6 p-4  w-full">
+    <div className="border lg:border-gray-200 border-gray-600 lg:p-6 p-4 w-full">
       <h2 className="text-xl font-semibold text-gray-800 mb-4">CART TOTALS</h2>
-      <div className="flex justify-between mb-4">
+
+      {/* Subtotal */}
+      <div className="flex justify-between mb-3">
         <span className="text-gray-700">SUBTOTAL</span>
         <span className="font-semibold text-gray-800">
-          {subTotal.toFixed(0)}
+          Rs. {subTotal.toFixed(0)}
         </span>
       </div>
 
-      <div className="mb-4">
-        <div className="mt-2">
-        </div>
+      {/* First-order discount row */}
+      {authToken && (
+        <>
+          {isLoading ? (
+            <div className="flex justify-between mb-3 animate-pulse">
+              <div className="h-4 w-40 bg-gray-200 rounded" />
+              <div className="h-4 w-16 bg-gray-200 rounded" />
+            </div>
+          ) : isEligible && discountAmount > 0 ? (
+            <div className="flex justify-between items-center mb-3 py-2 px-3 bg-gray-50 border border-gray-200">
+              <span className="flex items-center gap-1.5 text-sm text-black font-medium">
+                <FiTag size={13} className="shrink-0" />
+                FIRST ORDER ({discountPercent}% OFF)
+              </span>
+              <span className="text-sm font-semibold text-black">
+                − Rs. {discountAmount.toFixed(0)}
+              </span>
+            </div>
+          ) : null}
+        </>
+      )}
+
+      {/* Delivery */}
+      <div className="flex justify-between mb-4">
+        <span className="text-gray-700 text-sm">DELIVERY</span>
+        <span className="text-sm text-gray-500">Free</span>
       </div>
 
-      <div className="flex justify-between mb-4">
+      {/* Divider */}
+      <div className="border-t border-gray-200 my-3" />
+
+      {/* Total */}
+      <div className="flex justify-between mb-5">
         <span className="text-gray-800 font-semibold">TOTAL</span>
         <span className="text-xl font-semibold text-gray-800">
-          {totalCost.toFixed(0)}
+          Rs. {discountedTotal.toFixed(0)}
         </span>
       </div>
 
       <Button
-        disabled={totalCost === 0}
-        loading={isLoading}
-        className={`${totalCost === 0 ? "cursor-not-allowed opacity-50" : "cursor-pointer"} w-full bg-black text-white py-6 rounded-none shadow-none uppercase font-semibold`}
+        disabled={subTotal === 0}
+        loading={isCheckoutLoading}
+        className={`${
+          subTotal === 0 ? "cursor-not-allowed opacity-50" : "cursor-pointer"
+        } w-full bg-black text-white py-6 rounded-none shadow-none uppercase font-semibold`}
         onClick={handleCheckout}
       >
         PROCEED TO CHECKOUT
       </Button>
+
+      {/* Discount hint for guests */}
+      {!authToken && (
+        <p className="mt-3 text-xs text-gray-400 text-center">
+          Sign up to get <span className="font-semibold text-black">5% OFF</span> your first order.
+        </p>
+      )}
     </div>
   );
 };

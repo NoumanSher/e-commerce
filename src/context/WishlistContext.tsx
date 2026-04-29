@@ -6,6 +6,7 @@ import { Product } from "@/components/productDetail/productDetailDto";
 interface WishlistContextProps {
   wishlist: Product[];
   setWishlist: Dispatch<SetStateAction<Product[]>>;
+  isHydrated: boolean;
 }
 
 const WishlistContext = createContext<WishlistContextProps | undefined>(undefined);
@@ -24,7 +25,7 @@ export const WishlistProvider = ({ children }: { children: ReactNode }) => {
     storageApi.setJSON(STORAGE_KEYS.wishlist, wishlist);
   }, [wishlist, isHydrated]);
 
-  const value = useMemo(() => ({ wishlist, setWishlist }), [wishlist]);
+  const value = useMemo(() => ({ wishlist, setWishlist, isHydrated }), [wishlist, isHydrated]);
 
   return <WishlistContext.Provider value={value}>{children}</WishlistContext.Provider>;
 };

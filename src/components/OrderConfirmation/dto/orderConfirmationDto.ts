@@ -42,6 +42,17 @@ interface OrderData {
   paymentStatus: string;
   deliveryFee: number;
   address: Address;
+  orderDetails: {
+    totalPrice: number;
+    subTotal: number;
+    paymentMethod: string;
+    paymentStatus: string;
+    deliveryFee: number;
+    discountAmount: number;
+    discountType: string | null;
+  };
+  total: number;
+  discountAmount: number;
   orderNo: string;
   orderStatus: string;
   createdAt: string;

@@ -2,11 +2,11 @@
 
 import { useEffect, useState, Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
-import { useStore } from "@/context/storeContext";
+import { useAppUIContext } from "@/context/AppUIContext";
 import { AuthModal } from "@/components/AuthModal";
 // Create a separate component effectively to be used within Suspense
 const AuthErrorContent = () => {
-    const { setIsAuthModalOpen } = useStore();
+    const { setIsAuthModalOpen } = useAppUIContext();
     const router = useRouter();
     const searchParams = useSearchParams();
     const [errorMessage, setErrorMessage] = useState("Authentication failed");

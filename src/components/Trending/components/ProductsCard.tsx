@@ -2,14 +2,14 @@
 import React, { memo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { productsService } from "@/services/productsService";
-import { useStore } from "@/context/storeContext";
+import { useAppUIContext } from "@/context/AppUIContext";
 import { queryKeys } from "@/lib/queryKeys";
 import { STALE_TIMES, CACHE_TIMES } from "@/lib/queryClient";
 import MainCard from "../../Card/index";
 import type { ApiError } from "@/lib/apiClient";
 
 const ProductsCard = () => {
-  const { selectedCategory } = useStore();
+  const { selectedCategory } = useAppUIContext();
 
   const {
     data: productsData,

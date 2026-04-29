@@ -1,5 +1,5 @@
 import QuantitySelector from "../productDetail/components/QuantitySelector";
-import { useCart } from "../hooks/useCart";
+import { useCart } from "@/hooks/useCart";
 import { toast } from "react-toastify";
 import Image from "next/image";
 import { RiDeleteBin6Line } from "react-icons/ri";

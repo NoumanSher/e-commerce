@@ -1,7 +1,7 @@
 "use client";
 
 import React, { Suspense, lazy } from "react";
-import { useWishlist } from "@/components/hooks/useWishlist";
+import { useWishlist } from "@/hooks/useWishlist";
 import Loader from "@/components/Loader";
 import { AuthModal } from "@/components/AuthModal";
 

@@ -1,9 +1,8 @@
 "use client";
 import React, { useEffect, useRef, useState, useCallback, useMemo } from "react";
 import { PackageSearch } from "lucide-react";
-import { productsService } from "@/services/productsService";
 import { Product } from "@/components/productDetail/productDetailDto";
-import { useStore } from "@/context/storeContext";
+import { useAppUIContext } from "@/context/AppUIContext";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useCategoriesQuery, useInfiniteProductsQuery } from "@/hooks/useProductsQuery";
 
@@ -26,23 +25,23 @@ export default function CategoryNavigation() {
   const router = useRouter();
   const childCategoryID = searchParams.get("childCategorySlug");
   const parentCategorySlug = searchParams.get("parentCategorySlug");
-  const { selectedCategory, updateSelectedCategory } = useStore();
+  const { selectedCategory, updateSelectedCategory } = useAppUIContext();
 
   const [mobileOpen, setMobileOpen] = useState(false);
   const [expanded, setExpanded] = useState<string | null>(parentCategorySlug);
   const categoriesData = useMemo(() => allCategories?.categories || [], [allCategories?.categories]);
 
   const containerRef = useRef<HTMLDivElement | null>(null);
-  
+
   // Use state strictly for local UI selection if the URL hasn't caught up, but default to URL params
   const [selectedChildCategory, setSelectedChildCategory] = useState<string | null>(childCategoryID);
-  
+
   // Resolve active categories reliably based on URL params and local state
   const activeParentSlug = useMemo(() => {
     // If a child is selected, trace back its parent
     const activeChild = selectedChildCategory || childCategoryID;
     if (activeChild && allCategories?.categories) {
-      const parent = allCategories.categories.find(c => 
+      const parent = allCategories.categories.find(c =>
         c.children?.some(ch => ch.slug === activeChild)
       );
       if (parent) return parent.slug;
@@ -90,7 +89,6 @@ export default function CategoryNavigation() {
   // Infinite query for products (using custom hook)
   const {
     data,
-    error,
     fetchNextPage,
     hasNextPage,
     isFetchingNextPage,

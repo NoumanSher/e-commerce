@@ -25,6 +25,12 @@ function createApiClient(): AxiosInstance {
     if (token && config.headers) {
       config.headers["Authorization"] = `Bearer ${token}`;
     }
+    
+    // Let Axios automatically set the correct Content-Type with boundary for FormData
+    if (config.data instanceof FormData && config.headers) {
+      delete config.headers["Content-Type"];
+    }
+    
     return config;
   });
 
@@ -86,20 +92,32 @@ export default apiClient;
 
 export const get = <T = unknown>(
   url: string,
-  params?: Record<string, unknown>
-): Promise<T> => apiClient.get<T>(url, { params }).then((r) => r.data);
+  params?: Record<string, unknown>,
+  config?: import("axios").AxiosRequestConfig
+): Promise<T> => apiClient.get<T>(url, { params, ...config }).then((r) => r.data);
 
-export const post = <T = unknown>(url: string, body?: unknown): Promise<T> =>
-  apiClient.post<T>(url, body).then((r) => r.data);
+export const post = <T = unknown>(
+  url: string,
+  body?: unknown,
+  config?: import("axios").AxiosRequestConfig
+): Promise<T> => apiClient.post<T>(url, body, config).then((r) => r.data);
 
-export const put = <T = unknown>(url: string, body?: unknown): Promise<T> =>
-  apiClient.put<T>(url, body).then((r) => r.data);
+export const put = <T = unknown>(
+  url: string,
+  body?: unknown,
+  config?: import("axios").AxiosRequestConfig
+): Promise<T> => apiClient.put<T>(url, body, config).then((r) => r.data);
 
-export const patch = <T = unknown>(url: string, body?: unknown): Promise<T> =>
-  apiClient.patch<T>(url, body).then((r) => r.data);
+export const patch = <T = unknown>(
+  url: string,
+  body?: unknown,
+  config?: import("axios").AxiosRequestConfig
+): Promise<T> => apiClient.patch<T>(url, body, config).then((r) => r.data);
 
-export const del = <T = unknown>(url: string): Promise<T> =>
-  apiClient.delete<T>(url).then((r) => r.data);
+export const del = <T = unknown>(
+  url: string,
+  config?: import("axios").AxiosRequestConfig
+): Promise<T> => apiClient.delete<T>(url, config).then((r) => r.data);
 
 // Used by storeContext on logout to clear the in-memory default header
 export const clearAuthToken = (): void => {

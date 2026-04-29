@@ -12,6 +12,7 @@ const STORAGE_KEYS = {
   userName: "userName",
   selectedCategory: "selectedCategory",
   wishlist: "wishlist",
+  firstOrderBannerDismissed: "firstOrderBannerDismissed",
 } as const
 
 type StorageKey = (typeof STORAGE_KEYS)[keyof typeof STORAGE_KEYS]

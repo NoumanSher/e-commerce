@@ -1,16 +1,22 @@
 import { get, post } from "@/lib/apiClient";
-import type { OrderResponse, CreateOrderPayload } from "@/types";
+import type {
+  OrderResponse,
+  CreateOrderPayload,
+  UserAddressResponse,
+  OrdersListResponse,
+} from "@/types";
 
 export const orderService = {
-  getUserAddress: (userId: string): Promise<unknown> =>
-    get(`/order/userAddress/${userId}`), // Fixed typo: was "/userAdress/"
+  getUserAddress: (userId: string): Promise<UserAddressResponse> =>
+    get<UserAddressResponse>(`/order/userAddress/${userId}`),
 
   getSingleOrder: (orderNumber: string): Promise<OrderResponse> =>
     get<OrderResponse>(`/order/user-single-order/${orderNumber}`),
 
   createOrder: (payload: CreateOrderPayload): Promise<OrderResponse> =>
-    post<OrderResponse>("/order", payload),
+    post<OrderResponse>("/order/create-order", payload),
 
-  getOrdersByUserId: (userId: string): Promise<unknown> =>
-    get(`/order/user-all-orders/${userId}`),
+  getOrdersByUserId: (userId: string): Promise<OrdersListResponse> =>
+    get<OrdersListResponse>(`/order/user-all-orders/${userId}`),
 };
+

@@ -50,7 +50,8 @@ const OrderDetailsPage = () => {
           paymentMethod={profileData?.orders?.paymentMethod ?? ""}
           subtotal={profileData?.orders?.subTotal ?? ""}
           delivery={profileData?.orders?.deliveryFee ?? ""}
-          total={profileData?.orders?.subTotal ?? ""} // Total logic should be fixed but we pass subtotal directly for now.
+          total={profileData?.orders?.orderDetails?.totalPrice ?? profileData?.orders?.totalPrice ?? profileData?.orders?.subTotal ?? ""}
+          discountAmount={profileData?.orders?.orderDetails?.discountAmount ?? profileData?.orders?.discountAmount ?? 0}
         />
       </div>
 
