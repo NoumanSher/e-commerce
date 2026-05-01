@@ -89,25 +89,30 @@ export default function FirstOrderBanner() {
           onClick={handleStickyOpen}
           onKeyDown={(e) => e.key === "Enter" && handleStickyOpen()}
           className="
-            fixed bottom-6 left-1/2 -translate-x-1/2 z-40
-            flex items-center gap-2
+            fixed right-0 top-1/2 -translate-y-1/2 z-40
+            flex flex-col items-center
             bg-black text-white text-sm font-semibold
-            px-5 py-2.5 shadow-2xl
+            py-4 px-2 shadow-2xl
             cursor-pointer select-none
             hover:bg-gray-900 transition-colors duration-200
-            animate-bounce-once
+            animate-bounce-once-side
           "
-          style={{ borderRadius: "2px" }}
+          style={{ borderRadius: "4px 0 0 4px" }}
         >
-          <FiTag size={14} className="shrink-0" />
-          <span>5% OFF your first order — claim now</span>
           <button
             aria-label="Close banner"
             onClick={handleStickyClose}
-            className="ml-2 text-gray-400 hover:text-white transition-colors"
+            className="text-gray-400 hover:text-white transition-colors mb-3"
           >
-            <FiX size={14} />
+            <FiX size={16} />
           </button>
+          <div
+            className="flex items-center gap-2"
+            style={{ writingMode: 'vertical-rl', transform: 'rotate(180deg)' }}
+          >
+            <FiTag size={14} className="shrink-0" />
+            <span className="tracking-wide">5% OFF — Claim Now</span>
+          </div>
         </div>
       )}
 
@@ -161,7 +166,7 @@ export default function FirstOrderBanner() {
 
             {/* Headline */}
             <h2 className="text-2xl font-bold text-black mb-2 leading-tight">
-              Get 5% OFF your first order
+              Get 5% OFF On Your First Order
             </h2>
             <p className="text-sm text-gray-500 mb-6">
               Sign up and unlock your instant discount.
@@ -209,12 +214,12 @@ export default function FirstOrderBanner() {
         .animate-modal-in {
           animation: modalIn 0.25s ease-out forwards;
         }
-        @keyframes bounceOnce {
-          0%,100% { transform: translateX(-50%) translateY(0); }
-          40%      { transform: translateX(-50%) translateY(-8px); }
+        @keyframes bounceOnceSide {
+          0%,100% { transform: translateY(-50%) translateX(0); }
+          40%      { transform: translateY(-50%) translateX(-8px); }
         }
-        .animate-bounce-once {
-          animation: bounceOnce 0.9s ease 0.4s 1;
+        .animate-bounce-once-side {
+          animation: bounceOnceSide 0.9s ease 0.4s 1;
         }
       `}</style>
     </>
