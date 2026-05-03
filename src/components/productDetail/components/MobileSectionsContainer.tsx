@@ -156,11 +156,11 @@ const MobileSectionsContainer: React.FC<MobileSectionsContainerProps> = ({
         )}
       </section>
 
-      {/* ── RELATED PRODUCTS SECTION ─────────────── */}
+      {/* ── MORE TO LOVE SECTION ─────────────── */}
       <div className="h-2 bg-gray-100" />
       <section id="mobile-section-related" className="py-4 px-3">
         <h2 className="text-base font-semibold text-black mb-3">
-          Related Products
+          More To Love
         </h2>
         {isLoading ? (
           <div className="grid grid-cols-2 gap-2">
@@ -181,7 +181,7 @@ const MobileSectionsContainer: React.FC<MobileSectionsContainerProps> = ({
           </div>
         ) : (
           <p className="text-center text-gray-400 py-6 text-sm">
-            No related products found
+            No products found
           </p>
         )}
       </section>

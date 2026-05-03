@@ -14,7 +14,7 @@ interface RelatedProductsProps {
   onTabChange?: (value: string) => void;
 }
 
-export default function RelatedProducts({ productSlug, productId, activeTab = "related products", onTabChange }: RelatedProductsProps) {
+export default function RelatedProducts({ productSlug, productId, activeTab = "more to love", onTabChange }: RelatedProductsProps) {
   const { selectedCategory } = useAppUIContext();
   const { userId, authToken } = useAuth();
 
@@ -66,7 +66,7 @@ export default function RelatedProducts({ productSlug, productId, activeTab = "r
     recommendedProducts?.filter((item) => item.seo.slug !== productSlug) || [];
   const tabTriggerStyle =
     "px-0 bg-transparent text-base sm:text-lg font-medium text-gray-600 data-[state=active]:border-b-2 data-[state=active]:border-black data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:text-black rounded-none";
-  const data = [{ title: "Related Products" }, { title: "Recommended" }, { title: "Reviews" }];
+  const data = [{ title: "More To Love" }, { title: "Recommended" }, { title: "Reviews" }];
   return (
     <Tabs value={activeTab} onValueChange={onTabChange} className="mt-5 px-2 lg:px-8">
       <TabsList className="flex  justify-start scrollbarHide overflow-x-auto shadow-none space-x-2 bg-transparent mb-5">
@@ -81,7 +81,7 @@ export default function RelatedProducts({ productSlug, productId, activeTab = "r
         ))}
       </TabsList>
 
-      <TabsContent value="related products">
+      <TabsContent value="more to love">
         {filteredRelatedProducts.length > 0 ? (
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4  gap-2 sm:gap-4">
             {filteredRelatedProducts.map((item) => (
@@ -92,7 +92,7 @@ export default function RelatedProducts({ productSlug, productId, activeTab = "r
           </div>
         ) : (
           <div className="text-center text-gray-500 py-8">
-            No related products found
+            No products found
           </div>
         )}
       </TabsContent>

@@ -38,7 +38,7 @@ interface ProductDetailProps {
 const ProductDetail: React.FC<ProductDetailProps> = ({ slug, initialData }) => {
   const { data, isLoading } = useGetProductDetailBySlug(slug, initialData);
   const [showBelowFold, setShowBelowFold] = useState(false);
-  const [activeTab, setActiveTab] = useState("related products");
+  const [activeTab, setActiveTab] = useState("more to love");
   const tabsSectionRef = useRef<HTMLDivElement>(null);
   const { updateSelectedCategory } = useAppUIContext();
   const [galleryHandlers, setGalleryHandlers] = useState<{
@@ -118,7 +118,7 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ slug, initialData }) => {
         <div ref={tabsSectionRef} className="hidden lg:block">
           {showBelowFold && (
             <Suspense
-              fallback={<div className="h-40 justify-center items-center flex">Loading related products...</div>}
+              fallback={<div className="h-40 justify-center items-center flex">Loading more to love...</div>}
             >
               <Tabs
                 productSlug={slug}
