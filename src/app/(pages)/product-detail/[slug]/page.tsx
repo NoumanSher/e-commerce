@@ -5,6 +5,7 @@ import { productsService } from "@/services/productsService";
 import ProductDetailSkeleton from "@/components/productDetail/components/ProductDetailSkeleton";
 import { getMetadata } from "./metadata";
 import { notFound } from "next/navigation";
+import { AuthModal } from "@/components/AuthModal";
 // Dynamically load your client‐side heavy component:
 const ProductDetailClient = dynamic(
   () => import("@/components/productDetail"),
@@ -42,6 +43,8 @@ export default async function Page({
       <Suspense fallback={<ProductDetailSkeleton />}>
         <ProductDetailClient slug={slug} initialData={product} />
       </Suspense>
+      <AuthModal />
+
     </>
   );
 }
