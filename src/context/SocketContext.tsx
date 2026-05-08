@@ -4,6 +4,8 @@ import { io, Socket } from "socket.io-client";
 import { useAuth } from "./AuthContext";
 import { toast } from "react-toastify";
 import { get, patch } from "@/lib/apiClient";
+import { useQueryClient } from "@tanstack/react-query";
+import { queryKeys } from "@/lib/queryKeys";
 
 interface SocketContextType {
   socket: Socket | null;
@@ -75,6 +77,8 @@ export const SocketProvider = ({ children }: { children: React.ReactNode }) => {
     fetchNotifications();
   }, [authToken]);
 
+  const queryClient = useQueryClient();
+
   useEffect(() => {
     if (socket && connected && userId) {
       console.log("👤 Registering user to socket room:", userId);
@@ -119,6 +123,23 @@ export const SocketProvider = ({ children }: { children: React.ReactNode }) => {
       }
     };
   }, [socket, connected, userId]);
+
+  // Listen for stock restoration broadcasts from the backend.
+  // Fires for ALL connected clients (not just the order owner) so every
+  // visitor sees the updated stock immediately without a page reload.
+  useEffect(() => {
+    if (!socket) return;
+
+    socket.on("stockRestored", (data: { productIds: string[] }) => {
+      console.log("🔄 Stock restored for products:", data.productIds);
+      // Invalidate all product queries so React Query refetches fresh stock
+      queryClient.invalidateQueries({ queryKey: queryKeys.products.all() });
+    });
+
+    return () => {
+      socket.off("stockRestored");
+    };
+  }, [socket, queryClient]);
 
   const markNotificationAsRead = async (id: string) => {
     try {

@@ -33,7 +33,7 @@ const AllProductsSkeleton = () => (
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 sm:gap-4 xl:max-w-[1440px] mx-auto p-3 sm:p-4 mt-2">
         {[...Array(8)].map((_, i) => (
           <div key={i} className="bg-white rounded overflow-hidden shadow-sm">
-            <div className="aspect-[3/4] w-full bg-gray-200 animate-pulse" />
+            <div className="aspect-square w-full bg-gray-200 animate-pulse" />
             <div className="p-3 space-y-2">
               <div className="h-4 bg-gray-200 rounded animate-pulse w-3/4" />
               <div className="h-5 bg-gray-200 rounded animate-pulse w-1/2" />

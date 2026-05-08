@@ -35,6 +35,10 @@ const nextConfig = {
         protocol: "https",
         hostname: "pakshipper-backend.vercel.app",
       },
+      {
+        protocol: "https",
+        hostname: "pakshipper-backend-production.up.railway.app",
+      },
     ],
   },
   headers: async () => {

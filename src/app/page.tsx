@@ -24,28 +24,7 @@ const getCachedStoreSettings = unstable_cache(
 
 const PromoGrid = dynamic(() => import("@/components/PromoGrid/PromoGrid"), { ssr: false });
 
-const TrendingSkeleton = () => (
-  <div className="bg-[#faf9f8] px-4 md:px-6 mx-auto pt-7 pb-10">
-    {/* Category pills skeleton */}
-    <div className="flex justify-center gap-6 mb-6 mt-2">
-      {[...Array(4)].map((_, i) => (
-        <div key={i} className="h-5 w-20 bg-gray-200 rounded-full animate-pulse" />
-      ))}
-    </div>
-    {/* Product grid skeleton */}
-    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 sm:gap-4 xl:max-w-[1440px] mx-auto">
-      {[...Array(8)].map((_, i) => (
-        <div key={i} className="bg-white rounded overflow-hidden shadow-sm">
-          <div className="aspect-square w-full bg-gray-200 animate-pulse" />
-          <div className="p-3 space-y-2">
-            <div className="h-4 bg-gray-200 rounded animate-pulse w-3/4" />
-            <div className="h-5 bg-gray-200 rounded animate-pulse w-1/2" />
-          </div>
-        </div>
-      ))}
-    </div>
-  </div>
-);
+
 
 const PromoGridSkeleton = () => (
   <div className="bg-[#faf9f8] px-4 md:px-6 py-10">
@@ -62,7 +41,6 @@ const PromoGridSkeleton = () => (
 // Dynamic imports — only load when needed to reduce initial bundle size
 const Trending = dynamic(() => import("@/components/Trending/trending"), {
   ssr: false,
-  loading: TrendingSkeleton,
 });
 
 
@@ -102,7 +80,7 @@ export default async function LandingPage() {
         <Slider storeSettings={storeSettings} />
 
         {/* Trending — below the fold; reserve ~700px to prevent CLS */}
-        <ScrollReveal fallback={<TrendingSkeleton />} minHeight="700px">
+        <ScrollReveal minHeight="700px">
           <Trending />
         </ScrollReveal>
 

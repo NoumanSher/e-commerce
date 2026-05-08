@@ -46,7 +46,7 @@ const ProductsCategories = () => {
         {categoriesLoading ? (
           <div className="flex flex-wrap justify-center gap-3 mb-4 mt-4">
             {[...Array(4)].map((_, i) => (
-              <div key={i} className="h-9 w-24 bg-gray-200 rounded-full animate-pulse" />
+              <div key={i} className="px-5 py-2 rounded-full bg-gray-200 rounded-full animate-pulse" />
             ))}
           </div>
         ) : (
