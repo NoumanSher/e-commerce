@@ -68,7 +68,7 @@ export default function ProductGrid({
           <>
             {[...Array(8)].map((_, i) => (
               <div key={i} className="bg-white rounded overflow-hidden shadow-sm mt-3 sm:mt-0">
-                <div className="aspect-[3/4] w-full bg-gray-200 animate-pulse" />
+                <div className="aspect-square w-full bg-gray-200 animate-pulse" />
                 <div className="p-3 space-y-2">
                   <div className="h-4 bg-gray-200 rounded animate-pulse w-3/4" />
                   <div className="h-5 bg-gray-200 rounded animate-pulse w-1/2" />
