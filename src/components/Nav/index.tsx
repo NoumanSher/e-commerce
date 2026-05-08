@@ -55,6 +55,7 @@ const Navbar = () => {
 
     const currentScrollY = window.scrollY;
     const navbarHeight = navbarRef.current?.offsetHeight ?? 64;
+    const isProductDetailPage = pathname.includes("/product-detail");
 
     if (currentScrollY > lastScrollY.current && currentScrollY > navbarHeight) {
       // Scrolling down — hide navbar
@@ -65,8 +66,11 @@ const Navbar = () => {
     } else if (currentScrollY < lastScrollY.current) {
       // Scrolling up — show navbar
       if (!isNavbarVisibleRef.current) {
-        setIsNavbarVisible(true);
-        isNavbarVisibleRef.current = true;
+        // If on product detail page, only show when scrolled back to the very top
+        if (!isProductDetailPage || currentScrollY <= navbarHeight) {
+          setIsNavbarVisible(true);
+          isNavbarVisibleRef.current = true;
+        }
       }
     }
 

@@ -48,7 +48,7 @@ const ProductBasicInfo: React.FC<ProductInfoProps> = ({
             <span className="text-[#EF0505] text-sm lg:text-base font-bold uppercase tracking-wider">Sold Out</span>
           ) : (
             <span className="text-gray-600 text-sm lg:text-base font-medium">
-              Only left {stockAvailability}
+              Only {stockAvailability} left
             </span>
           )}
         </div>

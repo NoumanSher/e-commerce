@@ -67,10 +67,10 @@ const ProductInfo: React.FC<ProductDetailsProps> = ({ product, onGalleryHandlers
   const [selectedColor, setSelectedColor] = useState("");
   const [selectedSize, setSelectedSize] = useState("");
   const [selectedVarientId, setSelectedVarientId] = useState("");
-  const [availableStock, SetAvailabelStock] = useState<number>(0);
+  const [availableStock, SetAvailabelStock] = useState<number>(stock < 0 ? 0 : stock || 0);
   const [extraCost, SetExtraCost] = useState<number>(0);
   const [selectedQuantity, setSelectedQuantity] = useState(1);
-  const [productPrice, SetProductPrice] = useState<number>(0);
+  const [productPrice, SetProductPrice] = useState<number>(calculateDiscountedPrice(salePrice, discount || 0) || 0);
 
   const [isCheckingOut, setIsCheckingOut] = useState(false);
   const [isAddingToCart, setIsAddingToCart] = useState(false);

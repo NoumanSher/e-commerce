@@ -40,12 +40,10 @@ const getCachedCategories = unstable_cache(
   { revalidate: 300, tags: ["categories"] }
 );
 
-// const jost = Jost({ subsets: ["latin"] }); // Load the Jost font
-
 const jost = Jost({
   subsets: ["latin"],
-  weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"], // Specify weights if needed
-  style: ["normal", "italic"], // Optional: Include both normal and italic styles
+  weight: ["400", "500", "600", "700"], // Only the weights actually used
+  display: "swap", // Prevents invisible text during font load (FOIT)
 });
 
 export const metadata: Metadata = {
