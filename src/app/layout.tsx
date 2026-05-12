@@ -49,6 +49,9 @@ const jost = Jost({
 export const metadata: Metadata = {
   title: "PakShipperStore - E-commerce",
   description: "Your favorite shopping destination",
+  other: {
+    "p:domain_verify": "c9fe3fb877e373bceb51284b8fa11ffa",
+  },
 };
 export default async function RootLayout({
   children,
