@@ -147,12 +147,12 @@ const Navbar = () => {
               className="absolute left-1/2 -translate-x-1/2 pt-2 lg:pt-0 lg:static lg:transform-none flex items-center lg:mx-0 lg:mr-10 h-full"
               onClick={closeMobileMenu}
             >
-              <div className="relative h-full">
+              <div className="relative h-full flex items-center py-2">
                 <Image
                   src={storeSettings?.logo ?? logo.src}
-                  className="object-contain object-center -my-6"
-                  width={100}
-                  height={100}
+                  className="object-contain object-center max-h-full w-auto"
+                  width={120}
+                  height={48}
                   alt="Store logo"
                   priority
                 />
