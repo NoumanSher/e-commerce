@@ -8,10 +8,33 @@ import nouman from "@/assets/img/nouman.jpg";
 import usman from "@/assets/img/usman.png";
 import gorge from "@/assets/img/gorge.png";
 import Link from "next/link";
-export const metadata: Metadata = {
-  title: "About Us | PakShipper",
-  description: "Learn about our story, mission, and values",
-};
+import { headers } from "next/headers";
+import { getStoreSettingServer } from "@/services/settingsService.server";
+
+export async function generateMetadata(): Promise<Metadata> {
+  let host = "default";
+  try {
+    host = headers().get("host") ?? "default";
+    const cleanHost = host.split(":")[0].toLowerCase();
+    if (cleanHost === "localhost" || cleanHost === "127.0.0.1") {
+      host = process.env.NEXT_PUBLIC_DEVELOPMENT_HOST || "sandbox.localhost";
+    }
+  } catch {}
+
+  try {
+    const storeSettings = await getStoreSettingServer(host);
+    const storeName = storeSettings?.title || "PakShipper";
+    return {
+      title: `About Us | ${storeName}`,
+      description: storeSettings?.description || 'Learn about our story, mission, and values',
+    };
+  } catch (error) {
+    return {
+      title: 'About Us | PakShipper',
+      description: 'Learn about our story, mission, and values',
+    };
+  }
+}
 
 const AboutUsPage: React.FC = () => {
   return (

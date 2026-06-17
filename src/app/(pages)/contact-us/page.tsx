@@ -7,6 +7,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { useGetStoreSettings } from '@/components/Slider/query/storeSettingQuery';
 
 // Form validation schema
 const contactFormSchema = z.object({
@@ -21,7 +22,11 @@ type ContactFormInputs = z.infer<typeof contactFormSchema>;
 
 const ContactUsPage: React.FC = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const { data: storeSettings } = useGetStoreSettings();
   
+  const storePhone = storeSettings?.mobile || "+923176872900";
+  const storeEmail = storeSettings?.email || "pakshipperstore@gmail.com";
+
   const {
     register,
     handleSubmit,
@@ -191,7 +196,7 @@ const ContactUsPage: React.FC = () => {
                       </div>
                       <div>
                         <h3 className="text-lg font-bold text-gray-900 mb-1">Phone Number</h3>
-                        <p className="text-gray-600">+923176872900</p>
+                        <p className="text-gray-600">{storePhone}</p>
                         {/* <p className="text-gray-600">+1 (987) 654-3210</p> */}
                       </div>
                     </div>
@@ -202,7 +207,7 @@ const ContactUsPage: React.FC = () => {
                       </div>
                       <div>
                         <h3 className="text-lg font-bold text-gray-900 mb-1">Email Address</h3>
-                        <p className="text-gray-600">pakshipperstore@gmail.com</p>
+                        <p className="text-gray-600">{storeEmail}</p>
                       </div>
                     </div>
                   </div>

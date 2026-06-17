@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { Resend } from "resend";
+import { getStoreSettingServer } from "@/services/settingsService.server";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
@@ -15,18 +16,25 @@ export async function POST(request: Request) {
       );
     }
 
+    // Resolve tenant store settings based on host header
+    const host = request.headers.get("host") || "";
+    const storeSettings = await getStoreSettingServer(host);
+
+    const storeName = storeSettings?.title || "Pak Shipper Store";
+    const storeEmail = storeSettings?.email || "pakshipperstore@gmail.com";
+
     // Use environment variable for from email or fallback to onboarding
     const fromEmail = process.env.NEXT_PUBLIC_RESEND_DOMAIN || "onboarding@resend.dev";
 
     // Send email to your team
     const teamEmailResponse = await resend.emails.send({
-      from: `Pak Shipper Store <${fromEmail}>`,
-      to: "pakshipperstore@gmail.com",
+      from: `${storeName} <${fromEmail}>`,
+      to: storeEmail,
       replyTo: email,
-      subject: `${subject}`,
+      subject: `[Contact Form] ${subject}`,
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-          <h2 style="color: #000;">New Contact Form Submission</h2>
+          <h2 style="color: #000;">New Contact Form Submission - ${storeName}</h2>
           <p><strong>Name:</strong> ${name}</p>
           <p><strong>Email:</strong> ${email}</p>
           <p><strong>Subject:</strong> ${subject}</p>
@@ -35,7 +43,7 @@ export async function POST(request: Request) {
             ${message.replace(/\n/g, "<br>")}
           </div>
           <p style="margin-top: 1.5rem; color: #6b7280; font-size: 0.875rem;">
-            This email was sent from your website's contact form.
+            This email was sent from the contact form of ${storeName}.
           </p>
         </div>
       `,
@@ -43,10 +51,10 @@ export async function POST(request: Request) {
 
     // Send confirmation email to the user
     const userEmailResponse = await resend.emails.send({
-      from: `Pakshipper Team <${fromEmail}>`,
+      from: `${storeName} Team <${fromEmail}>`,
       to: email,
-      replyTo: "pakshipperstore@gmail.com",
-      subject: "Thank you for contacting us",
+      replyTo: storeEmail,
+      subject: `Thank you for contacting ${storeName}`,
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
           <h2 style="color: #000;">Thank you for contacting us!</h2>

@@ -14,6 +14,9 @@ const config: Config = {
         xs: '375px', // custom breakpoint for small screens
         m: '425px', // custom breakpoint for small screens
       },
+      fontFamily: {
+        jost: ['Jost', 'sans-serif'],
+      },
       keyframes: {
         "slide-in-left": {
           "0%": { transform: "translateX(100%)" },

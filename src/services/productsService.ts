@@ -86,6 +86,7 @@ const relatedProductsByCategorySlug = (
 
 /**
  * Fetch all parent categories with their children.
+ * Client-side: browser sends Origin automatically.
  */
 const fetchAllCategories = (): Promise<ParentCategoriesResponse> =>
   get<ParentCategoriesResponse>("/categories/all");

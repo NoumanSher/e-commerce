@@ -9,18 +9,15 @@ import { FaWhatsapp } from "react-icons/fa";
 import Slider from "@/components/Slider/Slider";
 import { unstable_cache } from "next/cache";
 import ScrollReveal from "@/components/common/ScrollReveal";
+import { headers } from "next/headers";
+import { getStoreSettingServer } from "@/services/settingsService.server";
 
 import { StoreInfo } from "@/components/Slider/dto/storeSettingDto";
 import { getLandingMetadata } from "@/app/utils/metadata/landingMetadata";
 import { createQueryClient } from "@/lib/queryClient";
 import { queryKeys } from "@/lib/queryKeys";
 
-// Use the same cached fetchers as layout so both share one server-side response.
-const getCachedStoreSettings = unstable_cache(
-  () => settingsService.getStoreSetting(),
-  ["layout-store-settings"],
-  { revalidate: 300, tags: ["store-settings"] }
-);
+// Note: getCachedStoreSettings is defined inside LandingPage to enable per-tenant cache key scoping matching RootLayout.
 
 const PromoGrid = dynamic(() => import("@/components/PromoGrid/PromoGrid"), { ssr: false });
 
@@ -58,6 +55,25 @@ const FAQ = dynamic(() => import("@/components/FAQ"), {
 export const revalidate = 300;
 
 export default async function LandingPage() {
+  let host = "default";
+  try {
+    host = headers().get("host") ?? "default";
+    const cleanHost = host.split(":")[0].toLowerCase();
+    if (cleanHost === "localhost" || cleanHost === "127.0.0.1") {
+      host = process.env.NEXT_PUBLIC_DEVELOPMENT_HOST || "sandbox.localhost";
+    }
+  } catch {
+    // During next build static generation
+  }
+
+  // Per-tenant unstable_cache wrapper.
+  // Using the exact same cache key and tags as RootLayout ensures they share a single server-side response.
+  const getCachedStoreSettings = unstable_cache(
+    () => getStoreSettingServer(host),
+    [`layout-store-settings-${host}`],
+    { revalidate: 300, tags: ["store-settings", host] }
+  );
+
   const queryClient = createQueryClient();
 
   const storeSettings = (await queryClient.ensureQueryData({

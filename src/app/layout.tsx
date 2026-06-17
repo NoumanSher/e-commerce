@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import { Jost } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/Nav";
 import Footer from "@/components/Footer/footer";
@@ -12,39 +11,25 @@ import Provider from "@/context/react-query-provider";
 import OfflineIndicator from "@/components/OfflineIndicator";
 import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
 import { createQueryClient } from "@/lib/queryClient";
-import { settingsService } from "@/services/settingsService";
-import { productsService } from "@/services/productsService";
 import { queryKeys } from "@/lib/queryKeys";
 import { SocketProvider } from "@/context/SocketContext";
 import { unstable_cache } from "next/cache";
+import { headers } from "next/headers";
 import dynamic from "next/dynamic";
+// Server-only service imports — these use next/headers internally and must
+// NOT be imported from Client Components.
+import { getStoreSettingServer } from "@/services/settingsService.server";
+import { fetchAllCategoriesServer } from "@/services/productsService.server";
 
 const FirstOrderBanner = dynamic(
   () => import("@/components/FirstOrderBanner"),
   { ssr: false }
 );
 
-// Cache the layout-level prefetches for 5 minutes across all requests.
-// This means clicking the logo won't re-hit the backend on every navigation.
+// Segment-level revalidation: SSR pages are stale-revalidated every 5 minutes.
 export const revalidate = 300;
 
-const getCachedStoreSettings = unstable_cache(
-  () => settingsService.getStoreSetting(),
-  ["layout-store-settings"],
-  { revalidate: 300, tags: ["store-settings"] }
-);
-
-const getCachedCategories = unstable_cache(
-  () => productsService.fetchAllCategories(),
-  ["layout-categories"],
-  { revalidate: 300, tags: ["categories"] }
-);
-
-const jost = Jost({
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700"], // Only the weights actually used
-  display: "swap", // Prevents invisible text during font load (FOIT)
-});
+// Font loaded via <link> tag below (browser-side) — no build-time network call.
 
 export const metadata: Metadata = {
   title: "PakShipperStore - E-commerce",
@@ -53,11 +38,49 @@ export const metadata: Metadata = {
     "p:domain_verify": "c9fe3fb877e373bceb51284b8fa11ffa",
   },
 };
+
 export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  /**
+   * Multi-tenant SSR cache key isolation
+   * ─────────────────────────────────────
+   * IMPORTANT: `headers()` MUST be called here in the Server Component scope —
+   * NOT inside `unstable_cache` callbacks. Cached functions run in a context
+   * without an active request, so `next/headers` would hang or throw inside them.
+   *
+   * We read `host` once here, then pass it as a plain string parameter to the
+   * service functions and as part of the cache key so each tenant gets its own
+   * isolated cache entry (prevents Tenant A's data leaking to Tenant B).
+   */
+  let host = "default";
+  try {
+    host = headers().get("host") ?? "default";
+    const cleanHost = host.split(":")[0].toLowerCase();
+    if (cleanHost === "localhost" || cleanHost === "127.0.0.1") {
+      host = process.env.NEXT_PUBLIC_DEVELOPMENT_HOST || "sandbox.localhost";
+    }
+  } catch {
+    // During `next build` static generation there is no request context.
+    // Fall back to "default" — the prefetch calls will fail gracefully.
+  }
+
+  // Per-tenant unstable_cache wrappers.
+  // `host` is a captured string — headers() is NOT called inside these callbacks.
+  const getCachedStoreSettings = unstable_cache(
+    () => getStoreSettingServer(host),
+    [`layout-store-settings-${host}`],
+    { revalidate: 300, tags: ["store-settings", host] }
+  );
+
+  const getCachedCategories = unstable_cache(
+    () => fetchAllCategoriesServer(host),
+    [`layout-categories-${host}`],
+    { revalidate: 300, tags: ["categories", host] }
+  );
+
   const queryClient = createQueryClient();
 
   // Prefetch global settings and categories using cached fetchers.
@@ -76,12 +99,22 @@ export default async function RootLayout({
     ]);
   } catch (error) {
     console.error("Layout prefetching failed:", error);
-    // Continue rendering - the client will retry the fetches
+    // Continue rendering — the client will retry the fetches
   }
 
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={`${jost.className} flex flex-col min-h-screen`}>
+      <head>
+        {/* Preconnect to Google Fonts CDN for faster font loading */}
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        {/* Jost font — loaded in the browser, NOT at build time */}
+        <link
+          href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600;700&display=swap"
+          rel="stylesheet"
+        />
+      </head>
+      <body className="font-jost flex flex-col min-h-screen">
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
@@ -89,7 +122,8 @@ export default async function RootLayout({
               "@context": "https://schema.org",
               "@type": "Store",
               name: "PakShipper",
-              description: "E-commerce shopping destination serving Lahore and all over Pakistan.",
+              description:
+                "E-commerce shopping destination serving Lahore and all over Pakistan.",
               url: "https://pakshipper.com",
               telephone: "+923176872900",
               address: {
@@ -97,18 +131,18 @@ export default async function RootLayout({
                 addressLocality: "Lahore",
                 addressRegion: "Punjab",
                 postalCode: "54000",
-                addressCountry: "PK"
+                addressCountry: "PK",
               },
               geo: {
                 "@type": "GeoCoordinates",
                 latitude: 31.5204,
-                longitude: 74.3587
+                longitude: 74.3587,
               },
               areaServed: {
                 "@type": "Country",
-                name: "Pakistan"
-              }
-            })
+                name: "Pakistan",
+              },
+            }),
           }}
         />
         <GoogleAnalytics gaId={process.env.GA_MEASUREMENT_ID as string} />
@@ -116,6 +150,12 @@ export default async function RootLayout({
         <Provider>
           <HydrationBoundary state={dehydrate(queryClient)}>
             <StoreTypeProviderWrapper>
+              {/*
+               * SocketProvider is a no-op stub — WebSockets are disabled because
+               * the backend runs on Vercel's free tier which does not support
+               * persistent connections. All children using `useSocket()` receive
+               * safe empty defaults and continue to function normally.
+               */}
               <SocketProvider>
                 <ToastContainer
                   autoClose={2000}

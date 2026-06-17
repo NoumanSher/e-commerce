@@ -1,7 +1,8 @@
 // app/product-detail/[productId]/metadata.ts
 import { Metadata } from "next";
-import { productsService } from "@/services/productsService";
-import { settingsService } from "@/services/settingsService";
+import { headers } from "next/headers";
+import { getProductBySlugServer } from "@/services/productsService.server";
+import { getStoreSettingServer } from "@/services/settingsService.server";
 
 interface GenerateMetadataProps {
   params: { slug: string };
@@ -10,13 +11,32 @@ interface GenerateMetadataProps {
 export async function getMetadata({
   params,
 }: GenerateMetadataProps): Promise<Metadata> {
+  let host = "default";
+  try {
+    host = headers().get("host") ?? "default";
+    const cleanHost = host.split(":")[0].toLowerCase();
+    if (cleanHost === "localhost" || cleanHost === "127.0.0.1") {
+      host = process.env.NEXT_PUBLIC_DEVELOPMENT_HOST || "sandbox.localhost";
+    }
+  } catch {
+    // During `next build` static generation there is no request context.
+    // Fall back to "default" — the prefetch calls will fail gracefully.
+  }
+
   const [product, storeSettings] = await Promise.all([
-    productsService.getProductBySlug(params.slug),
-    settingsService.getStoreSetting(),
+    getProductBySlugServer(params.slug, host),
+    getStoreSettingServer(host),
   ]);
 
+  if (!product) {
+    return {
+      title: "Product Not Found",
+      description: "The requested product does not exist.",
+    };
+  }
+
   const urlBase = "https://pakshipper.com/product-detail";
-  const productUrl = `${urlBase}/${product.seo.slug}`;
+  const productUrl = `${urlBase}/${product.seo?.slug || params.slug}`;
   const title = product.seo?.metaTitle ?? product.productName;
   const description = product.seo?.metaDescription ?? product.description;
 

@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation'
 import { useAppUIContext } from '@/context/AppUIContext'
 import { useAuth } from '@/context/AuthContext'
 import { useGetStoreSettings } from '@/components/Slider/query/storeSettingQuery'
+import { useCategoriesQuery } from '@/hooks/useProductsQuery'
 
 const FooterTabs = () => {
   const router = useRouter();
@@ -23,6 +24,7 @@ const FooterTabs = () => {
   };
 
   const { data: settings } = useGetStoreSettings();
+  const { data: categoriesData } = useCategoriesQuery();
   
   const companyColumn = {
     title: "Company",
@@ -41,16 +43,26 @@ const FooterTabs = () => {
     ]
   };
 
+  // Build dynamic shop categories fallback from actual tenant categories
+  let shopItems = [
+    { name: "Formal Wear", url: "/all-products?childCategorySlug=Formal-Wear&mode=client" },
+    { name: "Lingerie Sets", url: "/all-products?childCategorySlug=Lingerie-sets&mode=client" },
+    { name: "Pajamas & Robes", url: "/all-products?childCategorySlug=Pajamas-Robes&mode=client" }
+  ];
+
+  if (categoriesData?.categories && categoriesData.categories.length > 0) {
+    shopItems = categoriesData.categories.slice(0, 5).map((cat) => ({
+      name: cat.name,
+      url: `/all-products?parentCategorySlug=${cat.slug}&mode=client`
+    }));
+  }
+
   const shopColumns = (settings?.footerLinks && settings.footerLinks.length > 0) 
     ? settings.footerLinks 
     : [
         {
           title: "Shop",
-          items: [
-            { name: "Formal Wear", url: "/all-products?childCategorySlug=Formal-Wear&mode=client" },
-            { name: "Lingerie Sets", url: "/all-products?childCategorySlug=Lingerie-sets&mode=client" },
-            { name: "Pajamas & Robes", url: "/all-products?childCategorySlug=Pajamas-Robes&mode=client" }
-          ]
+          items: shopItems
         }
       ];
 

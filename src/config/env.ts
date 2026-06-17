@@ -6,7 +6,11 @@ const envSchema = z.object({
   NODE_ENV: z.enum(['development', 'test', 'production']).default('development'),
 });
 
-const _env = envSchema.safeParse(process.env);
+const _env = envSchema.safeParse({
+  NEXT_PUBLIC_API_BASE_URL: process.env.NEXT_PUBLIC_API_BASE_URL,
+  NEXT_PUBLIC_WHATSAPP_PHONE: process.env.NEXT_PUBLIC_WHATSAPP_PHONE,
+  NODE_ENV: process.env.NODE_ENV,
+});
 
 if (!_env.success) {
   console.error(
@@ -24,3 +28,4 @@ export const env = _env.data;
  */
 export const BASE_URL_LIVE =
   env.NEXT_PUBLIC_API_BASE_URL ?? "https://pakshipper-backend.vercel.app/api";
+
