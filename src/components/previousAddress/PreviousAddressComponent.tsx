@@ -9,7 +9,7 @@ interface Address {
   lastName: string;
   streetAddress: string;
   city: string;
-  zipCode: string;
+  zipCode?: string;
   phone: string;
   email: string;
 }

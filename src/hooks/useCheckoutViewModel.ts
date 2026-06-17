@@ -18,7 +18,7 @@ export const checkoutSchema = z.object({
   lastName: z.string().min(1, "Last Name is required"),
   streetAddress: z.string().min(1, "Address is required"),
   city: z.string().min(1, "City is required"),
-  zipCode: z.string().min(1, "ZIP code is required"),
+  zipCode: z.string().optional(),
   phone: z.string().min(1, "Phone number is required"),
   email: z.string().email("Invalid email").min(1, "Email is required"),
   paymentMethod: z.nativeEnum(PaymentMethod, {
