@@ -18,6 +18,7 @@ export interface OrderItem {
   variantName?: string;
   price: number;
   lineTotal: number;
+  image?: string;
 }
 
 export interface CartItem {

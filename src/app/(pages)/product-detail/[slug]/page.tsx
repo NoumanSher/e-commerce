@@ -7,6 +7,10 @@ import ProductDetailSkeleton from "@/components/productDetail/components/Product
 import { getMetadata } from "./metadata";
 import { notFound } from "next/navigation";
 import { AuthModal } from "@/components/AuthModal";
+import AquaMistProductDetailPage from "@/themes/aquamist/(pages)/product-detail/[slug]/page";
+
+import { resolveActiveTheme } from "@/utils/theme";
+
 // Dynamically load your client‐side heavy component:
 const ProductDetailClient = dynamic(
   () => import("@/components/productDetail"),
@@ -24,6 +28,12 @@ interface generateMetadataProps {
 export default async function Page({
   params: { slug },
 }: generateMetadataProps) {
+  const activeTheme = await resolveActiveTheme();
+
+  if (activeTheme === "aquamist") {
+    return <AquaMistProductDetailPage params={{ slug }} />;
+  }
+
   let host = "default";
   try {
     host = headers().get("host") ?? "default";
@@ -62,3 +72,4 @@ export default async function Page({
   );
 }
 export const generateMetadata = getMetadata;
+

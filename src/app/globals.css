@@ -237,3 +237,113 @@
   width: 100%;
   aspect-ratio: 16 / 9;
 }
+
+/* ── AquaMist Theme ──────────────────────────────────────────────────────── */
+
+/* Strip Quill editor inline white backgrounds & forced black text colours
+   from product descriptions inside the AquaMist dark theme.
+   Uses !important because Quill writes inline style="" attributes that
+   would otherwise beat any class-level rule.                               */
+.aq-rich-text .rich-text *,
+.aq-rich-text .rich-text p,
+.aq-rich-text .rich-text span,
+.aq-rich-text .rich-text li,
+.aq-rich-text .rich-text h1,
+.aq-rich-text .rich-text h2,
+.aq-rich-text .rich-text h3 {
+  background-color: transparent !important;
+  color: inherit !important;
+}
+
+/* Glass card — product cards, feature cards, floating badges */
+.aq-glass-card {
+  background: rgba(255, 255, 255, 0.07);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  border: 1px solid rgba(255, 255, 255, 0.13);
+}
+
+/* Glass panel — filter bar, pagination */
+.aq-glass-panel {
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.13);
+}
+
+/* Hide scrollbar for filter tabs */
+.aq-no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.aq-no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* Thin custom scrollbar — used on product description in AquaMist */
+.scrollbar-thin {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(189, 255, 243, 0.3) transparent;
+}
+.scrollbar-thin::-webkit-scrollbar {
+  width: 4px;
+}
+.scrollbar-thin::-webkit-scrollbar-track {
+  background: transparent;
+}
+.scrollbar-thin::-webkit-scrollbar-thumb {
+  background-color: rgba(189, 255, 243, 0.3);
+  border-radius: 999px;
+}
+.scrollbar-thin:hover::-webkit-scrollbar-thumb {
+  background-color: rgba(189, 255, 243, 0.6);
+}
+
+/* AquaMist — Reviews section dark-theme overrides */
+.aquamist-reviews .bg-white,
+.aquamist-reviews .bg-gray-50,
+.aquamist-reviews .bg-gray-100 {
+  background: rgba(255, 255, 255, 0.06) !important;
+  border-radius: 12px;
+}
+.aquamist-reviews .text-gray-900,
+.aquamist-reviews .text-gray-800,
+.aquamist-reviews .text-black {
+  color: #e8f5f2 !important;
+}
+.aquamist-reviews .text-gray-600,
+.aquamist-reviews .text-gray-500 {
+  color: rgba(189, 255, 243, 0.6) !important;
+}
+.aquamist-reviews .border,
+.aquamist-reviews .border-gray-200 {
+  border-color: rgba(255, 255, 255, 0.1) !important;
+}
+.aquamist-reviews button {
+  transition: opacity 0.2s;
+}
+.aquamist-reviews textarea,
+.aquamist-reviews input {
+  background: rgba(255, 255, 255, 0.06) !important;
+  border-color: rgba(255, 255, 255, 0.15) !important;
+  color: #e8f5f2 !important;
+}
+.aquamist-reviews textarea::placeholder,
+.aquamist-reviews input::placeholder {
+  color: rgba(189, 255, 243, 0.4) !important;
+}
+
+/* ── AquaMist Gallery Override ──────────────────────────────────────────── */
+/* Forces the shared ImageGallery component to fill its container in AquaMist */
+.gallery-full-width > div {
+  width: 100% !important;
+}
+/* Remove the white background from the thumbnail strip */
+.gallery-full-width .bg-white {
+  background: transparent !important;
+}
+/* Remove thumbnail strip mobile padding */
+.gallery-full-width .px-3 {
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+}

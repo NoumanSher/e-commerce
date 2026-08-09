@@ -20,6 +20,10 @@ import dynamic from "next/dynamic";
 // NOT be imported from Client Components.
 import { getStoreSettingServer } from "@/services/settingsService.server";
 import { fetchAllCategoriesServer } from "@/services/productsService.server";
+import { resolveActiveTheme } from "@/utils/theme";
+
+// Theme layouts
+import AquaMistLayout from "@/themes/aquamist/layout";
 
 const FirstOrderBanner = dynamic(
   () => import("@/components/FirstOrderBanner"),
@@ -31,13 +35,12 @@ export const revalidate = 300;
 
 // Font loaded via <link> tag below (browser-side) — no build-time network call.
 
-export const metadata: Metadata = {
-  title: "PakShipperStore - E-commerce",
-  description: "Your favorite shopping destination",
-  other: {
-    "p:domain_verify": "c9fe3fb877e373bceb51284b8fa11ffa",
-  },
-};
+import { getLandingMetadata } from "@/app/utils/metadata/landingMetadata";
+import DynamicStoreHead from "@/components/DynamicStoreHead";
+
+export async function generateMetadata(): Promise<Metadata> {
+  return getLandingMetadata();
+}
 
 export default async function RootLayout({
   children,
@@ -102,6 +105,15 @@ export default async function RootLayout({
     // Continue rendering — the client will retry the fetches
   }
 
+  /**
+   * Active theme — read from env so the merchant owner can switch
+   * themes without a code change.
+   *
+   * NEXT_PUBLIC_ACTIVE_THEME=aquamist  ← enables the AquaMist theme
+   * (default) ← uses the original Navbar / Footer layout
+   */
+  const activeTheme = await resolveActiveTheme();
+
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
@@ -162,9 +174,20 @@ export default async function RootLayout({
                   theme="colored"
                   position="top-right"
                 />
-                <Navbar />
-                <main className="flex-1">{children}</main>
-                <Footer />
+
+                {/* ── Theme-aware chrome ─────────────────────────────── */}
+                {activeTheme === "aquamist" ? (
+                  // AquaMist has its own Header, Footer and fonts
+                  <AquaMistLayout>{children}</AquaMistLayout>
+                ) : (
+                  // Default theme — original Navbar / Footer
+                  <>
+                    <Navbar />
+                    <main className="flex-1">{children}</main>
+                    <Footer />
+                  </>
+                )}
+
                 <FirstOrderBanner />
                 <OfflineIndicator />
                 <ReactQueryDevtools initialIsOpen={false} />
