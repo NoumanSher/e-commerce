@@ -60,6 +60,11 @@ export const queryKeys = {
     settings: () => [...queryKeys.store.all(), "settings"],
   },
 
+  // FAQs
+  faqs: {
+    all: () => ["faqs"],
+  },
+
   // User profile
   user: {
     all: () => ["user"],

@@ -34,7 +34,7 @@ export default function DesktopSidebar({
             ))}
           </div>
         ) : (
-          [...categoriesData].reverse().map((cat) => (
+          categoriesData.map((cat) => (
             <div key={cat._id} className="mb-1">
               <button
                 className={`flex justify-between items-center w-full px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-150

@@ -32,6 +32,9 @@ export interface ChildCategory {
   slug: string;
   description: string;
   parentCategory: string;
+  image?: string | null;
+  sortOrder?: number;
+  isActive?: boolean;
   createdAt: string;
   updatedAt: string;
   __v: number;
@@ -42,6 +45,9 @@ export interface Category {
   name: string;
   slug: string;
   description: string;
+  image?: string | null;
+  sortOrder?: number;
+  isActive?: boolean;
   createdAt: string;
   updatedAt: string;
   __v: number;

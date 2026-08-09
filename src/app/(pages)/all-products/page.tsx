@@ -1,6 +1,12 @@
 import React, { Suspense, lazy } from "react";
+import type { Metadata } from "next";
+import { getLandingMetadata } from "@/app/utils/metadata/landingMetadata";
 
 const AllCategoriesCardSection = lazy(() => import("@/components/Trending/components/AlllCAtegoriesCard"));
+
+export async function generateMetadata(): Promise<Metadata> {
+  return getLandingMetadata("All Products");
+}
 
 const AllProductsSkeleton = () => (
   <div className="flex w-full">
@@ -54,4 +60,3 @@ export default function AllProducts() {
     </>
   );
 }
-

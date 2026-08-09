@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback, useRef } from "react";
+import { createPortal } from "react-dom";
 import Image from "next/image";
 import { X, ChevronLeft, ChevronRight } from "lucide-react";
 
@@ -392,10 +393,18 @@ export default function ImageLightbox({
     return () => clearTimeout(zoomTimer.current);
   }, [scale]);
 
-  return (
+  // ── Mounting state for React Portal ─────────────────────────────────
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted) return null;
+
+  const content = (
     <div
       ref={containerRef}
-      className="fixed inset-0 bg-black z-[9999] flex items-center justify-center touch-none select-none"
+      className="fixed inset-0 bg-black/95 z-[9999] flex items-center justify-center touch-none select-none"
       onTouchStart={handleTouchStart}
       onTouchMove={handleTouchMove}
       onTouchEnd={handleTouchEnd}
@@ -405,15 +414,15 @@ export default function ImageLightbox({
       {/* Close Button */}
       <button
         aria-label="Close"
-        className="absolute top-4 right-4 p-2 text-white hover:bg-white/10 rounded-full z-50 transition-colors"
+        className="fixed top-4 right-4 p-3 bg-black/70 hover:bg-black/90 text-white rounded-full z-[10000] border border-white/20 transition-all shadow-xl hover:scale-110 cursor-pointer"
         onClick={handleClose}
       >
-        <X size={28} />
+        <X size={24} />
       </button>
 
       {/* Image Counter */}
       {images.length > 1 && (
-        <div className="absolute top-4 left-1/2 -translate-x-1/2 bg-black/70 text-white px-4 py-2 rounded-full text-sm z-50">
+        <div className="fixed top-4 left-1/2 -translate-x-1/2 bg-black/70 border border-white/20 text-white px-4 py-2 rounded-full text-sm z-[10000]">
           {currentIndex + 1} / {images.length}
         </div>
       )}
@@ -544,4 +553,6 @@ export default function ImageLightbox({
       ` }} />
     </div>
   );
+
+  return createPortal(content, document.body);
 }

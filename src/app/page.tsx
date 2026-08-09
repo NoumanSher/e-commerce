@@ -1,4 +1,5 @@
 import React from "react";
+import type { Metadata } from "next";
 import dynamic from "next/dynamic";
 import Image from "next/image";
 import Link from "next/link";
@@ -16,6 +17,9 @@ import { StoreInfo } from "@/components/Slider/dto/storeSettingDto";
 import { getLandingMetadata } from "@/app/utils/metadata/landingMetadata";
 import { createQueryClient } from "@/lib/queryClient";
 import { queryKeys } from "@/lib/queryKeys";
+import { resolveActiveTheme } from "@/utils/theme";
+// Theme pages
+import AquaMistHomePage from "@/themes/aquamist/page";
 
 // Note: getCachedStoreSettings is defined inside LandingPage to enable per-tenant cache key scoping matching RootLayout.
 
@@ -55,6 +59,13 @@ const FAQ = dynamic(() => import("@/components/FAQ"), {
 export const revalidate = 300;
 
 export default async function LandingPage() {
+  // ── Theme routing ─────────────────────────────────────────────────
+  const activeTheme = await resolveActiveTheme();
+  if (activeTheme === "aquamist") {
+    // AquaMist theme has its own self-contained page
+    return <AquaMistHomePage />;
+  }
+  // ─────────────────────────────────────────────────────────
   let host = "default";
   try {
     host = headers().get("host") ?? "default";
@@ -144,7 +155,7 @@ export default async function LandingPage() {
 
         {/* FAQ — reserve ~300px */}
         <ScrollReveal fallback={<div className="w-full h-[300px] bg-white animate-pulse" />} minHeight="300px">
-          <FAQ />
+          <FAQ limit={5} showViewAll={true} />
         </ScrollReveal>
       </HydrationBoundary>
 
@@ -166,4 +177,6 @@ export default async function LandingPage() {
   );
 }
 
-export const generateMetadata = getLandingMetadata;
+export async function generateMetadata(): Promise<Metadata> {
+  return getLandingMetadata();
+}

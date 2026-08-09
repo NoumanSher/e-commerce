@@ -1,5 +1,5 @@
 import React, { memo, lazy, Suspense } from "react";
-import "./styles.css";
+// import "./styles.css";
 import ProductsCategories from "./ProductsCategories";
 import ProductsCard from "./ProductsCard";
 const AllProductBtn = lazy(() => import("../../specific/allProductBtn"));

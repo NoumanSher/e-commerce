@@ -1,4 +1,10 @@
 import React, { Suspense, lazy } from "react";
+import AquaMistCartPage from "@/themes/aquamist/(pages)/cart/page";
+import { resolveActiveTheme } from "@/utils/theme";
+
+// ── Theme delegation ──────────────────────────────────────────────────────────
+// For the aquamist theme the full AquaMist cart is rendered directly.
+// All other themes fall through to the default CartScreen below.
 
 const CartScreen = lazy(() => import("@/components/screen/cart"));
 const CartSkeleton = () => {
@@ -75,7 +81,12 @@ const CartSkeleton = () => {
   );
 };
 
-export default function CartPage() {
+export default async function CartPage() {
+  const activeTheme = await resolveActiveTheme();
+  if (activeTheme === "aquamist") {
+    return <AquaMistCartPage />;
+  }
+
   return (
     <Suspense fallback={<CartSkeleton />}>
       <CartScreen />

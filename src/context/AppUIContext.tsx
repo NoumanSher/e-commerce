@@ -13,6 +13,8 @@ interface AppUIContextProps {
   productDetail: ProductDetailData | null;
   updateProductDetailData: (data: ProductDetailData) => void;
   isHydrated: boolean;
+  quickAddProduct: any | null;
+  setQuickAddProduct: (product: any | null) => void;
 }
 
 const AppUIContext = createContext<AppUIContextProps | undefined>(undefined);
@@ -23,6 +25,7 @@ export const AppUIProvider = ({ children }: { children: ReactNode }) => {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [productDetail, setProductDetail] = useState<ProductDetailData | null>(null);
   const [isHydrated, setIsHydrated] = useState(false);
+  const [quickAddProduct, setQuickAddProduct] = useState<any | null>(null);
 
   useEffect(() => {
     // Migration for legacy typo just in case
@@ -56,8 +59,9 @@ export const AppUIProvider = ({ children }: { children: ReactNode }) => {
     activeTab, setActiveTab,
     selectedCategory, updateSelectedCategory,
     productDetail, updateProductDetailData,
-    isHydrated
-  }), [isAuthModalOpen, activeTab, selectedCategory, productDetail, updateSelectedCategory, updateProductDetailData, isHydrated]);
+    isHydrated,
+    quickAddProduct, setQuickAddProduct
+  }), [isAuthModalOpen, activeTab, selectedCategory, productDetail, updateSelectedCategory, updateProductDetailData, isHydrated, quickAddProduct]);
 
   return <AppUIContext.Provider value={value}>{children}</AppUIContext.Provider>;
 };

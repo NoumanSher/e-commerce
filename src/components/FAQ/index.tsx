@@ -1,8 +1,10 @@
 "use client";
 import React, { useState } from "react";
 import { HiChevronDown } from "react-icons/hi2";
+import { useFaqsQuery } from "@/hooks/useFaqsQuery";
+import Link from "next/link";
 
-const faqs = [
+const MOCK_FAQS = [
   {
     question: "Do you offer delivery in Lahore?",
     answer: "Yes, we offer fast and reliable delivery across all areas of Lahore. Most orders are delivered within 24-48 hours.",
@@ -25,12 +27,34 @@ const faqs = [
   },
 ];
 
-const FAQ = () => {
+interface FAQProps {
+  limit?: number;
+  showViewAll?: boolean;
+}
+
+const FAQ: React.FC<FAQProps> = ({ limit, showViewAll = false }) => {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
+  const { data: dbFaqs, isLoading } = useFaqsQuery();
 
   const toggleFAQ = (index: number) => {
     setOpenIndex(openIndex === index ? null : index);
   };
+
+  // Resolve which FAQs to render (prefer DB, fallback to Mock)
+  const activeDbFaqs = (dbFaqs || []).filter((f) => f.isActive);
+  const hasDbFaqs = activeDbFaqs.length > 0;
+  const rawList = hasDbFaqs ? activeDbFaqs : MOCK_FAQS;
+  
+  // Apply limit if specified
+  const faqs = limit ? rawList.slice(0, limit) : rawList;
+
+  if (isLoading && !hasDbFaqs) {
+    return (
+      <section className="bg-white py-16 px-4 md:px-6 text-center">
+        <div className="inline-block w-8 h-8 border-2 border-black border-t-transparent rounded-full animate-spin"></div>
+      </section>
+    );
+  }
 
   return (
     <section className="bg-white py-16 px-4 md:px-6">
@@ -61,13 +85,15 @@ const FAQ = () => {
                   {faq.question}
                 </span>
                 <HiChevronDown
-                  className={`w-5 h-5 text-gray-400 transition-transform duration-300 ${openIndex === index ? "rotate-180 text-black" : ""
-                    }`}
+                  className={`w-5 h-5 text-gray-400 transition-transform duration-300 ${
+                    openIndex === index ? "rotate-180 text-black" : ""
+                  }`}
                 />
               </button>
               <div
-                className={`overflow-hidden transition-all duration-300 ${openIndex === index ? "max-h-40 opacity-100 mt-2" : "max-h-0 opacity-0"
-                  }`}
+                className={`overflow-hidden transition-all duration-300 ${
+                  openIndex === index ? "max-h-40 opacity-100 mt-2" : "max-h-0 opacity-0"
+                }`}
               >
                 <p className="text-gray-600 leading-relaxed pb-2">
                   {faq.answer}
@@ -76,6 +102,17 @@ const FAQ = () => {
             </div>
           ))}
         </div>
+
+        {showViewAll && rawList.length > (limit || 0) && (
+          <div className="text-center mt-8">
+            <Link
+              href="/faq"
+              className="inline-block bg-black text-white px-6 py-2.5 rounded-full text-sm font-semibold hover:bg-gray-800 transition-colors"
+            >
+              View All FAQs
+            </Link>
+          </div>
+        )}
       </div>
     </section>
   );

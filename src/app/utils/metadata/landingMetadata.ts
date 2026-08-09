@@ -3,9 +3,9 @@
 import { Metadata } from "next";
 import { headers } from "next/headers";
 import { getStoreSettingServer } from "@/services/settingsService.server";
-import logo from '@/assets/img/logo.webp';
+import logo from "@/assets/img/logo.webp";
 
-export async function getLandingMetadata(): Promise<Metadata> {
+export async function getLandingMetadata(pageTitle?: string): Promise<Metadata> {
   let host = "default";
   try {
     host = headers().get("host") ?? "default";
@@ -15,37 +15,43 @@ export async function getLandingMetadata(): Promise<Metadata> {
     }
   } catch {
     // During `next build` static generation there is no request context.
-    // Fall back to "default" — the prefetch calls will fail gracefully.
   }
 
   try {
     const storeSettings = await getStoreSettingServer(host);
 
-    if (!storeSettings) throw new Error("Failed to fetch store settings");
+    const storeName = storeSettings?.title || "PakShipperStore";
+    const titleText = pageTitle ? `${pageTitle} | ${storeName}` : storeName;
+    const faviconUrl = storeSettings?.logo || logo.src;
 
     return {
-      title: storeSettings.title || "PakshipperStore",
+      title: titleText,
       description:
-        storeSettings.description || "Your favorite shopping destination",
+        storeSettings?.description || "Your favorite shopping destination",
       icons: {
         icon: [
           {
-            url: storeSettings.logo || logo.src,
-            type: "image/png",
-            sizes: "32x32",
+            url: faviconUrl,
           },
         ],
+        shortcut: faviconUrl,
+        apple: faviconUrl,
       },
-      creator: "Blazlogic",
-      applicationName: "PakShipperStore",
+      creator: storeName,
+      applicationName: storeName,
       generator: "Next.js",
     };
   } catch (error) {
     console.error("Error generating landing metadata:", (error as any)?.message || error);
     return {
-      title: "PakshipperStore",
+      title: pageTitle ? `${pageTitle} | PakShipperStore` : "PakShipperStore",
       description: "Your favorite shopping destination",
     };
   }
 }
 
+export function createGenerateMetadata(pageTitle?: string) {
+  return async function generateMetadata(): Promise<Metadata> {
+    return getLandingMetadata(pageTitle);
+  };
+}

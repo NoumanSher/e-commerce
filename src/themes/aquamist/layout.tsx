@@ -1,0 +1,57 @@
+import React from "react";
+import type { Metadata } from "next";
+import AquaMistHeader from "./Header";
+import AquaMistFooter from "./Footer";
+
+export const metadata: Metadata = {
+  title: "HumidAura - Breathe the Difference",
+  description:
+    "Luxury ultrasonic humidifiers crafted for your calm. Elevate your atmosphere with state-of-the-art technology and timeless design.",
+};
+
+export default function AquaMistLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  return (
+    <>
+      {/* ── AquaMist theme font injection ────────────────────────────────── */}
+      {/* These <link> tags live inside <head> because this layout renders    */}
+      {/* inside RootLayout's <html>/<body>; Next.js hoists them properly.   */}
+      <link rel="preconnect" href="https://fonts.googleapis.com" />
+      <link
+        rel="preconnect"
+        href="https://fonts.gstatic.com"
+        crossOrigin="anonymous"
+      />
+      {/* EB Garamond — display serif for headings */}
+      <link
+        href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400..800;1,400..800&display=swap"
+        rel="stylesheet"
+      />
+      {/* Inter — clean sans-serif for body / labels */}
+      <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap"
+        rel="stylesheet"
+      />
+      {/* Material Symbols Outlined — icon font used throughout the theme */}
+      <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap"
+        rel="stylesheet"
+      />
+
+      {/* ── AquaMist chrome ─────────────────────────────────────────────── */}
+      <div className="flex flex-col min-h-screen bg-aq-background text-aq-on-surface font-inter antialiased overflow-x-hidden selection:bg-aq-primary-container selection:text-aq-on-primary-container">
+        {/* Ambient mist glow — fixed, behind all content */}
+        <div aria-hidden="true" className="fixed inset-0 pointer-events-none z-0">
+          <div className="absolute top-1/4 left-1/4 w-[800px] h-[800px] bg-aq-primary-container/10 rounded-full blur-[120px] mix-blend-screen opacity-50" />
+          <div className="absolute bottom-1/4 right-1/4 w-[600px] h-[600px] bg-aq-primary-container/5 rounded-full blur-[100px] mix-blend-screen opacity-30" />
+        </div>
+        <AquaMistHeader />
+        <main className="relative z-10 flex-1">{children}</main>
+        <AquaMistFooter />
+      </div>
+    </>
+  );
+}

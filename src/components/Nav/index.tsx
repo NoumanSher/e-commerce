@@ -12,7 +12,7 @@ import { useAuth } from "@/context/AuthContext";
 import { useGetStoreSettings } from "../Slider/query/storeSettingQuery";
 import Image from "next/image";
 import logo from "@/assets/img/logo.webp";
-import NotificationBell from "./NotificationBell";
+import NotificationBell from "./NotificationBell"; 
 
 const NAV_LINKS = [
   { path: "/", label: "Home", icon: FiHome },
@@ -128,7 +128,7 @@ const Navbar = () => {
         `}
       >
         <nav className="bg-white border-b border-gray-200 shadow-sm">
-          <div className="container mx-auto px-4 py-2 lg:px-16 flex items-center justify-between h-16 relative">
+          <div className="container mx-auto px-4 lg:px-16 flex items-center justify-between h-20 relative">
 
             {/* Mobile: Hamburger */}
             <button
@@ -147,12 +147,12 @@ const Navbar = () => {
               className="absolute left-1/2 -translate-x-1/2 pt-2 lg:pt-0 lg:static lg:transform-none flex items-center lg:mx-0 lg:mr-10 h-full"
               onClick={closeMobileMenu}
             >
-              <div className="relative h-full flex items-center py-2">
+              <div className="relative h-full flex items-center">
                 <Image
                   src={storeSettings?.logo ?? logo.src}
-                  className="object-contain object-center max-h-full w-auto"
-                  width={120}
-                  height={48}
+                  className="object-contain object-center max-h-[56px] w-auto max-w-[200px]"
+                  width={200}
+                  height={56}
                   alt="Store logo"
                   priority
                 />
@@ -255,7 +255,7 @@ const Navbar = () => {
       {/* Mobile Slide-in Menu */}
       <div
         className={`
-          lg:hidden fixed inset-0 z-40 mt-16
+          lg:hidden fixed inset-0 z-40 mt-20
           transition-all duration-300 ease-in-out
           ${isMobileMenuOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"}
         `}
@@ -360,7 +360,7 @@ const Navbar = () => {
       </div>
 
       {/* Spacer to prevent content from hiding under fixed navbar */}
-      <div className="h-16" />
+      <div className="h-20" />
     </>
   );
 };
