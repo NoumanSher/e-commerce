@@ -34,7 +34,7 @@ const AuthForm: React.FC<AuthFormProps> = ({
   isLoading,
 }) => {
   const { setActiveTab } = useAppUIContext();
-  const { handleGoogleLogin, handleLinkedInLogin } = useSocialAuth();
+  const { handleGoogleLogin } = useSocialAuth();
 
   const {
     register,
