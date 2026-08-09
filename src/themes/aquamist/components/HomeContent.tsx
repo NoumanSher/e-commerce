@@ -1,13 +1,18 @@
 "use client";
 
-import React, { useMemo, useRef, useEffect } from "react";
+import React, { useMemo, useRef, useEffect, useState, useCallback } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useQueryClient } from "@tanstack/react-query";
 import ProductCard from "./ProductCard";
 import { useProductsQuery } from "@/hooks/useProductsQuery";
 import type { Product } from "@/components/productDetail/productDetailDto";
 import CategorySlider from "@/components/CategorySlider/CategorySlider";
 import AquaMistFaqSection from "./FaqSection";
 import { useAppUIContext } from "@/context/AppUIContext";
+import { queryKeys } from "@/lib/queryKeys";
+import { productsService } from "@/services/productsService";
+import { STALE_TIMES, CACHE_TIMES } from "@/lib/queryClient";
 
 const MOCK_PRODUCTS: Partial<Product>[] = [
   {
@@ -76,6 +81,10 @@ export default function AquaMistHomeContent() {
   // Use selectedCategory only after hydration to avoid SSR text mismatch
   const activeCategory = isHydrated ? selectedCategory : null;
 
+  const router = useRouter();
+  const queryClient = useQueryClient();
+  const [isNavLoading, setIsNavLoading] = useState(false);
+
   // Ref to the products section — used to scroll into view on category select
   const productsSectionRef = useRef<HTMLElement>(null);
 
@@ -105,6 +114,40 @@ export default function AquaMistHomeContent() {
     if (!isHydrated || !activeCategory) return;
     productsSectionRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
   }, [activeCategory, isHydrated]);
+
+  // Build the collections URL: forward selected category if present
+  const collectionsHref = activeCategory
+    ? `/collections?parentCategorySlug=${activeCategory}`
+    : "/collections";
+
+  // Prefetch on hover — same pattern as AllProductBtn
+  const handleCollectionsPrefetch = useCallback(() => {
+    queryClient.prefetchQuery({
+      queryKey: queryKeys.categories.all(),
+      queryFn: () => productsService.fetchAllCategories(),
+      staleTime: STALE_TIMES.infinite,
+      gcTime: CACHE_TIMES.infinite,
+    });
+    if (activeCategory) {
+      queryClient.prefetchInfiniteQuery({
+        queryKey: ["products", { parent: activeCategory, child: null }],
+        queryFn: ({ pageParam = 1 }) =>
+          productsService.fetchProducts({
+            categorySlug: activeCategory,
+            page: pageParam as number,
+            limit: 12,
+            mode: "client",
+          }),
+        initialPageParam: 1,
+      });
+    }
+    router.prefetch(collectionsHref);
+  }, [queryClient, router, activeCategory, collectionsHref]);
+
+  const handleCollectionsClick = useCallback(() => {
+    setIsNavLoading(true);
+    router.push(collectionsHref);
+  }, [router, collectionsHref]);
 
   return (
     <>
@@ -145,14 +188,29 @@ export default function AquaMistHomeContent() {
           </div>
         )}
 
-        {/* ── See All Collections Button ──────────────────────────────────── */}
+        {/* ── See All Collections Button ───────────────────────────────── */}
         <div className="flex justify-center mt-14">
-          <Link
-            href="/collections"
-            className="inline-flex items-center gap-2 bg-aq-primary-container text-aq-on-primary-container px-8 py-3.5 rounded-full font-inter text-sm font-semibold tracking-widest hover:bg-aq-primary transition-all duration-300 shadow-[0_0_20px_rgba(125,232,216,0.25)] hover:shadow-[0_0_30px_rgba(125,232,216,0.45)] hover:scale-105"
+          <button
+            onClick={handleCollectionsClick}
+            onMouseEnter={handleCollectionsPrefetch}
+            onTouchStart={handleCollectionsPrefetch}
+            disabled={isNavLoading}
+            className="inline-flex items-center gap-2.5 bg-aq-primary-container text-aq-on-primary-container px-8 py-3.5 rounded-full font-inter text-sm font-semibold tracking-widest hover:bg-aq-primary transition-all duration-300 shadow-[0_0_20px_rgba(125,232,216,0.25)] hover:shadow-[0_0_30px_rgba(125,232,216,0.45)] hover:scale-105 disabled:opacity-70 disabled:cursor-not-allowed disabled:scale-100"
           >
-            See All Collections &rarr;
-          </Link>
+            {isNavLoading ? (
+              <>
+                <span className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
+                <span>Loading…</span>
+              </>
+            ) : (
+              <>
+                <span>{activeCategory ? `See All in ${activeCategory}` : "See All Collections"}</span>
+                <svg className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                </svg>
+              </>
+            )}
+          </button>
         </div>
       </section>
 
