@@ -102,7 +102,7 @@ export default function AquaMistCheckoutContent() {
   const activeItems = isBuyNow ? (productDetail?.items ?? []) : cartItems;
   const activeSubTotal = isBuyNow ? (productDetail?.subTotal ?? 0) : cartSubTotal;
 
-  const { isEligible, discountPercent, discountAmount } = useFirstOrderDiscount(activeSubTotal);
+  const { isEligible, discountPercent, discountType, discountValue, discountAmount } = useFirstOrderDiscount(activeSubTotal);
 
   // ── Form state ──────────────────────────────────────────────────────────────
   const [firstName, setFirstName] = useState("");
@@ -551,7 +551,9 @@ export default function AquaMistCheckoutContent() {
                         <span className="material-symbols-outlined text-[14px] shrink-0" style={{ fontVariationSettings: "'FILL' 1" }}>
                           celebration
                         </span>
-                        <span className="truncate">First Order ({discountPercent}% off)</span>
+                        <span className="truncate">
+                          First Order ({discountType === "fixed" ? `PKR ${discountValue}` : `${discountPercent}%`} off)
+                        </span>
                       </span>
                       <span className="shrink-0">-{formatPKR(firstOrderDiscount)}</span>
                     </div>
