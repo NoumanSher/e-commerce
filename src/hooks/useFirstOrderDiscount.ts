@@ -3,20 +3,28 @@ import { get } from "@/lib/apiClient";
 import { useAuth } from "@/context/AuthContext";
 import { useCart } from "@/hooks/useCart";
 
+export interface FirstOrderPromoConfig {
+  enabled: boolean;
+  discountType: "percentage" | "fixed";
+  discountValue: number;
+  title?: string;
+  subtitle?: string;
+  startDate?: string | null;
+  endDate?: string | null;
+}
+
 interface FirstOrderDiscountResponse {
   eligible: boolean;
-  discountPercent: number;
+  discountType?: "percentage" | "fixed";
+  discountValue?: number;
+  discountPercent?: number;
+  timeRemainingText?: string;
+  config?: FirstOrderPromoConfig;
 }
 
 /**
  * Checks whether the currently logged-in user is eligible for
- * the first-order 5% discount.
- *
- * Returns:
- *  - isEligible: boolean
- *  - discountPercent: number (5 or 0)
- *  - discountAmount: number (computed from subTotal)
- *  - isLoading: boolean
+ * the first-order discount configured by the merchant.
  */
 export const useFirstOrderDiscount = (customSubTotal?: number) => {
   const { userId, authToken } = useAuth();
@@ -34,10 +42,28 @@ export const useFirstOrderDiscount = (customSubTotal?: number) => {
   });
 
   const isEligible = data?.eligible ?? false;
-  const discountPercent = data?.discountPercent ?? 0;
-  const discountAmount = isEligible
-    ? Math.round(activeSubTotal * (discountPercent / 100))
-    : 0;
+  const discountType = data?.discountType || "percentage";
+  const discountValue = data?.discountValue ?? data?.discountPercent ?? 0;
+  const discountPercent = discountType === "percentage" ? discountValue : 0;
+  const timeRemainingText = data?.timeRemainingText || "";
 
-  return { isEligible, discountPercent, discountAmount, isLoading };
+  let discountAmount = 0;
+  if (isEligible) {
+    if (discountType === "fixed") {
+      discountAmount = Math.min(activeSubTotal, discountValue);
+    } else {
+      discountAmount = Math.round(activeSubTotal * (discountValue / 100));
+    }
+  }
+
+  return {
+    isEligible,
+    discountType,
+    discountValue,
+    discountPercent,
+    discountAmount,
+    timeRemainingText,
+    config: data?.config,
+    isLoading,
+  };
 };

@@ -27,30 +27,68 @@ export default function FirstOrderBanner() {
   const [showStickyBar, setShowStickyBar] = useState(false);
   const [mounted, setMounted] = useState(false);
 
+  const promo = (storeSettings as any)?.firstOrderDiscount;
+
+  // Check if promotion is active
+  const isEnabled = React.useMemo(() => {
+    if (promo?.enabled === false) return false;
+    const now = new Date();
+    if (promo?.startDate && new Date(promo.startDate) > now) return false;
+    if (promo?.endDate && new Date(promo.endDate) < now) return false;
+    return true;
+  }, [promo]);
+
+  // Compute countdown timer string (e.g. "2 hours left" or "4 days left")
+  const timeRemainingText = React.useMemo(() => {
+    if (!promo?.endDate) return "";
+    const now = new Date();
+    const diffMs = new Date(promo.endDate).getTime() - now.getTime();
+    if (diffMs <= 0) return "";
+    const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
+    const diffDays = Math.floor(diffHours / 24);
+    if (diffDays >= 1) {
+      return `${diffDays} day${diffDays > 1 ? "s" : ""} left`;
+    }
+    if (diffHours >= 1) {
+      return `${diffHours} hour${diffHours > 1 ? "s" : ""} left`;
+    }
+    const diffMins = Math.floor(diffMs / (1000 * 60));
+    return `${diffMins} min${diffMins > 1 ? "s" : ""} left`;
+  }, [promo?.endDate]);
+
+  const discountBadgeText = React.useMemo(() => {
+    if (promo?.discountType === "fixed") {
+      return `PKR ${promo?.discountValue ?? 0} OFF`;
+    }
+    return `${promo?.discountValue ?? 5}% OFF`;
+  }, [promo]);
+
+  const titleText = promo?.title || `Get ${discountBadgeText} On Your First Order`;
+  const subtitleText = promo?.subtitle || "Sign up and unlock your instant discount.";
+
   useEffect(() => {
     setMounted(true);
   }, []);
 
   // Show popup after 3 s for non-logged-in users who haven't dismissed it
   useEffect(() => {
-    if (!mounted) return;
-    if (authToken) return; // already logged in — hide everything
+    if (!mounted || !isEnabled || authToken) return;
     if (isDismissed()) {
       setShowStickyBar(true); // still show the sticky hint
       return;
     }
     const t = setTimeout(() => setShowModal(true), 3000);
     return () => clearTimeout(t);
-  }, [mounted, authToken]);
+  }, [mounted, isEnabled, authToken]);
 
   // Show sticky bar when modal is closed (or already dismissed)
   useEffect(() => {
-    if (!mounted || authToken) {
+    if (!mounted || !isEnabled || authToken) {
       setShowStickyBar(false);
       return;
     }
     if (!showModal) setShowStickyBar(true);
-  }, [showModal, mounted, authToken]);
+  }, [showModal, mounted, isEnabled, authToken]);
 
   const handleDismiss = useCallback(() => {
     localStorage.setItem(
@@ -76,7 +114,7 @@ export default function FirstOrderBanner() {
     setShowStickyBar(false);
   }, []);
 
-  if (!mounted || authToken) return null;
+  if (!mounted || !isEnabled || authToken) return null;
 
   return (
     <>
@@ -85,7 +123,7 @@ export default function FirstOrderBanner() {
         <div
           role="button"
           tabIndex={0}
-          aria-label="Get 5% off your first order"
+          aria-label={titleText}
           onClick={handleStickyOpen}
           onKeyDown={(e) => e.key === "Enter" && handleStickyOpen()}
           className="
@@ -111,7 +149,9 @@ export default function FirstOrderBanner() {
             style={{ writingMode: 'vertical-rl', transform: 'rotate(180deg)' }}
           >
             <FiTag size={14} className="shrink-0" />
-            <span className="tracking-wide">5% OFF — Claim Now</span>
+            <span className="tracking-wide">
+              {discountBadgeText} {timeRemainingText ? `• ${timeRemainingText}` : "— Claim Now"}
+            </span>
           </div>
         </div>
       )}
@@ -154,22 +194,30 @@ export default function FirstOrderBanner() {
             </button>
 
             {/* Logo */}
-            <div className="mb-6">
+            <div className="mb-4">
               <Image
                 src={storeSettings?.logo ?? logo.src}
-                width={90}
-                height={90}
+                width={80}
+                height={80}
                 alt="Store logo"
                 className="object-contain mx-auto"
               />
             </div>
 
+            {/* Countdown Badge if End Date is set */}
+            {timeRemainingText && (
+              <div className="mb-3 inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-rose-50 border border-rose-200 text-rose-600 text-xs font-semibold tracking-wide animate-pulse">
+                <span>⏱</span>
+                <span>Limited Time: {timeRemainingText}</span>
+              </div>
+            )}
+
             {/* Headline */}
             <h2 className="text-2xl font-bold text-black mb-2 leading-tight">
-              Get 5% OFF On Your First Order
+              {titleText}
             </h2>
             <p className="text-sm text-gray-500 mb-6">
-              Sign up and unlock your instant discount.
+              {subtitleText}
             </p>
 
             {/* CTA — Sign up */}
@@ -198,8 +246,7 @@ export default function FirstOrderBanner() {
 
             {/* Fine print */}
             <p className="mt-4 text-[11px] text-gray-400 leading-relaxed">
-              Valid on your first order only. Discount applied automatically at
-              checkout.
+              Valid on your first order only. Discount applied automatically at checkout.
             </p>
           </div>
         </div>
