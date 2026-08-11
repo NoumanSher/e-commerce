@@ -7,143 +7,40 @@ import { useCategoriesQuery, useProductsQuery } from "@/hooks/useProductsQuery";
 import type { Product } from "@/components/productDetail/productDetailDto";
 import CategorySlider from "@/components/CategorySlider/CategorySlider";
 
-// Resilient mock products in case database is empty or loading
-const MOCK_PRODUCTS: Partial<Product>[] = [
-  {
-    _id: "aura-obsidian",
-    productName: "Aura Obsidian",
-    description: "Ultra-quiet ultrasonic diffusion with 12-hour continuous misting capacity.",
-    salePrice: 149,
-    discount: 0,
-    images: [
-      {
-        src: "https://lh3.googleusercontent.com/aida-public/AB6AXuA_229ABYm8CCqdF2qScfH8Rr-FTPV4fXRIYsfZQv_gi7kt5CQZV7JpReGnVYlF0Rllsb-tmJAURPWCIRfJqCwnBUtxIdaAyScxB0-nbug7M6_TcHXemdNA27t2kUVewHaz8suB_9GM2owDP5zcO-6JJgZfjTsflHaIRp1lQ5EPL-cSSuhIrKksenYxfyvFSKk41RE5FBwtRBqfCl651pu2qBHowv3RpRmU67g7cGrYJ6H0jgfYXB6jtRnrRJN1mNsc_WO3GTcUOlw",
-        alt: "Matte black cylindrical humidifier emitting cool teal mist",
-        blurDataURL: "",
-        isThumbnail: true,
-        _id: "img-1",
-      },
-    ],
-    seo: { slug: "aura-obsidian", metaTitle: "Aura Obsidian", metaDescription: "", metaKeywords: [] },
-    parentCategoryName: "Bedroom",
-    isNew: false,
-    isLimited: false,
-    options: [],
-    variants: [],
-  },
-  {
-    _id: "strato-tower",
-    productName: "Strato Tower",
-    description: "High-capacity evaporative humidification for spaces up to 800 sq ft.",
-    salePrice: 289,
-    discount: 0,
-    images: [
-      {
-        src: "https://lh3.googleusercontent.com/aida-public/AB6AXuCgpXYHmdBqMSH4GZP0jf_2n4FQZ6VrocxcTuu8NjZH4gFw6azgipVWd26DrD-V8ypkVYBOJZT0L1ECFwZPsv3TxeZRnbTe4nVxVfUl-faNtFGQgHDgMj6mU378QWFZYRbhbim9D-f8y2aqDc9mHx6BniKzHsFqmPxPkRSXfoeYlR2U_xoyW7wv3Ys5AkaaAO24QWzk_kANpEz7mkJQDYhkZJO4zrG9bMGqAT3inJofTGXQz-jCOMVPfBQtA9obc_bm95ZR1mbO9jw",
-        alt: "Tall brushed silver and frosted glass humidifier with teal backlighting",
-        blurDataURL: "",
-        isThumbnail: true,
-        _id: "img-2",
-      },
-    ],
-    seo: { slug: "strato-tower", metaTitle: "Strato Tower", metaDescription: "", metaKeywords: [] },
-    parentCategoryName: "Living Room",
-    isNew: true,
-    isLimited: false,
-    options: [],
-    variants: [],
-  },
-  {
-    _id: "zenith-pebble",
-    productName: "Zenith Pebble",
-    description: "Personal hydration zone creator with USB-C power and mood lighting.",
-    salePrice: 89,
-    discount: 0,
-    images: [
-      {
-        src: "https://lh3.googleusercontent.com/aida-public/AB6AXuDWLGDwrC1sZhgBrosty3pCdkmBLo_8x86fBmaj1tV2ezpTXRpoo_1ccy0HoNUDqCcmccfYX5r8S9lK90cn4PqMGCacdS42OPYsbj9IIoPlXKSN7fIOlQroOH5-VsUnBgek-9FJng9-cPVocItuvH1Lv69U2YGV9xLX19NUZ-Yx3tED02OEgVjBHeJbKPU86yleNPKEr8usK805gF2rwwrKHBieMIUu9bJ6JXGyUrXkyaGUQ_nhe2ytAhLJ1r6JpIUW3DIS_jG3TNI",
-        alt: "Compact pebble-shaped matte stone gray desktop humidifier",
-        blurDataURL: "",
-        isThumbnail: true,
-        _id: "img-3",
-      },
-    ],
-    seo: { slug: "zenith-pebble", metaTitle: "Zenith Pebble", metaDescription: "", metaKeywords: [] },
-    parentCategoryName: "Office",
-    isNew: false,
-    isLimited: false,
-    options: [],
-    variants: [],
-  },
-  {
-    _id: "aqua-clarity",
-    productName: "Aqua Clarity",
-    description: "Visible water reservoir with ambient base lighting and essential oil tray.",
-    salePrice: 129,
-    discount: 0,
-    images: [
-      {
-        src: "https://lh3.googleusercontent.com/aida-public/AB6AXuAILu-zLyS-E2p1ttDV-_7znjQiNOXOE8u82YZM8g07r6vQKC2yD05-50rExyLL8OzsxdnkadBLjPe4FqTQKQwQKXYxUJ7LTsD_cHvlc5LBe8sOanE7KfvMenBratANasq4heC6BG72vEIIc5hj_jtLjTCb49616zMVNZGJrcol-HBGjmkL5CUpoAR2kCKMAJ-gyYfOMHhVLISv9EhlpwhCze4Vdral1CLZcq9xNFSEZWp9xGp5eF65XtAYScAY_TdwMMir6py_nkU",
-        alt: "Transparent glass reservoir humidifier with glowing teal base",
-        blurDataURL: "",
-        isThumbnail: true,
-        _id: "img-4",
-      },
-    ],
-    seo: { slug: "aqua-clarity", metaTitle: "Aqua Clarity", metaDescription: "", metaKeywords: [] },
-    parentCategoryName: "Bedroom",
-    isNew: false,
-    isLimited: false,
-    options: [],
-    variants: [],
-  },
-  {
-    _id: "nimbus-connect",
-    productName: "Nimbus Connect",
-    description: "App-controlled humidity management with integrated air quality sensors.",
-    salePrice: 219,
-    discount: 0,
-    images: [
-      {
-        src: "https://lh3.googleusercontent.com/aida-public/AB6AXuB41A-1_c2uRzS3lnWLHydeDiufluj82D6ivnItsb5BUZlchDAOdgad-xb-F85rGtkTR-B-IOovJ1Jn0wk_Wk2iNV74WdoM9HdU-HEPwaik7wgMly_SqvZdlsPeLEbulVzFY3pRDJ7Ay5tGMXKhtVESuaBwh4AIiN1xRZMBBBqiWCqTO_fbb_x5bLNEy3efkutJdtIMtGOeiqWyHBq_TqesefVGriNCWRjp1oavCL6j4RB_dWNoeF21-nYMQrMbrbwMDm-gmuokBU4",
-        alt: "Futuristic geometric humidifier with integrated digital display",
-        blurDataURL: "",
-        isThumbnail: true,
-        _id: "img-5",
-      },
-    ],
-    seo: { slug: "nimbus-connect", metaTitle: "Nimbus Connect", metaDescription: "", metaKeywords: [] },
-    parentCategoryName: "Smart Series",
-    isNew: false,
-    isLimited: true,
-    options: [],
-    variants: [],
-  },
-  {
-    _id: "monolith",
-    productName: "Monolith",
-    description: "Architectural statement piece delivering massive moisture output for open plans.",
-    salePrice: 450,
-    discount: 0,
-    images: [
-      {
-        src: "https://lh3.googleusercontent.com/aida-public/AB6AXuBDuRke00fAbsEcwttAdyLsCr3_K7UqUcwzNQWhBO-X-daj7iHFunoj6KMFxU439NZCB6rPpeiGKLcu0dvUGPc-ZlMUwxiz9o9jU30_t11SNsXtMmMDx8tHcry2OAE7ZzVWz5NxYus3hmSuFQ2oCH0L5QYK3-mUCXJOrV73ag97mS7oP8npHh_dREPuKtYhUdG1J2qkWOyxDAvF1v063P30G0ysfs80lLtU7YT1CtgD6ZZ5rEV4p6LDdquQdeq1OwIqjF50nY4P2lA",
-        alt: "Floor-standing sculptural midnight blue humidifier",
-        blurDataURL: "",
-        isThumbnail: true,
-        _id: "img-6",
-      },
-    ],
-    seo: { slug: "monolith", metaTitle: "Monolith", metaDescription: "", metaKeywords: [] },
-    parentCategoryName: "Large Spaces",
-    isNew: false,
-    isLimited: false,
-    options: [],
-    variants: [],
-  },
-];
-
 const ITEMS_PER_PAGE = 6;
+
+// ── Skeleton card ───────────────────────────────────────────────────────────
+function ProductSkeleton() {
+  return (
+    <div className="aquamist-loader-card aspect-[3/4] rounded-[20px] bg-white/5 border border-white/10 animate-pulse" />
+  );
+}
+
+// ── Error state ─────────────────────────────────────────────────────────────
+function ProductsError({ onRetry }: { onRetry: () => void }) {
+  return (
+    <div className="flex flex-col items-center justify-center py-24 gap-5 text-center border border-white/10 rounded-[20px] bg-white/3 backdrop-blur-md max-w-lg mx-auto">
+      <span className="material-symbols-outlined text-6xl text-rose-400/70">
+        cloud_off
+      </span>
+      <div>
+        <p className="font-inter text-aq-on-surface font-semibold mb-1">
+          Failed to load products
+        </p>
+        <p className="font-inter text-sm text-aq-on-surface-variant">
+          Please check your connection and try again.
+        </p>
+      </div>
+      <button
+        onClick={onRetry}
+        className="inline-flex items-center gap-2 bg-aq-primary-container text-aq-on-primary-container px-6 py-2.5 rounded-full font-inter text-sm font-semibold tracking-wider hover:bg-aq-primary transition-all duration-300"
+      >
+        <span className="material-symbols-outlined text-[18px]">refresh</span>
+        Retry
+      </button>
+    </div>
+  );
+}
 
 export default function AquaMistCollectionsContent() {
   const searchParams = useSearchParams();
@@ -174,8 +71,8 @@ export default function AquaMistCollectionsContent() {
     [categoriesResponse]
   );
 
-  // Dynamically generate filter tabs
-  const FILTER_TABS = useMemo(() => {
+  // Dynamically generate filter tabs (kept for potential future use)
+  const _FILTER_TABS = useMemo(() => {
     return [
       { label: "All", slug: "All" },
       ...categories.map((c) => ({ label: c.name, slug: c.slug })),
@@ -183,39 +80,25 @@ export default function AquaMistCollectionsContent() {
   }, [categories]);
 
   // Fetch dynamic products based on active category and page
-  const { data: productsResponse, isLoading } = useProductsQuery({
+  const {
+    data: productsResponse,
+    isLoading,
+    isError,
+    refetch,
+  } = useProductsQuery({
     categorySlug: activeFilter === "All" ? undefined : activeFilter,
     page,
     limit: ITEMS_PER_PAGE,
     mode: "client",
   });
 
-  // Calculate pages
+  // Real products only — no static fallback
+  const displayProducts = useMemo<Product[]>(() => {
+    return productsResponse?.data ?? [];
+  }, [productsResponse?.data]);
+
   const totalProducts = productsResponse?.pagination?.totalProducts ?? 0;
-  const apiTotalPages = productsResponse?.pagination?.totalPages ?? 1;
-
-  // Use live data if present, otherwise fall back to mock data
-  const hasApiProducts = productsResponse?.data && productsResponse.data.length > 0;
-  
-  const displayProducts = useMemo(() => {
-    if (hasApiProducts) {
-      return productsResponse.data;
-    }
-    // Client-side filtering & paging for mock data
-    const filteredMock = activeFilter === "All"
-      ? MOCK_PRODUCTS
-      : MOCK_PRODUCTS.filter((p) => p.parentCategoryName === activeFilter);
-    
-    return filteredMock.slice((page - 1) * ITEMS_PER_PAGE, page * ITEMS_PER_PAGE) as Product[];
-  }, [hasApiProducts, productsResponse?.data, activeFilter, page]);
-
-  const totalPages = useMemo(() => {
-    if (hasApiProducts) return apiTotalPages;
-    const filteredMock = activeFilter === "All"
-      ? MOCK_PRODUCTS
-      : MOCK_PRODUCTS.filter((p) => p.parentCategoryName === activeFilter);
-    return Math.ceil(filteredMock.length / ITEMS_PER_PAGE) || 1;
-  }, [hasApiProducts, apiTotalPages, activeFilter]);
+  const totalPages = productsResponse?.pagination?.totalPages ?? 1;
 
   const handleFilterChange = (slug: string) => {
     setActiveFilter(slug);
@@ -228,6 +111,46 @@ export default function AquaMistCollectionsContent() {
     }
   };
 
+  // ── Render product grid content ─────────────────────────────────────────
+  function renderGrid() {
+    if (isLoading) {
+      return (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 mb-12">
+          {[...Array(6)].map((_, i) => (
+            <ProductSkeleton key={i} />
+          ))}
+        </div>
+      );
+    }
+
+    if (isError) {
+      return <ProductsError onRetry={() => refetch()} />;
+    }
+
+    if (displayProducts.length === 0) {
+      return (
+        <div className="text-center py-24 border border-white/10 rounded-[20px] bg-white/3 backdrop-blur-md max-w-lg mx-auto">
+          <span className="material-symbols-outlined text-6xl text-aq-on-surface-variant mb-4 block">
+            inventory_2
+          </span>
+          <p className="font-inter text-aq-on-surface-variant font-medium">
+            {activeFilter === "All"
+              ? "No products available yet. Check back soon!"
+              : `No products in "${activeFilter}" yet.`}
+          </p>
+        </div>
+      );
+    }
+
+    return (
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 mb-12 animate-fadeIn">
+        {displayProducts.map((product) => (
+          <ProductCard key={product._id} product={product} />
+        ))}
+      </div>
+    );
+  }
+
   return (
     <main className="flex-grow pt-[120px] pb-12 px-5 md:px-20 max-w-[1280px] mx-auto w-full">
       {/* ── Page Header ──────────────────────────────────────────────────── */}
@@ -238,6 +161,12 @@ export default function AquaMistCollectionsContent() {
         <h1 className="font-eb-garamond text-[40px] md:text-[48px] leading-[48px] md:leading-[56px] text-aq-on-surface mb-3">
           Our Collections
         </h1>
+        {/* Show total product count when loaded */}
+        {!isLoading && !isError && totalProducts > 0 && (
+          <p className="font-inter text-sm text-aq-on-surface-variant">
+            {totalProducts} product{totalProducts !== 1 ? "s" : ""} available
+          </p>
+        )}
       </header>
 
       {/* ── Category Slider Carousel ────────────────────────────────────────── */}
@@ -261,37 +190,10 @@ export default function AquaMistCollectionsContent() {
 
       {/* ── Product Grid ─────────────────────────────────────────────────── */}
       <div ref={productGridRef} className="scroll-mt-32" />
-      {isLoading ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 mb-12">
-          {[...Array(6)].map((_, i) => (
-            <div
-              key={i}
-              className="aquamist-loader-card aspect-[3/4] rounded-[20px] bg-white/5 border border-white/10 animate-pulse"
-            />
-          ))}
-        </div>
-      ) : displayProducts.length > 0 ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 mb-12 animate-fadeIn">
-          {displayProducts.map((product) => (
-            <ProductCard
-              key={product._id}
-              product={product}
-            />
-          ))}
-        </div>
-      ) : (
-        <div className="text-center py-24 border border-white/10 rounded-[20px] bg-white/3 backdrop-blur-md max-w-lg mx-auto">
-          <span className="material-symbols-outlined text-6xl text-aq-on-surface-variant mb-4 block">
-            inventory_2
-          </span>
-          <p className="font-inter text-aq-on-surface-variant font-medium">
-            No products in this category yet.
-          </p>
-        </div>
-      )}
+      {renderGrid()}
 
       {/* ── Pagination ───────────────────────────────────────────────────── */}
-      {totalPages > 1 && (
+      {!isLoading && !isError && totalPages > 1 && (
         <div className="flex justify-center mt-12">
           <div className="aq-glass-panel rounded-full px-4 py-2 flex items-center gap-4 border border-white/10 bg-white/5 backdrop-blur-md shadow-lg">
             <button

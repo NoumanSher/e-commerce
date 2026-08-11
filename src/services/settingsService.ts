@@ -9,14 +9,9 @@ export interface StoreInfo {
  * Client-side: fetch store settings.
  * Uses the shared Axios client — the browser supplies the Origin header automatically.
  */
-const getStoreSetting = async (): Promise<StoreInfo | null> => {
+const getStoreSetting = async (): Promise<StoreInfo> => {
   const url = "/settings";
-  try {
-    return await get<StoreInfo>(url);
-  } catch (error) {
-    console.error("Error fetching store settings:", error);
-    return null;
-  }
+  return await get<StoreInfo>(url);
 };
 
 export const settingsService = {
