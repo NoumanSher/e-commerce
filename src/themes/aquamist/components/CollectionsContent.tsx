@@ -45,10 +45,17 @@ function ProductsError({ onRetry }: { onRetry: () => void }) {
 export default function AquaMistCollectionsContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
-  const initialCategory = searchParams.get("parentCategorySlug") || "All";
-  const [activeFilter, setActiveFilter] = useState(initialCategory);
+  const urlCategory = searchParams.get("parentCategorySlug");
+  const [activeFilter, setActiveFilter] = useState(urlCategory || "");
   const [page, setPage] = useState(1);
   const productGridRef = useRef<HTMLDivElement>(null);
+
+  // Fetch parent categories dynamically — only active ones
+  const { data: categoriesResponse } = useCategoriesQuery();
+  const categories = useMemo(
+    () => (categoriesResponse?.categories || []).filter((c) => c.isActive !== false),
+    [categoriesResponse]
+  );
 
   // Scroll back to product grid top whenever page changes
   useEffect(() => {
@@ -57,19 +64,16 @@ export default function AquaMistCollectionsContent() {
     }
   }, [page]);
 
-  // Sync filter when the URL query changes (e.g. footer nav → category)
+  // Sync filter when URL query changes or when categories load
   useEffect(() => {
-    const slug = searchParams.get("parentCategorySlug") || "All";
-    setActiveFilter(slug);
+    const slug = searchParams.get("parentCategorySlug");
+    if (slug) {
+      setActiveFilter(slug);
+    } else if (categories.length > 0) {
+      setActiveFilter(categories[0].slug);
+    }
     setPage(1);
-  }, [searchParams]);
-
-  // Fetch parent categories dynamically — only active ones
-  const { data: categoriesResponse } = useCategoriesQuery();
-  const categories = useMemo(
-    () => (categoriesResponse?.categories || []).filter((c) => c.isActive !== false),
-    [categoriesResponse]
-  );
+  }, [searchParams, categories]);
 
   // Dynamically generate filter tabs (kept for potential future use)
   const _FILTER_TABS = useMemo(() => {
@@ -176,16 +180,6 @@ export default function AquaMistCollectionsContent() {
           onSelectCategory={handleFilterChange}
           title=""
         />
-        {activeFilter !== "All" && (
-          <div className="flex justify-center mt-2">
-            <button
-              onClick={() => handleFilterChange("All")}
-              className="text-xs font-semibold uppercase tracking-wider text-sky-400 hover:text-sky-300 underline underline-offset-4 transition-colors"
-            >
-              Clear Filter (Show All Products)
-            </button>
-          </div>
-        )}
       </div>
 
       {/* ── Product Grid ─────────────────────────────────────────────────── */}

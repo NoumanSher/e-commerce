@@ -38,6 +38,13 @@ export interface StoreInfo {
   pinterestUrl: string;
   youtubeUrl: string;
   promoCards: PromoCard[];
+  shippingSetting?: {
+    shippingType?: 'free' | 'flat' | 'conditional_free';
+    flatRate?: number;
+    freeShippingMinAmount?: number;
+    shippingLabel?: string;
+    freeShippingText?: string;
+  };
 }
 
 interface BannerImage {

@@ -4,6 +4,7 @@ import { useCart } from "@/hooks/useCart";
 import { useFirstOrderDiscount } from "@/hooks/useFirstOrderDiscount";
 import { useAuth } from "@/context/AuthContext";
 import { FiTag } from "react-icons/fi";
+import { useShippingFee } from "@/hooks/useShippingFee";
 
 interface ShoppingBagProps {
   checkValidation: (discountAmount?: number) => void;
@@ -11,12 +12,21 @@ interface ShoppingBagProps {
 
 const CartTotals: React.FC<ShoppingBagProps> = ({ checkValidation }) => {
   const { subTotal } = useCart();
+  const { deliveryFee, displayFee, shippingLabel } = useShippingFee(subTotal);
+  console.log(
+    "deliveryFee",
+    deliveryFee,
+    "displayFee",
+    displayFee,
+    "shippingLabel",
+    shippingLabel,
+  );
   const { authToken } = useAuth();
   const { isEligible, discountAmount, discountPercent, isLoading } =
     useFirstOrderDiscount();
   const [isCheckoutLoading, setIsCheckoutLoading] = useState(false);
 
-  const discountedTotal = subTotal - discountAmount;
+  const discountedTotal = subTotal - discountAmount + deliveryFee;
 
   const handleCheckout = () => {
     setIsCheckoutLoading(true);
@@ -59,8 +69,10 @@ const CartTotals: React.FC<ShoppingBagProps> = ({ checkValidation }) => {
 
       {/* Delivery */}
       <div className="flex justify-between mb-4">
-        <span className="text-gray-700 text-sm">DELIVERY</span>
-        <span className="text-sm text-gray-500">Free</span>
+        <span className="text-gray-700 text-sm">{shippingLabel}</span>
+        <span className="text-sm text-gray-500">
+          {deliveryFee ? deliveryFee : displayFee}
+        </span>
       </div>
 
       {/* Divider */}
@@ -88,7 +100,9 @@ const CartTotals: React.FC<ShoppingBagProps> = ({ checkValidation }) => {
       {/* Discount hint for guests */}
       {!authToken && (
         <p className="mt-3 text-xs text-gray-400 text-center">
-          Sign up to get <span className="font-semibold text-black">5% OFF</span> your first order.
+          Sign up to get{" "}
+          <span className="font-semibold text-black">5% OFF</span> your first
+          order.
         </p>
       )}
     </div>

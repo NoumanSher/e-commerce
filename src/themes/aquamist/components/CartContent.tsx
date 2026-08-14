@@ -9,7 +9,8 @@ import { CartItem } from "@/types";
 import GlassCard from "./GlassCard";
 import { toast } from "react-toastify";
 
-// ── Helper ────────────────────────────────────────────────────────────────────
+import { calculateItemPrice } from "@/lib/cartUtils";
+import { useShippingFee } from "@/hooks/useShippingFee";
 
 function formatPKR(n: number) {
   return `PKR ${n.toLocaleString("en-PK")}`;
@@ -67,7 +68,10 @@ function RealCartRow({
   const images = item.product.images as any;
   const imgSrc = typeof images?.[0] === "string" ? images[0] : (images?.[0]?.src ?? "");
   const name = item.product.productName;
-  const lineTotal = item.product.salePrice * item.quantity;
+  const unitPrice = calculateItemPrice(item);
+  const lineTotal = unitPrice * item.quantity;
+  const originalUnitPrice = Number(item.product.salePrice) || 0;
+  const hasDiscount = Number(item.product.discount || 0) > 0;
 
   return (
     <div
@@ -96,7 +100,12 @@ function RealCartRow({
               {item.color && <p className="font-inter text-sm text-aq-on-surface/60 mt-0.5">{item.color}</p>}
               {item.size && <p className="font-inter text-xs text-aq-on-surface/40 mt-0.5">Size: {item.size}</p>}
             </div>
-            <p className="font-inter font-semibold text-aq-on-surface whitespace-nowrap">{formatPKR(lineTotal)}</p>
+            <div className="text-right">
+              <p className="font-inter font-semibold text-aq-on-surface whitespace-nowrap">{formatPKR(lineTotal)}</p>
+              {hasDiscount && (
+                <p className="font-inter text-xs text-aq-on-surface/50 line-through whitespace-nowrap">{formatPKR(originalUnitPrice * item.quantity)}</p>
+              )}
+            </div>
           </div>
 
           <div className="flex justify-between items-center mt-5">
@@ -151,7 +160,8 @@ export default function AquaMistCartContent() {
 
   const hasRealItems = cartItems.length > 0;
   const totalItems = cartItems.reduce((a, i) => a + i.quantity, 0);
-  const total = subTotal; // No tax, no promo
+  const { deliveryFee, displayFee, isFree, shippingLabel } = useShippingFee(subTotal);
+  const total = subTotal + deliveryFee;
 
   // ── Remove with animation ──────────────────────────────────────────────────
   const handleRemove = useCallback((productID: string, variantID?: string) => {
@@ -281,8 +291,10 @@ export default function AquaMistCartContent() {
                 <span>{formatPKR(subTotal)}</span>
               </div>
               <div className="flex justify-between items-center font-inter text-sm text-aq-on-surface/80">
-                <span>Shipping</span>
-                <span className="font-inter font-semibold text-aq-primary tracking-wide">FREE</span>
+                <span>Shipping ({shippingLabel})</span>
+                <span className={isFree ? "font-inter font-semibold text-aq-primary tracking-wide" : "font-inter font-semibold text-aq-on-surface"}>
+                  {displayFee}
+                </span>
               </div>
               <div className="pt-4 border-t border-white/10 flex justify-between items-center">
                 <span className="font-inter font-bold text-base text-aq-on-surface">Total</span>

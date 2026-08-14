@@ -10,9 +10,10 @@ import type { Product } from "@/components/productDetail/productDetailDto";
 import { useCart } from "@/hooks/useCart";
 import { useCartContext } from "@/context/CartContext";
 import { useAppUIContext } from "@/context/AppUIContext";
-import { formatPrice } from "@/lib/utils";
+import { formatPrice, calculateDiscountedPrice } from "@/lib/utils";
 import { queryKeys } from "@/lib/queryKeys";
 import { productsService } from "@/services/productsService";
+import { toast } from "react-toastify";
 
 interface ProductCardProps {
   product: Product;
@@ -40,7 +41,13 @@ export default function ProductCard({ product }: ProductCardProps) {
     options,
   } = product;
 
-   const defaultBlur =
+  const numDiscount = Number(discount) || 0;
+  const hasDiscount = numDiscount > 0;
+  const finalPrice = hasDiscount
+    ? calculateDiscountedPrice(salePrice, numDiscount)
+    : salePrice;
+
+  const defaultBlur =
     "data:image/svg+xml;base64," +
     btoa(
       `<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
@@ -95,13 +102,17 @@ export default function ProductCard({ product }: ProductCardProps) {
       // Trigger the Quick Add Modal for variant selection
       setQuickAddProduct(product);
     } else {
+      if (product.stock <= 0) {
+        // alert("Product is out of stock");
+        toast.info("SOLD OUT");
+        return;
+      }
       addToCart({ product, quantity: 1 });
       setTimeout(() => {
         setIsCartOpen(true);
       }, 1000);
     }
   };
- 
 
   return (
     <Link
@@ -166,9 +177,16 @@ export default function ProductCard({ product }: ProductCardProps) {
 
           {/* Price + CTA */}
           <div className="flex items-center justify-between mt-auto pt-2 gap-2">
-            <span className="font-inter text-base sm:text-lg font-bold text-aq-on-surface shrink-0">
-              PKR {formatPrice(salePrice)}
-            </span>
+            <div className="flex flex-col sm:flex-row sm:items-baseline gap-1 shrink-0">
+              <span className="font-inter text-base sm:text-lg font-bold text-aq-on-surface">
+                PKR {formatPrice(finalPrice)}
+              </span>
+              {hasDiscount && (
+                <span className="font-inter text-xs text-aq-on-surface-variant/60 line-through">
+                  PKR {formatPrice(salePrice)}
+                </span>
+              )}
+            </div>
             <button
               onClick={handleAddToCart}
               className="px-3 py-1.5 sm:px-5 sm:py-2 rounded-full border border-aq-primary text-aq-primary hover:bg-aq-primary hover:text-aq-on-primary font-inter text-[11px] sm:text-xs font-semibold tracking-[0.08em] transition-all duration-300 transform active:scale-95 shrink-0"

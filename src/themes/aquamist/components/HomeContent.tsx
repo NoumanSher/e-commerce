@@ -13,6 +13,7 @@ import { useAppUIContext } from "@/context/AppUIContext";
 import { queryKeys } from "@/lib/queryKeys";
 import { productsService } from "@/services/productsService";
 import { STALE_TIMES, CACHE_TIMES } from "@/lib/queryClient";
+import WhatsAppFloatingButton from "@/components/common/WhatsAppFloatingButton";
 
 const PRESS = ["Forbes", "Vogue Living", "TechCrunch"];
 
@@ -243,6 +244,9 @@ export default function AquaMistHomeContent() {
 
       {/* ── FAQ Section ────────────────────────────────────────────────── */}
       <AquaMistFaqSection />
+
+      {/* ── WhatsApp Floating Action Button ────────────────────────────── */}
+      <WhatsAppFloatingButton />
     </>
   );
 }

@@ -3,6 +3,7 @@ import { useAppUIContext } from "@/context/AppUIContext";
 import { useSearchParams } from "next/navigation";
 import { useCart } from "@/hooks/useCart";
 import { useFirstOrderDiscount } from "@/hooks/useFirstOrderDiscount";
+import { useShippingFee } from "@/hooks/useShippingFee";
 import { calculateItemPrice } from "@/lib/cartUtils";
 
 const OrderSummaryComponent: React.FC = () => {
@@ -17,8 +18,9 @@ const OrderSummaryComponent: React.FC = () => {
     : cartSubTotal;
 
   const { isEligible, discountAmount, discountPercent } = useFirstOrderDiscount(activeSubTotal);
+  const { deliveryFee, displayFee,shippingLabel } = useShippingFee(activeSubTotal);
 
-  const finalTotal = activeSubTotal - (isEligible ? discountAmount : 0);
+  const finalTotal = Math.max(0, activeSubTotal - (isEligible ? discountAmount : 0) + deliveryFee);
 
   return (
     <div className="p-4 border rounded mb-4">
@@ -52,16 +54,9 @@ const OrderSummaryComponent: React.FC = () => {
               <span>− {discountAmount}</span>
             </div>
           )}
-          <div className="py-2">
-            <label className="flex items-center space-x-2">
-              <input
-                type="radio"
-                name="shipping"
-                defaultChecked
-                className="form-radio"
-              />
-              <span>Free shipping</span>
-            </label>
+          <div className="py-2 flex justify-between items-center text-sm font-medium">
+            <span>{shippingLabel}</span>
+            <span className="font-semibold text-gray-900">{deliveryFee ? deliveryFee : displayFee}</span>
           </div>
           <div className="flex justify-between text-xl font-bold mt-4">
             <span>Total</span>
@@ -102,16 +97,9 @@ const OrderSummaryComponent: React.FC = () => {
               <span>− {discountAmount}</span>
             </div>
           )}
-          <div className="py-2">
-            <label className="flex items-center space-x-2">
-              <input
-                type="radio"
-                name="shipping"
-                defaultChecked
-                className="form-radio"
-              />
-              <span>Free shipping</span>
-            </label>
+          <div className="py-2 flex justify-between items-center text-sm font-medium">
+            <span>{shippingLabel}</span>
+            <span className="font-semibold text-gray-900">{deliveryFee}</span>
           </div>
           <div className="flex justify-between text-xl font-bold mt-4">
             <span>Total</span>
