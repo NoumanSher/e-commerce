@@ -1,7 +1,13 @@
 "use client";
 import React, { useEffect, useState, useCallback, useRef } from "react";
 import { FaBars, FaTimes } from "react-icons/fa";
-import { FiHeart, FiUser, FiShoppingCart, FiHome, FiInfo, FiPhone } from "react-icons/fi";
+import {
+  FiHeart,
+  FiUser,
+  FiHome,
+  FiInfo,
+  FiPhone,
+} from "react-icons/fi";
 import { useRouter, usePathname } from "next/navigation";
 import Link from "next/link";
 import { CartIcon } from "@/assets/svg/common";
@@ -12,7 +18,8 @@ import { useAuth } from "@/context/AuthContext";
 import { useGetStoreSettings } from "../Slider/query/storeSettingQuery";
 import Image from "next/image";
 import logo from "@/assets/img/logo.webp";
-import NotificationBell from "./NotificationBell"; 
+import NotificationBell from "./NotificationBell";
+// import QuickAddModal from "../../themes/aquamist/components/QuickAddModal";
 
 const NAV_LINKS = [
   { path: "/", label: "Home", icon: FiHome },
@@ -110,7 +117,7 @@ const Navbar = () => {
       closeMobileMenu();
       router.push(path);
     },
-    [router, closeMobileMenu]
+    [router, closeMobileMenu],
   );
 
   const isActive = (path: string) =>
@@ -129,7 +136,6 @@ const Navbar = () => {
       >
         <nav className="bg-white border-b border-gray-200 shadow-sm">
           <div className="container mx-auto px-4 lg:px-16 flex items-center justify-between h-20 relative">
-
             {/* Mobile: Hamburger */}
             <button
               className="lg:hidden text-xl text-gray-700 focus:outline-none hover:text-black transition-colors"
@@ -168,9 +174,10 @@ const Navbar = () => {
                   className={`
                     text-sm tracking-wide font-medium h-full flex items-center
                     border-b-2 transition-colors duration-200
-                    ${isActive(path)
-                      ? "border-black text-black"
-                      : "border-transparent text-gray-700 hover:text-black hover:border-gray-300"
+                    ${
+                      isActive(path)
+                        ? "border-black text-black"
+                        : "border-transparent text-gray-700 hover:text-black hover:border-gray-300"
                     }
                   `}
                 >
@@ -208,7 +215,9 @@ const Navbar = () => {
                 <FiHeart
                   size={20}
                   fill={isClient && wishlistCount > 0 ? "currentColor" : "none"}
-                  className={isClient && wishlistCount > 0 ? "text-red-500" : ""}
+                  className={
+                    isClient && wishlistCount > 0 ? "text-red-500" : ""
+                  }
                 />
                 {isClient && wishlistCount > 0 && (
                   <span className="absolute -top-2 -right-2 w-4 h-4 bg-black text-white text-[10px] font-semibold rounded-full flex items-center justify-center">
@@ -318,9 +327,10 @@ const Navbar = () => {
                       className={`
                         flex items-center gap-3 w-full text-left px-3 py-3 rounded-lg text-sm font-medium
                         transition-colors duration-150
-                        ${isActive(path)
-                          ? "bg-gray-100 text-black"
-                          : "text-gray-700 hover:bg-gray-50 hover:text-black"
+                        ${
+                          isActive(path)
+                            ? "bg-gray-100 text-black"
+                            : "text-gray-700 hover:bg-gray-50 hover:text-black"
                         }
                       `}
                     >
@@ -338,9 +348,10 @@ const Navbar = () => {
                     className={`
                       flex items-center gap-3 w-full text-left px-3 py-3 rounded-lg text-sm font-medium
                       transition-colors duration-150
-                      ${pathname === "/wish-list"
-                        ? "bg-gray-100 text-black"
-                        : "text-gray-700 hover:bg-gray-50 hover:text-black"
+                      ${
+                        pathname === "/wish-list"
+                          ? "bg-gray-100 text-black"
+                          : "text-gray-700 hover:bg-gray-50 hover:text-black"
                       }
                     `}
                   >
@@ -361,6 +372,7 @@ const Navbar = () => {
 
       {/* Spacer to prevent content from hiding under fixed navbar */}
       <div className="h-20" />
+      {/* <QuickAddModal /> */}
     </>
   );
 };

@@ -15,6 +15,8 @@ import { FiHeart } from "react-icons/fi";
 import { formatPrice, calculateDiscountedPrice } from "@/lib/utils";
 import { productsService } from "@/services/productsService";
 import { queryKeys } from "@/lib/queryKeys";
+import { toast } from "react-toastify";
+import { useAppUIContext } from "@/context/AppUIContext";
 
 interface MainCardProps {
   item: Product;
@@ -35,7 +37,7 @@ const defaultBlur =
       </defs>
       <rect width="32" height="32" fill="#f0f0f0" />
       <rect width="32" height="32" fill="url(#shimmer)" opacity="0.7" />
-    </svg>`
+    </svg>`,
   );
 
 const MainCard = ({ item }: MainCardProps) => {
@@ -43,6 +45,7 @@ const MainCard = ({ item }: MainCardProps) => {
   const router = useRouter();
   const { addToCart } = useCart();
   const { setIsCartOpen } = useCartContext();
+  const { setQuickAddProduct } = useAppUIContext();
 
   const [hoveredCard, setHoveredCard] = useState<string | null>(null);
   // const [isImageLoaded, setIsImageLoaded] = useState(false);
@@ -54,6 +57,8 @@ const MainCard = ({ item }: MainCardProps) => {
     switch (parentCategorySlug) {
       case "Earrings":
         return "aspect-square";
+      case "New Born":
+        return "aspect-[3/4]";
       case "Necklace":
         return "aspect-square";
       case "Bracelets":
@@ -74,16 +79,19 @@ const MainCard = ({ item }: MainCardProps) => {
   const isHovered = !isMobileOrTablet && hoveredCard === item.seo.slug; // ✅ hover only desktop
 
   // Prefetch product data on hover
-  const prefetchProduct = useCallback((slug: string) => {
-    queryClient.prefetchQuery({
-      queryKey: queryKeys.products.detail(slug),
-      queryFn: () => productsService.getProductBySlug(slug),
-      staleTime: 1000 * 60 * 5,
-      gcTime: 1000 * 60 * 30,
-    });
-    // Also prefetch the Next.js page bundle
-    router.prefetch(`/product-detail/${slug}`);
-  }, [queryClient, router]);
+  const prefetchProduct = useCallback(
+    (slug: string) => {
+      queryClient.prefetchQuery({
+        queryKey: queryKeys.products.detail(slug),
+        queryFn: () => productsService.getProductBySlug(slug),
+        staleTime: 1000 * 60 * 5,
+        gcTime: 1000 * 60 * 30,
+      });
+      // Also prefetch the Next.js page bundle
+      router.prefetch(`/product-detail/${slug}`);
+    },
+    [queryClient, router],
+  );
 
   const handleMouseEnter = useCallback((slug: string) => {
     setHoveredCard(slug);
@@ -92,7 +100,10 @@ const MainCard = ({ item }: MainCardProps) => {
   const handleMouseLeave = useCallback(() => {
     setHoveredCard(null);
   }, []);
-  const handleAddToWishlist = (e: { stopPropagation: () => void; preventDefault: () => void }) => {
+  const handleAddToWishlist = (e: {
+    stopPropagation: () => void;
+    preventDefault: () => void;
+  }) => {
     e.stopPropagation();
     e.preventDefault();
     if (item) addToWishlist(item);
@@ -106,7 +117,7 @@ const MainCard = ({ item }: MainCardProps) => {
 
   const handleAddToCart = (
     e: React.MouseEvent<HTMLButtonElement>, // Use the correct type for the event
-    isVariant: boolean
+    isVariant: boolean,
   ) => {
     if (!item) {
       return;
@@ -114,11 +125,16 @@ const MainCard = ({ item }: MainCardProps) => {
     e.stopPropagation(); // Prevent event bubbling
     e.preventDefault(); // Prevent link navigation
 
-    if (isVariant) {
-      // Redirect to product details page if the product has variants
-      router.push(`/product-detail/${item.seo.slug}`);
+    const hasOptions = isVariant || (item.options && item.options.length > 0);
+    if (hasOptions) {
+      setQuickAddProduct(item);
     } else {
       // Add product to cart
+      if (item.stock <= 0) {
+        // alert("Product is out of stock");
+        toast.info("SOLD OUT");
+        return;
+      }
       let product = item;
       addToCart({ product, quantity: 1 });
 
@@ -138,7 +154,7 @@ const MainCard = ({ item }: MainCardProps) => {
     >
       {/* Image Section */}
       <div
-        className={`relative  ${getAspectRatio(item.parentCategoryID.name)} w-full`}
+        className={`relative  ${getAspectRatio(item.parentCategoryName)} w-full`}
         onMouseEnter={() => handleMouseEnter(item.seo.slug)}
         onMouseLeave={handleMouseLeave}
       >
@@ -158,32 +174,7 @@ const MainCard = ({ item }: MainCardProps) => {
           placeholder="blur"
           blurDataURL={item.images[0]?.blurDataURL || defaultBlur}
         />
-        {/* <div className="absolute top-2 left-2 right-2 flex justify-between gap-2">
-            <div className="flex flex-wrap gap-1">
-              {item.isNew && (
-                <span className="bg-white/80 text-black text-[11px] px-2 py-1 rounded">
-                  New
-                </span>
-              )}
-              {item.isLimited && (
-                <span className="bg-gray-200 text-black text-[11px] px-2 py-1 rounded">
-                  Limited
-                </span>
-              )}
-            </div>
 
-            {item.discount && (
-              <div className="flex justify-between gap-1">
-                <span className="bg-black hidden lg:inline-block  text-white text-[11px] px-2 py-1 rounded">
-                  Sale
-                </span>
-                <span className="bg-red-600 text-white  h-fit text-[11px] px-2 py-1 rounded">
-                  {item.discount}%{" "}
-                  <span className="hidden lg:inline-block">OFF</span>
-                </span>
-              </div>
-            )}
-          </div> */}
         {item.isNew && (
           <div className="bg-white absolute top-0 mx-[8px] mt-[8px] sm:py-[7px] sm:px-[10px] py-[4px] px-[8px] ">
             <h1 className="uppercase text-black text-[11px] sm:text-[12px] leading-[1.25em] font-normal ">
@@ -194,8 +185,9 @@ const MainCard = ({ item }: MainCardProps) => {
 
         {Number(item.discount) > 0 && (
           <div
-            className={`bg-black absolute top-0 mx-[8px] mt-[8px] sm:py-[7px] sm:px-[10px] py-[4px] px-[8px] ${item.isNew ? "top-[30px] sm:top-[36px]" : ""
-              } `}
+            className={`bg-black absolute top-0 mx-[8px] mt-[8px] sm:py-[7px] sm:px-[10px] py-[4px] px-[8px] ${
+              item.isNew ? "top-[30px] sm:top-[36px]" : ""
+            } `}
           >
             <h1 className="uppercase text-white text-[11px] sm:text-[12px] leading-[1.25em] font-normal ">
               sale
@@ -225,14 +217,19 @@ const MainCard = ({ item }: MainCardProps) => {
           {Number(item.discount) > 0 ? (
             <>
               <p className="font-semibold text-base sm:text-lg text-red-600 whitespace-nowrap">
-                PKR {formatPrice(calculateDiscountedPrice(item.salePrice, item.discount))}
+                PKR{" "}
+                {formatPrice(
+                  calculateDiscountedPrice(item.salePrice, item.discount),
+                )}
               </p>
               <p className="text-xs sm:text-sm text-gray-500 line-through whitespace-nowrap">
                 PKR {formatPrice(item.salePrice)}
               </p>
             </>
           ) : (
-            <p className="font-semibold text-base sm:text-lg whitespace-nowrap">PKR {formatPrice(item.salePrice)}</p>
+            <p className="font-semibold text-base sm:text-lg whitespace-nowrap">
+              PKR {formatPrice(item.salePrice)}
+            </p>
           )}
         </div>
 
@@ -260,9 +257,7 @@ const MainCard = ({ item }: MainCardProps) => {
         {isMobileOrTablet && (
           <div className="flex items-center justify-between mt-2">
             <button
-              onClick={
-                isTrue ? handleRemoveFromWishlist : handleAddToWishlist
-              }
+              onClick={isTrue ? handleRemoveFromWishlist : handleAddToWishlist}
               className="p-2 rounded-full bg-gray-100 hover:bg-gray-200"
             >
               {isTrue ? (

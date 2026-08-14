@@ -17,9 +17,16 @@ import { useAppUIContext } from "@/context/AppUIContext";
 import { useAuth } from "@/context/AuthContext";
 import { useCart } from "@/hooks/useCart";
 import { calculateDiscountedPrice } from "@/lib/utils";
+import { useShippingFee } from "@/hooks/useShippingFee";
+
 const SocialMediaShareWithNoSSR = dynamic(
   () => import("./components/SocialMediaShare"),
-  { ssr: false, loading: () => <div className="h-10 w-20  animate-pulse rounded-lg bg-gray-300" /> }
+  {
+    ssr: false,
+    loading: () => (
+      <div className="h-10 w-20  animate-pulse rounded-lg bg-gray-300" />
+    ),
+  },
 );
 
 interface ProductDetailsProps {
@@ -32,7 +39,11 @@ interface ProductDetailsProps {
   onReviewClick?: () => void;
 }
 
-const ProductInfo: React.FC<ProductDetailsProps> = ({ product, onGalleryHandlersReady, onReviewClick }) => {
+const ProductInfo: React.FC<ProductDetailsProps> = ({
+  product,
+  onGalleryHandlersReady,
+  onReviewClick,
+}) => {
   const { updateProductDetailData } = useAppUIContext();
   const { userId } = useAuth();
   const { addToCart } = useCart();
@@ -49,7 +60,7 @@ const ProductInfo: React.FC<ProductDetailsProps> = ({ product, onGalleryHandlers
     parentCategoryName,
     childCategoryName,
     discount,
-    seo
+    seo,
   } = product;
 
   const colors = useMemo(() => {
@@ -67,10 +78,15 @@ const ProductInfo: React.FC<ProductDetailsProps> = ({ product, onGalleryHandlers
   const [selectedColor, setSelectedColor] = useState("");
   const [selectedSize, setSelectedSize] = useState("");
   const [selectedVarientId, setSelectedVarientId] = useState("");
-  const [availableStock, SetAvailabelStock] = useState<number>(stock < 0 ? 0 : stock || 0);
+  const [availableStock, SetAvailabelStock] = useState<number>(
+    stock < 0 ? 0 : stock || 0,
+  );
   const [extraCost, SetExtraCost] = useState<number>(0);
   const [selectedQuantity, setSelectedQuantity] = useState(1);
-  const [productPrice, SetProductPrice] = useState<number>(calculateDiscountedPrice(salePrice, discount || 0) || 0);
+  const [productPrice, SetProductPrice] = useState<number>(
+    calculateDiscountedPrice(salePrice, discount || 0) || 0,
+  );
+  const { deliveryFee } = useShippingFee(productPrice * selectedQuantity);
 
   const [isCheckingOut, setIsCheckingOut] = useState(false);
   const [isAddingToCart, setIsAddingToCart] = useState(false);
@@ -106,13 +122,18 @@ const ProductInfo: React.FC<ProductDetailsProps> = ({ product, onGalleryHandlers
 
     if (variantName) {
       const selectVariat = variants?.find(
-        (item) => item.name.toLowerCase().trim() === variantName.toLowerCase().trim()
+        (item) =>
+          item.name.toLowerCase().trim() === variantName.toLowerCase().trim(),
       );
       if (selectVariat?._id) {
         setSelectedVarientId(selectVariat._id);
       }
       SetAvailabelStock(
-        selectVariat?.stock !== undefined ? (selectVariat.stock > 0 ? selectVariat.stock : 0) : 0
+        selectVariat?.stock !== undefined
+          ? selectVariat.stock > 0
+            ? selectVariat.stock
+            : 0
+          : 0,
       );
 
       const newExtraCost = selectVariat?.additionalSalePrice ?? 0;
@@ -125,7 +146,16 @@ const ProductInfo: React.FC<ProductDetailsProps> = ({ product, onGalleryHandlers
       const finalPrice = calculateDiscountedPrice(salePrice, discount || 0);
       SetProductPrice(finalPrice);
     }
-  }, [selectedColor, selectedSize, salePrice, discount, variants, colors.length, sizes.length, isVariant]);
+  }, [
+    selectedColor,
+    selectedSize,
+    salePrice,
+    discount,
+    variants,
+    colors.length,
+    sizes.length,
+    isVariant,
+  ]);
   const handleAddToCart = useCallback(() => {
     setIsAddingToCart(true);
     if (isVariant) {
@@ -138,14 +168,15 @@ const ProductInfo: React.FC<ProductDetailsProps> = ({ product, onGalleryHandlers
         variantName = selectedSize.trim();
       }
       const selectVariat = variants?.find(
-        (item) => item.name.toLowerCase().trim() === variantName.toLowerCase().trim()
+        (item) =>
+          item.name.toLowerCase().trim() === variantName.toLowerCase().trim(),
       );
       const isColorMissing = colors.length > 0 && !selectedColor;
       const isSizeMissing = sizes.length > 0 && !selectedSize;
 
       if (isColorMissing || isSizeMissing) {
-        const el = document.getElementById('select-varient');
-        el?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        const el = document.getElementById("select-varient");
+        el?.scrollIntoView({ behavior: "smooth", block: "center" });
         setValidation((prev) => ({
           ...prev,
           colorRequired: isColorMissing,
@@ -180,7 +211,7 @@ const ProductInfo: React.FC<ProductDetailsProps> = ({ product, onGalleryHandlers
     selectedQuantity,
     availableStock,
     colors.length,
-    sizes.length
+    sizes.length,
   ]);
 
   // Handle Checkout logic
@@ -191,8 +222,8 @@ const ProductInfo: React.FC<ProductDetailsProps> = ({ product, onGalleryHandlers
       const isSizeMissing = sizes.length > 0 && !selectedSize;
 
       if (isColorMissing || isSizeMissing) {
-        const el = document.getElementById('select-varient');
-        el?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        const el = document.getElementById("select-varient");
+        el?.scrollIntoView({ behavior: "smooth", block: "center" });
         setValidation((prev) => ({
           ...prev,
           colorRequired: isColorMissing,
@@ -229,8 +260,8 @@ const ProductInfo: React.FC<ProductDetailsProps> = ({ product, onGalleryHandlers
         },
       ],
 
-      deliveryFee: 0,
-      totalPrice: productPrice * selectedQuantity,
+      deliveryFee: deliveryFee,
+      totalPrice: (productPrice * selectedQuantity) + deliveryFee,
       subTotal: productPrice * selectedQuantity,
     };
     updateProductDetailData(dataToPass);
@@ -250,9 +281,8 @@ const ProductInfo: React.FC<ProductDetailsProps> = ({ product, onGalleryHandlers
     updateProductDetailData,
     userId,
     colors.length,
-    sizes.length
+    sizes.length,
   ]);
-
 
   const handleQuantityChange = (quantity: number) => {
     if (quantity < 0) {
@@ -287,7 +317,12 @@ const ProductInfo: React.FC<ProductDetailsProps> = ({ product, onGalleryHandlers
         {/* Mobile: Quick Actions Header (Moved below Product Info) */}
         <div className="lg:hidden flex items-center justify-between mb-3 px-2 pt-2 border-t border-gray-100">
           <WishlistButton product={product} />
-          <button className="pb-2 text-sm font-medium text-opacity-80 text-black" onClick={onReviewClick}>Reviews ⭐</button>
+          <button
+            className="pb-2 text-sm font-medium text-opacity-80 text-black"
+            onClick={onReviewClick}
+          >
+            Reviews ⭐
+          </button>
           <SocialMediaShareWithNoSSR
             url={`https://www.pakshipper.com/product-detail/${seo.slug}`}
           />

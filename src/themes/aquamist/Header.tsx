@@ -6,7 +6,6 @@ import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useCart } from "@/hooks/useCart";
 import { useGetStoreSettings } from "@/components/Slider/query/storeSettingQuery";
-import QuickAddModal from "./components/QuickAddModal";
 
 const NAV_LINKS = [
   { label: "HOME", href: "/" },
@@ -218,7 +217,6 @@ export default function AquaMistHeader() {
           </nav>
         </div>
       )}
-      <QuickAddModal />
     </>
   );
 }

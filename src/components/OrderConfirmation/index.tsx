@@ -6,15 +6,18 @@ import { useGetOrderDetailByorderNumber } from "./query/orderConfirmationQuery";
 import { useCartContext } from "@/context/CartContext";
 import { useRouter } from "next/navigation";
 import OrderConfirmationSkeleton from "../OrderSkeleton";
+// import { useShippingFee } from "@/hooks/useShippingFee";
 
 const OrderConfirmation = () => {
   const { orderNumber } = useCartContext();
+  
   const { data, isLoading } = useGetOrderDetailByorderNumber(orderNumber);
   const router = useRouter();
   
   useEffect(() => {
     window.scrollTo({ top: 0, left: 0, behavior: "smooth" });
   }, []);
+
   
   // Safe parsing to prevent crashes if items are missing
   const items = data?.data?.items || [];
@@ -22,7 +25,6 @@ const OrderConfirmation = () => {
     (acc, item) => acc + (item.lineTotal || 0),
     0
   );
-
   const deliveryFee = data?.data?.orderDetails?.deliveryFee ?? data?.data?.deliveryFee ?? 0;
   const discountAmount = data?.data?.orderDetails?.discountAmount ?? 0;
   const totalCost = data?.data?.orderDetails?.totalPrice ?? (subTotal + deliveryFee - discountAmount);

@@ -17,6 +17,7 @@ import ProductDetailSkeleton from "@/components/productDetail/components/Product
 import RichTextRenderer from "@/components/RichTextRenderer";
 import AquaMistReviews from "./AquaMistReviews";
 import ImageGallery from "@/components/Gallery";
+import WhatsAppFloatingButton from "@/components/common/WhatsAppFloatingButton";
 
 // ── Color button hex mapping ───────────────────────────────────────────────
 const COLOR_HEX_MAP: Record<string, string> = {
@@ -761,6 +762,18 @@ export default function AquaMistProductDetailContent({ slug }: ProductDetailCont
           Buy Now
         </button>
       </div>
+
+      {/* WhatsApp Floating Button */}
+      <WhatsAppFloatingButton
+        product={{
+          name: product.productName,
+          price: currentPrice.toFixed(2),
+          sku: product.sku,
+          size: selectedSize,
+          color: selectedColor,
+          url: typeof window !== "undefined" ? window.location.href : `https://www.pakshipper.com/product-detail/${product.seo?.slug || slug}`,
+        }}
+      />
     </div>
   );
 }

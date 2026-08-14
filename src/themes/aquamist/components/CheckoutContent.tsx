@@ -10,6 +10,7 @@ import { useAppUIContext } from "@/context/AppUIContext";
 import { orderService } from "@/services/orderService";
 import { useSubmitOrder } from "@/hooks/mutations/useOrderMutations";
 import { useFirstOrderDiscount } from "@/hooks/useFirstOrderDiscount";
+import { useShippingFee } from "@/hooks/useShippingFee";
 import { calculateDiscountedPrice } from "@/lib/utils";
 import { PaymentMethod } from "@/types";
 import { toast } from "react-toastify";
@@ -18,10 +19,7 @@ import GlassCard from "./GlassCard";
 // ── Helpers ────────────────────────────────────────────────────────────────────
 
 function formatPKR(amount: number) {
-  return `PKR ${amount.toLocaleString("en-PK", {
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2,
-  })}`;
+  return `PKR ${amount.toLocaleString("en-PK")}`;
 }
 
 // ── Styled Input ────────────────────────────────────────────────────────────────
@@ -156,9 +154,11 @@ export default function AquaMistCheckoutContent() {
     }, 0);
   }, [cartItems, isBuyNow, activeSubTotal]);
 
-  const deliveryFee = 0; // COD only — free delivery
+  // ── Shipping Fee ─────────────────────────────────────────────────────────────
+  const { deliveryFee, isFree, displayFee, amountNeededForFree, shippingLabel } = useShippingFee(subtotal);
+
   const firstOrderDiscount = isEligible ? discountAmount : 0;
-  const total = subtotal - firstOrderDiscount + deliveryFee;
+  const total = Math.max(0, subtotal - firstOrderDiscount + deliveryFee);
 
   // ── Navigate on success ─────────────────────────────────────────────────────
   useEffect(() => {
@@ -462,7 +462,7 @@ export default function AquaMistCheckoutContent() {
                       </p>
                     </div>
                   </div>
-                  <span className="text-aq-primary-container font-bold font-inter text-xs sm:text-sm shrink-0">FREE</span>
+                  <span className="text-aq-primary-container font-bold font-inter text-xs sm:text-sm shrink-0">{displayFee}</span>
                 </div>
                 {/* Selected checkmark */}
                 <span className="absolute top-4 right-4">
@@ -542,9 +542,16 @@ export default function AquaMistCheckoutContent() {
                     <span className="shrink-0">{formatPKR(subtotal)}</span>
                   </div>
                   <div className="flex justify-between text-aq-on-surface/60">
-                    <span>Delivery</span>
-                    <span className="text-aq-primary-container font-semibold">FREE</span>
+                    <span>Delivery ({shippingLabel})</span>
+                    <span className={isFree ? "text-aq-primary-container font-semibold" : "shrink-0 font-medium text-aq-on-surface"}>
+                      {displayFee}
+                    </span>
                   </div>
+                  {amountNeededForFree > 0 && (
+                    <p className="text-[11px] font-inter text-aq-primary-container/80 mt-1 mb-0">
+                      Add PKR {amountNeededForFree.toLocaleString()} more for Free Delivery!
+                    </p>
+                  )}
                   {isEligible && firstOrderDiscount > 0 && (
                     <div className="flex justify-between text-aq-primary-container">
                       <span className="flex items-center gap-1.5 min-w-0">
