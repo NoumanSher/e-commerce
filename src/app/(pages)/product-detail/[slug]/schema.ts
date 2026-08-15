@@ -1,77 +1,77 @@
 // utils/generateProductSchema.ts
 
-export function generateProductSchema(product: any) {
-  const schema: any = {
+export function generateProductSchema(
+  product: any,
+  origin: string = "https://pakshipper.com",
+  storeName: string = "PakShipperStore"
+) {
+  const cleanOrigin = origin.replace(/\/+$/, "");
+  const productUrl = product.seo?.slug
+    ? `${cleanOrigin}/product-detail/${product.seo.slug}`
+    : cleanOrigin;
+
+  // 1. Core Product Schema
+  const productSchema: any = {
     "@context": "https://schema.org",
     "@type": "Product",
     name: product.productName,
-    description: product.seo?.metaDescription || product.description?.replace(/<[^>]*>/g, '').substring(0, 250),
+    description:
+      product.seo?.metaDescription ||
+      product.description?.replace(/<[^>]*>/g, "").substring(0, 250),
     sku: product.sku,
-    image: product.images?.map((img: any) => img.src),
+    image: product.images?.map((img: any) => img.src) || [],
     brand: {
       "@type": "Brand",
-      name: "PakShipperStore",
+      name: storeName,
     },
-    offers: {}, // Will be populated below
+    url: productUrl,
+    offers: {},
   };
 
-  /* ------------------ CATEGORY ------------------ */
   if (product.parentCategoryName) {
-    schema.category = product.parentCategoryName;
+    productSchema.category = product.parentCategoryName;
   }
 
-  /* ------------------ URL (IMPORTANT) ------------------ */
-  if (product.seo?.slug) {
-    schema.url = `https://pakshipper.com/product-detail/${product.seo.slug}`;
-  }
-
-  /* ------------------ AGGREGATE RATING (FIXED STRUCTURE) ------------------ */
-  if (
-    product.ratingStats &&
-    product.ratingStats.totalReviews > 0
-  ) {
-    schema.aggregateRating = {
+  if (product.ratingStats && product.ratingStats.totalReviews > 0) {
+    productSchema.aggregateRating = {
       "@type": "AggregateRating",
       ratingValue: product.ratingStats.averageRating,
       reviewCount: product.ratingStats.totalReviews,
       bestRating: 5,
-      worstRating: 1, // Add this for completeness
+      worstRating: 1,
     };
 
-    /* ------------------ REVIEWS (CORRECT PLACEMENT) ------------------ */
     if (product.reviews?.length) {
-      // Use "review" (singular) array inside the Product schema
-      schema.review = product.reviews.map((review: any) => ({
+      productSchema.review = product.reviews.map((review: any) => ({
         "@type": "Review",
         author: {
           "@type": "Person",
           name: review.userId?.username || "Anonymous",
         },
         reviewBody: review.description,
-        datePublished: review.createdAt.split("T")[0],
+        datePublished:
+          review.createdAt?.split("T")[0] || new Date().toISOString().split("T")[0],
         reviewRating: {
           "@type": "Rating",
           ratingValue: review.rating,
           bestRating: 5,
           worstRating: 1,
         },
-        // Add these optional fields for better SEO
         publisher: {
           "@type": "Organization",
-          name: "PakShipperStore"
-        }
+          name: storeName,
+        },
       }));
     }
   }
 
-  /* ------------------ OFFERS (WITH CORRECT AVAILABILITY URLS) ------------------ */
   const availabilityUrl = (stock: number) =>
     stock > 0 ? "https://schema.org/InStock" : "https://schema.org/OutOfStock";
 
   if (product.isVariant && product.variants?.length) {
     const prices = product.variants.map((v: any) => {
       const basePlusExtra = product.salePrice + (v.additionalSalePrice || 0);
-      return product.discount > 0 
+      return product.discount > 0
         ? Math.round(basePlusExtra * (1 - product.discount / 100))
         : basePlusExtra;
     });
@@ -81,70 +81,85 @@ export function generateProductSchema(product: any) {
       0
     );
 
-    schema.offers = {
+    productSchema.offers = {
       "@type": "AggregateOffer",
       priceCurrency: "PKR",
       lowPrice: Math.min(...prices).toString(),
       highPrice: Math.max(...prices).toString(),
       offerCount: product.variants.length.toString(),
       availability: availabilityUrl(totalStock),
-      url: schema.url,
+      url: productUrl,
       seller: {
         "@type": "Organization",
-        name: "PakShipperStore",
+        name: storeName,
       },
       itemCondition: "https://schema.org/NewCondition",
     };
   } else {
-    const finalPrice = product.discount > 0 
-      ? Math.round(product.salePrice * (1 - product.discount / 100))
-      : product.salePrice;
+    const finalPrice =
+      product.discount > 0
+        ? Math.round(product.salePrice * (1 - product.discount / 100))
+        : product.salePrice;
 
-    schema.offers = {
+    productSchema.offers = {
       "@type": "Offer",
       priceCurrency: "PKR",
       price: finalPrice.toString(),
       availability: availabilityUrl(product.stock || 0),
       itemCondition: "https://schema.org/NewCondition",
-      url: schema.url,
+      url: productUrl,
       seller: {
         "@type": "Organization",
-        name: "PakShipperStore",
+        name: storeName,
       },
     };
   }
 
-  /* ------------------ ADDITIONAL PROPERTIES ------------------ */
-  const additionalProperties = [];
+  // 2. BreadcrumbList Schema
+  const breadcrumbs = [
+    {
+      "@type": "ListItem",
+      position: 1,
+      name: "Home",
+      item: cleanOrigin,
+    },
+    {
+      "@type": "ListItem",
+      position: 2,
+      name: "Collections",
+      item: `${cleanOrigin}/collections`,
+    },
+  ];
 
-  if (product.isNew) {
-    additionalProperties.push({
-      "@type": "PropertyValue",
-      name: "condition",
-      value: "New Arrival",
+  if (product.parentCategoryName) {
+    breadcrumbs.push({
+      "@type": "ListItem",
+      position: 3,
+      name: product.parentCategoryName,
+      item: `${cleanOrigin}/collections?parentCategorySlug=${encodeURIComponent(
+        product.parentCategorySlug || product.parentCategoryName
+      )}`,
+    });
+    breadcrumbs.push({
+      "@type": "ListItem",
+      position: 4,
+      name: product.productName,
+      item: productUrl,
+    });
+  } else {
+    breadcrumbs.push({
+      "@type": "ListItem",
+      position: 3,
+      name: product.productName,
+      item: productUrl,
     });
   }
 
-  if (product.isLimited) {
-    additionalProperties.push({
-      "@type": "PropertyValue",
-      name: "availability",
-      value: "Limited Edition",
-    });
-  }
+  const breadcrumbSchema = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: breadcrumbs,
+  };
 
-  // Add fabric and other details
-  if (product.description?.includes("Polyester")) {
-    additionalProperties.push({
-      "@type": "PropertyValue",
-      name: "fabric",
-      value: "84% Polyester, 16% Spandex",
-    });
-  }
-
-  if (additionalProperties.length > 0) {
-    schema.additionalProperty = additionalProperties;
-  }
-
-  return schema;
+  return [productSchema, breadcrumbSchema];
 }

@@ -52,13 +52,20 @@ export default async function Page({
     // this renders the Next.js 404 page and prevents the error
     return notFound();
   }
+
+  const rawHost = headers().get("host") ?? host;
+  const cleanHostName = rawHost.split(":")[0].toLowerCase();
+  const origin = (cleanHostName === "localhost" || cleanHostName === "127.0.0.1")
+    ? `http://${process.env.NEXT_PUBLIC_DEVELOPMENT_HOST || "sandbox.localhost"}`
+    : `https://${cleanHostName}`;
+
   return (
     <>
       {/* JSON‑LD schema: inlined by the server */}
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
-          __html: JSON.stringify(generateProductSchema(product)),
+          __html: JSON.stringify(generateProductSchema(product, origin)),
         }}
       />
 

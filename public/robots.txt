@@ -1,5 +1,0 @@
-User-agent: *
-Allow: /
-
-Sitemap: https://pakshipper.com/sitemap.xml
-Sitemap: https://pakshipper.com/image-sitemap.xml

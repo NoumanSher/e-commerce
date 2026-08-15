@@ -1,26 +1,40 @@
+"use client";
+
 import { FaWhatsapp } from "react-icons/fa";
+import { useGetStoreSettings } from "@/components/Slider/query/storeSettingQuery";
 
 const WhatsAppButton = ({ product }) => {
-  // Construct the WhatsApp message with product details
+  const { data: storeSettings } = useGetStoreSettings();
+
+  // Derive phone dynamically from store settings
+  const rawNumber =
+    storeSettings?.mobile ||
+    process.env.NEXT_PUBLIC_WHATSAPP_PHONE ||
+    "923176872900";
+  const whatsappNumber = rawNumber.replace(/\D/g, "") || "923176872900";
+
   const generateWhatsAppText = () => {
     try {
-      return encodeURIComponent(
-        `Hello! I'm interested in your product:\n\n` +
-        `*${product?.name || "Product"}*\n` +
-        (product?.price ? `💰 Price: ${product.price}\n` : "") +
-        (product?.sku ? `📦 SKU: ${product.sku}\n` : "") +
-        (product?.size ? `📏 Size: ${product.size}\n` : "") +
-        (product?.color ? `🎨 Color: ${product.color}\n` : "") +
-        (product?.url ? `🔗 Product Link: ${product.url}\n` : "")
-      );
+      const lines = [
+        "Hello! I'm interested in ordering this product:\n",
+        `🛍️ *Product:* ${product?.name || "Product"}`,
+        product?.price ? `💰 *Price:* PKR ${product.price}` : "",
+        product?.sku ? `📦 *SKU:* ${product.sku}` : "",
+        product?.size ? `📏 *Size:* ${product.size}` : "",
+        product?.color ? `🎨 *Color:* ${product.color}` : "",
+        product?.url ? `🔗 *Link:* ${product.url}` : "",
+        "\nPlease let me know about availability and delivery.",
+      ]
+        .filter(Boolean)
+        .join("\n");
+
+      return encodeURIComponent(lines);
     } catch (error) {
       console.error("Error generating WhatsApp text:", error);
       return encodeURIComponent("Hello! I'm interested in your products.");
     }
   };
 
-  // Your WhatsApp number (with country code, no spaces or special characters)
-  const whatsappNumber = "923176872900"; // Pakistan number example
   const whatsappURL = `https://wa.me/${whatsappNumber}?text=${generateWhatsAppText()}`;
 
   return (

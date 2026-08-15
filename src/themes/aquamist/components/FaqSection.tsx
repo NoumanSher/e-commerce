@@ -27,8 +27,25 @@ export default function AquaMistFaqSection() {
     setOpenIndex(openIndex === index ? null : index);
   };
 
+  const faqSchema = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: displayFaqs.map((f) => ({
+      "@type": "Question",
+      name: f.question,
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: f.answer,
+      },
+    })),
+  };
+
   return (
     <section className="py-24 px-5 md:px-20 max-w-[1280px] mx-auto relative z-20">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
+      />
       <div className="text-center mb-16">
         <span className="text-aq-primary font-inter text-[14px] tracking-[0.2em] font-semibold block mb-4 uppercase">
           Questions

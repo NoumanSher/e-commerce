@@ -41,6 +41,8 @@ export const revalidate = 300;
 
 import { getLandingMetadata } from "@/app/utils/metadata/landingMetadata";
 import DynamicStoreHead from "@/components/DynamicStoreHead";
+import JsonLdStore from "@/components/common/JsonLdStore";
+import { getServerOrigin } from "@/utils/url";
 
 export async function generateMetadata(): Promise<Metadata> {
   return getLandingMetadata();
@@ -118,6 +120,9 @@ export default async function RootLayout({
    */
   const activeTheme = await resolveActiveTheme();
 
+  const origin = getServerOrigin(host);
+  const storeSettings = queryClient.getQueryData<any>(queryKeys.store.settings());
+
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
@@ -135,36 +140,7 @@ export default async function RootLayout({
         />
       </head>
       <body className="font-jost flex flex-col min-h-screen">
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{
-            __html: JSON.stringify({
-              "@context": "https://schema.org",
-              "@type": "Store",
-              name: "PakShipper",
-              description:
-                "E-commerce shopping destination serving Lahore and all over Pakistan.",
-              url: "https://pakshipper.com",
-              telephone: "+923176872900",
-              address: {
-                "@type": "PostalAddress",
-                addressLocality: "Lahore",
-                addressRegion: "Punjab",
-                postalCode: "54000",
-                addressCountry: "PK",
-              },
-              geo: {
-                "@type": "GeoCoordinates",
-                latitude: 31.5204,
-                longitude: 74.3587,
-              },
-              areaServed: {
-                "@type": "Country",
-                name: "Pakistan",
-              },
-            }),
-          }}
-        />
+        <JsonLdStore origin={origin} storeSettings={storeSettings} />
         <GoogleAnalytics gaId={process.env.GA_MEASUREMENT_ID as string} />
 
         <Provider>

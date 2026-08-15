@@ -43,18 +43,25 @@ export default function WhatsAppFloatingButton({
     }
 
     if (product) {
-      return encodeURIComponent(
-        `Hello! I'm interested in your product:\n\n` +
-          `*${product.name || "Product"}*\n` +
-          (product.price ? `💰 Price: PKR ${product.price}\n` : "") +
-          (product.sku ? `📦 SKU: ${product.sku}\n` : "") +
-          (product.size ? `📏 Size: ${product.size}\n` : "") +
-          (product.color ? `🎨 Color: ${product.color}\n` : "") +
-          (product.url ? `🔗 Product Link: ${product.url}\n` : "")
-      );
+      const lines = [
+        "Hello! I'm interested in ordering this product:\n",
+        `🛍️ *Product:* ${product.name || "Product"}`,
+        product.price ? `💰 *Price:* PKR ${product.price}` : "",
+        product.sku ? `📦 *SKU:* ${product.sku}` : "",
+        product.size ? `📏 *Size:* ${product.size}` : "",
+        product.color ? `🎨 *Color:* ${product.color}` : "",
+        product.url ? `🔗 *Link:* ${product.url}` : "",
+        "\nPlease let me know about availability and delivery.",
+      ]
+        .filter(Boolean)
+        .join("\n");
+
+      return encodeURIComponent(lines);
     }
 
-    return encodeURIComponent("Hello! I'm interested in your products.");
+    return encodeURIComponent(
+      `Hello! I'm reaching out from ${storeSettings?.title || "your store"}. I have a question about your products.`
+    );
   };
 
   const whatsappURL = `https://wa.me/${whatsappNumber}?text=${generateText()}`;

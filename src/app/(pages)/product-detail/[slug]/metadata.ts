@@ -3,6 +3,7 @@ import { Metadata } from "next";
 import { headers } from "next/headers";
 import { getProductBySlugServer } from "@/services/productsService.server";
 import { getStoreSettingServer } from "@/services/settingsService.server";
+import { getServerOrigin } from "@/utils/url";
 
 interface GenerateMetadataProps {
   params: { slug: string };
@@ -20,7 +21,6 @@ export async function getMetadata({
     }
   } catch {
     // During `next build` static generation there is no request context.
-    // Fall back to "default" — the prefetch calls will fail gracefully.
   }
 
   const [product, storeSettings] = await Promise.all([
@@ -35,56 +35,72 @@ export async function getMetadata({
     };
   }
 
-  const urlBase = "https://pakshipper.com/product-detail";
-  const productUrl = `${urlBase}/${product.seo?.slug || params.slug}`;
-  const title = product.seo?.metaTitle ?? product.productName;
-  const description = product.seo?.metaDescription ?? product.description;
+  // Derive the actual tenant origin dynamically from the request host
+  const origin = getServerOrigin(headers().get("host") ?? host);
+  const productUrl = `${origin}/product-detail/${product.seo?.slug || params.slug}`;
+  const storeName = storeSettings?.title || "PakShipperStore";
+  const title = product.seo?.metaTitle || `${product.productName} | ${storeName}`;
 
-  // Narrow out the optional logo into a concrete string (or undefined)
+  // Clean HTML from description for WhatsApp and search engines
+  const rawDescription = product.seo?.metaDescription || product.description || "";
+  const cleanDescription = rawDescription
+    .replace(/<[^>]*>/g, " ")
+    .replace(/\s+/g, " ")
+    .trim()
+    .substring(0, 160);
+
   const logoUrl = storeSettings?.logo;
 
+  // Build high-res OpenGraph images for WhatsApp link previews
+  const ogImages =
+    product.images && product.images.length > 0
+      ? product.images.map((img: { src: string; alt?: string }) => ({
+          url: img.src,
+          alt: img.alt || product.productName,
+          width: 800,
+          height: 800,
+        }))
+      : logoUrl
+      ? [{ url: logoUrl, alt: storeName, width: 600, height: 600 }]
+      : [];
 
   return {
     title,
-    description,
+    description: cleanDescription,
     keywords: product.seo?.metaKeywords?.join(", "),
-    // Only include icons if we actually have a string logoUrl
-    ...(logoUrl
-      ? {
-        icons: {
-          icon: [
-            {
-              url: logoUrl,
-              type: "image/png",
-              sizes: "32x32",
-            },
-          ],
-        },
-      }
-      : {}),
+    metadataBase: new URL(origin),
     alternates: { canonical: productUrl },
 
+    ...(logoUrl
+      ? {
+          icons: {
+            icon: [
+              {
+                url: logoUrl,
+                type: "image/png",
+                sizes: "32x32",
+              },
+            ],
+            shortcut: logoUrl,
+            apple: logoUrl,
+          },
+        }
+      : {}),
+
     openGraph: {
-      title,
-      description,
+      title: product.productName,
+      description: cleanDescription,
       url: productUrl,
       type: "website",
-      siteName: "PakShipperStore",
-      images: product.images.map((img: { src: string; alt: string }) => ({
-        url: img.src,
-        alt: product.productName,
-        width: 1200,
-        height: 630,
-      })),
+      siteName: storeName,
+      images: ogImages,
     },
 
     twitter: {
       card: "summary_large_image",
-      title,
-      description,
-      images: product.images.map((img: { src: string; alt: string }) => img.src),
+      title: product.productName,
+      description: cleanDescription,
+      images: ogImages.map((img) => img.url),
     },
-
-
   };
 }

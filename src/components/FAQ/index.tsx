@@ -56,8 +56,25 @@ const FAQ: React.FC<FAQProps> = ({ limit, showViewAll = false }) => {
     );
   }
 
+  const faqSchema = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: faqs.map((f) => ({
+      "@type": "Question",
+      name: f.question,
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: f.answer,
+      },
+    })),
+  };
+
   return (
     <section className="bg-white py-16 px-4 md:px-6">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
+      />
       <div className="max-w-3xl mx-auto">
         <div className="text-center mb-12">
           <h2 className="text-[26px] xl:text-[32px] font-bold tracking-tight text-gray-900 mb-2">

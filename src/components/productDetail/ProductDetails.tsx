@@ -17,6 +17,7 @@ import { useAppUIContext } from "@/context/AppUIContext";
 import { useAuth } from "@/context/AuthContext";
 import { useCart } from "@/hooks/useCart";
 import { calculateDiscountedPrice } from "@/lib/utils";
+import { getProductUrl } from "@/utils/url";
 import { useShippingFee } from "@/hooks/useShippingFee";
 
 const SocialMediaShareWithNoSSR = dynamic(
@@ -324,7 +325,7 @@ const ProductInfo: React.FC<ProductDetailsProps> = ({
             Reviews ⭐
           </button>
           <SocialMediaShareWithNoSSR
-            url={`https://www.pakshipper.com/product-detail/${seo.slug}`}
+            url={getProductUrl(seo.slug)}
           />
         </div>
 
@@ -387,7 +388,7 @@ const ProductInfo: React.FC<ProductDetailsProps> = ({
           <WishlistButton product={product} />
 
           <SocialMediaShareWithNoSSR
-            url={`https://www.pakshipper.com/product-detail/${seo.slug}`}
+            url={getProductUrl(seo.slug)}
           />
         </div>
 
@@ -406,7 +407,7 @@ const ProductInfo: React.FC<ProductDetailsProps> = ({
             sku: sku,
             size: selectedSize,
             color: selectedColor,
-            url: `https://www.pakshipper.com/product-detail/${seo.slug}`,
+            url: getProductUrl(seo.slug),
           }}
         />
       </div>
