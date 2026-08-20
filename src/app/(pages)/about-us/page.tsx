@@ -90,6 +90,19 @@ export default async function AboutUsPage() {
           ? "bg-gradient-to-r from-blue-900/40 via-purple-900/30 to-slate-900/50 border border-white/10 backdrop-blur-xl text-white" 
           : "bg-gradient-to-r from-slate-900 via-blue-900 to-slate-950 text-white"
       }`}>
+        {aboutUs?.heroImage && (
+          <>
+            <Image
+              src={aboutUs.heroImage}
+              alt={heroTitle}
+              fill
+              className="object-cover opacity-35"
+              priority
+              unoptimized
+            />
+            <div className="absolute inset-0 bg-black/40 backdrop-blur-[1px]" />
+          </>
+        )}
         <div className="max-w-3xl mx-auto relative z-10 space-y-4">
           <h1 className="font-eb-garamond text-4xl sm:text-5xl md:text-6xl font-bold tracking-tight text-white drop-shadow-md">
             {heroTitle}

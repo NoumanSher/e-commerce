@@ -23,6 +23,12 @@ interface Option {
 
 interface Variant {
   name: string;
+  /** New structure: { size, color } attributes — present on products created via merchant panel */
+  attributes?: {
+    size?: string;
+    color?: string;
+    [key: string]: string | undefined;
+  };
   additionalCostPrice: number;
   additionalSalePrice: number;
   stock: number;

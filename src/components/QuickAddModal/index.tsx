@@ -9,6 +9,7 @@ import { calculateDiscountedPrice, formatPrice } from "@/lib/utils";
 import { useGetProductDetailBySlug } from "@/components/productDetail/productDetailQuery";
 import { useGetStoreSettings } from "@/components/Slider/query/storeSettingQuery";
 import { X, ChevronDown, ShoppingCart, Image as ImageIcon } from "lucide-react";
+import { resolveVariant, isColorSoldOut, isSizeSoldOut } from "@/utils/variantUtils";
 
 interface QuickAddModalProps {
   theme?: "default" | "aquamist";
@@ -56,28 +57,15 @@ export default function QuickAddModal({ theme }: QuickAddModalProps) {
     if (!product?.variants || product.variants.length === 0) {
       return (product?.stock ?? 0) <= 0;
     }
-    const colorVariants = product.variants.filter((v: any) =>
-      v.name.toLowerCase().includes(color.toLowerCase().trim())
-    );
-    if (colorVariants.length === 0) return false;
-    return colorVariants.every((v: any) => (v.stock ?? 0) <= 0);
+    return isColorSoldOut(color, product.variants);
   }, [product]);
 
   const isSizeDisabled = useCallback((size: string) => {
     if (!product?.variants || product.variants.length === 0) {
       return (product?.stock ?? 0) <= 0;
     }
-    if (selectedColor) {
-      const targetName = `${selectedColor.trim()} - ${size.trim()}`.toLowerCase();
-      const matched = product.variants.find((v: any) => v.name.toLowerCase().trim() === targetName);
-      if (matched) return (matched.stock ?? 0) <= 0;
-    }
-    const sizeVariants = product.variants.filter((v: any) =>
-      v.name.toLowerCase().includes(size.toLowerCase().trim())
-    );
-    if (sizeVariants.length === 0) return false;
-    return sizeVariants.every((v: any) => (v.stock ?? 0) <= 0);
-  }, [product, selectedColor]);
+    return isSizeSoldOut(size, selectedColor, product.variants, colors.length > 0);
+  }, [product, selectedColor, colors.length]);
 
   // ── Initialize defaults ───────────────────────────────────────────────────
   useEffect(() => {
@@ -95,23 +83,30 @@ export default function QuickAddModal({ theme }: QuickAddModalProps) {
   useEffect(() => {
     if (!product) return;
 
-    let variantName = "";
-    if (colors.length > 0 && sizes.length > 0) {
-      if (selectedColor && selectedSize) variantName = `${selectedColor.trim()} - ${selectedSize}`;
-    } else if (colors.length > 0) {
-      if (selectedColor) variantName = selectedColor.trim();
-    } else if (sizes.length > 0) {
-      if (selectedSize) variantName = selectedSize.trim();
-    }
+    const hasColors = colors.length > 0;
+    const hasSizes = sizes.length > 0;
+    const isSelectionMade =
+      (hasColors && hasSizes && selectedColor && selectedSize) ||
+      (hasColors && !hasSizes && selectedColor) ||
+      (!hasColors && hasSizes && selectedSize);
 
-    if (variantName) {
-      const matchedVariant = product.variants?.find(
-        (v: any) => v.name.toLowerCase().trim() === variantName.toLowerCase().trim()
+    if (isSelectionMade && product.variants?.length > 0) {
+      const matchedVariant = resolveVariant(
+        product.variants,
+        selectedColor,
+        selectedSize,
+        hasColors,
+        hasSizes
       );
+
       if (matchedVariant) {
         setSelectedVariantId(matchedVariant._id);
         setAvailableStock(matchedVariant.stock > 0 ? matchedVariant.stock : 0);
         setExtraCost(matchedVariant.additionalSalePrice ?? 0);
+      } else {
+        setSelectedVariantId("");
+        setAvailableStock(0);
+        setExtraCost(0);
       }
     } else {
       setAvailableStock(product.stock < 0 ? 0 : product.stock || 0);

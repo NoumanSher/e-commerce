@@ -44,11 +44,15 @@ const ProductBasicInfo: React.FC<ProductInfoProps> = ({
           ) : null}
         </div>
         <div className="flex items-center">
-          {stockAvailability === 0 ? (
+          {stockAvailability <= 0 ? (
             <span className="text-[#EF0505] text-sm lg:text-base font-bold uppercase tracking-wider">Sold Out</span>
+          ) : stockAvailability <= 5 ? (
+            <span className="text-amber-600 text-sm lg:text-base font-medium">
+              Only {stockAvailability} left in stock
+            </span>
           ) : (
             <span className="text-gray-600 text-sm lg:text-base font-medium">
-              Only {stockAvailability} left
+              {stockAvailability} in stock
             </span>
           )}
         </div>
