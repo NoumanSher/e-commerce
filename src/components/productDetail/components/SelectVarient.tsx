@@ -8,6 +8,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { isColorSoldOut, isSizeSoldOut } from "@/utils/variantUtils";
 
 interface SelectVarientProps {
   availableColors: string[];
@@ -35,24 +36,7 @@ const SelectColorAndSize: React.FC<SelectVarientProps> = React.memo(
     validation,
     setValidation,
   }) => {
-    // Helper to check if a color is Sold Out across all sizes
-    const isColorSoldOut = (color: string) => {
-      const colorVariants = variants?.filter(v => v.name.toLowerCase().includes(color.toLowerCase().trim()));
-      return colorVariants?.length > 0 && colorVariants.every(v => v.stock <= 0);
-    };
-
-    // Helper to check if a size is Sold Out for the currently selected color
-    const isSizeSoldOut = (size: string) => {
-      if (availableColors.length > 0 && selectedColor) {
-        // Find specific combination
-        const comboName = `${selectedColor.trim()} - ${size.trim()}`;
-        const variant = variants?.find(v => v.name === comboName);
-        return variant ? variant.stock <= 0 : true;
-      }
-      // If no color selected yet, check if this size is Sold Out across ALL colors
-      const sizeVariants = variants?.filter(v => v.name.toLowerCase().includes(size.toLowerCase().trim()));
-      return sizeVariants?.length > 0 && sizeVariants.every(v => v.stock <= 0);
-    };
+    const hasColors = availableColors.length > 0;
     const handleChangeColor = useCallback(
       (e: string) => {
 
@@ -86,7 +70,7 @@ const SelectColorAndSize: React.FC<SelectVarientProps> = React.memo(
                 <SelectGroup>
                   <SelectLabel>Color</SelectLabel>
                    {availableColors.map((color, index) => {
-                    const soldOut = isColorSoldOut(color);
+                    const soldOut = isColorSoldOut(color, variants);
                     return (
                      <SelectItem key={index} value={color} disabled={soldOut}>
                        <p className={`text-sm lg:text-base font-normal ${soldOut ? 'text-gray-400 line-through' : ''}`}>
@@ -119,7 +103,7 @@ const SelectColorAndSize: React.FC<SelectVarientProps> = React.memo(
                 <SelectGroup>
                   <SelectLabel>Size</SelectLabel>
                    {availableSizes.map((size, index) => {
-                    const soldOut = isSizeSoldOut(size);
+                    const soldOut = isSizeSoldOut(size, selectedColor, variants, hasColors);
                     return (
                       <SelectItem key={index} value={size} disabled={soldOut}>
                         <p className={`text-sm lg:text-base font-normal ${soldOut ? 'text-gray-400 line-through' : ''}`}>

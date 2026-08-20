@@ -19,6 +19,7 @@ import { useCart } from "@/hooks/useCart";
 import { calculateDiscountedPrice } from "@/lib/utils";
 import { getProductUrl } from "@/utils/url";
 import { useShippingFee } from "@/hooks/useShippingFee";
+import { resolveVariant } from "@/utils/variantUtils";
 
 const SocialMediaShareWithNoSSR = dynamic(
   () => import("./components/SocialMediaShare"),
@@ -76,12 +77,17 @@ const ProductInfo: React.FC<ProductDetailsProps> = ({
     return opt?.values ?? [];
   }, [options]);
 
+  const totalCalculatedStock = useMemo(() => {
+    if (isVariant && Array.isArray(variants) && variants.length > 0) {
+      return variants.reduce((sum, v) => sum + (Number(v.stock) || 0), 0);
+    }
+    return Math.max(0, Number(stock) || 0);
+  }, [isVariant, variants, stock]);
+
   const [selectedColor, setSelectedColor] = useState("");
   const [selectedSize, setSelectedSize] = useState("");
   const [selectedVarientId, setSelectedVarientId] = useState("");
-  const [availableStock, SetAvailabelStock] = useState<number>(
-    stock < 0 ? 0 : stock || 0,
-  );
+  const [availableStock, SetAvailabelStock] = useState<number>(totalCalculatedStock);
   const [extraCost, SetExtraCost] = useState<number>(0);
   const [selectedQuantity, setSelectedQuantity] = useState(1);
   const [productPrice, SetProductPrice] = useState<number>(
@@ -99,36 +105,37 @@ const ProductInfo: React.FC<ProductDetailsProps> = ({
   const router = useRouter();
 
   useEffect(() => {
-    if (stock) {
-      SetAvailabelStock(stock < 0 ? 0 : stock);
-    }
+    SetAvailabelStock(totalCalculatedStock);
     if (salePrice) {
       // Initialize with discounted base price
       const initialPrice = calculateDiscountedPrice(salePrice, discount || 0);
       SetProductPrice(initialPrice);
     }
-  }, [salePrice, stock, discount]);
+  }, [salePrice, totalCalculatedStock, discount]);
 
   useEffect(() => {
-    let variantName = "";
-    if (colors.length > 0 && sizes.length > 0) {
-      if (selectedColor && selectedSize) {
-        variantName = `${selectedColor.trim()} - ${selectedSize}`;
-      }
-    } else if (colors.length > 0) {
-      if (selectedColor) variantName = selectedColor.trim();
-    } else if (sizes.length > 0) {
-      if (selectedSize) variantName = selectedSize.trim();
-    }
+    const hasColors = colors.length > 0;
+    const hasSizes = sizes.length > 0;
+    const isSelectionMade =
+      (hasColors && hasSizes && selectedColor && selectedSize) ||
+      (hasColors && !hasSizes && selectedColor) ||
+      (!hasColors && hasSizes && selectedSize);
 
-    if (variantName) {
-      const selectVariat = variants?.find(
-        (item) =>
-          item.name.toLowerCase().trim() === variantName.toLowerCase().trim(),
+    if (isSelectionMade && isVariant) {
+      const selectVariat = resolveVariant(
+        variants,
+        selectedColor,
+        selectedSize,
+        hasColors,
+        hasSizes
       );
+
       if (selectVariat?._id) {
         setSelectedVarientId(selectVariat._id);
+      } else {
+        setSelectedVarientId("");
       }
+
       SetAvailabelStock(
         selectVariat?.stock !== undefined
           ? selectVariat.stock > 0
@@ -157,23 +164,14 @@ const ProductInfo: React.FC<ProductDetailsProps> = ({
     sizes.length,
     isVariant,
   ]);
+
   const handleAddToCart = useCallback(() => {
     setIsAddingToCart(true);
     if (isVariant) {
-      let variantName = "";
-      if (colors.length > 0 && sizes.length > 0) {
-        variantName = `${selectedColor.trim()} - ${selectedSize}`;
-      } else if (colors.length > 0) {
-        variantName = selectedColor.trim();
-      } else if (sizes.length > 0) {
-        variantName = selectedSize.trim();
-      }
-      const selectVariat = variants?.find(
-        (item) =>
-          item.name.toLowerCase().trim() === variantName.toLowerCase().trim(),
-      );
-      const isColorMissing = colors.length > 0 && !selectedColor;
-      const isSizeMissing = sizes.length > 0 && !selectedSize;
+      const hasColors = colors.length > 0;
+      const hasSizes = sizes.length > 0;
+      const isColorMissing = hasColors && !selectedColor;
+      const isSizeMissing = hasSizes && !selectedSize;
 
       if (isColorMissing || isSizeMissing) {
         const el = document.getElementById("select-varient");
@@ -186,6 +184,15 @@ const ProductInfo: React.FC<ProductDetailsProps> = ({
         setIsAddingToCart(false);
         return;
       }
+
+      const selectVariat = resolveVariant(
+        variants,
+        selectedColor,
+        selectedSize,
+        hasColors,
+        hasSizes
+      );
+
       addToCart({
         product,
         quantity:
@@ -218,9 +225,12 @@ const ProductInfo: React.FC<ProductDetailsProps> = ({
   // Handle Checkout logic
   const handleCheckout = useCallback(() => {
     setIsCheckingOut(true);
+    const hasColors = colors.length > 0;
+    const hasSizes = sizes.length > 0;
+
     if (isVariant) {
-      const isColorMissing = colors.length > 0 && !selectedColor;
-      const isSizeMissing = sizes.length > 0 && !selectedSize;
+      const isColorMissing = hasColors && !selectedColor;
+      const isSizeMissing = hasSizes && !selectedSize;
 
       if (isColorMissing || isSizeMissing) {
         const el = document.getElementById("select-varient");
@@ -235,16 +245,15 @@ const ProductInfo: React.FC<ProductDetailsProps> = ({
       }
     }
 
-    let variantName = "";
-    if (isVariant) {
-      if (colors.length > 0 && sizes.length > 0) {
-        variantName = `${selectedColor.trim()} - ${selectedSize}`;
-      } else if (colors.length > 0) {
-        variantName = selectedColor.trim();
-      } else if (sizes.length > 0) {
-        variantName = selectedSize.trim();
-      }
-    }
+    const selectVariat = isVariant
+      ? resolveVariant(variants, selectedColor, selectedSize, hasColors, hasSizes)
+      : undefined;
+
+    const variantName = selectVariat?.name || (
+      selectedColor && selectedSize
+        ? `${selectedColor.trim()} - ${selectedSize.trim()}`
+        : selectedColor || selectedSize || ""
+    );
 
     let dataToPass = {
       productName: productName,
@@ -253,7 +262,7 @@ const ProductInfo: React.FC<ProductDetailsProps> = ({
       items: [
         {
           productId: _id,
-          variantId: selectedVarientId,
+          variantId: selectVariat?._id || selectedVarientId,
           variantName: variantName,
           price: productPrice, // already discounted in state
           quantity: selectedQuantity,
@@ -281,6 +290,8 @@ const ProductInfo: React.FC<ProductDetailsProps> = ({
     selectedVarientId,
     updateProductDetailData,
     userId,
+    variants,
+    deliveryFee,
     colors.length,
     sizes.length,
   ]);
