@@ -31,9 +31,6 @@ function CategorySliderContent({
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(false);
 
-  // Active category from URL query or Context state
-  const currentCategorySlug = searchParams.get("parentCategorySlug") || selectedCategory;
-
   // Filter active categories and sort by sortOrder
   const activeCategories = useMemo(() => {
     const all = categoriesData?.categories || [];
@@ -41,6 +38,10 @@ function CategorySliderContent({
       .filter((cat) => cat.isActive !== false)
       .sort((a, b) => (a.sortOrder ?? 0) - (b.sortOrder ?? 0));
   }, [categoriesData?.categories]);
+
+  // Active category from URL query or Context state, defaulting to first category
+  const defaultFirstSlug = activeCategories[0]?.slug;
+  const currentCategorySlug = searchParams.get("parentCategorySlug") || selectedCategory || defaultFirstSlug;
 
   // Check scroll position to show/hide scroll arrow buttons
   const checkScroll = useCallback(() => {
@@ -110,44 +111,44 @@ function CategorySliderContent({
       {/* ── Slider Container + Navigation Arrows ────────────────────── */}
       <div className="relative max-w-6xl mx-auto group">
 
-        {/* Left Arrow Indicator */}
+        {/* Left Arrow Indicator (Desktop / Tablet) */}
         <button
           type="button"
           onClick={() => handleScroll("left")}
           disabled={!canScrollLeft}
           aria-label="Scroll Left"
-          className={`absolute -left-3 sm:-left-5 top-1/2 -translate-y-1/2 z-20 w-10 h-10 rounded-full flex items-center justify-center shadow-lg transition-all duration-300 ${
+          className={`hidden sm:flex items-center justify-center absolute -left-3 md:-left-5 top-[44px] sm:top-[48px] md:top-[56px] -translate-y-1/2 z-20 w-8 h-8 sm:w-9 sm:h-9 md:w-10 md:h-10 rounded-full shadow-lg transition-all duration-300 ${
             canScrollLeft
               ? isAqua
-                ? "bg-slate-900/90 border border-white/20 text-white hover:bg-sky-400 hover:text-slate-950 hover:scale-110"
-                : "bg-white/95 border border-gray-200 text-gray-800 hover:bg-gray-900 hover:text-white hover:scale-110"
+                ? "bg-[#0a0f1e]/90 border border-white/20 text-white hover:bg-sky-400 hover:text-slate-950 hover:border-sky-400 hover:scale-110 backdrop-blur-md"
+                : "bg-white/95 border border-gray-200 text-gray-800 hover:bg-gray-900 hover:text-white hover:scale-110 shadow-md"
               : "opacity-0 pointer-events-none"
           }`}
         >
-          <ChevronLeft className="w-5 h-5" />
+          <ChevronLeft className="w-4 h-4 sm:w-5 sm:h-5" />
         </button>
 
-        {/* Right Arrow Indicator */}
+        {/* Right Arrow Indicator (Desktop / Tablet) */}
         <button
           type="button"
           onClick={() => handleScroll("right")}
           disabled={!canScrollRight}
           aria-label="Scroll Right"
-          className={`absolute -right-3 sm:-right-5 top-1/2 -translate-y-1/2 z-20 w-10 h-10 rounded-full flex items-center justify-center shadow-lg transition-all duration-300 ${
+          className={`hidden sm:flex items-center justify-center absolute -right-3 md:-right-5 top-[44px] sm:top-[48px] md:top-[56px] -translate-y-1/2 z-20 w-8 h-8 sm:w-9 sm:h-9 md:w-10 md:h-10 rounded-full shadow-lg transition-all duration-300 ${
             canScrollRight
               ? isAqua
-                ? "bg-slate-900/90 border border-white/20 text-white hover:bg-sky-400 hover:text-slate-950 hover:scale-110"
-                : "bg-white/95 border border-gray-200 text-gray-800 hover:bg-gray-900 hover:text-white hover:scale-110"
+                ? "bg-[#0a0f1e]/90 border border-white/20 text-white hover:bg-sky-400 hover:text-slate-950 hover:border-sky-400 hover:scale-110 backdrop-blur-md"
+                : "bg-white/95 border border-gray-200 text-gray-800 hover:bg-gray-900 hover:text-white hover:scale-110 shadow-md"
               : "opacity-0 pointer-events-none"
           }`}
         >
-          <ChevronRight className="w-5 h-5" />
+          <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5" />
         </button>
 
         {/* Scrollable Row */}
         <div
           ref={scrollRef}
-          className="flex items-start gap-4 sm:gap-6 sm:gap-8 overflow-x-auto scroll-smooth no-scrollbar py-3 px-2"
+          className="flex items-start gap-4 sm:gap-6 md:gap-8 overflow-x-auto scroll-smooth no-scrollbar py-3 px-2 sm:px-1 touch-pan-x"
           style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
         >
           {isLoading

@@ -30,10 +30,7 @@ export default async function Page({
 }: generateMetadataProps) {
   const activeTheme = await resolveActiveTheme();
 
-  if (activeTheme === "aquamist") {
-    return <AquaMistProductDetailPage params={{ slug }} />;
-  }
-
+  // ── Resolve host (shared by both themes) ──────────────────────────────
   let host = "default";
   try {
     host = headers().get("host") ?? "default";
@@ -46,37 +43,50 @@ export default async function Page({
     // Fall back to "default" — the prefetch calls will fail gracefully.
   }
 
-  // Server fetch (cached with revalidate)
+  // ── Fetch product (shared by both themes; React cache() deduplicates) ─
   const product = await getProductBySlugServer(slug, host);
   if (!product) {
-    // this renders the Next.js 404 page and prevents the error
     return notFound();
   }
 
   const rawHost = headers().get("host") ?? host;
   const cleanHostName = rawHost.split(":")[0].toLowerCase();
-  const origin = (cleanHostName === "localhost" || cleanHostName === "127.0.0.1")
-    ? `http://${process.env.NEXT_PUBLIC_DEVELOPMENT_HOST || "sandbox.localhost"}`
-    : `https://${cleanHostName}`;
+  const origin =
+    cleanHostName === "localhost" || cleanHostName === "127.0.0.1"
+      ? `http://${process.env.NEXT_PUBLIC_DEVELOPMENT_HOST || "sandbox.localhost"}`
+      : `https://${cleanHostName}`;
+
+  // ── JSON-LD: emitted for both themes so Google always sees it ─────────
+  const jsonLd = (
+    <script
+      type="application/ld+json"
+      dangerouslySetInnerHTML={{
+        __html: JSON.stringify(generateProductSchema(product, origin)),
+      }}
+    />
+  );
+
+  // ── Theme delegate ─────────────────────────────────────────────────────
+  if (activeTheme === "aquamist") {
+    return (
+      <>
+        {jsonLd}
+        <AquaMistProductDetailPage params={{ slug }} />
+      </>
+    );
+  }
 
   return (
     <>
-      {/* JSON‑LD schema: inlined by the server */}
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{
-          __html: JSON.stringify(generateProductSchema(product, origin)),
-        }}
-      />
-
+      {jsonLd}
       {/* Only load the heavy React part on the client */}
       <Suspense fallback={<ProductDetailSkeleton />}>
         <ProductDetailClient slug={slug} initialData={product} />
       </Suspense>
       <AuthModal />
-
     </>
   );
 }
+
 export const generateMetadata = getMetadata;
 

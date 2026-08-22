@@ -10,15 +10,17 @@
  * Do NOT import this from Client Components.
  */
 
+import { cache } from "react";
 import { serverGet } from "@/lib/serverApiClient";
 import type { StoreInfo } from "@/services/settingsService";
 
 /**
  * Fetch store settings for the current tenant.
+ * Wrapped with React cache() to deduplicate multiple calls with the same host within a single request.
  *
  * @param host  Value of headers().get('host') from the calling Server Component.
  */
-export const getStoreSettingServer = async (
+export const getStoreSettingServer = cache(async (
   host: string
 ): Promise<StoreInfo | null> => {
   try {
@@ -27,4 +29,4 @@ export const getStoreSettingServer = async (
     console.error("[SSR] Error fetching store settings:", (error as any)?.message || error);
     return null;
   }
-};
+});

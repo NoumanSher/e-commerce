@@ -2,12 +2,13 @@ import React from "react";
 import type { Metadata } from "next";
 import AquaMistOrderConfirmationPage from "@/themes/aquamist/(pages)/order-confirmation/page";
 import { resolveActiveTheme } from "@/utils/theme";
+import { getLandingMetadata } from "@/app/utils/metadata/landingMetadata";
 
-export const metadata: Metadata = {
-  title: "Order Confirmed — HumidAura",
-  description:
-    "Thank you for your order! Your HumidAura purchase has been completed and is being processed.",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const base = await getLandingMetadata("Order Confirmed");
+  return { ...base, robots: { index: false, follow: true } };
+}
+
 
 /**
  * Root order confirmation route delegate.

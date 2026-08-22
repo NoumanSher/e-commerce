@@ -2,38 +2,9 @@
 
 import React, { useState, useEffect, useCallback, useRef, useMemo } from "react";
 import Link from "next/link";
-import GlassCard from "./GlassCard";
 import { useGetStoreSettings } from "@/components/Slider/query/storeSettingQuery";
 
-/** Floating badge card shown around the hero product image */
-function FloatingBadge({
-  icon,
-  label,
-  className,
-  delay = "0s",
-}: {
-  icon: string;
-  label: string;
-  className?: string;
-  delay?: string;
-}) {
-  return (
-    <GlassCard
-      className={[
-        "absolute px-4 py-3 rounded-xl flex items-center gap-3 animate-float z-20",
-        className,
-      ].join(" ")}
-      style={{ animationDelay: delay }}
-    >
-      <span className="material-symbols-outlined text-aq-primary-container text-[20px]">
-        {icon}
-      </span>
-      <span className="font-inter text-sm text-aq-on-surface whitespace-nowrap">
-        {label}
-      </span>
-    </GlassCard>
-  );
-}
+
 
 export default function AquaMistHero() {
   const { data: storeSettings, isLoading, isError, refetch } = useGetStoreSettings();

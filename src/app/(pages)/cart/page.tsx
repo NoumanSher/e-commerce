@@ -1,6 +1,15 @@
 import React, { Suspense, lazy } from "react";
+import type { Metadata } from "next";
 import AquaMistCartPage from "@/themes/aquamist/(pages)/cart/page";
 import { resolveActiveTheme } from "@/utils/theme";
+import { getLandingMetadata } from "@/app/utils/metadata/landingMetadata";
+
+export async function generateMetadata(): Promise<Metadata> {
+  const base = await getLandingMetadata("Shopping Cart");
+  return { ...base, robots: { index: false, follow: true } };
+}
+
+
 
 // ── Theme delegation ──────────────────────────────────────────────────────────
 // For the aquamist theme the full AquaMist cart is rendered directly.

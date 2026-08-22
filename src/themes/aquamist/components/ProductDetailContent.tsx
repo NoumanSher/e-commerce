@@ -484,7 +484,7 @@ export default function AquaMistProductDetailContent({ slug }: ProductDetailCont
       {/* ═══════════════════════════════════════════════════════════════════ */}
       {/* ABOVE THE FOLD — loads immediately                                  */}
       {/* ═══════════════════════════════════════════════════════════════════ */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 mb-16 lg:mb-24">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 mb-16 lg:mb-24">
         
         {/* Left Column: Image Gallery Component from Base Theme (No outer glass container border/padding) */}
         <div className="lg:col-span-7">
@@ -510,7 +510,7 @@ export default function AquaMistProductDetailContent({ slug }: ProductDetailCont
 
           {/* Description — Desktop Only (hidden on mobile, shown in long-scroll below reviews) */}
           {product.description && (
-            <div className="aq-rich-text hidden sm:block font-inter text-aq-on-surface-variant text-sm sm:text-base leading-relaxed mb-6 max-h-56 overflow-y-auto pr-2 scrollbar-thin scrollbar-track-transparent scrollbar-thumb-aq-primary/30 hover:scrollbar-thumb-aq-primary/60">
+            <div className="aq-rich-text hidden sm:block font-inter text-aq-on-surface-variant text-sm sm:text-base leading-relaxed mb-6 max-h-80 overflow-y-auto pr-2 scrollbar-thin scrollbar-track-transparent scrollbar-thumb-aq-primary/30 hover:scrollbar-thumb-aq-primary/60">
               <RichTextRenderer content={product.description} />
             </div>
           )}
@@ -541,11 +541,11 @@ export default function AquaMistProductDetailContent({ slug }: ProductDetailCont
           {/* Price */}
           <div className="flex items-end gap-3 sm:gap-4 mb-6 sm:mb-8 border-b border-white/10 pb-6">
             <span className="font-inter text-[26px] sm:text-[32px] font-bold text-aq-on-surface">
-              PKR {currentPrice.toFixed(2)}
+              PKR {currentPrice.toFixed(0)}
             </span>
             {product.discount > 0 && (
               <span className="font-inter text-aq-error/60 line-through pb-1 text-base sm:text-lg">
-                PKR {originalPrice.toFixed(2)}
+                PKR {originalPrice.toFixed(0)}
               </span>
             )}
           </div>

@@ -203,7 +203,30 @@
   width: 50%;
 }
 
-/* Rich Text Styles for Product Descriptions */
+/* Rich Text Styles — applies to ALL themes, all consumers
+   (product descriptions, legal pages, FAQ answers, About Us).
+   Quill writes inline style="color:...; background-color:..." on nodes,
+   which would otherwise beat any class-level theme color. `inherit` makes
+   rich text always take the color of whatever container wraps it. */
+.rich-text * {
+  color: inherit !important;
+  background-color: transparent !important;
+}
+
+.rich-text strong,
+.rich-text b {
+  font-weight: 600 !important;
+}
+
+.rich-text h1, .rich-text h2, .rich-text h3,
+.rich-text h4, .rich-text h5, .rich-text h6 {
+  font-weight: 700 !important;
+}
+
+.rich-text a {
+  text-decoration: underline !important;
+}
+
 .rich-text {
   line-height: 1.6;
 }
@@ -240,20 +263,9 @@
 
 /* ── AquaMist Theme ──────────────────────────────────────────────────────── */
 
-/* Strip Quill editor inline white backgrounds & forced black text colours
-   from product descriptions inside the AquaMist dark theme.
-   Uses !important because Quill writes inline style="" attributes that
-   would otherwise beat any class-level rule.                               */
-.aq-rich-text .rich-text *,
-.aq-rich-text .rich-text p,
-.aq-rich-text .rich-text span,
-.aq-rich-text .rich-text li,
-.aq-rich-text .rich-text h1,
-.aq-rich-text .rich-text h2,
-.aq-rich-text .rich-text h3 {
-  background-color: transparent !important;
-  color: inherit !important;
-}
+/* .aq-rich-text .rich-text * color/background rules removed — now handled
+   globally by .rich-text * above, which uses `color: inherit` so the
+   AquaMist wrapper's text-white/80 cascades correctly into all children. */
 
 /* Glass card — product cards, feature cards, floating badges */
 .aq-glass-card {

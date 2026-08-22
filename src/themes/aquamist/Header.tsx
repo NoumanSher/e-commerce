@@ -1,11 +1,12 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useCart } from "@/hooks/useCart";
 import { useGetStoreSettings } from "@/components/Slider/query/storeSettingQuery";
+import { useAppUIContext } from "@/context/AppUIContext";
 
 const NAV_LINKS = [
   { label: "HOME", href: "/" },
@@ -20,6 +21,14 @@ export default function AquaMistHeader() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const { totalItems } = useCart();
   const { data: storeSettings } = useGetStoreSettings();
+  const { updateSelectedCategory } = useAppUIContext();
+
+  const handleHomeClick = useCallback(() => {
+    updateSelectedCategory("");
+    if (pathname === "/") {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+  }, [pathname, updateSelectedCategory]);
 
   // ── Scroll-shadow effect ──────────────────────────────────────────────────
   useEffect(() => {
@@ -54,6 +63,7 @@ export default function AquaMistHeader() {
           {/* Brand */}
           <Link
             href="/"
+            onClick={handleHomeClick}
             className="flex items-center h-full max-h-[68px] relative"
           >
             {storeSettings?.logo ? (
@@ -78,6 +88,7 @@ export default function AquaMistHeader() {
               <Link
                 key={href}
                 href={href}
+                onClick={href === "/" ? handleHomeClick : undefined}
                 className={[
                   "font-inter text-[14px] leading-[20px] tracking-[0.1em] font-semibold transition-colors duration-300",
                   isActive(href)
@@ -156,7 +167,10 @@ export default function AquaMistHeader() {
               <Link
                 key={href}
                 href={href}
-                onClick={() => setMobileOpen(false)}
+                onClick={() => {
+                  if (href === "/") handleHomeClick();
+                  setMobileOpen(false);
+                }}
                 className={[
                   "font-inter text-[18px] tracking-[0.15em] font-semibold transition-colors duration-300",
                   isActive(href)

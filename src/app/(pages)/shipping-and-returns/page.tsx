@@ -1,19 +1,17 @@
 import React from "react";
+import type { Metadata } from "next";
 import { headers } from "next/headers";
 import { getStoreSettingServer } from "@/services/settingsService.server";
-import RichTextRenderer from "@/components/RichTextRenderer";
+import LegalPolicyPage from "@/components/LegalPolicyPage";
+import { getLandingMetadata } from "@/app/utils/metadata/landingMetadata";
 
-export const revalidate = 60; // Cache for 60 seconds
+export const revalidate = 60;
 
-/**
- * Checks whether Quill HTML has any real visible text.
- * Quill stores empty editors as "<p><br></p>" which is truthy but visually blank.
- */
-function hasVisibleContent(html?: string): boolean {
-  if (!html) return false;
-  const stripped = html.replace(/<[^>]*>/g, "").replace(/&nbsp;/g, " ").trim();
-  return stripped.length > 0;
+export async function generateMetadata(): Promise<Metadata> {
+  const base = await getLandingMetadata("Shipping & Returns");
+  return { ...base, robots: { index: false, follow: true } };
 }
+
 
 export default async function ShippingAndReturnsPage() {
   let host = "default";
@@ -26,86 +24,35 @@ export default async function ShippingAndReturnsPage() {
   } catch {}
 
   const settings = await getStoreSettingServer(host);
-  const shippingContent = settings?.shippingAndReturns;
-  const showRichContent = hasVisibleContent(shippingContent);
 
   return (
-    <div className="min-h-screen pt-[110px] pb-16 px-4 md:px-8 max-w-4xl mx-auto flex flex-col items-center">
-      <div className="w-full bg-white/5 border border-white/10 rounded-2xl p-6 sm:p-12 backdrop-blur-xl text-white shadow-2xl mt-4">
-        <h1 className="font-eb-garamond text-3xl md:text-4xl font-bold tracking-tight text-white mb-6 pb-4 border-b border-white/10">
-          Shipping & Returns
-        </h1>
+    <LegalPolicyPage
+      title="Shipping & Returns"
+      content={settings?.shippingAndReturns}
+      fallback={
+        <>
+          <p className="text-xs uppercase tracking-wider mb-6 opacity-60">
+            Last updated: August 2026
+          </p>
+          <section>
+            <h2 className="text-xl font-semibold mb-3">1. Shipping Options &amp; Delivery</h2>
+            <p>
+              We offer standard and expedited shipping across Pakistan. Orders are processed within
+              1-2 business days and typical delivery times range from 2-5 working days depending on
+              location.
+            </p>
+          </section>
 
-        {showRichContent ? (
-          <div className="policy-content">
-            <RichTextRenderer
-              content={shippingContent!}
-              className="text-white/80 leading-relaxed text-sm md:text-base"
-            />
-            <style>{`
-              .policy-content .rich-text *,
-              .policy-content .rich-text span,
-              .policy-content .rich-text p,
-              .policy-content .rich-text div,
-              .policy-content .rich-text li {
-                color: rgba(255, 255, 255, 0.85) !important;
-                background-color: transparent !important;
-                background: transparent !important;
-              }
-              .policy-content .rich-text strong,
-              .policy-content .rich-text b {
-                color: #ffffff !important;
-                font-weight: 600 !important;
-              }
-              .policy-content .rich-text h1,
-              .policy-content .rich-text h2,
-              .policy-content .rich-text h3,
-              .policy-content .rich-text h4,
-              .policy-content .rich-text h5,
-              .policy-content .rich-text h6 {
-                color: #ffffff !important;
-                background-color: transparent !important;
-                font-weight: 700 !important;
-              }
-              .policy-content .rich-text a {
-                color: #38bdf8 !important;
-                text-decoration: underline !important;
-              }
-              .policy-content .rich-text ul,
-              .policy-content .rich-text ol {
-                padding-left: 1.5rem;
-                margin-top: 0.5rem;
-                margin-bottom: 0.75rem;
-              }
-              .policy-content .rich-text li {
-                margin-bottom: 0.35rem;
-              }
-              .policy-content .rich-text p {
-                margin-bottom: 0.75rem;
-              }
-            `}</style>
-          </div>
-        ) : (
-          <div className="space-y-8 text-white/80 leading-relaxed">
-            <p className="text-white/50 text-xs uppercase tracking-wider mb-6">Last updated: August 2026</p>
-            <section>
-              <h2 className="text-xl font-semibold text-white mb-3">1. Shipping Options & Delivery</h2>
-              <p>
-                We offer standard and expedited shipping across Pakistan. Orders are processed within 1-2 business days
-                and typical delivery times range from 2-5 working days depending on location.
-              </p>
-            </section>
-
-            <section>
-              <h2 className="text-xl font-semibold text-white mb-3">2. Returns & Exchanges Policy</h2>
-              <p>
-                If you receive a damaged or incorrect item, you can request a return or exchange within 7 days of delivery.
-                Items must be unused and in original packaging. Contact our customer support team to initiate a return.
-              </p>
-            </section>
-          </div>
-        )}
-      </div>
-    </div>
+          <section>
+            <h2 className="text-xl font-semibold mb-3">2. Returns &amp; Exchanges Policy</h2>
+            <p>
+              If you receive a damaged or incorrect item, you can request a return or exchange within
+              7 days of delivery. Items must be unused and in original packaging. Contact our customer
+              support team to initiate a return.
+            </p>
+          </section>
+        </>
+      }
+    />
   );
 }

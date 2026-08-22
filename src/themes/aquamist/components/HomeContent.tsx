@@ -1,11 +1,11 @@
 "use client";
 
 import React, { useMemo, useRef, useEffect, useState, useCallback } from "react";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useQueryClient } from "@tanstack/react-query";
 import ProductCard from "./ProductCard";
 import { useProductsQuery } from "@/hooks/useProductsQuery";
+import { useCategories } from "@/hooks/useCategories";
 import type { Product } from "@/components/productDetail/productDetailDto";
 import CategorySlider from "@/components/CategorySlider/CategorySlider";
 import AquaMistFaqSection from "./FaqSection";
@@ -46,9 +46,26 @@ function ProductsError({ onRetry }: { onRetry: () => void }) {
 }
 
 export default function AquaMistHomeContent() {
+  const { data: categoriesData } = useCategories();
   const { selectedCategory, isHydrated } = useAppUIContext();
-  // Use selectedCategory only after hydration to avoid SSR text mismatch
-  const activeCategory = isHydrated ? selectedCategory : null;
+
+  // Find first active category by default
+  const firstCategory = useMemo(() => {
+    const all = categoriesData?.categories || [];
+    const active = all
+      .filter((cat) => cat.isActive !== false)
+      .sort((a, b) => (a.sortOrder ?? 0) - (b.sortOrder ?? 0));
+    return active[0] || null;
+  }, [categoriesData?.categories]);
+
+  // By default, select first category if none is explicitly selected
+  const activeCategory = (isHydrated && selectedCategory) ? selectedCategory : firstCategory?.slug || null;
+
+  const activeCategoryName = useMemo(() => {
+    if (!activeCategory) return null;
+    const found = categoriesData?.categories?.find((c) => c.slug === activeCategory);
+    return found?.name || activeCategory;
+  }, [categoriesData?.categories, activeCategory]);
 
   const router = useRouter();
   const queryClient = useQueryClient();
@@ -78,11 +95,12 @@ export default function AquaMistHomeContent() {
     return [];
   }, [productsData]);
 
-  // Scroll to products section when a category is selected
-  useEffect(() => {
-    if (!isHydrated || !activeCategory) return;
-    productsSectionRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
-  }, [activeCategory, isHydrated]);
+  // Scroll to products section ONLY when user explicitly clicks a category
+  const handleCategorySelect = useCallback((_slug: string) => {
+    setTimeout(() => {
+      productsSectionRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+    }, 50);
+  }, []);
 
   // Build the collections URL: forward selected category if present
   const collectionsHref = activeCategory
@@ -166,7 +184,12 @@ export default function AquaMistHomeContent() {
     <>
       {/* ── Category Slider Carousel ────────────────────────────────────────── */}
       <section className="pt-12 pb-4">
-        <CategorySlider theme="aquamist" title="Shop by Category" navigateOnClick={false} />
+        <CategorySlider
+          theme="aquamist"
+          title="Shop by Category"
+          navigateOnClick={false}
+          onSelectCategory={handleCategorySelect}
+        />
       </section>
 
       {/* ── Best Sellers / Featured Grid ─────────────────────────────────── */}
@@ -176,13 +199,13 @@ export default function AquaMistHomeContent() {
             className="text-aq-primary-container font-inter text-[14px] tracking-[0.2em] font-semibold block mb-3 uppercase"
             suppressHydrationWarning
           >
-            {activeCategory ? `Category: ${activeCategory}` : "BEST SELLERS"}
+            {activeCategoryName ? `Category: ${activeCategoryName}` : "FEATURED PRODUCTS"}
           </span>
           <h2
             className="font-eb-garamond text-[40px] md:text-[48px] leading-[48px] md:leading-[56px] text-aq-on-surface"
             suppressHydrationWarning
           >
-            {activeCategory ? "Explore Featured Products" : "Our Most Loved"}
+            {"Explore Featured Products"}
           </h2>
         </div>
 
@@ -205,7 +228,7 @@ export default function AquaMistHomeContent() {
                 </>
               ) : (
                 <>
-                  <span>{activeCategory ? `See All in ${activeCategory}` : "See All Collections"}</span>
+                  <span>{activeCategoryName ? `See All in ${activeCategoryName}` : "See All Collections"}</span>
                   <svg
                     className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1"
                     xmlns="http://www.w3.org/2000/svg"

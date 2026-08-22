@@ -5,28 +5,17 @@ import Link from "next/link";
 import { headers } from "next/headers";
 import { getStoreSettingServer } from "@/services/settingsService.server";
 import { resolveActiveTheme } from "@/utils/theme";
+import { getLandingMetadata } from "@/app/utils/metadata/landingMetadata";
 import RichTextRenderer from "@/components/RichTextRenderer";
 import { Award, Heart, Truck, ShieldCheck, Leaf, Star, Clock, Headset, Sparkles, CheckCircle2 } from "lucide-react";
 
 export const revalidate = 60; // Cache for 60 seconds
 
-export async function generateMetadata(): Promise<Metadata> {
-  let host = "default";
-  try {
-    host = headers().get("host") ?? "default";
-    const cleanHost = host.split(":")[0].toLowerCase();
-    if (cleanHost === "localhost" || cleanHost === "127.0.0.1") {
-      host = process.env.NEXT_PUBLIC_DEVELOPMENT_HOST || "sandbox.localhost";
-    }
-  } catch {}
+// Uses getLandingMetadata — which itself calls getStoreSettingServer(host).
+// Because getStoreSettingServer is wrapped with React cache(), the call made
+// here and the call made inside the page body resolve to one network round-trip.
+export const generateMetadata = getLandingMetadata.bind(null, "About Us") as () => Promise<Metadata>;
 
-  const storeSettings = await getStoreSettingServer(host);
-  const storeName = storeSettings?.title || "PakShipper";
-  return {
-    title: `About Us | ${storeName}`,
-    description: storeSettings?.aboutUs?.heroSubtitle || storeSettings?.description || "Learn about our story, mission, and values",
-  };
-}
 
 /** Render vector icon based on preset icon name */
 function ValueIcon({ iconName, isAqua }: { iconName?: string; isAqua: boolean }) {

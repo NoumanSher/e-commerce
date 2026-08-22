@@ -2,12 +2,13 @@ import React from "react";
 import type { Metadata } from "next";
 import AquaMistCheckoutPage from "@/themes/aquamist/(pages)/checkout/page";
 import { resolveActiveTheme } from "@/utils/theme";
+import { getLandingMetadata } from "@/app/utils/metadata/landingMetadata";
 
-export const metadata: Metadata = {
-  title: "Secure Checkout — HumidAura",
-  description:
-    "Complete your order securely. Enter your shipping and payment details to finalise your HumidAura purchase.",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const base = await getLandingMetadata("Checkout");
+  return { ...base, robots: { index: false, follow: true } };
+}
+
 
 /**
  * Root checkout route delegate.

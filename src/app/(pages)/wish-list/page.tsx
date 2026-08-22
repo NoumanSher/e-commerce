@@ -1,23 +1,12 @@
-"use client";
+﻿import type { Metadata } from "next";
+import { getLandingMetadata } from "@/app/utils/metadata/landingMetadata";
+import WishListClient from "./WishListClient";
 
-import React, { Suspense, lazy } from "react";
-import { useWishlist } from "@/hooks/useWishlist";
-import Loader from "@/components/Loader";
-import { AuthModal } from "@/components/AuthModal";
-
-const WishCardList = lazy(
-  () => import("./WishCardList")
-);
+export async function generateMetadata(): Promise<Metadata> {
+  const base = await getLandingMetadata("Wishlist");
+  return { ...base, robots: { index: false, follow: true } };
+}
 
 export default function WishListPage() {
-  const { wishlist } = useWishlist();
-
-  return (
-    <>
-      <Suspense fallback={<Loader />}>
-        <WishCardList products={wishlist} />
-      </Suspense>
-      <AuthModal />
-    </>
-  );
+  return <WishListClient />;
 }
